@@ -2,12 +2,21 @@ import React, { useState } from 'react';
 import { GameDefinition } from '../types';
 import VerbGame from './VerbGame';
 import WordleGame from './WordleGame';
-import { Gamepad2, Layers, Zap, Grid3X3 } from 'lucide-react';
+import PowerOfVerbsGame from './PowerOfVerbsGame';
+import { Gamepad2, Layers, Zap, Grid3X3, Sword } from 'lucide-react';
 
 const Games: React.FC = () => {
   const [activeGameId, setActiveGameId] = useState<string | null>(null);
 
   const games: GameDefinition[] = [
+    {
+      id: 'power-verbs',
+      title: 'El Poder de los Verbos',
+      description: '¡Defiende el castillo! Responde correctamente para potenciar a tu héroe y derrotar a los monstruos.',
+      iconName: 'Sword',
+      isAiPowered: false,
+      difficulty: 'Medium'
+    },
     {
       id: 'wordle-game',
       title: 'Adivina la Palabra',
@@ -56,6 +65,14 @@ const Games: React.FC = () => {
       );
   }
 
+  if (activeGameId === 'power-verbs') {
+    return (
+        <div className="w-full bg-cream min-h-screen">
+             <PowerOfVerbsGame onBack={() => setActiveGameId(null)} />
+        </div>
+    );
+}
+
   // Placeholder for other games
   if (activeGameId) {
      return (
@@ -101,9 +118,11 @@ const Games: React.FC = () => {
             )}
             
             <div className={`w-14 h-14 rounded-xl flex items-center justify-center mb-6 text-white shadow-md transition-colors ${
+              game.id === 'power-verbs' ? 'bg-orange-500' :
               game.id === 'verb-master' ? 'bg-spanish-red' : 'bg-deep-blue'
             }`}>
               {game.iconName === 'Zap' && <Zap size={28} />}
+              {game.iconName === 'Sword' && <Sword size={28} />}
               {game.iconName === 'Layers' && <Layers size={28} />}
               {game.iconName === 'Gamepad2' && <Gamepad2 size={28} />}
               {game.iconName === 'Grid3X3' && <Grid3X3 size={28} />}

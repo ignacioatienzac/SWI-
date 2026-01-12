@@ -34,3 +34,16 @@ export interface SecretWord {
   hint: string;
   translation: string;
 }
+
+// Power of Verbs Game Types
+export interface PowerVerb {
+  verb: string;
+  tense: string;
+  mode: string;
+  pronoun: string;
+  answer: string[]; // Array to handle potential variations or just one correct answer
+  regular: boolean;
+}
+
+export type GameDifficulty = 'facil' | 'intermedio' | 'dificil';
+export type GameMode = 'write' | 'choice';
