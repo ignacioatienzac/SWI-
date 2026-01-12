@@ -39,9 +39,9 @@ export interface SecretWord {
 export interface PowerVerb {
   verb: string;
   tense: string;
-  mode: string;
+  mode?: string; // Optional, defaults to 'indicativo'
   pronoun: string;
-  answer: string[]; // Array to handle potential variations or just one correct answer
+  answer: string | string[]; // Can be a single string or array of valid answers
   regular: boolean;
 }
 
