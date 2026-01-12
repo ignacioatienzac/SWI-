@@ -4,6 +4,7 @@ import Hero from './components/Hero';
 import Games from './components/Games';
 import Resources from './components/Resources';
 import AboutMe from './components/AboutMe';
+import SocialMedia from './components/SocialMedia';
 import { View } from './types';
 
 const App: React.FC = () => {
@@ -16,6 +17,7 @@ const App: React.FC = () => {
           <>
             <Hero onStart={() => setCurrentView(View.GAMES)} />
             <AboutMe />
+            <SocialMedia />
           </>
         );
       case View.GAMES:
@@ -27,6 +29,7 @@ const App: React.FC = () => {
           <>
             <Hero onStart={() => setCurrentView(View.GAMES)} />
             <AboutMe />
+            <SocialMedia />
           </>
         );
     }

@@ -1,12 +1,21 @@
 import React, { useState } from 'react';
 import { GameDefinition } from '../types';
 import VerbGame from './VerbGame';
-import { Gamepad2, Layers, Zap } from 'lucide-react';
+import WordleGame from './WordleGame';
+import { Gamepad2, Layers, Zap, Grid3X3 } from 'lucide-react';
 
 const Games: React.FC = () => {
   const [activeGameId, setActiveGameId] = useState<string | null>(null);
 
   const games: GameDefinition[] = [
+    {
+      id: 'wordle-game',
+      title: 'Adivina la Palabra',
+      description: 'El clásico juego de palabras. Tienes 6 intentos para descubrir la palabra oculta.',
+      iconName: 'Grid3X3',
+      isAiPowered: true,
+      difficulty: 'Easy'
+    },
     {
       id: 'verb-master',
       title: 'Maestro de Verbos',
@@ -14,14 +23,6 @@ const Games: React.FC = () => {
       iconName: 'Zap',
       isAiPowered: true,
       difficulty: 'Medium'
-    },
-    {
-      id: 'vocab-flash',
-      title: 'Flashcards Esenciales',
-      description: 'Repasa las 500 palabras más comunes del español con tarjetas interactivas.',
-      iconName: 'Layers',
-      isAiPowered: false,
-      difficulty: 'Easy'
     },
     {
       id: 'phrase-builder',
@@ -45,6 +46,14 @@ const Games: React.FC = () => {
         <VerbGame />
       </div>
     );
+  }
+
+  if (activeGameId === 'wordle-game') {
+      return (
+          <div className="w-full bg-cream min-h-screen">
+               <WordleGame onBack={() => setActiveGameId(null)} />
+          </div>
+      );
   }
 
   // Placeholder for other games
@@ -97,6 +106,7 @@ const Games: React.FC = () => {
               {game.iconName === 'Zap' && <Zap size={28} />}
               {game.iconName === 'Layers' && <Layers size={28} />}
               {game.iconName === 'Gamepad2' && <Gamepad2 size={28} />}
+              {game.iconName === 'Grid3X3' && <Grid3X3 size={28} />}
             </div>
 
             <h3 className="text-2xl font-bold text-gray-900 mb-3 group-hover:text-spanish-red transition-colors">

@@ -28,3 +28,9 @@ export interface VerbChallenge {
   answer: string;
   translation: string;
 }
+
+export interface SecretWord {
+  word: string;
+  hint: string;
+  translation: string;
+}
