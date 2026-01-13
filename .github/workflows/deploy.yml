@@ -28,14 +28,10 @@ jobs:
           cache: 'npm'
           
       - name: Install dependencies
-        run: npm ci
+        run: npm install
         
       - name: Build
         run: npm run build
-        env:
-          # Para que la API Key funcione en el build, debe estar en los Secretos del Repositorio
-          # con el nombre API_KEY o VITE_API_KEY
-          VITE_API_KEY: ${{ secrets.API_KEY }}
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
