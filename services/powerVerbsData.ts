@@ -1,6 +1,6 @@
 import { PowerVerb } from "../types";
 
-export const powerVerbsData: PowerVerb[] = [
+const rawData: any[] = [
     { "verb": "hablar", "tense": "presente", "pronoun": "yo", "answer": "hablo", "regular": true },
     { "verb": "hablar", "tense": "presente", "pronoun": "tú", "answer": "hablas", "regular": true },
     { "verb": "hablar", "tense": "presente", "pronoun": "él/ella", "answer": "habla", "regular": true },
@@ -1211,4 +1211,6 @@ export const powerVerbsData: PowerVerb[] = [
     { "verb": "dormirse", "mode": "imperativo", "tense": "negativo", "pronoun": "nosotros", "answer": "no nos durmamos", "regular": false },
     { "verb": "dormirse", "mode": "imperativo", "tense": "negativo", "pronoun": "vosotros", "answer": "no os durmáis", "regular": false },
     { "verb": "dormirse", "mode": "imperativo", "tense": "negativo", "pronoun": "ustedes", "answer": "no se duerman", "regular": false }
-] as any;
+];
+
+export const powerVerbsData: PowerVerb[] = rawData;

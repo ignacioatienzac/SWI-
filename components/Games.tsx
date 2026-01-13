@@ -1,13 +1,16 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { GameDefinition } from '../types';
 import VerbGame from './VerbGame';
 import WordleGame from './WordleGame';
 import PowerOfVerbsGame from './PowerOfVerbsGame';
 import { Gamepad2, Layers, Zap, Grid3X3, Sword } from 'lucide-react';
 
-const Games: React.FC = () => {
-  const [activeGameId, setActiveGameId] = useState<string | null>(null);
+interface GamesProps {
+  activeGameId: string | null;
+  setActiveGameId: (id: string | null) => void;
+}
 
+const Games: React.FC<GamesProps> = ({ activeGameId, setActiveGameId }) => {
   const games: GameDefinition[] = [
     {
       id: 'power-verbs',

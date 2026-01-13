@@ -86,7 +86,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
   
   // Canvas Refs (Mutable game state to avoid re-renders)
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const requestRef = useRef<number>();
+  const requestRef = useRef<number | undefined>(undefined);
   const lastTimeRef = useRef<number>(0);
   const lastSpawnRef = useRef<number>(0);
   const lastShotRef = useRef<number>(0);
@@ -96,7 +96,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
   const projectilesRef = useRef<Projectile[]>([]);
   
   // --- DYNAMIC DATA HELPERS ---
-  const availableTenses = useMemo(() => {
+  const availableTenses = useMemo<string[]>(() => {
     const tenses = new Set<string>();
     powerVerbsData.forEach(v => {
       const mode = v.mode || 'indicativo';
@@ -104,13 +104,19 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
         tenses.add(v.tense);
       }
     });
-    return Array.from(tenses).sort();
+    // Explicit comparator for strings to satisfy strict TS configurations if necessary
+    return Array.from(tenses).sort((a, b) => a.localeCompare(b));
   }, [selectedGrammar]);
 
-  // Reset tense if it's not available in the new grammar mode
+  // Reset tense or select first available when grammar mode changes
   useEffect(() => {
-    if (!availableTenses.includes(selectedTense)) {
-      setSelectedTense('');
+    if (availableTenses.length > 0) {
+        if (!selectedTense || !availableTenses.includes(selectedTense)) {
+            // Auto-select the first tense to help the user
+            setSelectedTense(availableTenses[0]);
+        }
+    } else {
+        setSelectedTense('');
     }
   }, [selectedGrammar, availableTenses, selectedTense]);
 
@@ -438,17 +444,15 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
                <div className="flex gap-4">
                   <button 
                     onClick={() => setSelectedMode('write')}
-                    className={`flex-1 p-4 rounded-xl border-2 text-left transition-all ${selectedMode === 'write' ? 'border-deep-blue bg-blue-50 ring-2 ring-blue-100' : 'border-gray-200 hover:bg-gray-50'}`}
+                    className={`flex-1 p-4 rounded-xl border-2 text-center transition-all ${selectedMode === 'write' ? 'border-deep-blue bg-blue-50 ring-2 ring-blue-100' : 'border-gray-200 hover:bg-gray-50'}`}
                   >
                       <span className="block font-bold text-lg text-deep-blue">Escribir</span>
-                      <span className="text-sm text-gray-500">Escribe la conjugación correcta.</span>
                   </button>
                   <button 
                     onClick={() => setSelectedMode('choice')}
-                    className={`flex-1 p-4 rounded-xl border-2 text-left transition-all ${selectedMode === 'choice' ? 'border-deep-blue bg-blue-50 ring-2 ring-blue-100' : 'border-gray-200 hover:bg-gray-50'}`}
+                    className={`flex-1 p-4 rounded-xl border-2 text-center transition-all ${selectedMode === 'choice' ? 'border-deep-blue bg-blue-50 ring-2 ring-blue-100' : 'border-gray-200 hover:bg-gray-50'}`}
                   >
                       <span className="block font-bold text-lg text-deep-blue">Selección</span>
-                      <span className="text-sm text-gray-500">Elige entre opciones.</span>
                   </button>
                </div>
             </div>
@@ -462,201 +466,3 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
                         key={d}
                         onClick={() => setSelectedDifficulty(d)}
                         className={`flex-1 py-3 rounded-lg border font-bold capitalize transition-all ${
-                            selectedDifficulty === d 
-                                ? d === 'facil' ? 'bg-green-100 border-green-300 text-green-800' 
-                                : d === 'intermedio' ? 'bg-yellow-100 border-yellow-300 text-yellow-800'
-                                : 'bg-red-100 border-red-300 text-red-800'
-                                : 'bg-white border-gray-200 text-gray-400'
-                        }`}
-                    >
-                        {d}
-                    </button>
-                 ))}
-               </div>
-            </div>
-
-            <div className="pt-4">
-                {feedbackMsg.type === 'error' && <p className="text-red-500 text-center mb-4">{feedbackMsg.text}</p>}
-                <button 
-                    onClick={handleStartGame}
-                    disabled={!selectedTense || !selectedVerbType || !selectedMode || !selectedDifficulty}
-                    className="w-full py-4 bg-spanish-red text-white font-black text-xl rounded-xl shadow-lg hover:bg-red-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-all transform hover:-translate-y-1"
-                >
-                    ¡COMENZAR DEFENSA!
-                </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="flex flex-col h-screen bg-gray-100 overflow-hidden font-sans">
-      <div className="bg-deep-blue text-white p-2 flex items-center justify-between shadow-md z-10">
-        <div className="flex items-center gap-4">
-            <button onClick={() => setGameState('PAUSED')} className="p-2 hover:bg-white/10 rounded-full">
-                {gameState === 'PAUSED' ? <Play size={20} /> : <Pause size={20} />}
-            </button>
-            <div>
-                <span className="text-xs text-gray-300 block">CASTILLO</span>
-                <span className="font-bold text-xl text-red-400">{'❤️'.repeat(lives)}</span>
-            </div>
-        </div>
-        <div className="flex flex-col items-center">
-            <span className="text-xs text-gray-300 uppercase tracking-wider">Puntuación</span>
-            <span className="font-black text-2xl text-spanish-yellow">{score}</span>
-        </div>
-        <div className="flex items-center gap-4">
-             <div className="text-right">
-                <span className="text-xs text-gray-300 block">PODER</span>
-                <span className="font-bold text-xl text-blue-300">{'⚡'.repeat(attackPower)}</span>
-            </div>
-            <button onClick={() => setInstructionsOpen(true)} className="p-2 hover:bg-white/10 rounded-full">
-                <Info size={20} />
-            </button>
-        </div>
-      </div>
-
-      <div className="relative flex-grow bg-blue-200 cursor-crosshair">
-        <canvas 
-            ref={canvasRef} 
-            width={window.innerWidth} 
-            height={window.innerHeight * 0.55}
-            className="w-full h-full block"
-        />
-        {(gameState === 'PAUSED' || gameState === 'GAMEOVER' || gameState === 'VICTORY') && (
-             <div className="absolute inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-20">
-                 <div className="bg-white p-8 rounded-3xl text-center max-w-md shadow-2xl animate-in zoom-in-95">
-                     {gameState === 'PAUSED' && (
-                         <>
-                             <h2 className="text-3xl font-black text-deep-blue mb-4">Pausa</h2>
-                             <button onClick={() => setGameState('PLAYING')} className="w-full py-3 bg-spanish-yellow text-deep-blue font-bold rounded-xl mb-3 hover:bg-yellow-400">Continuar</button>
-                             <button onClick={() => setGameState('SELECTION')} className="w-full py-3 border-2 border-gray-200 text-gray-600 font-bold rounded-xl hover:bg-gray-50">Salir</button>
-                         </>
-                     )}
-                     {gameState === 'GAMEOVER' && (
-                         <>
-                             <div className="text-6xl mb-4">💀</div>
-                             <h2 className="text-4xl font-black text-spanish-red mb-2">¡GAME OVER!</h2>
-                             <p className="text-gray-600 mb-6">Los monstruos han invadido el castillo.</p>
-                             <div className="text-2xl font-bold mb-8">Puntos: {score}</div>
-                             <button onClick={handleStartGame} className="w-full py-3 bg-deep-blue text-white font-bold rounded-xl mb-3 hover:bg-blue-900">Reintentar</button>
-                             <button onClick={() => setGameState('SELECTION')} className="w-full py-3 border-2 border-gray-200 text-gray-600 font-bold rounded-xl hover:bg-gray-50">Menú Principal</button>
-                         </>
-                     )}
-                      {gameState === 'VICTORY' && (
-                         <>
-                             <div className="text-6xl mb-4">🏆</div>
-                             <h2 className="text-4xl font-black text-spanish-yellow mb-2">¡VICTORIA!</h2>
-                             <p className="text-gray-600 mb-6">El castillo está a salvo gracias a tu gramática.</p>
-                             <div className="text-2xl font-bold mb-8">Puntos: {score}</div>
-                             <button onClick={() => setGameState('SELECTION')} className="w-full py-3 bg-deep-blue text-white font-bold rounded-xl hover:bg-blue-900">Continuar</button>
-                         </>
-                     )}
-                 </div>
-             </div>
-        )}
-      </div>
-
-      <div className="bg-white p-4 border-t-4 border-deep-blue shadow-lg h-[35vh] flex flex-col z-10">
-         <div className="flex-1 flex flex-col justify-center max-w-3xl mx-auto w-full">
-            {currentVerb ? (
-                <>
-                    <div className="flex items-center justify-center gap-6 mb-6">
-                        <div className="text-center">
-                             <span className="block text-xs uppercase text-gray-400 font-bold tracking-widest">Pronombre</span>
-                             <span className="text-2xl md:text-3xl font-bold text-green-600 capitalize">{currentVerb.pronoun}</span>
-                        </div>
-                        <div className="text-2xl text-gray-300">➜</div>
-                        <div className="text-center">
-                             <span className="block text-xs uppercase text-gray-400 font-bold tracking-widest">Verbo</span>
-                             <span className="text-3xl md:text-4xl font-black text-deep-blue capitalize">{currentVerb.verb}</span>
-                        </div>
-                    </div>
-
-                    {selectedMode === 'write' && (
-                        <div className="relative max-w-md mx-auto w-full">
-                             <div className="flex gap-2 mb-2 justify-center">
-                                 {['á','é','í','ó','ú','ñ'].map(char => (
-                                     <button key={char} onClick={() => insertChar(char)} className="w-8 h-8 bg-gray-100 rounded hover:bg-gray-200 font-bold text-gray-600 text-sm border border-gray-300">{char}</button>
-                                 ))}
-                             </div>
-                             <form onSubmit={(e) => { e.preventDefault(); handleAnswer(userInput); }} className="flex gap-2">
-                                <input 
-                                    id="verb-input"
-                                    type="text" 
-                                    value={userInput}
-                                    onChange={(e) => setUserInput(e.target.value)}
-                                    placeholder="Escribe la conjugación..."
-                                    className={`flex-1 p-3 text-lg border-2 rounded-xl focus:outline-none text-center font-bold ${feedbackMsg.type === 'error' ? 'border-red-500 bg-red-50 animate-shake' : feedbackMsg.type === 'success' ? 'border-green-500 bg-green-50' : 'border-gray-300 focus:border-deep-blue'}`}
-                                    autoComplete="off"
-                                    autoFocus
-                                />
-                                <button type="submit" className="bg-deep-blue text-white px-6 rounded-xl font-bold hover:bg-blue-900">
-                                    ATACAR
-                                </button>
-                             </form>
-                        </div>
-                    )}
-
-                    {selectedMode === 'choice' && (
-                        <div className="grid grid-cols-2 gap-3 max-w-2xl mx-auto w-full">
-                            {choiceOptions.map((opt, idx) => (
-                                <button 
-                                    key={idx}
-                                    onClick={() => handleAnswer(opt)}
-                                    className="p-4 bg-gray-50 border-2 border-gray-200 rounded-xl hover:bg-blue-50 hover:border-blue-300 font-bold text-lg text-gray-700 transition-all active:scale-95"
-                                >
-                                    {opt}
-                                </button>
-                            ))}
-                        </div>
-                    )}
-
-                    <div className="h-8 mt-2 text-center font-bold">
-                        <span className={feedbackMsg.type === 'success' ? 'text-green-600' : 'text-red-500'}>
-                            {feedbackMsg.text}
-                        </span>
-                    </div>
-                </>
-            ) : (
-                <div className="text-center text-gray-400">Cargando...</div>
-            )}
-         </div>
-      </div>
-
-      {instructionsOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-              <div className="bg-white rounded-2xl p-6 max-w-md w-full relative">
-                  <button onClick={() => setInstructionsOpen(false)} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
-                      <X size={24} />
-                  </button>
-                  <h3 className="text-2xl font-bold text-deep-blue mb-4 flex items-center gap-2">
-                      <Info className="text-spanish-red" /> Cómo Jugar
-                  </h3>
-                  <ul className="space-y-3 text-gray-600 mb-6">
-                      <li className="flex gap-3">
-                          <span className="text-2xl">🧙‍♂️</span>
-                          <span>Eres el mago. Tu poder de ataque depende de tus respuestas correctas.</span>
-                      </li>
-                      <li className="flex gap-3">
-                          <span className="text-2xl">👾</span>
-                          <span>Los monstruos atacan el castillo. Si llegan al muro izquierdo, pierdes vidas.</span>
-                      </li>
-                      <li className="flex gap-3">
-                          <span className="text-2xl">⚡</span>
-                          <span>Responde rápido y bien para aumentar tu daño y lanzar bolas de fuego más grandes.</span>
-                      </li>
-                  </ul>
-                  <button onClick={() => setInstructionsOpen(false)} className="w-full py-3 bg-spanish-yellow text-deep-blue font-bold rounded-xl hover:bg-yellow-400">
-                      ¡Entendido!
-                  </button>
-              </div>
-          </div>
-      )}
-    </div>
-  );
-};
-
-export default PowerOfVerbsGame;

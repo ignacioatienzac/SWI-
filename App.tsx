@@ -9,6 +9,15 @@ import { View } from './types';
 
 const App: React.FC = () => {
   const [currentView, setCurrentView] = useState<View>(View.HOME);
+  const [activeGameId, setActiveGameId] = useState<string | null>(null);
+
+  const handleViewChange = (view: View) => {
+    setCurrentView(view);
+    // Reset active game when changing views (e.g. clicking Home in header)
+    if (view !== View.GAMES) {
+      setActiveGameId(null);
+    }
+  };
 
   const renderContent = () => {
     switch (currentView) {
@@ -21,7 +30,7 @@ const App: React.FC = () => {
           </>
         );
       case View.GAMES:
-        return <Games />;
+        return <Games activeGameId={activeGameId} setActiveGameId={setActiveGameId} />;
       case View.RESOURCES:
         return <Resources />;
       default:
@@ -37,13 +46,14 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col font-sans bg-cream text-gray-800">
-      <Header currentView={currentView} onChangeView={setCurrentView} />
+      <Header currentView={currentView} onChangeView={handleViewChange} />
       
       <main className="flex-grow">
         {renderContent()}
       </main>
 
-      <footer className="bg-deep-blue text-white py-12">
+      {/* Footer: Hidden on mobile if a game is active, but visible on desktop or if no game is active */}
+      <footer className={`bg-deep-blue text-white py-12 ${activeGameId ? 'hidden md:block' : ''}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center">
           <div className="mb-4 md:mb-0">
             <span className="font-bold text-xl">Spanish with Ignacio</span>
