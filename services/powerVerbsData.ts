@@ -1,8 +1,8 @@
 import { PowerVerb } from "../types";
 
-// We cast to 'any' immediately to prevent TypeScript from trying to infer 
-// the union type of thousands of objects, which causes the "Something went wrong" / timeout error.
-const rawData: any = [
+// Casting to 'any' allows TypeScript to skip deep type checking on this massive array,
+// preventing the "Something went wrong" / memory exhaustion error during commit/build.
+const rawData: any[] = [
     { "verb": "hablar", "tense": "presente", "pronoun": "yo", "answer": "hablo", "regular": true },
     { "verb": "hablar", "tense": "presente", "pronoun": "tú", "answer": "hablas", "regular": true },
     { "verb": "hablar", "tense": "presente", "pronoun": "él/ella", "answer": "habla", "regular": true },
@@ -363,6 +363,6 @@ const rawData: any = [
     { "verb": "ver", "tense": "imperfecto", "pronoun": "vosotros", "answer": "veíais", "regular": false },
     { "verb": "ver", "tense": "imperfecto", "pronoun": "ellos/ellas", "answer": "veían", "regular": false },
     { "verb": "ver", "tense": "imperfecto", "pronoun": "ustedes", "answer": "veían", "regular": false }
-] as any; // Explicitly cast to 'any' to avoid TS exhaustion on large array literal
+];
 
 export const powerVerbsData: PowerVerb[] = rawData;
