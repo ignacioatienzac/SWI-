@@ -18,12 +18,8 @@ const AboutMe: React.FC = () => {
                <div className="absolute inset-0 bg-spanish-red rounded-[2rem] -rotate-3 opacity-10 transform transition-transform group-hover:-rotate-6"></div>
                
                <div className="relative w-full h-full rounded-[2rem] overflow-hidden shadow-2xl border-4 border-white">
-                {/* 
-                  NOTE: Replace this src with your local image path (e.g., "/ignacio.png") 
-                  I am using a high-quality avatar generator as a placeholder.
-                */}
                 <img 
-                  src="https://api.dicebear.com/9.x/avataaars/svg?seed=Ignacio&clothing=blazerAndShirt&eyes=happy&top=shortCurly&skinColor=f8d25c&hairColor=4a312c" 
+                  src="/images/avatar-ignacio.webp" 
                   alt="Ignacio - Profesor de Español" 
                   className="w-full h-full object-cover bg-cream"
                 />

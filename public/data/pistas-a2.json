@@ -1,0 +1,4487 @@
+{
+  "abierto": {
+    "pista1": "It's an adjective.",
+    "pista2": "It's the opposite of closed.",
+    "pista3": "The word contains one 'a', one 'b', one 'e', one 'i', one 'o', one 'r', and one 't'."
+  },
+  "abrigo": {
+    "pista1": "It's a piece of clothing.",
+    "pista2": "You wear this on top of other clothes to stay warm.",
+    "pista3": "The word contains one 'a', one 'b', one 'g', one 'i', one 'o', and one 'r'."
+  },
+  "abuelo": {
+    "pista1": "It's a family member.",
+    "pista2": "This is your father's or mother's father.",
+    "pista3": "The word contains one 'a', one 'b', one 'e', one 'l', one 'o', and one 'u'."
+  },
+  "aburrido": {
+    "pista1": "It's an adjective or a feeling.",
+    "pista2": "It's the opposite of interesting or fun.",
+    "pista3": "The word contains one 'a', one 'b', one 'd', one 'i', one 'o', two 'r', and one 'u'."
+  },
+  "aceite": {
+    "pista1": "It's a liquid.",
+    "pista2": "It's used for cooking, often from olives or seeds.",
+    "pista3": "The word contains one 'a', one 'c', two 'e', one 'i', and one 't'."
+  },
+  "aceituna": {
+    "pista1": "It's a food.",
+    "pista2": "A small green or black fruit that produces oil.",
+    "pista3": "The word contains two 'a', one 'c', one 'e', one 'i', one 'n', one 't', and one 'u'."
+  },
+  "aceptar": {
+    "pista1": "It's a verb.",
+    "pista2": "To agree to receive or do something.",
+    "pista3": "The word contains two 'a', one 'c', one 'e', one 'p', one 'r', and one 't'."
+  },
+  "adiós": {
+    "pista1": "It's an interjection.",
+    "pista2": "A word you say when you are leaving someone; goodbye.",
+    "pista3": "The word contains one 'a', one 'd', one 'i', one 'ó', and one 's'."
+  },
+  "aduana": {
+    "pista1": "It's a place.",
+    "pista2": "The office at a port or airport that collects taxes on goods.",
+    "pista3": "The word contains three 'a', one 'd', one 'n', and one 'u'."
+  },
+  "aeropuerto": {
+    "pista1": "It's a place.",
+    "pista2": "Planes take off and land here.",
+    "pista3": "The word contains two 'a', one 'e', one 'o', two 'p', two 'r', one 't', and one 'u'."
+  },
+  "agencia": {
+    "pista1": "It's a type of business.",
+    "pista2": "A company that provides a service, like for travel or news.",
+    "pista3": "The word contains two 'a', one 'c', one 'e', one 'g', one 'i', and one 'n'."
+  },
+  "agosto": {
+    "pista1": "It's a month.",
+    "pista2": "The eighth month of the year, often very hot in the northern hemisphere.",
+    "pista3": "The word contains one 'a', one 'g', two 'o', one 's', and one 't'."
+  },
+  "agradable": {
+    "pista1": "It's an adjective.",
+    "pista2": "Meaning pleasant, nice, or enjoyable.",
+    "pista3": "The word contains three 'a', one 'b', one 'd', one 'e', one 'g', one 'l', and one 'r'."
+  },
+  "agua": {
+    "pista1": "It's a liquid.",
+    "pista2": "A clear liquid (H2O) that you drink.",
+    "pista3": "The word contains two 'a', one 'g', and one 'u'."
+  },
+  "ahora": {
+    "pista1": "It's an adverb of time.",
+    "pista2": "It means 'at this moment' or 'now'.",
+    "pista3": "The word contains two 'a', one 'h', one 'o', and one 'r'."
+  },
+  "ajo": {
+    "pista1": "It's a food.",
+    "pista2": "A plant with a strong smell, used in cooking, often in small white cloves.",
+    "pista3": "The word contains one 'a', one 'j', and one 'o'."
+  },
+  "alegre": {
+    "pista1": "It's an adjective or feeling.",
+    "pista2": "It means happy or cheerful.",
+    "pista3": "The word contains one 'a', two 'e', one 'g', one 'l', and one 'r'."
+  },
+  "algodón": {
+    "pista1": "It's a material.",
+    "pista2": "A soft white fiber used to make fabric, t-shirts, and cotton balls.",
+    "pista3": "The word contains one 'a', one 'd', one 'g', one 'l', two 'o', and one 'n'."
+  },
+  "alto": {
+    "pista1": "It's an adjective.",
+    "pista2": "It can mean tall (for height) or loud (for sound).",
+    "pista3": "The word contains one 'a', one 'l', one 'o', and one 't'."
+  },
+  "amarillo": {
+    "pista1": "It's a color.",
+    "pista2": "The color of the sun, lemons, or a banana.",
+    "pista3": "The word contains two 'a', one 'i', two 'l', one 'm', one 'o', and one 'r'."
+  },
+  "amable": {
+    "pista1": "It's an adjective.",
+    "pista2": "Describes someone who is friendly and pleasant; kind.",
+    "pista3": "The word contains two 'a', one 'b', one 'e', one 'l', and one 'm'."
+  },
+  "amigo": {
+    "pista1": "It's a person.",
+    "pista2": "A person you like and know well; a friend.",
+    "pista3": "The word contains one 'a', one 'g', one 'i', one 'm', and one 'o'."
+  },
+  "ancho": {
+    "pista1": "It's an adjective.",
+    "pista2": "It describes the measurement from side to side; wide.",
+    "pista3": "The word contains one 'a', one 'c', one 'h', one 'n', and one 'o'."
+  },
+  "anillo": {
+    "pista1": "It's jewelry.",
+    "pista2": "A piece of jewelry worn on the finger.",
+    "pista3": "The word contains one 'a', one 'i', two 'l', one 'n', and one 'o'."
+  },
+  "antes": {
+    "pista1": "It's an adverb of time.",
+    "pista2": "It means 'before' or 'previously'.",
+    "pista3": "The word contains one 'a', one 'e', one 'n', one 's', and one 't'."
+  },
+  "antipático": {
+    "pista1": "It's an adjective.",
+    "pista2": "The opposite of friendly or nice; unkind.",
+    "pista3": "The word contains two 'a', one 'c', one 'i', two 't', one 'n', one 'o', and one 'p'."
+  },
+  "añadir": {
+    "pista1": "It's a verb.",
+    "pista2": "To put something with something else; to add.",
+    "pista3": "The word contains two 'a', one 'd', one 'i', one 'ñ', and one 'r'."
+  },
+  "año": {
+    "pista1": "It's a unit of time.",
+    "pista2": "A period of 365 days or twelve months.",
+    "pista3": "The word contains one 'a', one 'ñ', and one 'o'."
+  },
+  "aprender": {
+    "pista1": "It's a verb.",
+    "pista2": "To gain knowledge or skill; to learn.",
+    "pista3": "The word contains one 'a', two 'e', one 'd', one 'n', one 'p', and two 'r'."
+  },
+  "aquí": {
+    "pista1": "It's an adverb of place.",
+    "pista2": "It means 'in this spot' or 'here'.",
+    "pista3": "The word contains one 'a', one 'i', one 'q', and one 'u'."
+  },
+  "arroz": {
+    "pista1": "It's a food.",
+    "pista2": "A grain that is a staple food in many countries, used in paella.",
+    "pista3": "The word contains one 'a', two 'r', one 'o', and one 'z'."
+  },
+  "ascensor": {
+    "pista1": "It's a machine.",
+    "pista2": "A box that moves up and down in a building to take people to different floors; an elevator.",
+    "pista3": "The word contains one 'a', one 'c', one 'e', one 'n', one 'o', one 'r', two 's'."
+  },
+  "asiento": {
+    "pista1": "It's an object.",
+    "pista2": "Something you sit on; a seat.",
+    "pista3": "The word contains one 'a', one 'e', one 'i', one 'n', one 'o', one 's', and one 't'."
+  },
+  "atún": {
+    "pista1": "It's a food.",
+    "pista2": "A large fish found in the sea, often sold in cans.",
+    "pista3": "The word contains one 'a', one 't', one 'ú', and one 'n'."
+  },
+  "autobús": {
+    "pista1": "It's a vehicle.",
+    "pista2": "A large public vehicle that carries many passengers on a fixed route.",
+    "pista3": "The word contains one 'a', one 'b', one 'o', one 's', two 'u', and one 't'."
+  },
+  "avión": {
+    "pista1": "It's a vehicle.",
+    "pista2": "A machine that flies in the sky; an airplane.",
+    "pista3": "The word contains one 'a', one 'i', one 'ó', one 'n', and one 'v'."
+  },
+  "ayer": {
+    "pista1": "It's an adverb of time.",
+    "pista2": "The day before today; yesterday.",
+    "pista3": "The word contains one 'a', one 'e', one 'r', and one 'y'."
+  },
+  "ayudar": {
+    "pista1": "It's a verb.",
+    "pista2": "To give assistance to someone; to help.",
+    "pista3": "The word contains two 'a', one 'd', one 'r', one 'u', and one 'y'."
+  },
+  "azúcar": {
+    "pista1": "It's a food ingredient.",
+    "pista2": "A sweet substance, usually white, used in coffee or desserts.",
+    "pista3": "The word contains two 'a', one 'c', one 'r', one 'ú', and one 'z'."
+  },
+  "azul": {
+    "pista1": "It's a color.",
+    "pista2": "The color of the sky on a clear day or the ocean.",
+    "pista3": "The word contains one 'a', one 'l', one 'u', and one 'z'."
+  },
+  "bajar": {
+    "pista1": "It's a verb.",
+    "pista2": "To go down; the opposite of 'subir' (to go up).",
+    "pista3": "The word contains two 'a', one 'b', one 'j', and one 'r'."
+  },
+  "bajo": {
+    "pista1": "It's an adjective or preposition.",
+    "pista2": "It can mean 'short' (opposite of tall) or 'under'.",
+    "pista3": "The word contains one 'a', one 'b', one 'j', and one 'o'."
+  },
+  "banco": {
+    "pista1": "It's a noun.",
+    "pista2": "A place to get money, or a seat in a park.",
+    "pista3": "The word contains one 'a', one 'b', one 'c', one 'n', and one 'o'."
+  },
+  "barato": {
+    "pista1": "It's an adjective.",
+    "pista2": "It means low in price; the opposite of expensive.",
+    "pista3": "The word contains two 'a', one 'b', one 'o', one 'r', and one 't'."
+  },
+  "barba": {
+    "pista1": "It's hair on the face.",
+    "pista2": "The hair that grows on a man's chin and cheeks.",
+    "pista3": "The word contains two 'a', two 'b', and one 'r'."
+  },
+  "barco": {
+    "pista1": "It's a vehicle.",
+    "pista2": "A large boat used for transport on water.",
+    "pista3": "The word contains one 'a', one 'b', one 'c', one 'o', and one 'r'."
+  },
+  "beber": {
+    "pista1": "It's a verb.",
+    "pista2": "To consume a liquid; to drink.",
+    "pista3": "The word contains two 'b', two 'e', and one 'r'."
+  },
+  "bebida": {
+    "pista1": "It's a noun.",
+    "pista2": "Any liquid that you can consume; a drink.",
+    "pista3": "The word contains two 'b', one 'd', one 'e', and one 'i'."
+  },
+  "bigote": {
+    "pista1": "It's hair on the face.",
+    "pista2": "The hair that grows on a man's upper lip.",
+    "pista3": "The word contains one 'b', one 'e', one 'g', one 'i', one 'o', and one 't'."
+  },
+  "billete": {
+    "pista1": "It's a piece of paper.",
+    "pista2": "It can be paper money or a ticket for travel.",
+    "pista3": "The word contains one 'b', one 'e', two 'i', two 'l', and one 't'."
+  },
+  "blanco": {
+    "pista1": "It's a color.",
+    "pista2": "The color of milk, snow, or paper.",
+    "pista3": "The word contains one 'a', one 'b', one 'c', one 'l', one 'n', and one 'o'."
+  },
+  "blusa": {
+    "pista1": "It's a piece of clothing.",
+    "pista2": "A shirt, usually worn by women.",
+    "pista3": "The word contains one 'a', one 'b', one 'l', one 's', and one 'u'."
+  },
+  "boca": {
+    "pista1": "It's a body part.",
+    "pista2": "The part of your face used for eating and speaking.",
+    "pista3": "The word contains one 'a', one 'b', one 'c', and one 'o'."
+  },
+  "bocadillo": {
+    "pista1": "It's a food.",
+    "pista2": "A sandwich made with a long piece of bread.",
+    "pista3": "The word contains one 'a', one 'b', one 'c', one 'd', one 'i', two 'l', and two 'o'."
+  },
+  "bolso": {
+    "pista1": "It's an accessory.",
+    "pista2": "A bag carried, usually by women, to hold personal items; a purse.",
+    "pista3": "The word contains one 'b', two 'l', one 'o', and one 's'."
+  },
+  "bonito": {
+    "pista1": "It's an adjective.",
+    "pista2": "It means pretty or attractive.",
+    "pista3": "The word contains one 'b', one 'i', two 'n', one 'o', and one 't'."
+  },
+  "botella": {
+    "pista1": "It's a container.",
+    "pista2": "A container, usually glass or plastic, for holding liquids like water or wine.",
+    "pista3": "The word contains one 'a', one 'b', one 'e', two 'l', one 'o', and one 't'."
+  },
+  "brazo": {
+    "pista1": "It's a body part.",
+    "pista2": "The part of your body between your shoulder and your hand.",
+    "pista3": "The word contains one 'a', one 'b', one 'o', one 'r', and one 'z'."
+  },
+  "bueno": {
+    "pista1": "It's an adjective.",
+    "pista2": "It means 'good'; the opposite of 'malo' (bad).",
+    "pista3": "The word contains one 'b', one 'e', one 'n', one 'o', and one 'u'."
+  },
+  "buscar": {
+    "pista1": "It's a verb.",
+    "pista2": "To try to find something; to look for.",
+    "pista3": "The word contains one 'a', one 'b', one 'c', one 'r', one 's', and one 'u'."
+  },
+  "cabeza": {
+    "pista1": "It's a body part.",
+    "pista2": "The top part of your body that contains your brain, eyes, and mouth.",
+    "pista3": "The word contains two 'a', one 'b', one 'c', one 'e', and one 'z'."
+  },
+  "café": {
+    "pista1": "It's a drink.",
+    "pista2": "A hot, dark brown drink, or the place where you drink it.",
+    "pista3": "The word contains one 'a', one 'c', and one 'e' with an accent."
+  },
+  "caja": {
+    "pista1": "It's a container.",
+    "pista2": "A square or rectangular container; a box.",
+    "pista3": "The word contains two 'a', one 'c', and one 'j'."
+  },
+  "cajero": {
+    "pista1": "It's a person or machine.",
+    "pista2": "A person who handles money in a store, or a machine (ATM) that gives you money.",
+    "pista3": "The word contains one 'a', one 'c', one 'e', one 'j', one 'o', and one 'r'."
+  },
+  "calcetines": {
+    "pista1": "It's a piece of clothing.",
+    "pista2": "You wear these on your feet, inside your shoes.",
+    "pista3": "The word contains one 'a', three 'c', two 'e', one 'i', one 'l', one 'n', one 's', and one 't'."
+  },
+  "caldo": {
+    "pista1": "It's a food.",
+    "pista2": "A clear liquid soup; broth.",
+    "pista3": "The word contains one 'a', one 'c', one 'd', one 'l', and one 'o'."
+  },
+  "caliente": {
+    "pista1": "It's an adjective.",
+    "pista2": "Having a high temperature; hot.",
+    "pista3": "The word contains one 'a', one 'c', two 'e', one 'i', one 'l', one 'n', and one 't'."
+  },
+  "calle": {
+    "pista1": "It's a place.",
+    "pista2": "A public road in a city or town; a street.",
+    "pista3": "The word contains one 'a', one 'c', one 'e', and two 'l'."
+  },
+  "cama": {
+    "pista1": "It's furniture.",
+    "pista2": "A piece of furniture you sleep on.",
+    "pista3": "The word contains two 'a', one 'c', and one 'm'."
+  },
+  "camarero": {
+    "pista1": "It's a profession.",
+    "pista2": "A person who serves food and drinks in a restaurant; a waiter.",
+    "pista3": "The word contains two 'a', one 'c', one 'e', one 'm', two 'o', and two 'r'."
+  },
+  "cambiar": {
+    "pista1": "It's a verb.",
+    "pista2": "To make or become different; to change.",
+    "pista3": "The word contains two 'a', one 'b', one 'c', one 'i', one 'm', and one 'r'."
+  },
+  "camisa": {
+    "pista1": "It's a piece of clothing.",
+    "pista2": "A piece of clothing for the upper body, usually with buttons.",
+    "pista3": "The word contains two 'a', one 'c', one 'i', one 'm', and one 's'."
+  },
+  "camiseta": {
+    "pista1": "It's a piece of clothing.",
+    "pista2": "A casual shirt, typically short-sleeved; a T-shirt.",
+    "pista3": "The word contains two 'a', one 'c', one 'e', one 'i', one 'm', one 's', and one 't'."
+  },
+  "cansado": {
+    "pista1": "It's an adjective or feeling.",
+    "pista2": "Feeling in need of rest or sleep; tired.",
+    "pista3": "The word contains two 'a', one 'c', one 'd', one 'n', one 'o', and one 's'."
+  },
+  "cantar": {
+    "pista1": "It's a verb.",
+    "pista2": "To make musical sounds with your voice; to sing.",
+    "pista3": "The word contains two 'a', one 'c', one 'n', one 'r', and one 't'."
+  },
+  "cara": {
+    "pista1": "It's a body part.",
+    "pista2": "The front of your head; your face.",
+    "pista3": "The word contains two 'a', one 'c', and one 'r'."
+  },
+  "carne": {
+    "pista1": "It's a food.",
+    "pista2": "The flesh of an animal used as food; meat.",
+    "pista3": "The word contains one 'a', one 'c', one 'e', one 'n', and one 'r'."
+  },
+  "caro": {
+    "pista1": "It's an adjective.",
+    "pista2": "Costing a lot of money; expensive.",
+    "pista3": "The word contains one 'a', one 'c', one 'o', and one 'r'."
+  },
+  "carta": {
+    "pista1": "It's a noun.",
+    "pista2": "It can be a written message (a letter) or a restaurant menu.",
+    "pista3": "The word contains two 'a', one 'c', one 'r', and one 't'."
+  },
+  "casa": {
+    "pista1": "It's a building.",
+    "pista2": "A building where people live; a home.",
+    "pista3": "The word contains two 'a', one 'c', and one 's'."
+  },
+  "casado": {
+    "pista1": "It's a status.",
+    "pista2": "Describes a person who is married.",
+    "pista3": "The word contains two 'a', one 'c', one 'd', one 'o', and one 's'."
+  },
+  "castaño": {
+    "pista1": "It's a color.",
+    "pista2": "A reddish-brown color, often used to describe hair.",
+    "pista3": "The word contains two 'a', one 'c', one 'ñ', one 'o', one 's', and one 't'."
+  },
+  "cebolla": {
+    "pista1": "It's a vegetable.",
+    "pista2": "A round vegetable with layers that can make you cry when you cut it.",
+    "pista3": "The word contains one 'a', one 'b', one 'c', one 'e', two 'l', and one 'o'."
+  },
+  "cena": {
+    "pista1": "It's a meal.",
+    "pista2": "The last meal of the day; dinner.",
+    "pista3": "The word contains one 'a', one 'c', one 'e', and one 'n'."
+  },
+  "cenar": {
+    "pista1": "It's a verb.",
+    "pista2": "To eat the last meal of the day; to eat dinner.",
+    "pista3": "The word contains one 'a', one 'c', one 'e', one 'n', and one 'r'."
+  },
+  "centro": {
+    "pista1": "It's a location.",
+    "pista2": "The middle part of something, or the 'downtown' area of a city.",
+    "pista3": "The word contains one 'c', one 'e', one 'n', one 'o', one 'r', and one 't'."
+  },
+  "cerca": {
+    "pista1": "It's an adverb of place.",
+    "pista2": "At a short distance; near.",
+    "pista3": "The word contains one 'a', two 'c', one 'e', and one 'r'."
+  },
+  "cerrar": {
+    "pista1": "It's a verb.",
+    "pista2": "The opposite of 'abrir' (to open).",
+    "pista3": "The word contains one 'a', one 'c', one 'e', and two 'r'."
+  },
+  "cerveza": {
+    "pista1": "It's a drink.",
+    "pista2": "An alcoholic beverage made from grain; beer.",
+    "pista3": "The word contains one 'a', one 'c', two 'e', one 'r', one 'v', and one 'z'."
+  },
+  "chaqueta": {
+    "pista1": "It's a piece of clothing.",
+    "pista2": "A light coat; a jacket.",
+    "pista3": "The word contains two 'a', one 'c', one 'e', one 'h', one 'q', one 't', and one 'u'."
+  },
+  "champiñón": {
+    "pista1": "It's a food.",
+    "pista2": "A type of fungus used in cooking; mushroom.",
+    "pista3": "The word contains one 'a', one 'c', one 'h', one 'i', one 'm', one 'ñ', two 'o', and one 'p'."
+  },
+  "champú": {
+    "pista1": "It's a liquid.",
+    "pista2": "A type of soap used for washing your hair.",
+    "pista3": "The word contains one 'a', one 'c', one 'h', one 'm', one 'p', and one 'ú'."
+  },
+  "chico": {
+    "pista1": "It's a person.",
+    "pista2": "A young male; a boy.",
+    "pista3": "The word contains one 'c', one 'h', one 'i', and one 'o'."
+  },
+  "chocolate": {
+    "pista1": "It's a food.",
+    "pista2": "A sweet, brown food made from cacao beans.",
+    "pista3": "The word contains two 'c', one 'e', one 'h', one 'l', two 'o', and one 't'."
+  },
+  "chorizo": {
+    "pista1": "It's a food.",
+    "pista2": "A type of spicy pork sausage from Spain.",
+    "pista3": "The word contains one 'c', one 'h', one 'i', one 'o', one 'r', and one 'z'."
+  },
+  "chuleta": {
+    "pista1": "It's a food.",
+    "pista2": "A piece of meat, usually pork or lamb, on a rib; a chop.",
+    "pista3": "The word contains one 'a', one 'c', one 'e', one 'h', one 'l', one 't', and one 'u'."
+  },
+  "cinturón": {
+    "pista1": "It's an accessory.",
+    "pista2": "You wear this around your waist to hold up your pants; a belt.",
+    "pista3": "The word contains one 'c', one 'i', one 'n', one 'ó', one 'r', one 't', and one 'u'."
+  },
+  "cita": {
+    "pista1": "It's an event.",
+    "pista2": "An appointment or a romantic meeting.",
+    "pista3": "The word contains one 'a', one 'c', one 'i', and one 't'."
+  },
+  "ciudad": {
+    "pista1": "It's a place.",
+    "pista2": "A large town; a city.",
+    "pista3": "The word contains one 'a', one 'c', one 'd', one 'i', one 'u', and 'd'."
+  },
+  "cliente": {
+    "pista1": "It's a person.",
+    "pista2": "A person who buys goods or services from a shop or business.",
+    "pista3": "The word contains one 'c', two 'e', one 'i', one 'l', one 'n', and one 't'."
+  },
+  "coche": {
+    "pista1": "It's a vehicle.",
+    "pista2": "A machine with four wheels that you drive; a car.",
+    "pista3": "The word contains two 'c', one 'e', one 'h', and one 'o'."
+  },
+  "cocina": {
+    "pista1": "It's a room in a house.",
+    "pista2": "This is where you prepare and cook food; a kitchen.",
+    "pista3": "The word contains one 'a', two 'c', one 'i', one 'n', and one 'o'."
+  },
+  "cocinar": {
+    "pista1": "It's a verb.",
+    "pista2": "The action of preparing food using heat; to cook.",
+    "pista3": "The word contains one 'a', two 'c', one 'i', one 'n', one 'o', and one 'r'."
+  },
+  "codo": {
+    "pista1": "It's a body part.",
+    "pista2": "The joint in the middle of your arm.",
+    "pista3": "The word contains one 'c', one 'd', and two 'o'."
+  },
+  "coger": {
+    "pista1": "It's a verb.",
+    "pista2": "To take, to grab, or to catch.",
+    "pista3": "The word contains one 'c', one 'e', one 'g', one 'o', and one 'r'."
+  },
+  "color": {
+    "pista1": "It's a noun.",
+    "pista2": "Examples are red, blue, or yellow.",
+    "pista3": "The word contains one 'c', one 'l', two 'o', and one 'r'."
+  },
+  "comer": {
+    "pista1": "It's a verb.",
+    "pista2": "To put food in your mouth and swallow it; to eat.",
+    "pista3": "The word contains one 'c', one 'e', one 'm', one 'o', and one 'r'."
+  },
+  "comida": {
+    "pista1": "It's a noun.",
+    "pista2": "What you eat; food or a meal.",
+    "pista3": "The word contains one 'a', one 'c', one 'd', one 'i', one 'm', and one 'o'."
+  },
+  "cómodo": {
+    "pista1": "It's an adjective.",
+    "pista2": "Describes something that feels physically relaxing; comfortable.",
+    "pista3": "The word contains one 'c', one 'd', one 'm', and two 'o' (one with an accent)."
+  },
+  "comprar": {
+    "pista1": "It's a verb.",
+    "pista2": "To pay money for something; to buy.",
+    "pista3": "The word contains one 'a', one 'c', one 'm', one 'p', one 'o', and two 'r'."
+  },
+  "comprender": {
+    "pista1": "It's a verb.",
+    "pista2": "To know the meaning of something; to understand.",
+    "pista3": "The word contains one 'c', one 'd', two 'e', one 'm', one 'n', one 'o', one 'p', and two 'r'."
+  },
+  "conocer": {
+    "pista1": "It's a verb.",
+    "pista2": "To be familiar with a person or place; to know.",
+    "pista3": "The word contains two 'c', one 'e', one 'n', two 'o', and one 'r'."
+  },
+  "contento": {
+    "pista1": "It's an adjective or feeling.",
+    "pista2": "It means happy or pleased.",
+    "pista3": "The word contains one 'c', one 'e', two 'n', two 'o', and two 't'."
+  },
+  "corazón": {
+    "pista1": "It's a body part.",
+    "pista2": "The organ that pumps blood; it's also a symbol of love.",
+    "pista3": "The word contains one 'a', one 'c', one 'n', one 'o' (with an accent), one 'r', and one 'z'."
+  },
+  "corbata": {
+    "pista1": "It's an accessory.",
+    "pista2": "A man wears this around his neck with a formal shirt; a tie.",
+    "pista3": "The word contains two 'a', one 'b', one 'c', one 'o', one 'r', and one 't'."
+  },
+  "corto": {
+    "pista1": "It's an adjective.",
+    "pista2": "The opposite of long; short.",
+    "pista3": "The word contains one 'c', two 'o', one 'r', and one 't'."
+  },
+  "crema": {
+    "pista1": "It's a substance.",
+    "pista2": "It can be a thick liquid (cream) or a lotion for your skin.",
+    "pista3": "The word contains one 'a', one 'c', one 'e', one 'm', and one 'r'."
+  },
+  "creer": {
+    "pista1": "It's a verb.",
+    "pista2": "To think something is true; to believe.",
+    "pista3": "The word contains one 'c', two 'e', and two 'r'."
+  },
+  "cruzar": {
+    "pista1": "It's a verb.",
+    "pista2": "To go from one side to the other, like a street or a river; to cross.",
+    "pista3": "The word contains one 'a', one 'c', one 'r', one 'u', and one 'z'."
+  },
+  "cuchara": {
+    "pista1": "It's an utensil.",
+    "pista2": "You use this to eat soup; a spoon.",
+    "pista3": "The word contains two 'a', two 'c', one 'h', one 'r', and one 'u'."
+  },
+  "cuchillo": {
+    "pista1": "It's an utensil.",
+    "pista2": "You use this to cut food; a knife.",
+    "pista3": "The word contains two 'c', one 'h', one 'i', two 'l', one 'o', and one 'u'."
+  },
+  "cuello": {
+    "pista1": "It's a body part.",
+    "pista2": "The part of the body that connects the head to the shoulders; the neck.",
+    "pista3": "The word contains one 'c', one 'e', two 'l', one 'o', and one 'u'."
+  },
+  "cuenta": {
+    "pista1": "It's a noun.",
+    "pista2": "It can be a bank account or the bill at a restaurant.",
+    "pista3": "The word contains one 'a', one 'c', one 'e', one 'n', one 't', and one 'u'."
+  },
+  "cuerpo": {
+    "pista1": "It's a noun.",
+    "pista2": "The physical structure of a person or animal; the body.",
+    "pista3": "The word contains one 'c', one 'e', one 'o', one 'p', one 'r', and one 'u'."
+  },
+  "dar": {
+    "pista1": "It's a verb.",
+    "pista2": "To give.",
+    "pista3": "The word contains one 'a', one 'd', and one 'r'."
+  },
+  "deber": {
+    "pista1": "It's a verb.",
+    "pista2": "It can mean 'to owe' (money) or 'must' (obligation).",
+    "pista3": "The word contains one 'b', one 'd', two 'e', and one 'r'."
+  },
+  "débil": {
+    "pista1": "It's an adjective.",
+    "pista2": "The opposite of strong; weak.",
+    "pista3": "The word contains one 'b', one 'd', one 'e' (with an accent), one 'i', and one 'l'."
+  },
+  "decidir": {
+    "pista1": "It's a verb.",
+    "pista2": "To make a choice; to decide.",
+    "pista3": "The word contains one 'c', two 'd', one 'e', and two 'i'."
+  },
+  "decir": {
+    "pista1": "It's a verb.",
+    "pista2": "To speak words; to say or to tell.",
+    "pista3": "The word contains one 'c', one 'd', one 'e', one 'i', and one 'r'."
+  },
+  "dedo": {
+    "pista1": "It's a body part.",
+    "pista2": "You have five of these on your hand; a finger.",
+    "pista3": "The word contains two 'd', one 'e', and one 'o'."
+  },
+  "dejar": {
+    "pista1": "It's a verb.",
+    "pista2": "To leave something behind, or to allow.",
+    "pista3": "The word contains one 'a', one 'd', one 'e', one 'j', and one 'r'."
+  },
+  "delgado": {
+    "pista1": "It's an adjective.",
+    "pista2": "The opposite of fat; thin or slim.",
+    "pista3": "The word contains one 'a', two 'd', one 'e', one 'g', one 'l', and one 'o'."
+  },
+  "delicioso": {
+    "pista1": "It's an adjective.",
+    "pista2": "Tastes very good; delicious.",
+    "pista3": "The word contains one 'c', one 'd', one 'e', two 'i', one 'l', two 'o', and one 's'."
+  },
+  "dentista": {
+    "pista1": "It's a profession.",
+    "pista2": "A doctor who takes care of your teeth.",
+    "pista3": "The word contains one 'a', one 'd', one 'e', one 'i', one 'n', one 's', and two 't'."
+  },
+  "desayuno": {
+    "pista1": "It's a meal.",
+    "pista2": "The first meal of the day; breakfast.",
+    "pista3": "The word contains one 'a', one 'd', one 'e', one 'n', one 'o', one 's', one 'u', and one 'y'."
+  },
+  "desayunar": {
+    "pista1": "It's a verb.",
+    "pista2": "The action of eating the first meal of the day.",
+    "pista3": "The word contains two 'a', one 'd', one 'e', one 'n', one 'r', one 's', one 'u', and one 'y'."
+  },
+  "descansar": {
+    "pista1": "It's a verb.",
+    "pista2": "To stop working or moving in order to relax; to rest.",
+    "pista3": "The word contains two 'a', one 'c', one 'd', one 'e', one 'n', one 'r', and two 's'."
+  },
+  "describir": {
+    "pista1": "It's a verb.",
+    "pista2": "To say what someone or something is like; to describe.",
+    "pista3": "The word contains one 'b', one 'c', one 'd', one 'e', two 'i', two 'r', and one 's'."
+  },
+  "desear": {
+    "pista1": "It's a verb.",
+    "pista2": "To want something; to wish.",
+    "pista3": "The word contains one 'a', one 'd', two 'e', one 'r', and one 's'."
+  },
+  "destino": {
+    "pista1": "It's a noun.",
+    "pista2": "The place where someone is going; the destination.",
+    "pista3": "The word contains one 'd', one 'e', one 'i', one 'n', one 'o', one 's', and one 't'."
+  },
+  "detrás": {
+    "pista1": "It's an adverb of place.",
+    "pista2": "In the back; behind.",
+    "pista3": "The word contains one 'a' (with an accent), one 'd', one 'e', one 'r', one 's', and one 't'."
+  },
+  "día": {
+    "pista1": "It's a noun.",
+    "pista2": "A period of 24 hours; day.",
+    "pista3": "The word contains one 'a', one 'd', and one 'i' (with an accent)."
+  },
+  "diciembre": {
+    "pista1": "It's a month.",
+    "pista2": "The last month of the year; when Christmas is.",
+    "pista3": "The word contains one 'b', one 'c', one 'd', two 'e', two 'i', one 'm', and one 'r'."
+  },
+  "diente": {
+    "pista1": "It's a body part.",
+    "pista2": "The hard white things in your mouth used for chewing; a tooth.",
+    "pista3": "The word contains one 'd', two 'e', one 'i', one 'n', and one 't'."
+  },
+  "diferente": {
+    "pista1": "It's an adjective.",
+    "pista2": "Not the same; different.",
+    "pista3": "The word contains one 'd', three 'e', one 'f', one 'i', one 'n', one 'r', and one 't'."
+  },
+  "difícil": {
+    "pista1": "It's an adjective.",
+    "pista2": "Not easy; hard or complicated.",
+    "pista3": "The word contains one 'c', one 'd', one 'f', two 'i' (one with an accent), and one 'l'."
+  },
+  "dinero": {
+    "pista1": "It's a noun.",
+    "pista2": "What you use to buy things; money.",
+    "pista3": "The word contains one 'd', one 'e', one 'i', one 'n', one 'o', and one 'r'."
+  },
+  "dirección": {
+    "pista1": "It's a noun.",
+    "pista2": "Where you live (your address) or a path (direction).",
+    "pista3": "The word contains two 'c', one 'd', one 'e', two 'i', one 'n', one 'o' (with an accent), and one 'r'."
+  },
+  "divertido": {
+    "pista1": "It's an adjective.",
+    "pista2": "Something that makes you laugh or is enjoyable; fun.",
+    "pista3": "The word contains two 'd', one 'e', two 'i', one 'o', one 'r', one 't', and one 'v'."
+  },
+  "doctor": {
+    "pista1": "It's a profession.",
+    "pista2": "A person who helps sick people get better.",
+    "pista3": "The word contains one 'c', one 'd', two 'o', one 'r', and one 't'."
+  },
+  "doler": {
+    "pista1": "It's a verb.",
+    "pista2": "To cause pain; to hurt.",
+    "pista3": "The word contains one 'd', one 'e', one 'l', one 'o', and one 'r'."
+  },
+  "dolor": {
+    "pista1": "It's a noun.",
+    "pista2": "The feeling you have when you are hurt; pain.",
+    "pista3": "The word contains one 'd', one 'l', two 'o', and one 'r'."
+  },
+  "domingo": {
+    "pista1": "It's a day of the week.",
+    "pista2": "The last day of the week; Sunday.",
+    "pista3": "The word contains one 'd', one 'g', one 'i', one 'm', one 'n', and two 'o'."
+  },
+  "dónde": {
+    "pista1": "It's a question word.",
+    "pista2": "You use this to ask about a location; 'where'.",
+    "pista3": "The word contains two 'd', one 'e', one 'n', and one 'o' (with an accent)."
+  },
+  "dormir": {
+    "pista1": "It's a verb.",
+    "pista2": "To rest your mind and body at night; to sleep.",
+    "pista3": "The word contains one 'd', one 'i', one 'm', one 'o', and two 'r'."
+  },
+  "ducha": {
+    "pista1": "It's a noun.",
+    "pista2": "A place in the bathroom where you stand to wash your body; a shower.",
+    "pista3": "The word contains one 'a', one 'c', one 'd', one 'h', and one 'u'."
+  },
+  "duchar": {
+    "pista1": "It's a verb.",
+    "pista2": "The action of washing your body in a shower.",
+    "pista3": "The word contains one 'a', one 'c', one 'd', one 'h', one 'r', and one 'u'."
+  },
+  "duro": {
+    "pista1": "It's an adjective.",
+    "pista2": "It means 'hard' (not soft) or 'difficult'.",
+    "pista3": "The word contains one 'd', one 'o', one 'r', and one 'u'."
+  },
+  "edad": {
+    "pista1": "It's a noun.",
+    "pista2": "How old you are; your age.",
+    "pista3": "The word contains one 'a', two 'd', and one 'e'."
+  },
+  "elegante": {
+    "pista1": "It's an adjective.",
+    "pista2": "Stylish and attractive in appearance or manner.",
+    "pista3": "The word contains one 'a', three 'e', one 'g', one 'l', one 'n', and one 't'."
+  },
+  "empezar": {
+    "pista1": "It's a verb.",
+    "pista2": "To begin or to start.",
+    "pista3": "The word contains one 'a', two 'e', one 'm', one 'p', one 'r', and one 'z'."
+  },
+  "empleado": {
+    "pista1": "It's a person.",
+    "pista2": "Someone who works for a company; an employee.",
+    "pista3": "The word contains one 'a', one 'd', two 'e', one 'l', one 'm', one 'o', and one 'p'."
+  },
+  "en": {
+    "pista1": "It's a preposition.",
+    "pista2": "It means 'in' or 'on'.",
+    "pista3": "The word contains one 'e' and one 'n'."
+  },
+  "encontrar": {
+    "pista1": "It's a verb.",
+    "pista2": "To discover something by chance; to find.",
+    "pista3": "The word contains one 'a', one 'c', one 'e', two 'n', one 'o', and two 'r'."
+  },
+  "enero": {
+    "pista1": "It's a month.",
+    "pista2": "The first month of the year.",
+    "pista3": "The word contains two 'e', one 'n', one 'o', and one 'r'."
+  },
+  "enfadado": {
+    "pista1": "It's an adjective or feeling.",
+    "pista2": "Feeling or showing anger; angry.",
+    "pista3": "The word contains two 'a', two 'd', one 'e', one 'f', one 'n', and one 'o'."
+  },
+  "enfermo": {
+    "pista1": "It's an adjective.",
+    "pista2": "Not in good health; sick or ill.",
+    "pista3": "The word contains two 'e', one 'f', one 'm', one 'n', one 'o', and one 'r'."
+  },
+  "ensalada": {
+    "pista1": "It's a food.",
+    "pista2": "A cold dish, usually made of vegetables like lettuce and tomato; a salad.",
+    "pista3": "The word contains three 'a', one 'd', one 'e', one 'l', one 'n', and one 's'."
+  },
+  "enseñar": {
+    "pista1": "It's a verb.",
+    "pista2": "To give knowledge to someone; to teach.",
+    "pista3": "The word contains one 'a', two 'e', one 'n', one 'ñ', one 'r', and one 's'."
+  },
+  "entender": {
+    "pista1": "It's a verb.",
+    "pista2": "To comprehend; to understand.",
+    "pista3": "The word contains one 'd', three 'e', two 'n', one 'r', and one 't'."
+  },
+  "entonces": {
+    "pista1": "It's an adverb.",
+    "pista2": "It means 'at that time' or 'so' (then).",
+    "pista3": "The word contains one 'c', two 'e', two 'n', one 'o', one 's', and one 't'."
+  },
+  "entrada": {
+    "pista1": "It's a noun.",
+    "pista2": "A way to get in (an entrance) or a ticket.",
+    "pista3": "The word contains two 'a', one 'd', one 'e', one 'n', one 'r', and one 't'."
+  },
+  "entrar": {
+    "pista1": "It's a verb.",
+    "pista2": "To go into a place; to enter.",
+    "pista3": "The word contains one 'a', one 'e', one 'n', two 'r', and one 't'."
+  },
+  "entre": {
+    "pista1": "It's a preposition.",
+    "pista2": "It means 'between' or 'among'.",
+    "pista3": "The word contains two 'e', one 'n', one 'r', and one 't'."
+  },
+  "entregar": {
+    "pista1": "It's a verb.",
+    "pista2": "To give something to someone; to deliver or hand over.",
+    "pista3": "The word contains one 'a', two 'e', one 'g', one 'n', two 'r', and one 't'."
+  },
+  "equipaje": {
+    "pista1": "It's a noun.",
+    "pista2": "The bags and suitcases you take when you travel; luggage.",
+    "pista3": "The word contains one 'a', two 'e', one 'i', one 'j', one 'p', one 'q', and one 'u'."
+  },
+  "espalda": {
+    "pista1": "It's a body part.",
+    "pista2": "The back of your body, from your shoulders to your waist.",
+    "pista3": "The word contains two 'a', one 'd', one 'e', one 'l', one 'p', and one 's'."
+  },
+  "esperar": {
+    "pista1": "It's a verb.",
+    "pista2": "It can mean 'to wait' or 'to hope'.",
+    "pista3": "The word contains one 'a', two 'e', one 'p', two 'r', and one 's'."
+  },
+  "espejo": {
+    "pista1": "It's an object.",
+    "pista2": "A piece of glass where you can see your reflection.",
+    "pista3": "The word contains two 'e', one 'j', one 'o', one 'p', and one 's'."
+  },
+  "estación": {
+    "pista1": "It's a noun.",
+    "pista2": "A train or bus _____, or a season (like summer).",
+    "pista3": "The word contains one 'a', one 'c', one 'e', one 'i', one 'n', one 'o' (with an accent), one 's', and one 't'."
+  },
+  "estar": {
+    "pista1": "It's a verb.",
+    "pista2": "A verb meaning 'to be' (often for location or temporary states).",
+    "pista3": "The word contains one 'a', one 'e', one 'r', one 's', and one 't'."
+  },
+  "estómago": {
+    "pista1": "It's a body part.",
+    "pista2": "The organ where your food goes after you eat; stomach.",
+    "pista3": "The word contains one 'a', one 'e', one 'g', one 'm', two 'o' (one with an accent), one 's', and one 't'."
+  },
+  "estrecho": {
+    "pista1": "It's an adjective.",
+    "pista2": "The opposite of wide; narrow.",
+    "pista3": "The word contains one 'c', two 'e', one 'h', one 'o', one 'r', one 's', and one 't'."
+  },
+  "estrés": {
+    "pista1": "It's a feeling.",
+    "pista2": "A feeling of mental pressure or worry; stress.",
+    "pista3": "The word contains one 'e' (with an accent), one 'r', two 's', and one 't'."
+  },
+  "estudiante": {
+    "pista1": "It's a person.",
+    "pista2": "A person who goes to school or university; a student.",
+    "pista3": "The word contains one 'a', one 'd', two 'e', one 'i', one 'n', one 's', two 't', and one 'u'."
+  },
+  "estudiar": {
+    "pista1": "It's a verb.",
+    "pista2": "The action a student does; to study.",
+    "pista3": "The word contains one 'a', one 'd', one 'e', one 'i', one 'r', one 's', one 't', and one 'u'."
+  },
+  "euro": {
+    "pista1": "It's money.",
+    "pista2": "The currency used in Spain, Germany, France, etc.",
+    "pista3": "The word contains one 'e', one 'o', one 'r', and one 'u'."
+  },
+  "excursión": {
+    "pista1": "It's a trip.",
+    "pista2": "A short journey or trip, usually for leisure.",
+    "pista3": "The word contains one 'c', one 'e', one 'i', one 'n', one 'o' (with an accent), one 'r', one 's', one 'u', and one 'x'."
+  },
+  "explicar": {
+    "pista1": "It's a verb.",
+    "pista2": "To make something clear or easy to understand; to explain.",
+    "pista3": "The word contains one 'a', one 'c', one 'e', one 'i', one 'l', one 'p', one 'r', and one 'x'."
+  },
+  "fácil": {
+    "pista1": "It's an adjective.",
+    "pista2": "The opposite of difficult; easy.",
+    "pista3": "The word contains one 'a' (with an accent), one 'c', one 'f', one 'i', and one 'l'."
+  },
+  "falda": {
+    "pista1": "It's a piece of clothing.",
+    "pista2": "A piece of clothing (usually for women) that hangs from the waist.",
+    "pista3": "The word contains two 'a', one 'd', one 'f', and one 'l'."
+  },
+  "farmacia": {
+    "pista1": "It's a place.",
+    "pista2": "A store where you buy medicine; a pharmacy.",
+    "pista3": "The word contains three 'a', one 'c', one 'f', one 'i', one 'm', and one 'r'."
+  },
+  "favorito": {
+    "pista1": "It's an adjective.",
+    "pista2": "The one you like the most; favorite.",
+    "pista3": "The word contains one 'a', one 'f', one 'i', two 'o', one 'r', one 't', and one 'v'."
+  },
+  "febrero": {
+    "pista1": "It's a month.",
+    "pista2": "The second month of the year; the shortest month.",
+    "pista3": "The word contains one 'b', two 'e', one 'f', one 'o', and two 'r'."
+  },
+  "feo": {
+    "pista1": "It's an adjective.",
+    "pista2": "The opposite of beautiful or handsome; ugly.",
+    "pista3": "The word contains one 'e', one 'f', and one 'o'."
+  },
+  "feliz": {
+    "pista1": "It's an adjective or feeling.",
+    "pista2": "It means 'happy'.",
+    "pista3": "The word contains one 'e', one 'f', one 'i', one 'l', and one 'z'."
+  },
+  "fiebre": {
+    "pista1": "It's a symptom.",
+    "pista2": "When your body temperature is very high; a fever.",
+    "pista3": "The word contains one 'b', two 'e', one 'f', one 'i', and one 'r'."
+  },
+  "fiesta": {
+    "pista1": "It's an event.",
+    "pista2": "A celebration with music, food, and people; a party.",
+    "pista3": "The word contains one 'a', one 'e', one 'f', one 'i', one 's', and one 't'."
+  },
+  "fin": {
+    "pista1": "It's a noun.",
+    "pista2": "The last part; the end.",
+    "pista3": "The word contains one 'f', one 'i', and one 'n'."
+  },
+  "flan": {
+    "pista1": "It's a food.",
+    "pista2": "A sweet dessert made of eggs and milk with caramel on top.",
+    "pista3": "The word contains one 'a', one 'f', one 'l', and one 'n'."
+  },
+  "fresa": {
+    "pista1": "It's a fruit.",
+    "pista2": "A small, red, sweet fruit; a strawberry.",
+    "pista3": "The word contains one 'a', one 'e', one 'f', one 'r', and one 's'."
+  },
+  "fresco": {
+    "pista1": "It's an adjective.",
+    "pista2": "It can mean 'fresh' (not old) or 'cool' (a little cold).",
+    "pista3": "The word contains one 'c', one 'e', one 'f', one 'o', one 'r', and one 's'."
+  },
+  "freír": {
+    "pista1": "It's a verb.",
+    "pista2": "To cook food in hot oil or fat; to fry.",
+    "pista3": "The word contains one 'e', one 'f', one 'í', and one 'r'."
+  },
+  "frío": {
+    "pista1": "It's an adjective or noun.",
+    "pista2": "Low temperature; the opposite of hot.",
+    "pista3": "The word contains one 'f', one 'í', one 'o', and one 'r'."
+  },
+  "fruta": {
+    "pista1": "It's a food group.",
+    "pista2": "Sweet food like apples, bananas, or oranges.",
+    "pista3": "The word contains one 'a', one 'f', one 'r', one 't', and one 'u'."
+  },
+  "fuerte": {
+    "pista1": "It's an adjective.",
+    "pista2": "Having a lot of physical power; strong.",
+    "pista3": "The word contains one 'e', one 'f', one 'r', one 't', and one 'u'."
+  },
+  "fumar": {
+    "pista1": "It's a verb.",
+    "pista2": "To inhale and exhale from a cigarette; to smoke.",
+    "pista3": "The word contains one 'a', one 'f', one 'm', one 'r', and one 'u'."
+  },
+  "gafas": {
+    "pista1": "It's an accessory.",
+    "pista2": "You wear these on your face to see better; glasses.",
+    "pista3": "The word contains two 'a', one 'f', one 'g', and one 's'."
+  },
+  "gamba": {
+    "pista1": "It's a food.",
+    "pista2": "A small pink seafood; a prawn or shrimp.",
+    "pista3": "The word contains two 'a', one 'b', one 'g', and one 'm'."
+  },
+  "garganta": {
+    "pista1": "It's a body part.",
+    "pista2": "The inside of your neck; your throat.",
+    "pista3": "The word contains three 'a', one 'g', one 'n', two 'r', and one 't'."
+  },
+  "gazpacho": {
+    "pista1": "It's a food.",
+    "pista2": "A cold Spanish soup made with tomatoes.",
+    "pista3": "The word contains two 'a', one 'c', one 'g', one 'h', one 'o', one 'p', and one 'z'."
+  },
+  "gente": {
+    "pista1": "It's a noun.",
+    "pista2": "A plural word for 'persons'; people.",
+    "pista3": "The word contains two 'e', one 'g', one 'n', and one 't'."
+  },
+  "gordo": {
+    "pista1": "It's an adjective.",
+    "pista2": "The opposite of thin; fat.",
+    "pista3": "The word contains one 'd', one 'g', two 'o', and one 'r'."
+  },
+  "gorro": {
+    "pista1": "It's a piece of clothing.",
+    "pista2": "A hat you wear in winter to keep your head warm; a beanie.",
+    "pista3": "The word contains one 'g', two 'o', and two 'r'."
+  },
+  "gracias": {
+    "pista1": "It's an interjection.",
+    "pista2": "What you say to show you are grateful; 'thank you'.",
+    "pista3": "The word contains two 'a', one 'c', one 'g', one 'i', one 'r', and one 's'."
+  },
+  "grande": {
+    "pista1": "It's an adjective.",
+    "pista2": "Very big; large.",
+    "pista3": "The word contains one 'a', one 'd', one 'e', one 'g', one 'n', and one 'r'."
+  },
+  "gris": {
+    "pista1": "It's a color.",
+    "pista2": "The color between black and white; grey.",
+    "pista3": "The word contains one 'g', one 'i', one 'r', and one 's'."
+  },
+  "guapo": {
+    "pista1": "It's an adjective.",
+    "pista2": "Describes a man who is attractive; good-looking or handsome.",
+    "pista3": "The word contains one 'a', one 'g', one 'o', one 'p', and one 'u'."
+  },
+  "guantes": {
+    "pista1": "It's a piece of clothing.",
+    "pista2": "You wear these on your hands to keep them warm.",
+    "pista3": "The word contains one 'a', one 'e', one 'g', one 'n', one 's', one 't', and one 'u'."
+  },
+  "guía": {
+    "pista1": "It's a person or a book.",
+    "pista2": "A person who shows the way, or a book with information.",
+    "pista3": "The word contains one 'a', one 'g', one 'u', and one 'í'."
+  },
+  "guisante": {
+    "pista1": "It's a vegetable.",
+    "pista2": "A small, round, green vegetable; a pea.",
+    "pista3": "The word contains one 'a', one 'e', one 'g', one 'i', one 'n', one 's', one 't', and one 'u'."
+  },
+  "gustar": {
+    "pista1": "It's a verb.",
+    "pista2": "To find something pleasing; 'to like'.",
+    "pista3": "The word contains one 'a', one 'g', one 'r', one 's', one 't', and one 'u'."
+  },
+  "habitación": {
+    "pista1": "It's a place.",
+    "pista2": "A part of a house, like a bedroom or kitchen; a room.",
+    "pista3": "The word contains two 'a', one 'b', one 'c', one 'h', one 'i', one 'n', and one 'ó'."
+  },
+  "hablar": {
+    "pista1": "It's a verb.",
+    "pista2": "To say words; to speak or to talk.",
+    "pista3": "The word contains two 'a', one 'b', one 'h', one 'l', and one 'r'."
+  },
+  "hacer": {
+    "pista1": "It's a verb.",
+    "pista2": "To create something or perform an action; 'to do' or 'to make'.",
+    "pista3": "The word contains one 'a', one 'c', one 'e', one 'h', and one 'r'."
+  },
+  "hambre": {
+    "pista1": "It's a feeling.",
+    "pista2": "The feeling you have when you need to eat; hunger.",
+    "pista3": "The word contains one 'a', one 'b', one 'e', one 'h', one 'm', and one 'r'."
+  },
+  "hamburguesa": {
+    "pista1": "It's a food.",
+    "pista2": "Cooked meat served in a round bun.",
+    "pista3": "The word contains two 'a', one 'b', one 'e', one 'g', one 'h', one 'm', one 'r', one 's', and one 'u'."
+  },
+  "harina": {
+    "pista1": "It's an ingredient.",
+    "pista2": "A white powder made from grain, used to make bread; flour.",
+    "pista3": "The word contains two 'a', one 'h', one 'i', one 'n', and one 'r'."
+  },
+  "helado": {
+    "pista1": "It's a food.",
+    "pista2": "A sweet, cold, frozen dessert; ice cream.",
+    "pista3": "The word contains one 'a', one 'd', one 'e', one 'h', one 'l', and one 'o'."
+  },
+  "hermano": {
+    "pista1": "It's a family member.",
+    "pista2": "A boy or man who has the same parents as you; a brother.",
+    "pista3": "The word contains one 'a', one 'e', one 'h', one 'm', one 'n', one 'o', and one 'r'."
+  },
+  "hermoso": {
+    "pista1": "It's an adjective.",
+    "pista2": "Very pretty or attractive; beautiful.",
+    "pista3": "The word contains one 'e', one 'h', one 'm', two 'o', one 'r', and one 's'."
+  },
+  "hervir": {
+    "pista1": "It's a verb.",
+    "pista2": "To heat water until it bubbles at 100°C; to boil.",
+    "pista3": "The word contains one 'e', one 'h', one 'i', one 'r', and one 'v'."
+  },
+  "hielo": {
+    "pista1": "It's a noun.",
+    "pista2": "Frozen water; ice.",
+    "pista3": "The word contains one 'e', one 'h', one 'i', and one 'l'."
+  },
+  "hoja": {
+    "pista1": "It's a noun.",
+    "pista2": "The green part of a plant, or a sheet of paper.",
+    "pista3": "The word contains one 'a', one 'h', one 'j', and one 'o'."
+  },
+  "hola": {
+    "pista1": "It's a greeting.",
+    "pista2": "The first word you say when you meet someone; 'hello' or 'hi'.",
+    "pista3": "The word contains one 'a', one 'h', one 'l', and one 'o'."
+  },
+  "hombre": {
+    "pista1": "It's a person.",
+    "pista2": "An adult male human; a man.",
+    "pista3": "The word contains one 'b', one 'e', one 'h', one 'm', one 'o', and one 'r'."
+  },
+  "hombro": {
+    "pista1": "It's a body part.",
+    "pista2": "The part of your body where your arm connects; your shoulder.",
+    "pista3": "The word contains one 'b', one 'h', one 'm', two 'o', and one 'r'."
+  },
+  "hora": {
+    "pista1": "It's a unit of time.",
+    "pista2": "A period of 60 minutes; an hour.",
+    "pista3": "The word contains one 'a', one 'h', one 'o', and one 'r'."
+  },
+  "horario": {
+    "pista1": "It's a noun.",
+    "pista2": "A plan of when things will happen; a schedule or timetable.",
+    "pista3": "The word contains one 'a', one 'h', one 'i', two 'o', and two 'r'."
+  },
+  "hospital": {
+    "pista1": "It's a place.",
+    "pista2": "A building where sick or injured people go for treatment.",
+    "pista3": "The word contains one 'a', one 'h', one 'i', one 'l', one 'o', one 'p', one 's', and one 't'."
+  },
+  "hotel": {
+    "pista1": "It's a place.",
+    "pista2": "A building where you pay to sleep when you are traveling.",
+    "pista3": "The word contains one 'e', one 'h', one 'l', one 'o', and one 't'."
+  },
+  "hoy": {
+    "pista1": "It's an adverb of time.",
+    "pista2": "This present day; today.",
+    "pista3": "The word contains one 'h', one 'o', and one 'y'."
+  },
+  "huevo": {
+    "pista1": "It's a food.",
+    "pista2": "A round object from a chicken, often eaten for breakfast.",
+    "pista3": "The word contains one 'e', one 'h', one 'o', one 'u', and one 'v'."
+  },
+  "idea": {
+    "pista1": "It's a noun.",
+    "pista2": "A thought or a plan.",
+    "pista3": "The word contains one 'a', one 'd', one 'e', and one 'i'."
+  },
+  "igual": {
+    "pista1": "It's an adjective.",
+    "pista2": "The same in value or quantity; equal.",
+    "pista3": "The word contains one 'a', one 'g', one 'i', one 'l', and one 'u'."
+  },
+  "importante": {
+    "pista1": "It's an adjective.",
+    "pista2": "Having great value or significance; important.",
+    "pista3": "The word contains one 'a', one 'e', one 'i', one 'm', one 'n', one 'o', one 'p', one 'r', and one 't'."
+  },
+  "incluir": {
+    "pista1": "It's a verb.",
+    "pista2": "To make something part of a whole; to include.",
+    "pista3": "The word contains one 'c', two 'i', one 'l', one 'n', one 'r', and one 'u'."
+  },
+  "increíble": {
+    "pista1": "It's an adjective.",
+    "pista2": "Very difficult to believe; amazing or incredible.",
+    "pista3": "The word contains one 'b', one 'c', one 'e', one 'í', one 'l', one 'n', and one 'r'."
+  },
+  "información": {
+    "pista1": "It's a noun.",
+    "pista2": "Facts about a subject; information.",
+    "pista3": "The word contains one 'a', one 'c', one 'f', two 'i', one 'm', one 'n', one 'ó', and one 'r'."
+  },
+  "inteligente": {
+    "pista1": "It's an adjective.",
+    "pista2": "Able to learn and understand things easily; smart.",
+    "pista3": "The word contains two 'e', one 'g', one 'i', one 'l', one 'n', and two 't'."
+  },
+  "interesar": {
+    "pista1": "It's a verb.",
+    "pista2": "To attract your attention; to interest.",
+    "pista3": "The word contains one 'a', two 'e', one 'i', one 'n', two 'r', one 's', and one 't'."
+  },
+  "invierno": {
+    "pista1": "It's a season.",
+    "pista2": "The coldest season of the year.",
+    "pista3": "The word contains one 'e', two 'i', one 'n', one 'o', one 'r', one 'v', and 'n'."
+  },
+  "invitación": {
+    "pista1": "It's a noun.",
+    "pista2": "A request for someone to come to an event; an invitation.",
+    "pista3": "The word contains one 'a', two 'c', two 'i', one 'n', one 'ó', one 't', and one 'v'."
+  },
+  "invitar": {
+    "pista1": "It's a verb.",
+    "pista2": "To ask someone to come to an event; to invite.",
+    "pista3": "The word contains one 'a', two 'i', one 'n', one 'r', one 't', and one 'v'."
+  },
+  "ir": {
+    "pista1": "It's a verb.",
+    "pista2": "To move from one place to another; 'to go'.",
+    "pista3": "The word contains one 'i' and one 'r'."
+  },
+  "isla": {
+    "pista1": "It's a place.",
+    "pista2": "A piece of land surrounded by water.",
+    "pista3": "The word contains one 'a', one 'i', one 'l', and one 's'."
+  },
+  "izquierda": {
+    "pista1": "It's a direction.",
+    "pista2": "The opposite of right; left.",
+    "pista3": "The word contains one 'a', one 'd', one 'e', one 'i', one 'q', one 'r', one 'u', and one 'z'."
+  },
+  "jabón": {
+    "pista1": "It's an object.",
+    "pista2": "You use this with water to wash your hands; soap.",
+    "pista3": "The word contains one 'a', one 'b', one 'j', and one 'ó'."
+  },
+  "jamón": {
+    "pista1": "It's a food.",
+    "pista2": "Cured meat from a pig's leg; ham.",
+    "pista3": "The word contains one 'a', one 'j', one 'm', and one 'ó'."
+  },
+  "jardín": {
+    "pista1": "It's a place.",
+    "pista2": "An area outside a house with flowers and grass; a garden.",
+    "pista3": "The word contains one 'a', one 'd', one 'í', one 'j', one 'n', and one 'r'."
+  },
+  "jersey": {
+    "pista1": "It's a piece of clothing.",
+    "pista2": "A piece of clothing for your upper body, often made of wool; a sweater.",
+    "pista3": "The word contains two 'e', one 'j', one 'r', one 's', and one 'y'."
+  },
+  "joven": {
+    "pista1": "It's an adjective.",
+    "pista2": "The opposite of old; young.",
+    "pista3": "The word contains one 'e', one 'j', one 'n', one 'o', and one 'v'."
+  },
+  "jueves": {
+    "pista1": "It's a day of the week.",
+    "pista2": "The day after Wednesday; Thursday.",
+    "pista3": "The word contains two 'e', one 'j', one 's', one 'u', and one 'v'."
+  },
+  "jugar": {
+    "pista1": "It's a verb.",
+    "pista2": "To participate in a game or sport; to play.",
+    "pista3": "The word contains one 'a', one 'g', one 'j', one 'r', and one 'u'."
+  },
+  "julio": {
+    "pista1": "It's a month.",
+    "pista2": "The seventh month of the year; July.",
+    "pista3": "The word contains one 'i', one 'j', one 'l', one 'o', and one 'u'."
+  },
+  "junio": {
+    "pista1": "It's a month.",
+    "pista2": "The sixth month of the year; June.",
+    "pista3": "The word contains one 'i', one 'j', one 'n', one 'o', and one 'u'."
+  },
+  "junto": {
+    "pista1": "It's an adverb or adjective.",
+    "pista2": "Next to each other; together.",
+    "pista3": "The word contains one 'j', one 'n', one 'o', one 't', and one 'u'."
+  },
+  "kilo": {
+    "pista1": "It's a unit of measurement.",
+    "pista2": "A measure of weight equal to 1000 grams.",
+    "pista3": "The word contains one 'i', one 'k', one 'l', and one 'o'."
+  },
+  "kiosco": {
+    "pista1": "It's a place.",
+    "pista2": "A small shop that sells newspapers, magazines, and sweets.",
+    "pista3": "The word contains one 'i', one 'k', two 'o', and one 's'."
+  },
+  "labio": {
+    "pista1": "It's a body part.",
+    "pista2": "The two soft parts that form the edge of your mouth; lip.",
+    "pista3": "The word contains one 'a', one 'b', one 'i', and one 'l'."
+  },
+  "lado": {
+    "pista1": "It's a noun.",
+    "pista2": "The right or left part of something; side.",
+    "pista3": "The word contains one 'a', one 'd', one 'l', and one 'o'."
+  },
+  "lana": {
+    "pista1": "It's a material.",
+    "pista2": "The soft hair from a sheep; wool.",
+    "pista3": "The word contains two 'a', one 'l', and one 'n'."
+  },
+  "largo": {
+    "pista1": "It's an adjective.",
+    "pista2": "The opposite of short; long.",
+    "pista3": "The word contains one 'a', one 'g', one 'l', one 'o', and one 'r'."
+  },
+  "lata": {
+    "pista1": "It's a container.",
+    "pista2": "A metal container for food or drinks; a can.",
+    "pista3": "The word contains two 'a', one 'l', and one 't'."
+  },
+  "lavar": {
+    "pista1": "It's a verb.",
+    "pista2": "To clean something with water and soap; to wash.",
+    "pista3": "The word contains two 'a', one 'l', one 'r', and one 'v'."
+  },
+  "leche": {
+    "pista1": "It's a drink.",
+    "pista2": "A white liquid produced by cows; milk.",
+    "pista3": "The word contains one 'c', two 'e', one 'h', and one 'l'."
+  },
+  "lechuga": {
+    "pista1": "It's a vegetable.",
+    "pista2": "A green leafy vegetable used in salads; lettuce.",
+    "pista3": "The word contains one 'a', one 'c', one 'e', one 'g', one 'h', one 'l', and one 'u'."
+  },
+  "leer": {
+    "pista1": "It's a verb.",
+    "pista2": "To look at and understand written words; to read.",
+    "pista3": "The word contains two 'e', one 'l', and one 'r'."
+  },
+  "lejos": {
+    "pista1": "It's an adverb.",
+    "pista2": "At a great distance; far.",
+    "pista3": "The word contains one 'e', one 'j', one 'l', one 'o', and one 's'."
+  },
+  "lento": {
+    "pista1": "It's an adjective.",
+    "pista2": "The opposite of fast; slow.",
+    "pista3": "The word contains one 'e', one 'l', one 'n', one 'o', and one 't'."
+  },
+  "levantar": {
+    "pista1": "It's a verb.",
+    "pista2": "To move something to a higher position; to lift.",
+    "pista3": "The word contains two 'a', one 'e', one 'l', one 'n', one 'r', one 't', and one 'v'."
+  },
+  "libre": {
+    "pista1": "It's an adjective.",
+    "pista2": "Not busy, or having liberty; free.",
+    "pista3": "The word contains one 'b', one 'e', one 'i', one 'l', and one 'r'."
+  },
+  "limón": {
+    "pista1": "It's a fruit.",
+    "pista2": "A yellow, sour fruit.",
+    "pista3": "The word contains one 'i', one 'l', one 'm', and one 'ó'."
+  },
+  "limpiar": {
+    "pista1": "It's a verb.",
+    "pista2": "To make something free of dirt; to clean.",
+    "pista3": "The word contains one 'a', one 'i', one 'l', one 'm', one 'p', and one 'r'."
+  },
+  "limpio": {
+    "pista1": "It's an adjective.",
+    "pista2": "The opposite of dirty; clean.",
+    "pista3": "The word contains one 'i', one 'l', one 'm', one 'o', and one 'p'."
+  },
+  "línea": {
+    "pista1": "It's a noun.",
+    "pista2": "A long, thin mark; a line.",
+    "pista3": "The word contains one 'a', one 'e', one 'í', one 'l', and one 'n'."
+  },
+  "lista": {
+    "pista1": "It's a noun.",
+    "pista2": "A series of names or items written down; a list.",
+    "pista3": "The word contains one 'a', one 'i', one 'l', one 's', and one 't'."
+  },
+  "listo": {
+    "pista1": "It's an adjective.",
+    "pista2": "It can mean 'ready' or 'smart'.",
+    "pista3": "The word contains one 'i', one 'l', one 'o', one 's', and one 't'."
+  },
+  "llamar": {
+    "pista1": "It's a verb.",
+    "pista2": "To use a phone, or to give a name; 'to call'.",
+    "pista3": "The word contains two 'a', two 'l', one 'm', and one 'r'."
+  },
+  "llave": {
+    "pista1": "It's an object.",
+    "pista2": "A metal object used to open a lock; a key.",
+    "pista3": "The word contains one 'a', one 'e', and two 'l'."
+  },
+  "llegar": {
+    "pista1": "It's a verb.",
+    "pista2": "To reach a destination; to arrive.",
+    "pista3": "The word contains one 'a', one 'e', one 'g', two 'l', and one 'r'."
+  },
+  "llenar": {
+    "pista1": "It's a verb.",
+    "pista2": "To make something full; to fill.",
+    "pista3": "The word contains one 'a', one 'e', two 'l', one 'n', and one 'r'."
+  },
+  "llevar": {
+    "pista1": "It's a verb.",
+    "pista2": "To transport something, or to wear clothes.",
+    "pista3": "The word contains one 'a', one 'e', two 'l', one 'r', and one 'v'."
+  },
+  "llover": {
+    "pista1": "It's a verb.",
+    "pista2": "When water falls from the sky; to rain.",
+    "pista3": "The word contains one 'e', two 'l', one 'o', one 'r', and one 'v'."
+  },
+  "lunes": {
+    "pista1": "It's a day of the week.",
+    "pista2": "The first day of the working week; Monday.",
+    "pista3": "The word contains one 'e', one 'l', one 'n', one 's', and one 'u'."
+  },
+  "madre": {
+    "pista1": "It's a family member.",
+    "pista2": "Your female parent; mother.",
+    "pista3": "The word contains one 'a', one 'd', one 'e', one 'm', and one 'r'."
+  },
+  "mal": {
+    "pista1": "It's an adverb or adjective.",
+    "pista2": "The opposite of 'good' or 'well'; bad.",
+    "pista3": "The word contains one 'a', one 'l', and one 'm'."
+  },
+  "maleta": {
+    "pista1": "It's an object.",
+    "pista2": "A bag used for traveling; a suitcase.",
+    "pista3": "The word contains two 'a', one 'e', one 'l', one 'm', and one 't'."
+  },
+  "malo": {
+    "pista1": "It's an adjective.",
+    "pista2": "The opposite of 'bueno'; bad.",
+    "pista3": "The word contains one 'a', one 'l', one 'm', and one 'o'."
+  },
+  "mañana": {
+    "pista1": "It's a noun or adverb.",
+    "pista2": "The time after sunrise, or the day after today.",
+    "pista3": "The word contains three 'a', one 'm', and one 'ñ'."
+  },
+  "mandar": {
+    "pista1": "It's a verb.",
+    "pista2": "To give an order, or to send something.",
+    "pista3": "The word contains two 'a', one 'd', one 'm', one 'n', and one 'r'."
+  },
+  "mano": {
+    "pista1": "It's a body part.",
+    "pista2": "The part of your body at the end of your arm, with fingers.",
+    "pista3": "The word contains one 'a', one 'm', one 'n', and one 'o'."
+  },
+  "manta": {
+    "pista1": "It's an object.",
+    "pista2": "A thick piece of cloth used to keep warm in bed; a blanket.",
+    "pista3": "The word contains two 'a', one 'm', one 'n', and one 't'."
+  },
+  "mantequilla": {
+    "pista1": "It's a food.",
+    "pista2": "A yellow fat made from milk, spread on bread; butter.",
+    "pista3": "The word contains two 'a', one 'e', one 'i', one 'l', two 'm', one 'n', one 'q', one 't', and one 'u'."
+  },
+  "manzana": {
+    "pista1": "It's a fruit.",
+    "pista2": "A round fruit, often red or green; an apple.",
+    "pista3": "The word contains three 'a', one 'm', two 'n', and one 'z'."
+  },
+  "mapa": {
+    "pista1": "It's an object.",
+    "pista2": "A drawing of an area showing roads, rivers, and cities.",
+    "pista3": "The word contains two 'a', one 'm', and one 'p'."
+  },
+  "maquillaje": {
+    "pista1": "It's a noun.",
+    "pista2": "Cosmetics used on the face; makeup.",
+    "pista3": "The word contains three 'a', one 'e', one 'j', one 'l', one 'm', and one 'q'."
+  },
+  "mar": {
+    "pista1": "It's a place.",
+    "pista2": "A large body of salt water; the sea.",
+    "pista3": "The word contains one 'a', one 'm', and one 'r'."
+  },
+  "marrón": {
+    "pista1": "It's a color.",
+    "pista2": "The color of wood or chocolate; brown.",
+    "pista3": "The word contains one 'a', one 'm', one 'n', one 'ó', and two 'r'."
+  },
+  "martes": {
+    "pista1": "It's a day of the week.",
+    "pista2": "The day after Monday; Tuesday.",
+    "pista3": "The word contains one 'a', one 'e', one 'm', one 'r', one 's', and one 't'."
+  },
+  "marzo": {
+    "pista1": "It's a month.",
+    "pista2": "The third month of the year; March.",
+    "pista3": "The word contains one 'a', one 'm', one 'o', one 'r', and one 'z'."
+  },
+  "mayo": {
+    "pista1": "It's a month.",
+    "pista2": "The fifth month of the year; May.",
+    "pista3": "The word contains one 'a', one 'm', one 'o', and one 'y'."
+  },
+  "mayor": {
+    "pista1": "It's an adjective.",
+    "pista2": "It can mean 'older' or 'bigger'.",
+    "pista3": "The word contains one 'a', one 'm', one 'o', one 'r', and one 'y'."
+  },
+  "médico": {
+    "pista1": "It's a profession.",
+    "pista2": "A person who treats sick people; a doctor.",
+    "pista3": "The word contains one 'c', one 'd', one 'e' (with an accent), one 'i', one 'm', and one 'o'."
+  },
+  "medio": {
+    "pista1": "It's a noun or adjective.",
+    "pista2": "It can mean 'middle' or 'half'.",
+    "pista3": "The word contains one 'd', one 'e', one 'i', one 'm', and one 'o'."
+  },
+  "mejor": {
+    "pista1": "It's an adjective.",
+    "pista2": "The opposite of worse; better.",
+    "pista3": "The word contains one 'e', one 'j', one 'm', one 'o', and one 'r'."
+  },
+  "melocotón": {
+    "pista1": "It's a fruit.",
+    "pista2": "A round, fuzzy fruit with yellow flesh and a large seed; a peach.",
+    "pista3": "The word contains one 'c', one 'e', one 'l', one 'm', two 'n', and two 'o' (one with an accent)."
+  },
+  "melón": {
+    "pista1": "It's a fruit.",
+    "pista2": "A large, round, sweet fruit; a melon.",
+    "pista3": "The word contains one 'e', one 'l', one 'm', one 'n', and one 'ó'."
+  },
+  "menú": {
+    "pista1": "It's a noun.",
+    "pista2": "A list of food available at a restaurant.",
+    "pista3": "The word contains one 'e', one 'm', one 'n', and one 'ú'."
+  },
+  "mercado": {
+    "pista1": "It's a place.",
+    "pista2": "A place where people buy and sell food, clothes, etc.; a market.",
+    "pista3": "The word contains one 'a', one 'c', one 'd', one 'e', one 'm', one 'o', and one 'r'."
+  },
+  "mermelada": {
+    "pista1": "It's a food.",
+    "pista2": "A sweet food made from fruit, often spread on toast; jam.",
+    "pista3": "The word contains two 'a', one 'd', one 'e', two 'l', two 'm', and one 'r'."
+  },
+  "mes": {
+    "pista1": "It's a unit of time.",
+    "pista2": "A period like January, February, or March; a month.",
+    "pista3": "The word contains one 'e', one 'm', and one 's'."
+  },
+  "mesa": {
+    "pista1": "It's furniture.",
+    "pista2": "A piece of furniture with a flat top and legs; a table.",
+    "pista3": "The word contains one 'a', one 'e', one 'm', and one 's'."
+  },
+  "metro": {
+    "pista1": "It's a noun.",
+    "pista2": "A unit of length, or an underground train system.",
+    "pista3": "The word contains one 'e', one 'm', one 'o', one 'r', and one 't'."
+  },
+  "miedo": {
+    "pista1": "It's a feeling.",
+    "pista2": "The feeling you have when you are scared; fear.",
+    "pista3": "The word contains one 'd', one 'e', one 'i', one 'm', and one 'o'."
+  },
+  "miel": {
+    "pista1": "It's a food.",
+    "pista2": "A sweet, sticky liquid made by bees; honey.",
+    "pista3": "The word contains one 'e', one 'i', one 'l', and one 'm'."
+  },
+  "miércoles": {
+    "pista1": "It's a day of the week.",
+    "pista2": "The day after Tuesday; Wednesday.",
+    "pista3": "The word contains one 'c', two 'e' (one with an accent), one 'i', one 'l', one 'm', one 'o', one 'r', and one 's'."
+  },
+  "minuto": {
+    "pista1": "It's a unit of time.",
+    "pista2": "A period of 60 seconds.",
+    "pista3": "The word contains one 'i', one 'm', one 'n', one 'o', one 't', and one 'u'."
+  },
+  "mirar": {
+    "pista1": "It's a verb.",
+    "pista2": "To use your eyes to see; to look at.",
+    "pista3": "The word contains one 'a', one 'i', one 'm', and two 'r'."
+  },
+  "moderno": {
+    "pista1": "It's an adjective.",
+    "pista2": "Relating to the present time; not old-fashioned.",
+    "pista3": "The word contains one 'd', one 'e', one 'm', two 'n', two 'o', and one 'r'."
+  },
+  "montaña": {
+    "pista1": "It's a place.",
+    "pista2": "A very large, high hill; a mountain.",
+    "pista3": "The word contains two 'a', one 'm', one 'n', one 'ñ', one 'o', and one 't'."
+  },
+  "morado": {
+    "pista1": "It's a color.",
+    "pista2": "A color made by mixing red and blue; purple.",
+    "pista3": "The word contains one 'a', one 'd', one 'm', two 'o', and one 'r'."
+  },
+  "moreno": {
+    "pista1": "It's an adjective.",
+    "pista2": "Having dark hair or dark skin; brunette or tanned.",
+    "pista3": "The word contains one 'e', one 'm', one 'n', one 'o', and one 'r'."
+  },
+  "móvil": {
+    "pista1": "It's an object.",
+    "pista2": "A telephone that you can carry with you; a cell phone.",
+    "pista3": "The word contains one 'i', one 'l', one 'm', one 'ó', and one 'v'."
+  },
+  "mucho": {
+    "pista1": "It's an adverb or adjective.",
+    "pista2": "A large amount; 'a lot' or 'much'.",
+    "pista3": "The word contains one 'c', one 'h', one 'm', one 'o', and one 'u'."
+  },
+  "mujer": {
+    "pista1": "It's a person.",
+    "pista2": "An adult female human; a woman.",
+    "pista3": "The word contains one 'e', one 'j', one 'm', one 'r', and one 'u'."
+  },
+  "museo": {
+    "pista1": "It's a place.",
+    "pista2": "A building where historical or artistic objects are shown.",
+    "pista3": "The word contains one 'e', one 'm', one 'o', one 's', and one 'u'."
+  },
+  "música": {
+    "pista1": "It's an art form.",
+    "pista2": "Sounds organized in a pleasant way; music.",
+    "pista3": "The word contains one 'a', one 'c', one 'i', one 'm', one 's', and one 'ú'."
+  },
+  "muy": {
+    "pista1": "It's an adverb.",
+    "pista2": "It intensifies an adjective; 'very'.",
+    "pista3": "The word contains one 'm', one 'u', and one 'y'."
+  },
+  "nacer": {
+    "pista1": "It's a verb.",
+    "pista2": "To be born.",
+    "pista3": "The word contains one 'a', one 'c', one 'e', one 'n', and one 'r'."
+  },
+  "nada": {
+    "pista1": "It's a pronoun.",
+    "pista2": "The opposite of 'something'; nothing.",
+    "pista3": "The word contains two 'a', one 'd', and one 'n'."
+  },
+  "nadar": {
+    "pista1": "It's a verb.",
+    "pista2": "To move through water using your arms and legs; to swim.",
+    "pista3": "The word contains two 'a', one 'd', one 'n', and one 'r'."
+  },
+  "naranja": {
+    "pista1": "It's a fruit or a color.",
+    "pista2": "A round, orange-colored fruit; or the color itself.",
+    "pista3": "The word contains three 'a', one 'j', two 'n', and one 'r'."
+  },
+  "nariz": {
+    "pista1": "It's a body part.",
+    "pista2": "The part of your face used for smelling; your nose.",
+    "pista3": "The word contains one 'a', one 'i', one 'n', one 'r', and one 'z'."
+  },
+  "necesitar": {
+    "pista1": "It's a verb.",
+    "pista2": "To require something; to need.",
+    "pista3": "The word contains one 'a', one 'c', two 'e', one 'i', one 'n', one 'r', one 's', and one 't'."
+  },
+  "negro": {
+    "pista1": "It's a color.",
+    "pista2": "The darkest color; the opposite of white.",
+    "pista3": "The word contains one 'e', one 'g', one 'n', one 'o', and one 'r'."
+  },
+  "nervioso": {
+    "pista1": "It's an adjective or feeling.",
+    "pista2": "Feeling worried or anxious; nervous.",
+    "pista3": "The word contains one 'e', one 'i', one 'n', two 'o', one 'r', one 's', and one 'v'."
+  },
+  "nevar": {
+    "pista1": "It's a verb.",
+    "pista2": "When snow falls from the sky.",
+    "pista3": "The word contains one 'a', one 'e', one 'n', one 'r', and one 'v'."
+  },
+  "nieve": {
+    "pista1": "It's a noun.",
+    "pista2": "Soft, white frozen water that falls from the sky.",
+    "pista3": "The word contains two 'e', one 'i', one 'n', and one 'v'."
+  },
+  "niño": {
+    "pista1": "It's a person.",
+    "pista2": "A young human; a child or boy.",
+    "pista3": "The word contains one 'i', one 'n', one 'ñ', and one 'o'."
+  },
+  "noche": {
+    "pista1": "It's a time of day.",
+    "pista2": "The time when it is dark; the opposite of day.",
+    "pista3": "The word contains one 'c', one 'e', one 'h', one 'n', and one 'o'."
+  },
+  "nombre": {
+    "pista1": "It's a noun.",
+    "pista2": "What a person or thing is called; a name.",
+    "pista3": "The word contains one 'b', one 'e', one 'm', one 'n', one 'o', and one 'r'."
+  },
+  "norte": {
+    "pista1": "It's a direction.",
+    "pista2": "The opposite of south; north.",
+    "pista3": "The word contains one 'e', one 'n', one 'o', one 'r', and one 't'."
+  },
+  "noviembre": {
+    "pista1": "It's a month.",
+    "pista2": "The eleventh month of the year; November.",
+    "pista3": "The word contains one 'b', one 'e', one 'i', one 'm', one 'n', one 'o', one 'r', and one 'v'."
+  },
+  "nube": {
+    "pista1": "It's a noun.",
+    "pista2": "A white or gray mass in the sky; a cloud.",
+    "pista3": "The word contains one 'b', one 'e', one 'n', and one 'u'."
+  },
+  "nuevo": {
+    "pista1": "It's an adjective.",
+    "pista2": "The opposite of old; new.",
+    "pista3": "The word contains one 'e', one 'n', one 'o', one 'u', and one 'v'."
+  },
+  "número": {
+    "pista1": "It's a noun.",
+    "pista2": "A count or measurement, like 1, 2, or 3.",
+    "pista3": "The word contains one 'e', one 'm', one 'n', one 'o', one 'r', and one 'ú'."
+  },
+  "nunca": {
+    "pista1": "It's an adverb of time.",
+    "pista2": "At no time; the opposite of 'always'.",
+    "pista3": "The word contains one 'a', one 'c', one 'n', one 'u', and one 'n'."
+  },
+  "ocupado": {
+    "pista1": "It's an adjective.",
+    "pista2": "Having a lot to do; busy.",
+    "pista3": "The word contains one 'a', one 'c', one 'd', two 'o', one 'p', and one 'u'."
+  },
+  "octubre": {
+    "pista1": "It's a month.",
+    "pista2": "The tenth month of the year; October.",
+    "pista3": "The word contains one 'b', one 'c', one 'e', one 'o', one 'r', one 't', and one 'u'."
+  },
+  "odiar": {
+    "pista1": "It's a verb.",
+    "pista2": "To dislike something very much; to hate.",
+    "pista3": "The word contains one 'a', one 'd', one 'i', one 'o', and one 'r'."
+  },
+  "oficina": {
+    "pista1": "It's a place.",
+    "pista2": "A room or building where people work at desks.",
+    "pista3": "The word contains one 'a', one 'c', one 'f', two 'i', one 'n', and one 'o'."
+  },
+  "ofrecer": {
+    "pista1": "It's a verb.",
+    "pista2": "To present something for someone to accept; to offer.",
+    "pista3": "The word contains one 'c', two 'e', one 'f', one 'o', and two 'r'."
+  },
+  "oír": {
+    "pista1": "It's a verb.",
+    "pista2": "To use your ears to sense sound; to hear.",
+    "pista3": "The word contains one 'í', one 'o', and one 'r'."
+  },
+  "ojo": {
+    "pista1": "It's a body part.",
+    "pista2": "The part of your body you use to see; your eye.",
+    "pista3": "The word contains one 'j' and two 'o'."
+  },
+  "olvidar": {
+    "pista1": "It's a verb.",
+    "pista2": "The opposite of 'recordar' (to remember); to forget.",
+    "pista3": "The word contains one 'a', one 'd', one 'i', one 'l', one 'o', one 'r', and one 'v'."
+  },
+  "optimista": {
+    "pista1": "It's an adjective.",
+    "pista2": "A person who is hopeful and positive about the future.",
+    "pista3": "The word contains one 'a', one 'i', one 'm', two 'o', one 'p', one 's', and two 't'."
+  },
+  "oreja": {
+    "pista1": "It's a body part.",
+    "pista2": "The external part of your body used for hearing; your ear.",
+    "pista3": "The word contains one 'a', one 'e', one 'j', one 'o', and one 'r'."
+  },
+  "oscuro": {
+    "pista1": "It's an adjective.",
+    "pista2": "With little or no light; dark.",
+    "pista3": "The word contains one 'c', one 'o', one 'r', one 's', one 'u', and 'o'."
+  },
+  "otoño": {
+    "pista1": "It's a season.",
+    "pista2": "The season between summer and winter; autumn.",
+    "pista3": "The word contains one 'ñ', two 'o', and one 't'."
+  },
+  "otro": {
+    "pista1": "It's an adjective.",
+    "pista2": "A different one; 'other' or 'another'.",
+    "pista3": "The word contains two 'o', one 'r', and one 't'."
+  },
+  "paciente": {
+    "pista1": "It's an adjective or a noun.",
+    "pista2": "Able to wait calmly, or a person in a hospital.",
+    "pista3": "The word contains one 'a', one 'c', one 'e', one 'i', one 'n', one 'p', and one 't'."
+  },
+  "pagar": {
+    "pista1": "It's a verb.",
+    "pista2": "To give money for something; to pay.",
+    "pista3": "The word contains two 'a', one 'g', one 'p', and one 'r'."
+  },
+  "país": {
+    "pista1": "It's a place.",
+    "pista2": "A nation with its own government, like Spain or France.",
+    "pista3": "The word contains one 'a' (with an accent), one 'i', one 'p', and one 's'."
+  },
+  "pan": {
+    "pista1": "It's a food.",
+    "pista2": "A basic food made from flour, water, and yeast; bread.",
+    "pista3": "The word contains one 'a', one 'n', and one 'p'."
+  },
+  "panadería": {
+    "pista1": "It's a place.",
+    "pista2": "A shop where you buy bread; a bakery.",
+    "pista3": "The word contains two 'a', one 'd', one 'e', one 'í', one 'n', one 'p', and one 'r'."
+  },
+  "pantalones": {
+    "pista1": "It's a piece of clothing.",
+    "pista2": "A piece of clothing for your legs; pants or trousers.",
+    "pista3": "The word contains two 'a', one 'e', one 'l', one 'n', one 'o', one 'p', one 's', and one 't'."
+  },
+  "pañuelo": {
+    "pista1": "It's an object.",
+    "pista2": "A small cloth for wiping your nose; a handkerchief or tissue.",
+    "pista3": "The word contains one 'a', one 'e', one 'l', one 'n', one 'ñ', one 'o', one 'p', and one 'u'."
+  },
+  "para": {
+    "pista1": "It's a preposition.",
+    "pista2": "It means 'for' or 'in order to'.",
+    "pista3": "The word contains two 'a', one 'p', and one 'r'."
+  },
+  "parada": {
+    "pista1": "It's a place.",
+    "pista2": "A place where a bus or train stops.",
+    "pista3": "The word contains three 'a', one 'd', one 'p', and one 'r'."
+  },
+  "paraguas": {
+    "pista1": "It's an object.",
+    "pista2": "You use this to stay dry when it rains; an umbrella.",
+    "pista3": "The word contains three 'a', one 'g', one 'p', one 'r', one 's', and one 'u'."
+  },
+  "parecer": {
+    "pista1": "It's a verb.",
+    "pista2": "To look like or to seem.",
+    "pista3": "The word contains one 'a', one 'c', two 'e', one 'p', and one 'r'."
+  },
+  "pasaporte": {
+    "pista1": "It's an object.",
+    "pista2": "An official document for traveling to other countries.",
+    "pista3": "The word contains two 'a', one 'e', one 'o', two 'p', one 'r', one 's', and one 't'."
+  },
+  "pasear": {
+    "pista1": "It's a verb.",
+    "pista2": "To walk slowly for pleasure; to stroll.",
+    "pista3": "The word contains two 'a', one 'e', one 'p', one 'r', and one 's'."
+  },
+  "pasillo": {
+    "pista1": "It's a place.",
+    "pista2": "A long, narrow space in a building; a hallway or corridor.",
+    "pista3": "The word contains one 'a', one 'i', two 'l', one 'o', one 'p', and one 's'."
+  },
+  "pasta": {
+    "pista1": "It's a food.",
+    "pista2": "An Italian food like spaghetti, or toothpaste.",
+    "pista3": "The word contains two 'a', one 'p', one 's', and one 't'."
+  },
+  "pastel": {
+    "pista1": "It's a food.",
+    "pista2": "A sweet baked food; a cake.",
+    "pista3": "The word contains one 'a', one 'e', one 'l', one 'p', one 's', and one 't'."
+  },
+  "patata": {
+    "pista1": "It's a vegetable.",
+    "pista2": "A round vegetable that grows underground; a potato.",
+    "pista3": "The word contains three 'a', one 'p', and two 't'."
+  },
+  "pecho": {
+    "pista1": "It's a body part.",
+    "pista2": "The front of your body between your neck and stomach; your chest.",
+    "pista3": "The word contains one 'c', one 'e', one 'h', one 'o', and one 'p'."
+  },
+  "pedir": {
+    "pista1": "It's a verb.",
+    "pista2": "To ask for something; to order (in a restaurant).",
+    "pista3": "The word contains one 'd', one 'e', one 'i', one 'p', and one 'r'."
+  },
+  "pelo": {
+    "pista1": "It's a body part.",
+    "pista2": "The mass of fibers that grows on your head; hair.",
+    "pista3": "The word contains one 'e', one 'l', one 'o', and one 'p'."
+  },
+  "peluquería": {
+    "pista1": "It's a place.",
+    "pista2": "The shop where you go to get your hair cut.",
+    "pista3": "The word contains one 'a', one 'e', one 'í', one 'l', one 'p', one 'q', one 'r', and two 'u'."
+  },
+  "pensar": {
+    "pista1": "It's a verb.",
+    "pista2": "To use your mind; to think.",
+    "pista3": "The word contains one 'a', one 'e', one 'n', one 'p', one 'r', and one 's'."
+  },
+  "pequeño": {
+    "pista1": "It's an adjective.",
+    "pista2": "The opposite of 'grande' (big); small or little.",
+    "pista3": "The word contains one 'e', one 'ñ', one 'o', one 'p', one 'q', and one 'u'."
+  },
+  "pera": {
+    "pista1": "It's a fruit.",
+    "pista2": "A green or yellow fruit that is wider at the bottom.",
+    "pista3": "The word contains one 'a', one 'e', one 'p', and one 'r'."
+  },
+  "perder": {
+    "pista1": "It's a verb.",
+    "pista2": "To not be able to find something, or to not win; to lose.",
+    "pista3": "The word contains one 'd', two 'e', one 'p', and two 'r'."
+  },
+  "perdón": {
+    "pista1": "It's an interjection.",
+    "pista2": "What you say when you apologize; 'sorry' or 'excuse me'.",
+    "pista3": "The word contains one 'd', one 'e', one 'n', one 'ó', one 'p', and one 'r'."
+  },
+  "perezoso": {
+    "pista1": "It's an adjective.",
+    "pista2": "Not wanting to work or use energy; lazy.",
+    "pista3": "The word contains one 'e', two 'o', one 'p', one 'r', one 's', and two 'z'."
+  },
+  "perfume": {
+    "pista1": "It's a liquid.",
+    "pista2": "A liquid with a nice smell that you put on your body.",
+    "pista3": "The word contains one 'e', one 'f', one 'm', one 'p', one 'r', and one 'u'."
+  },
+  "persona": {
+    "pista1": "It's a noun.",
+    "pista2": "A human being; a person.",
+    "pista3": "The word contains one 'a', one 'e', one 'n', one 'o', one 'p', one 'r', and one 's'."
+  },
+  "pesado": {
+    "pista1": "It's an adjective.",
+    "pista2": "Having a lot of weight; heavy.",
+    "pista3": "The word contains one 'a', one 'd', one 'e', one 'o', one 'p', and one 's'."
+  },
+  "pescado": {
+    "pista1": "It's a food.",
+    "pista2": "An animal from the water, cooked as food; fish.",
+    "pista3": "The word contains one 'a', one 'c', one 'd', one 'e', one 'o', one 'p', and one 's'."
+  },
+  "pesimista": {
+    "pista1": "It's an adjective.",
+    "pista2": "A person who expects the worst to happen; pessimistic.",
+    "pista3": "The word contains one 'a', one 'e', one 'i', one 'm', one 'p', two 's', and one 't'."
+  },
+  "pie": {
+    "pista1": "It's a body part.",
+    "pista2": "The part of your body at the end of your leg; your foot.",
+    "pista3": "The word contains one 'e', one 'i', and one 'p'."
+  },
+  "piel": {
+    "pista1": "It's a noun.",
+    "pista2": "The outer covering of your body; skin.",
+    "pista3": "The word contains one 'e', one 'i', one 'l', and one 'p'."
+  },
+  "pierna": {
+    "pista1": "It's a body part.",
+    "pista2": "The part of your body you use to walk; your leg.",
+    "pista3": "The word contains one 'a', one 'e', one 'i', one 'n', one 'p', and one 'r'."
+  },
+  "pimienta": {
+    "pista1": "It's a spice.",
+    "pista2": "A black, spicy powder used on food; pepper.",
+    "pista3": "The word contains one 'a', one 'e', two 'i', one 'm', one 'n', one 'p', and one 't'."
+  },
+  "pintar": {
+    "pista1": "It's a verb.",
+    "pista2": "To cover a surface with color; to paint.",
+    "pista3": "The word contains one 'a', one 'i', one 'n', one 'p', one 'r', and one 't'."
+  },
+  "piscina": {
+    "pista1": "It's a place.",
+    "pista2": "A place filled with water for swimming.",
+    "pista3": "The word contains one 'a', one 'c', two 'i', one 'n', one 'p', and one 's'."
+  },
+  "piso": {
+    "pista1": "It's a place.",
+    "pista2": "A set of rooms to live in; an apartment or a floor.",
+    "pista3": "The word contains one 'i', one 'o', one 'p', and one 's'."
+  },
+  "plátano": {
+    "pista1": "It's a fruit.",
+    "pista2": "A long, yellow fruit; a banana.",
+    "pista3": "The word contains two 'a' (one with an accent), one 'l', one 'n', one 'o', one 'p', and one 't'."
+  },
+  "plato": {
+    "pista1": "It's an object.",
+    "pista2": "You eat food from this; a plate or a dish.",
+    "pista3": "The word contains one 'a', one 'l', one 'o', one 'p', and one 't'."
+  },
+  "playa": {
+    "pista1": "It's a place.",
+    "pista2": "An area of sand next to the sea; a beach.",
+    "pista3": "The word contains two 'a', one 'l', one 'p', and one 'y'."
+  },
+  "plaza": {
+    "pista1": "It's a place.",
+    "pista2": "An open public area in a city; a square.",
+    "pista3": "The word contains two 'a', one 'l', one 'p', and one 'z'."
+  },
+  "poco": {
+    "pista1": "It's an adverb or adjective.",
+    "pista2": "A small amount; 'a little' or 'few'.",
+    "pista3": "The word contains one 'c', two 'o', and one 'p'."
+  },
+  "poder": {
+    "pista1": "It's a verb.",
+    "pista2": "To be able to; 'can'.",
+    "pista3": "The word contains one 'd', one 'e', one 'o', one 'p', and one 'r'."
+  },
+  "pollo": {
+    "pista1": "It's a food.",
+    "pista2": "A bird eaten as food; chicken.",
+    "pista3": "The word contains two 'l', two 'o', and one 'p'."
+  },
+  "poner": {
+    "pista1": "It's a verb.",
+    "pista2": "To place or to put.",
+    "pista3": "The word contains one 'e', one 'n', one 'o', one 'p', and one 'r'."
+  },
+  "por": {
+    "pista1": "It's a preposition.",
+    "pista2": "It can mean 'by', 'for', or 'through'.",
+    "pista3": "The word contains one 'o', one 'p', and one 'r'."
+  },
+  "postre": {
+    "pista1": "It's a food.",
+    "pista2": "A sweet dish eaten at the end of a meal; dessert.",
+    "pista3": "The word contains one 'e', one 'o', one 'p', one 'r', one 's', and one 't'."
+  },
+  "precio": {
+    "pista1": "It's a noun.",
+    "pista2": "The amount of money you pay for something; price.",
+    "pista3": "The word contains one 'c', one 'e', one 'i', one 'o', one 'p', and one 'r'."
+  },
+  "preferir": {
+    "pista1": "It's a verb.",
+    "pista2": "To like one thing more than another; to prefer.",
+    "pista3": "The word contains two 'e', one 'f', one 'i', one 'p', and three 'r'."
+  },
+  "preguntar": {
+    "pista1": "It's a verb.",
+    "pista2": "To ask a question.",
+    "pista3": "The word contains one 'a', one 'e', one 'g', one 'n', one 'p', one 'r', one 't', and one 'u'."
+  },
+  "preocupado": {
+    "pista1": "It's an adjective or feeling.",
+    "pista2": "Feeling anxious about something; worried.",
+    "pista3": "The word contains one 'a', one 'c', one 'd', one 'e', two 'o', one 'p', two 'r', and one 'u'."
+  },
+  "preparar": {
+    "pista1": "It's a verb.",
+    "pista2": "To make something ready; to prepare.",
+    "pista3": "The word contains two 'a', one 'e', one 'p', three 'r', and one 'p'."
+  },
+  "primavera": {
+    "pista1": "It's a season.",
+    "pista2": "The season between winter and summer.",
+    "pista3": "The word contains one 'a', one 'e', one 'i', one 'm', one 'p', two 'r', and one 'v'."
+  },
+  "probar": {
+    "pista1": "It's a verb.",
+    "pista2": "To taste food, or to test something.",
+    "pista3": "The word contains one 'a', one 'b', one 'o', one 'p', and two 'r'."
+  },
+  "propina": {
+    "pista1": "It's a noun.",
+    "pista2": "Extra money given for good service; a tip.",
+    "pista3": "The word contains one 'a', one 'i', one 'n', one 'o', two 'p', and one 'r'."
+  },
+  "próximo": {
+    "pista1": "It's an adjective.",
+    "pista2": "It means 'next' or 'near'.",
+    "pista3": "The word contains one 'i', one 'm', two 'o' (one with an accent), one 'p', one 'r', and one 'x'."
+  },
+  "pueblo": {
+    "pista1": "It's a place.",
+    "pista2": "A small town or village.",
+    "pista3": "The word contains one 'b', one 'e', one 'l', one 'o', one 'p', and one 'u'."
+  },
+  "puente": {
+    "pista1": "It's a structure.",
+    "pista2": "A structure built over a river or road; a bridge.",
+    "pista3": "The word contains one 'e', one 'n', one 'p', one 't', and one 'u'."
+  },
+  "puerta": {
+    "pista1": "It's an object.",
+    "pista2": "You open this to enter a room; a door.",
+    "pista3": "The word contains one 'a', one 'e', one 'p', one 'r', one 't', and one 'u'."
+  },
+  "puerto": {
+    "pista1": "It's a place.",
+    "pista2": "A place where ships load and unload; a port.",
+    "pista3": "The word contains one 'e', one 'o', one 'p', one 'r', one 't', and one 'u'."
+  },
+  "pulsera": {
+    "pista1": "It's an accessory.",
+    "pista2": "Jewelry worn around the wrist; a bracelet.",
+    "pista3": "The word contains one 'a', one 'e', one 'l', one 'p', one 'r', one 's', and one 'u'."
+  },
+  "qué": {
+    "pista1": "It's a question word.",
+    "pista2": "It means 'what' or 'which'.",
+    "pista3": "The word contains one 'e' (with an accent), one 'q', and one 'u'."
+  },
+  "quedar": {
+    "pista1": "It's a verb.",
+    "pista2": "To stay, to remain, or to meet up.",
+    "pista3": "The word contains one 'a', one 'd', one 'e', one 'q', one 'r', and one 'u'."
+  },
+  "querer": {
+    "pista1": "It's a verb.",
+    "pista2": "To want something, or to love someone.",
+    "pista3": "The word contains three 'e', one 'q', two 'r', and one 'u'."
+  },
+  "queso": {
+    "pista1": "It's a food.",
+    "pista2": "A food made from milk; cheese.",
+    "pista3": "The word contains one 'e', one 'o', one 'q', one 's', and one 'u'."
+  },
+  "quién": {
+    "pista1": "It's a question word.",
+    "pista2": "It means 'who'.",
+    "pista3": "The word contains one 'e', one 'i' (with an accent), one 'n', one 'q', and one 'u'."
+  },
+  "rápido": {
+    "pista1": "It's an adjective.",
+    "pista2": "The opposite of slow; fast.",
+    "pista3": "The word contains one 'a' (with an accent), one 'd', one 'i', one 'o', one 'p', and one 'r'."
+  },
+  "raro": {
+    "pista1": "It's an adjective.",
+    "pista2": "It means 'strange' or 'rare'.",
+    "pista3": "The word contains one 'a', one 'o', and two 'r'."
+  },
+  "receta": {
+    "pista1": "It's a noun.",
+    "pista2": "Instructions for cooking food; a recipe.",
+    "pista3": "The word contains one 'a', one 'c', two 'e', one 'r', and one 't'."
+  },
+  "recibir": {
+    "pista1": "It's a verb.",
+    "pista2": "To get something; to receive.",
+    "pista3": "The word contains one 'b', one 'c', two 'e', two 'i', and two 'r'."
+  },
+  "recomendar": {
+    "pista1": "It's a verb.",
+    "pista2": "To suggest something is good; to recommend.",
+    "pista3": "The word contains one 'a', one 'c', one 'd', two 'e', one 'm', one 'n', one 'o', and two 'r'."
+  },
+  "recordar": {
+    "pista1": "It's a verb.",
+    "pista2": "The opposite of 'olvidar' (to forget); to remember.",
+    "pista3": "The word contains one 'a', one 'c', one 'd', one 'e', one 'o', and two 'r'."
+  },
+  "recto": {
+    "pista1": "It's an adjective or direction.",
+    "pista2": "It means 'straight'.",
+    "pista3": "The word contains one 'c', one 'e', one 'o', one 'r', and one 't'."
+  },
+  "rojo": {
+    "pista1": "It's a color.",
+    "pista2": "The color of an apple or a stop sign; red.",
+    "pista3": "The word contains one 'j', two 'o', and one 'r'."
+  },
+  "relajado": {
+    "pista1": "It's an adjective or feeling.",
+    "pista2": "Calm and free from stress; relaxed.",
+    "pista3": "The word contains two 'a', one 'd', one 'e', one 'j', one 'l', one 'o', and one 'r'."
+  },
+  "reloj": {
+    "pista1": "It's an object.",
+    "pista2": "It tells you the time; a clock or watch.",
+    "pista3": "The word contains one 'e', one 'j', one 'l', one 'o', and one 'r'."
+  },
+  "reservar": {
+    "pista1": "It's a verb.",
+    "pista2": "To arrange for a hotel room or table; to reserve.",
+    "pista3": "The word contains one 'a', two 'e', two 'r', one 's', one 'v', and 'r'."
+  },
+  "resfriado": {
+    "pista1": "It's an illness.",
+    "pista2": "A common illness that gives you a cough and runny nose; a cold.",
+    "pista3": "The word contains one 'a', one 'd', one 'e', one 'f', one 'i', one 'o', two 'r', and one 's'."
+  },
+  "restaurante": {
+    "pista1": "It's a place.",
+    "pista2": "A place where you pay to eat meals.",
+    "pista3": "The word contains one 'a', two 'e', one 'n', one 'r', two 's', two 't', and one 'u'."
+  },
+  "rico": {
+    "pista1": "It's an adjective.",
+    "pista2": "It means 'delicious' (for food) or 'rich' (for money).",
+    "pista3": "The word contains one 'c', one 'i', one 'o', and one 'r'."
+  },
+  "rodilla": {
+    "pista1": "It's a body part.",
+    "pista2": "The joint in the middle of your leg; your knee.",
+    "pista3": "The word contains one 'a', one 'd', one 'i', two 'l', one 'o', and one 'r'."
+  },
+  "romper": {
+    "pista1": "It's a verb.",
+    "pista2": "To damage something into pieces; to break.",
+    "pista3": "The word contains one 'e', one 'm', one 'o', one 'p', and two 'r'."
+  },
+  "ropa": {
+    "pista1": "It's a noun.",
+    "pista2": "Things you wear, like shirts and pants; clothes.",
+    "pista3": "The word contains one 'a', one 'o', one 'p', and one 'r'."
+  },
+  "rosa": {
+    "pista1": "It's a color or a noun.",
+    "pista2": "A light red color (pink) or a type of flower.",
+    "pista3": "The word contains one 'a', one 'o', one 'r', and one 's'."
+  },
+  "rubio": {
+    "pista1": "It's an adjective.",
+    "pista2": "Describes a person with yellow hair; blonde.",
+    "pista3": "The word contains one 'b', one 'i', one 'o', one 'r', and one 'u'."
+  },
+  "rueda": {
+    "pista1": "It's an object.",
+    "pista2": "A round object on a car or bicycle; a wheel.",
+    "pista3": "The word contains one 'a', one 'd', one 'e', one 'r', and one 'u'."
+  },
+  "sábado": {
+    "pista1": "It's a day of the week.",
+    "pista2": "The day after Friday; Saturday.",
+    "pista3": "The word contains two 'a' (one with an accent), one 'b', one 'd', one 'o', and one 's'."
+  },
+  "saber": {
+    "pista1": "It's a verb.",
+    "pista2": "To know a fact or how to do something.",
+    "pista3": "The word contains one 'a', one 'b', one 'e', one 'r', and one 's'."
+  },
+  "sabroso": {
+    "pista1": "It's an adjective.",
+    "pista2": "Having a good flavor; tasty.",
+    "pista3": "The word contains one 'a', one 'b', two 'o', one 'r', and two 's'."
+  },
+  "sacar": {
+    "pista1": "It's a verb.",
+    "pista2": "To take something out.",
+    "pista3": "The word contains two 'a', one 'c', one 'r', and one 's'."
+  },
+  "sal": {
+    "pista1": "It's an ingredient.",
+    "pista2": "A white crystal used to flavor food; salt.",
+    "pista3": "The word contains one 'a', one 'l', and one 's'."
+  },
+  "sala": {
+    "pista1": "It's a room.",
+    "pista2": "A room in a house, often the living room.",
+    "pista3": "The word contains two 'a', one 'l', and one 's'."
+  },
+  "salida": {
+    "pista1": "It's a noun.",
+    "pista2": "The way out (an exit) or a departure.",
+    "pista3": "The word contains one 'a', one 'd', one 'i', one 'l', and one 's'."
+  },
+  "salir": {
+    "pista1": "It's a verb.",
+    "pista2": "To go out or to leave.",
+    "pista3": "The word contains one 'a', one 'i', one 'l', one 'r', and one 's'."
+  },
+  "salsa": {
+    "pista1": "It's a food.",
+    "pista2": "A liquid topping for food, like tomato sauce.",
+    "pista3": "The word contains two 'a', one 'l', and two 's'."
+  },
+  "salud": {
+    "pista1": "It's a noun.",
+    "pista2": "The state of being well; health.",
+    "pista3": "The word contains one 'a', one 'd', one 'l', one 's', and one 'u'."
+  },
+  "sandalia": {
+    "pista1": "It's a piece of clothing.",
+    "pista2": "An open shoe worn in warm weather; a sandal.",
+    "pista3": "The word contains three 'a', one 'd', one 'i', one 'l', one 'n', and one 's'."
+  },
+  "sandía": {
+    "pista1": "It's a fruit.",
+    "pista2": "A large green fruit with red flesh; watermelon.",
+    "pista3": "The word contains two 'a', one 'd', one 'í', one 'n', and one 's'."
+  },
+  "sangre": {
+    "pista1": "It's a liquid.",
+    "pista2": "The red liquid in your body; blood.",
+    "pista3": "The word contains one 'a', one 'e', one 'g', one 'n', one 'r', and one 's'."
+  },
+  "sartén": {
+    "pista1": "It's an object.",
+    "pista2": "A flat metal pan for cooking; a frying pan.",
+    "pista3": "The word contains one 'a', one 'e' (with an accent), one 'n', one 'r', one 's', and one 't'."
+  },
+  "sed": {
+    "pista1": "It's a feeling.",
+    "pista2": "The feeling of needing to drink water; thirst.",
+    "pista3": "The word contains one 'd', one 'e', and one 's'."
+  },
+  "seguir": {
+    "pista1": "It's a verb.",
+    "pista2": "To continue, or to follow.",
+    "pista3": "The word contains one 'e', one 'g', one 'i', one 'r', one 's', and one 'u'."
+  },
+  "seguro": {
+    "pista1": "It's an adjective.",
+    "pista2": "It means 'sure' or 'safe'.",
+    "pista3": "The word contains one 'e', one 'g', one 'o', one 'r', one 's', and one 'u'."
+  },
+  "semana": {
+    "pista1": "It's a unit of time.",
+    "pista2": "A period of seven days; a week.",
+    "pista3": "The word contains two 'a', one 'e', one 'm', one 'n', and one 's'."
+  },
+  "sentar": {
+    "pista1": "It's a verb.",
+    "pista2": "To put yourself in a seated position; to sit.",
+    "pista3": "The word contains one 'a', one 'e', one 'n', one 'r', one 's', and one 't'."
+  },
+  "sentir": {
+    "pista1": "It's a verb.",
+    "pista2": "To experience an emotion or sensation; to feel.",
+    "pista3": "The word contains one 'e', one 'i', one 'n', one 'r', one 's', and one 't'."
+  },
+  "señor": {
+    "pista1": "It's a person or title.",
+    "pista2": "A title for a man (Mr.), or the man himself.",
+    "pista3": "The word contains one 'e', one 'ñ', one 'o', one 'r', and one 's'."
+  },
+  "septiembre": {
+    "pista1": "It's a month.",
+    "pista2": "The ninth month of the year; September.",
+    "pista3": "The word contains one 'b', two 'e', one 'i', one 'm', one 'p', one 'r', one 's', and one 't'."
+  },
+  "ser": {
+    "pista1": "It's a verb.",
+    "pista2": "A verb meaning 'to be' (often for permanent traits).",
+    "pista3": "The word contains one 'e', one 'r', and one 's'."
+  },
+  "serio": {
+    "pista1": "It's an adjective.",
+    "pista2": "Not joking or funny; serious.",
+    "pista3": "The word contains one 'e', one 'i', one 'o', one 'r', and one 's'."
+  },
+  "servicio": {
+    "pista1": "It's a noun.",
+    "pista2": "It can mean 'service' or 'restroom'.",
+    "pista3": "The word contains one 'c', one 'e', two 'i', one 'o', one 'r', one 's', and one 'v'."
+  },
+  "servilleta": {
+    "pista1": "It's an object.",
+    "pista2": "A piece of paper or cloth used when eating; a napkin.",
+    "pista3": "The word contains one 'a', two 'e', one 'i', one 'l', one 'r', one 's', one 't', and one 'v'."
+  },
+  "servir": {
+    "pista1": "It's a verb.",
+    "pista2": "To give food or help to someone; to serve.",
+    "pista3": "The word contains one 'e', one 'i', one 'r', one 's', and one 'v'."
+  },
+  "simpático": {
+    "pista1": "It's an adjective.",
+    "pista2": "Friendly and pleasant; nice.",
+    "pista3": "The word contains one 'a' (with an accent), one 'c', one 'i', one 'm', one 'o', one 'p', one 's', and one 't'."
+  },
+  "sitio": {
+    "pista1": "It's a place.",
+    "pista2": "A location or a place.",
+    "pista3": "The word contains two 'i', one 'o', one 's', and one 't'."
+  },
+  "sol": {
+    "pista1": "It's a noun.",
+    "pista2": "The star that gives us light and heat; the sun.",
+    "pista3": "The word contains one 'l', one 'o', and one 's'."
+  },
+  "solo": {
+    "pista1": "It's an adjective or adverb.",
+    "pista2": "It means 'alone' or 'only'.",
+    "pista3": "The word contains one 'l', two 'o', and one 's'."
+  },
+  "soltero": {
+    "pista1": "It's a status.",
+    "pista2": "Describes a person who is not married; single.",
+    "pista3": "The word contains one 'e', one 'l', one 'o', one 'r', one 's', and one 't'."
+  },
+  "sombrero": {
+    "pista1": "It's a piece of clothing.",
+    "pista2": "You wear this on your head; a hat.",
+    "pista3": "The word contains one 'b', one 'e', one 'm', two 'o', one 'r', one 's', and 'r'."
+  },
+  "sopa": {
+    "pista1": "It's a food.",
+    "pista2": "A liquid food, often hot; soup.",
+    "pista3": "The word contains one 'a', one 'o', one 'p', and one 's'."
+  },
+  "suave": {
+    "pista1": "It's an adjective.",
+    "pista2": "Pleasant to touch; soft or smooth.",
+    "pista3": "The word contains one 'a', one 'e', one 's', one 'u', and one 'v'."
+  },
+  "subir": {
+    "pista1": "It's a verb.",
+    "pista2": "The opposite of 'bajar' (to go down); to go up.",
+    "pista3": "The word contains one 'b', one 'i', one 'r', one 's', and one 'u'."
+  },
+  "sucio": {
+    "pista1": "It's an adjective.",
+    "pista2": "The opposite of 'limpio' (clean); dirty.",
+    "pista3": "The word contains one 'c', one 'i', one 'o', one 's', and one 'u'."
+  },
+  "sudadera": {
+    "pista1": "It's a piece of clothing.",
+    "pista2": "A casual, long-sleeved shirt; a sweatshirt.",
+    "pista3": "The word contains one 'a', one 'd', two 'e', one 'r', one 's', and one 'u'."
+  },
+  "supermercado": {
+    "pista1": "It's a place.",
+    "pista2": "A large store that sells food and household items.",
+    "pista3": "The word contains one 'a', one 'c', one 'd', one 'e', 'm', one 'o', one 'p', one 'r', 's', and one 'u'."
+  },
+  "talla": {
+    "pista1": "It's a noun.",
+    "pista2": "The measurement of clothes (S, M, L); size.",
+    "pista3": "The word contains two 'a', two 'l', and one 't'."
+  },
+  "también": {
+    "pista1": "It's an adverb.",
+    "pista2": "It means 'also' or 'too'.",
+    "pista3": "The word contains one 'a', one 'b', one 'e' (with an accent), one 'i', one 'm', and one 't'."
+  },
+  "tarde": {
+    "pista1": "It's a noun or adverb.",
+    "pista2": "The time of day after noon, or 'late'.",
+    "pista3": "The word contains one 'a', one 'd', one 'e', one 'r', and one 't'."
+  },
+  "tarjeta": {
+    "pista1": "It's an object.",
+    "pista2": "A small piece of plastic (credit) or paper (post); a card.",
+    "pista3": "The word contains two 'a', one 'e', one 'j', one 'r', and two 't'."
+  },
+  "taxi": {
+    "pista1": "It's a vehicle.",
+    "pista2": "A car you pay to drive you somewhere.",
+    "pista3": "The word contains one 'a', one 'i', one 't', and one 'x'."
+  },
+  "taza": {
+    "pista1": "It's an object.",
+    "pista2": "A container for drinking hot liquids, like coffee; a cup.",
+    "pista3": "The word contains two 'a', one 't', and one 'z'."
+  },
+  "té": {
+    "pista1": "It's a drink.",
+    "pista2": "A hot drink made from leaves; tea.",
+    "pista3": "The word contains one 'e' (with an accent) and one 't'."
+  },
+  "teléfono": {
+    "pista1": "It's an object.",
+    "pista2": "A device for talking to people far away.",
+    "pista3": "The word contains two 'e' (one with an accent), one 'f', one 'l', one 'n', two 'o', and one 't'."
+  },
+  "tenedor": {
+    "pista1": "It's an utensil.",
+    "pista2": "You use this to lift food to your mouth; a fork.",
+    "pista3": "The word contains one 'd', two 'e', one 'n', one 'o', one 'r', and one 't'."
+  },
+  "tener": {
+    "pista1": "It's a verb.",
+    "pista2": "To possess something; to have.",
+    "pista3": "The word contains two 'e', one 'n', one 'r', and one 't'."
+  },
+  "terminar": {
+    "pista1": "It's a verb.",
+    "pista2": "To come to an end; to finish.",
+    "pista3": "The word contains one 'a', one 'e', one 'i', one 'm', one 'n', two 'r', and one 't'."
+  },
+  "tiempo": {
+    "pista1": "It's a noun.",
+    "pista2": "It can mean 'time' or 'weather'.",
+    "pista3": "The word contains one 'e', one 'i', one 'm', one 'o', one 'p', and one 't'."
+  },
+  "tienda": {
+    "pista1": "It's a place.",
+    "pista2": "A place where you buy things; a shop.",
+    "pista3": "The word contains one 'a', one 'd', one 'e', one 'i', one 'n', and one 't'."
+  },
+  "tímido": {
+    "pista1": "It's an adjective.",
+    "pista2": "Not comfortable with new people; shy.",
+    "pista3": "The word contains one 'd', one 'i', one 'í', one 'm', one 'o', and one 't'."
+  },
+  "tío": {
+    "pista1": "It's a family member.",
+    "pista2": "Your father's or mother's brother; uncle.",
+    "pista3": "The word contains one 'í', one 'o', and one 't'."
+  },
+  "toalla": {
+    "pista1": "It's an object.",
+    "pista2": "You use this to dry your body; a towel.",
+    "pista3": "The word contains two 'a', one 'l', one 'o', and one 't'."
+  },
+  "tobillo": {
+    "pista1": "It's a body part.",
+    "pista2": "The joint connecting your foot to your leg; your ankle.",
+    "pista3": "The word contains one 'b', one 'i', two 'l', two 'o', and one 't'."
+  },
+  "tocar": {
+    "pista1": "It's a verb.",
+    "pista2": "To feel with your hand, or to play an instrument.",
+    "pista3": "The word contains one 'a', one 'c', one 'o', one 'r', and one 't'."
+  },
+  "tomar": {
+    "pista1": "It's a verb.",
+    "pista2": "To take, or to drink.",
+    "pista3": "The word contains one 'a', one 'm', one 'o', one 'r', and one 't'."
+  },
+  "tomate": {
+    "pista1": "It's a food.",
+    "pista2": "A red fruit, often used as a vegetable.",
+    "pista3": "The word contains one 'a', one 'e', one 'm', two 'o', and two 't'."
+  },
+  "tonto": {
+    "pista1": "It's an adjective.",
+    "pista2": "Not intelligent; silly or foolish.",
+    "pista3": "The word contains one 'n', two 'o', and two 't'."
+  },
+  "trabajar": {
+    "pista1": "It's a verb.",
+    "pista2": "To do a job for money; to work.",
+    "pista3": "The word contains three 'a', one 'b', one 'j', one 'r', and one 't'."
+  },
+  "traer": {
+    "pista1": "It's a verb.",
+    "pista2": "To carry something to a place; to bring.",
+    "pista3": "The word contains one 'a', one 'e', one 'r', one 't', and 'r'."
+  },
+  "traje": {
+    "pista1": "It's a piece of clothing.",
+    "pista2": "A formal set of clothes (jacket and pants); a suit.",
+    "pista3": "The word contains one 'a', one 'e', one 'j', one 'r', and one 't'."
+  },
+  "tranquilo": {
+    "pista1": "It's an adjective or feeling.",
+    "pista2": "Calm, quiet, and peaceful.",
+    "pista3": "The word contains one 'a', one 'i', one 'l', one 'n', one 'o', one 'q', one 'r', one 't', and one 'u'."
+  },
+  "transporte": {
+    "pista1": "It's a noun.",
+    "pista2": "A system for moving people, like buses or trains.",
+    "pista3": "The word contains one 'a', one 'e', one 'n', one 'o', one 'p', one 'r', two 's', and two 't'."
+  },
+  "tren": {
+    "pista1": "It's a vehicle.",
+    "pista2": "A long vehicle that moves on tracks; a train.",
+    "pista3": "The word contains one 'e', one 'n', one 'r', and one 't'."
+  },
+  "triste": {
+    "pista1": "It's an adjective or feeling.",
+    "pista2": "The opposite of happy; sad.",
+    "pista3": "The word contains one 'e', one 'i', one 'r', one 's', and two 't'."
+  },
+  "turista": {
+    "pista1": "It's a person.",
+    "pista2": "A person who is traveling for pleasure.",
+    "pista3": "The word contains one 'a', one 'i', one 'r', one 's', two 't', and one 'u'."
+  },
+  "último": {
+    "pista1": "It's an adjective.",
+    "pista2": "The very end; the last.",
+    "pista3": "The word contains one 'i', one 'l', one 'm', one 'o', 't', and one 'ú'."
+  },
+  "uña": {
+    "pista1": "It's a body part.",
+    "pista2": "The hard part at the end of your finger; a nail.",
+    "pista3": "The word contains one 'a', one 'ñ', and one 'u'."
+  },
+  "urgente": {
+    "pista1": "It's an adjective.",
+    "pista2": "Requiring immediate action; urgent.",
+    "pista3": "The word contains two 'e', one 'g', one 'n', one 'r', one 't', and one 'u'."
+  },
+  "usar": {
+    "pista1": "It's a verb.",
+    "pista2": "To do something with an object; to use.",
+    "pista3": "The word contains one 'a', one 'r', one 's', and one 'u'."
+  },
+  "útil": {
+    "pista1": "It's an adjective.",
+    "pista2": "Serving a purpose; useful.",
+    "pista3": "The word contains one 'i', one 'l', one 't', and one 'ú'."
+  },
+  "uva": {
+    "pista1": "It's a fruit.",
+    "pista2": "A small green or purple fruit used to make wine; a grape.",
+    "pista3": "The word contains one 'a', one 'u', and one 'v'."
+  },
+  "vacaciones": {
+    "pista1": "It's a noun.",
+    "pista2": "A period of time for rest and travel; vacation.",
+    "pista3": "The word contains three 'a', one 'c', one 'e', one 'i', one 'n', one 'o', one 's', and one 'v'."
+  },
+  "vale": {
+    "pista1": "It's an interjection.",
+    "pista2": "A common word in Spain meaning 'OK' or 'alright'.",
+    "pista3": "The word contains one 'a', one 'e', one 'l', and one 'v'."
+  },
+  "valiente": {
+    "pista1": "It's an adjective.",
+    "pista2": "Showing courage; brave.",
+    "pista3": "The word contains one 'a', two 'e', one 'i', one 'l', one 'n', one 't', and one 'v'."
+  },
+  "vaso": {
+    "pista1": "It's an object.",
+    "pista2": "A container, usually made of glass, for drinking.",
+    "pista3": "The word contains one 'a', one 'o', one 's', and one 'v'."
+  },
+  "vender": {
+    "pista1": "It's a verb.",
+    "pista2": "The opposite of 'comprar' (to buy); to sell.",
+    "pista3": "The word contains one 'd', two 'e', one 'n', one 'r', and one 'v'."
+  },
+  "venir": {
+    "pista1": "It's a verb.",
+    "pista2": "To move towards the speaker; to come.",
+    "pista3": "The word contains one 'e', one 'i', one 'n', one 'r', and one 'v'."
+  },
+  "ventana": {
+    "pista1": "It's an object.",
+    "pista2": "An opening in a wall with glass; a window.",
+    "pista3": "The word contains two 'a', one 'e', one 'n', one 't', and one 'v'."
+  },
+  "ver": {
+    "pista1": "It's a verb.",
+    "pista2": "To use your eyes; to see or to watch.",
+    "pista3": "The word contains one 'e', one 'r', and one 'v'."
+  },
+  "verano": {
+    "pista1": "It's a season.",
+    "pista2": "The hottest season of the year; summer.",
+    "pista3": "The word contains one 'a', one 'e', one 'n', one 'o', one 'r', and one 'v'."
+  },
+  "verde": {
+    "pista1": "It's a color.",
+    "pista2": "The color of grass or leaves; green.",
+    "pista3": "The word contains one 'd', two 'e', one 'r', and one 'v'."
+  },
+  "verdura": {
+    "pista1": "It's a food.",
+    "pista2": "A plant eaten as food, like carrots or broccoli; vegetable.",
+    "pista3": "The word contains one 'a', one 'd', one 'e', one 'r', one 'u', and one 'v'."
+  },
+  "vestido": {
+    "pista1": "It's a piece of clothing.",
+    "pista2": "A one-piece item of clothing for women; a dress.",
+    "pista3": "The word contains one 'd', one 'e', one 'i', one 'o', one 's', one 't', and one 'v'."
+  },
+  "vestir": {
+    "pista1": "It's a verb.",
+    "pista2": "To put on clothes; to wear or to dress.",
+    "pista3": "The word contains one 'e', one 'i', one 'r', one 's', one 't', and one 'v'."
+  },
+  "vez": {
+    "pista1": "It's a noun.",
+    "pista2": "An occasion or instance; 'time' (as in 'one time').",
+    "pista3": "The word contains one 'e', one 'v', and one 'z'."
+  },
+  "viajar": {
+    "pista1": "It's a verb.",
+    "pista2": "To go on a trip; to travel.",
+    "pista3": "The word contains two 'a', one 'i', one 'j', one 'r', and one 'v'."
+  },
+  "viaje": {
+    "pista1": "It's a noun.",
+    "pista2": "The act of traveling; a trip.",
+    "pista3": "The word contains one 'a', one 'e', one 'i', one 'j', and one 'v'."
+  },
+  "vida": {
+    "pista1": "It's a noun.",
+    "pista2": "The state of being alive; life.",
+    "pista3": "The word contains one 'a', one 'd', one 'i', and one 'v'."
+  },
+  "viejo": {
+    "pista1": "It's an adjective.",
+    "pista2": "The opposite of 'nuevo' (new) or 'joven' (young); old.",
+    "pista3": "The word contains one 'e', one 'i', one 'j', one 'o', and one 'v'."
+  },
+  "viento": {
+    "pista1": "It's a noun.",
+    "pista2": "Moving air; wind.",
+    "pista3": "The word contains one 'e', one 'i', one 'n', one 'o', one 't', and one 'v'."
+  },
+  "viernes": {
+    "pista1": "It's a day of the week.",
+    "pista2": "The last day of the work week; Friday.",
+    "pista3": "The word contains two 'e', one 'i', one 'n', one 'r', one 's', and one 'v'."
+  },
+  "vinagre": {
+    "pista1": "It's a liquid.",
+    "pista2": "A sour liquid used in salad dressing; vinegar.",
+    "pista3": "The word contains one 'a', one 'e', one 'g', one 'i', one 'n', one 'r', and one 'v'."
+  },
+  "vino": {
+    "pista1": "It's a drink.",
+    "pista2": "An alcoholic drink made from grapes; wine.",
+    "pista3": "The word contains one 'i', one 'n', one 'o', and one 'v'."
+  },
+  "visitar": {
+    "pista1": "It's a verb.",
+    "pista2": "To go and see a person or place; to visit.",
+    "pista3": "The word contains one 'a', two 'i', one 'r', one 's', one 't', and one 'v'."
+  },
+  "vivir": {
+    "pista1": "It's a verb.",
+    "pista2": "To be alive, or to reside in a place; to live.",
+    "pista3": "The word contains two 'i', one 'r', and two 'v'."
+  },
+  "volar": {
+    "pista1": "It's a verb.",
+    "pista2": "To move through the air, like a bird or plane; to fly.",
+    "pista3": "The word contains one 'a', one 'l', one 'o', one 'r', and one 'v'."
+  },
+  "volver": {
+    "pista1": "It's a verb.",
+    "pista2": "To go back to a place; to return.",
+    "pista3": "The word contains one 'e', one 'l', one 'o', one 'r', and two 'v'."
+  },
+  "vuelo": {
+    "pista1": "It's a noun.",
+    "pista2": "A journey in an airplane; a flight.",
+    "pista3": "The word contains one 'e', one 'l', one 'o', one 'u', and one 'v'."
+  },
+  "web": {
+    "pista1": "It's a noun.",
+    "pista2": "A system of internet sites.",
+    "pista3": "The word contains one 'b', one 'e', and one 'w'."
+  },
+  "wifi": {
+    "pista1": "It's a noun.",
+    "pista2": "Wireless internet connection.",
+    "pista3": "The word contains two 'f', two 'i', and one 'w'."
+  },
+  "whisky": {
+    "pista1": "It's a drink.",
+    "pista2": "A strong alcoholic drink made from grain.",
+    "pista3": "The word contains one 'h', one 'i', one 'k', one 's', one 'w', and one 'y'."
+  },
+  "xilófono": {
+    "pista1": "It's a musical instrument.",
+    "pista2": "An instrument with wooden bars you hit.",
+    "pista3": "The word contains one 'f', one 'i', one 'l', three 'o' (one with an accent), one 'n', and one 'x'."
+  },
+  "ya": {
+    "pista1": "It's an adverb.",
+    "pista2": "It means 'already' or 'now'.",
+    "pista3": "The word contains one 'a' and one 'y'."
+  },
+  "yogur": {
+    "pista1": "It's a food.",
+    "pista2": "A thick, sour food made from milk; yogurt.",
+    "pista3": "The word contains one 'g', one 'o', one 'r', one 'u', and one 'y'."
+  },
+  "zanahoria": {
+    "pista1": "It's a vegetable.",
+    "pista2": "An orange root vegetable; a carrot.",
+    "pista3": "The word contains three 'a', one 'h', one 'i', one 'n', one 'o', one 'r', and one 'z'."
+  },
+  "zapatería": {
+    "pista1": "It's a place.",
+    "pista2": "A shop that sells shoes.",
+    "pista3": "The word contains three 'a', one 'e', one 'í', one 'p', one 'r', one 't', and one 'z'."
+  },
+  "zapatilla": {
+    "pista1": "It's a piece of clothing.",
+    "pista2": "A comfortable sports shoe (sneaker) or a soft shoe for home (slipper).",
+    "pista3": "The word contains three 'a', one 'i', two 'l', one 'p', one 't', and one 'z'."
+  },
+  "zapato": {
+    "pista1": "It's a piece of clothing.",
+    "pista2": "Something you wear on your foot; a shoe.",
+    "pista3": "The word contains two 'a', one 'o', one 'p', one 't', and one 'z'."
+  },
+  "zumo": {
+    "pista1": "It's a drink.",
+    "pista2": "A liquid from a fruit, like orange; juice.",
+    "pista3": "The word contains one 'm', one 'o', one 'u', and one 'z'."
+  },
+  "alquiler": {
+    "pista1": "It's a noun.",
+    "pista2": "The money you pay to live in a house that isn't yours.",
+    "pista3": "The word contains one 'a', two 'l's, one 'q', one 'u', one 'i', one 'e', and one 'r'."
+  },
+  "alumno": {
+    "pista1": "It's a noun referring to a person.",
+    "pista2": "A student in a school.",
+    "pista3": "The word contains one 'a', one 'l', one 'u', one 'm', one 'n', and one 'o'."
+  },
+  "aparcar": {
+    "pista1": "It's a verb.",
+    "pista2": "To leave your car in a specific place.",
+    "pista3": "The word contains three 'a's, one 'p', two 'r's, and one 'c'."
+  },
+  "árbol": {
+    "pista1": "It's a noun found in nature.",
+    "pista2": "It has a trunk, branches, and leaves.",
+    "pista3": "The word contains one 'á', one 'r', one 'b', one 'o', and one 'l'."
+  },
+  "arreglar": {
+    "pista1": "It's a verb.",
+    "pista2": "To fix something that is broken.",
+    "pista3": "The word contains two 'a's, three 'r's, one 'e', one 'g', and one 'l'."
+  },
+  "asignatura": {
+    "pista1": "It's a noun related to education.",
+    "pista2": "Math, History, or Science are examples of this.",
+    "pista3": "The word contains three 'a's, one 's', one 'i', one 'g', one 'n', one 't', one 'u', and one 'r'."
+  },
+  "basura": {
+    "pista1": "It's a noun.",
+    "pista2": "Things you throw away because you don't need them.",
+    "pista3": "The word contains two 'a's, one 'b', one 's', one 'u', and one 'r'."
+  },
+  "beca": {
+    "pista1": "It's a noun related to money and study.",
+    "pista2": "Financial aid to help pay for school or university.",
+    "pista3": "The word contains one 'b', one 'e', one 'c', and one 'a'."
+  },
+  "bolsillo": {
+    "pista1": "It's a noun related to clothing.",
+    "pista2": "A small bag sewn into pants or jackets to hold things.",
+    "pista3": "The word contains two 'o's, one 'b', three 'l's, one 's', and one 'i'."
+  },
+  "bosque": {
+    "pista1": "It's a place in nature.",
+    "pista2": "A large area covered chiefly with trees and undergrowth.",
+    "pista3": "The word contains one 'b', one 'o', one 's', one 'q', one 'u', and one 'e'."
+  },
+  "broma": {
+    "pista1": "It's a noun.",
+    "pista2": "Something you say or do to make people laugh.",
+    "pista3": "The word contains one 'b', one 'r', one 'o', one 'm', and one 'a'."
+  },
+  "buzón": {
+    "pista1": "It's a noun.",
+    "pista2": "Where you put letters to send them or receive them.",
+    "pista3": "The word contains one 'b', one 'u', one 'z', one 'ó', and one 'n'."
+  },
+  "cajón": {
+    "pista1": "It's a part of furniture.",
+    "pista2": "A sliding box in a table or desk used for storage.",
+    "pista3": "The word contains one 'c', one 'a', one 'j', one 'ó', and one 'n'."
+  },
+  "cámara": {
+    "pista1": "It's a device.",
+    "pista2": "You use this to take photos or record videos.",
+    "pista3": "The word contains one 'c', one 'á', one 'm', two 'a's, and one 'r'."
+  },
+  "campo": {
+    "pista1": "It's a noun.",
+    "pista2": "The countryside, away from the city.",
+    "pista3": "The word contains one 'c', one 'a', one 'm', one 'p', and one 'o'."
+  },
+  "canción": {
+    "pista1": "It's a noun related to music.",
+    "pista2": "A short piece of music with words.",
+    "pista3": "The word contains two 'c's, one 'a', two 'n's, one 'i', and one 'ó'."
+  },
+  "carpeta": {
+    "pista1": "It's a noun for organization.",
+    "pista2": "A cover or holder for keeping loose papers together.",
+    "pista3": "The word contains one 'c', two 'a's, one 'r', one 'p', one 'e', and one 't'."
+  },
+  "cartera": {
+    "pista1": "It's an accessory.",
+    "pista2": "A small case for carrying money and credit cards.",
+    "pista3": "The word contains one 'c', two 'a's, two 'r's, one 't', and one 'e'."
+  },
+  "cielo": {
+    "pista1": "It's a noun.",
+    "pista2": "It is blue during the day and has stars at night.",
+    "pista3": "The word contains one 'c', one 'i', one 'e', one 'l', and one 'o'."
+  },
+  "ciencia": {
+    "pista1": "It's a noun.",
+    "pista2": "The study of the physical and natural world.",
+    "pista3": "The word contains two 'c's, two 'i's, one 'e', one 'n', and one 'a'."
+  },
+  "compañero": {
+    "pista1": "It's a noun referring to a person.",
+    "pista2": "Someone who shares an activity or space with you.",
+    "pista3": "The word contains one 'c', two 'o's, one 'm', one 'p', one 'a', one 'ñ', one 'e', and one 'r'."
+  },
+  "compartir": {
+    "pista1": "It's a verb.",
+    "pista2": "To give a portion of something to others.",
+    "pista3": "The word contains one 'c', one 'o', one 'm', one 'p', one 'a', two 'r's, one 't', and one 'i'."
+  },
+  "concurso": {
+    "pista1": "It's a noun.",
+    "pista2": "A competition where people try to win a prize.",
+    "pista3": "The word contains two 'c's, two 'o's, one 'n', one 'u', one 'r', and one 's'."
+  },
+  "conducir": {
+    "pista1": "It's a verb.",
+    "pista2": "To operate and control a car.",
+    "pista3": "The word contains two 'c's, one 'o', one 'n', one 'd', one 'u', one 'i', and one 'r'."
+  },
+  "congelador": {
+    "pista1": "It's an appliance.",
+    "pista2": "The very cold part of the fridge used to make ice.",
+    "pista3": "The word contains one 'c', two 'o's, one 'n', one 'g', one 'e', one 'l', one 'a', one 'd', and one 'r'."
+  },
+  "contraseña": {
+    "pista1": "It's a noun.",
+    "pista2": "A secret word or code used to access something.",
+    "pista3": "The word contains one 'c', one 'o', two 'n's, one 't', one 'r', one 'a', one 's', one 'e', and one 'ñ'."
+  },
+  "cortar": {
+    "pista1": "It's a verb.",
+    "pista2": "To use a knife or scissors to divide something.",
+    "pista3": "The word contains one 'c', one 'o', two 'r's, one 't', and one 'a'."
+  },
+  "cosa": {
+    "pista1": "It's a noun.",
+    "pista2": "An object that is not alive.",
+    "pista3": "The word contains one 'c', one 'o', one 's', and one 'a'."
+  },
+  "costumbre": {
+    "pista1": "It's a noun.",
+    "pista2": "A habit or tradition.",
+    "pista3": "The word contains one 'c', one 'o', one 's', one 't', one 'u', one 'm', one 'b', one 'r', and one 'e'."
+  },
+  "cuidar": {
+    "pista1": "It's a verb.",
+    "pista2": "To look after someone or something.",
+    "pista3": "The word contains one 'c', one 'u', one 'i', one 'd', one 'a', and one 'r'."
+  },
+  "cultura": {
+    "pista1": "It's a noun.",
+    "pista2": "The arts, beliefs, and customs of a group of people.",
+    "pista3": "The word contains one 'c', two 'u's, one 'l', one 't', one 'r', and one 'a'."
+  },
+  "descuento": {
+    "pista1": "It's a noun related to shopping.",
+    "pista2": "A reduction in the usual price.",
+    "pista3": "The word contains one 'd', two 'e's, one 's', one 'c', one 'u', one 'n', one 't', and one 'o'."
+  },
+  "dibujo": {
+    "pista1": "It's a noun.",
+    "pista2": "A picture made with a pencil or pen.",
+    "pista3": "The word contains one 'd', one 'i', one 'b', one 'u', one 'j', and one 'o'."
+  },
+  "diccionario": {
+    "pista1": "It's a book.",
+    "pista2": "It lists words and their meanings.",
+    "pista3": "The word contains one 'd', three 'i's, two 'c's, two 'o's, one 'n', one 'a', and one 'r'."
+  },
+  "discutir": {
+    "pista1": "It's a verb.",
+    "pista2": "To argue or debate about something.",
+    "pista3": "The word contains one 'd', two 'i's, one 's', one 'c', one 'u', one 't', and one 'r'."
+  },
+  "edificio": {
+    "pista1": "It's a structure.",
+    "pista2": "A structure with a roof and walls, like a house or factory.",
+    "pista3": "The word contains one 'e', one 'd', three 'i's, one 'f', one 'c', and one 'o'."
+  },
+  "elegir": {
+    "pista1": "It's a verb.",
+    "pista2": "To choose or select.",
+    "pista3": "The word contains two 'e's, one 'l', one 'g', one 'i', and one 'r'."
+  },
+  "empresa": {
+    "pista1": "It's a noun.",
+    "pista2": "A business or company.",
+    "pista3": "The word contains two 'e's, one 'm', one 'p', one 'r', one 's', and one 'a'."
+  },
+  "encender": {
+    "pista1": "It's a verb.",
+    "pista2": "To turn on a light or machine.",
+    "pista3": "The word contains three 'e's, two 'n's, one 'c', one 'd', and one 'r'."
+  },
+  "entrevista": {
+    "pista1": "It's a noun.",
+    "pista2": "A formal meeting to ask questions, usually for a job.",
+    "pista3": "The word contains two 'e's, one 'n', two 't's, one 'r', one 'v', one 'i', one 's', and one 'a'."
+  },
+  "escalera": {
+    "pista1": "It's a noun.",
+    "pista2": "Steps used to go up or down.",
+    "pista3": "The word contains two 'e's, one 's', one 'c', two 'a's, one 'l', and one 'r'."
+  },
+  "estrella": {
+    "pista1": "It's a noun.",
+    "pista2": "A bright point of light in the night sky.",
+    "pista3": "The word contains two 'e's, one 's', one 't', one 'r', two 'l's, and one 'a'."
+  },
+  "éxito": {
+    "pista1": "It's a noun.",
+    "pista2": "The achievement of a goal; success.",
+    "pista3": "The word contains one 'é', one 'x', one 'i', one 't', and one 'o'."
+  },
+  "fábrica": {
+    "pista1": "It's a place.",
+    "pista2": "A building where goods are manufactured.",
+    "pista3": "The word contains one 'f', one 'á', one 'b', one 'r', one 'i', one 'c', and one 'a'."
+  },
+  "factura": {
+    "pista1": "It's a document.",
+    "pista2": "A bill that shows how much you have to pay.",
+    "pista3": "The word contains one 'f', two 'a's, one 'c', one 't', one 'u', and one 'r'."
+  },
+  "felicidad": {
+    "pista1": "It's an emotion.",
+    "pista2": "The state of being happy.",
+    "pista3": "The word contains one 'f', one 'e', one 'l', two 'i's, one 'c', two 'd's, and one 'a'."
+  },
+  "firmar": {
+    "pista1": "It's a verb.",
+    "pista2": "To write your name on a document.",
+    "pista3": "The word contains one 'f', one 'i', two 'r's, one 'm', and one 'a'."
+  },
+  "flor": {
+    "pista1": "It's a plant part.",
+    "pista2": "The colorful part of a plant.",
+    "pista3": "The word contains one 'f', one 'l', one 'o', and one 'r'."
+  },
+  "funcionar": {
+    "pista1": "It's a verb.",
+    "pista2": "To work properly (for a machine).",
+    "pista3": "The word contains one 'f', one 'u', two 'n's, one 'c', one 'i', one 'o', one 'a', and one 'r'."
+  },
+  "ganar": {
+    "pista1": "It's a verb.",
+    "pista2": "To win or to earn money.",
+    "pista3": "The word contains one 'g', two 'a's, one 'n', and one 'r'."
+  },
+  "garaje": {
+    "pista1": "It's a place.",
+    "pista2": "Where you park your car at home.",
+    "pista3": "The word contains one 'g', two 'a's, one 'r', one 'j', and one 'e'."
+  },
+  "gastar": {
+    "pista1": "It's a verb.",
+    "pista2": "To use money to buy things.",
+    "pista3": "The word contains one 'g', two 'a's, one 's', one 't', and one 'r'."
+  },
+  "guardar": {
+    "pista1": "It's a verb.",
+    "pista2": "To save or keep something safe.",
+    "pista3": "The word contains one 'g', one 'u', two 'a's, two 'r's, and one 'd'."
+  },
+  "guerra": {
+    "pista1": "It's a noun.",
+    "pista2": "Armed conflict between countries.",
+    "pista3": "The word contains one 'g', one 'u', one 'e', two 'r's, and one 'a'."
+  },
+  "guitarra": {
+    "pista1": "It's an instrument.",
+    "pista2": "A musical instrument with six strings.",
+    "pista3": "The word contains one 'g', one 'u', one 'i', one 't', two 'a's, and two 'r's."
+  },
+  "historia": {
+    "pista1": "It's a noun.",
+    "pista2": "The study of past events.",
+    "pista3": "The word contains one 'h', two 'i's, one 's', one 't', one 'o', one 'r', and one 'a'."
+  },
+  "idioma": {
+    "pista1": "It's a noun.",
+    "pista2": "A language spoken by people.",
+    "pista3": "The word contains two 'i's, one 'd', one 'o', one 'm', and one 'a'."
+  },
+  "iglesia": {
+    "pista1": "It's a building.",
+    "pista2": "A place for Christian worship.",
+    "pista3": "The word contains two 'i's, one 'g', one 'l', one 'e', one 's', and one 'a'."
+  },
+  "incendio": {
+    "pista1": "It's a disaster.",
+    "pista2": "A large and destructive fire.",
+    "pista3": "The word contains two 'i's, two 'n's, one 'c', one 'e', one 'd', and one 'o'."
+  },
+  "informe": {
+    "pista1": "It's a document.",
+    "pista2": "A written account of something observed or done.",
+    "pista3": "The word contains two 'i's, one 'n', one 'f', one 'o', one 'r', one 'm', and one 'e'."
+  },
+  "ingrediente": {
+    "pista1": "It's a noun related to food.",
+    "pista2": "One of the items needed to make a recipe.",
+    "pista3": "The word contains two 'i's, two 'n's, one 'g', one 'r', three 'e's, one 'd', and one 't'."
+  },
+  "jefe": {
+    "pista1": "It's a noun referring to a person.",
+    "pista2": "The boss or person in charge.",
+    "pista3": "The word contains one 'j', two 'e's, and one 'f'."
+  },
+  "juguete": {
+    "pista1": "It's an object.",
+    "pista2": "Something for children to play with.",
+    "pista3": "The word contains one 'j', two 'u's, one 'g', two 'e's, and one 't'."
+  },
+  "león": {
+    "pista1": "It's an animal.",
+    "pista2": "A big cat known as the king of the jungle.",
+    "pista3": "The word contains one 'l', one 'e', one 'ó', and one 'n'."
+  },
+  "letra": {
+    "pista1": "It's a noun.",
+    "pista2": "A character in the alphabet.",
+    "pista3": "The word contains one 'l', one 'e', one 't', one 'r', and one 'a'."
+  },
+  "libertad": {
+    "pista1": "It's a concept.",
+    "pista2": "The state of being free.",
+    "pista3": "The word contains one 'l', one 'i', one 'b', one 'e', one 'r', one 't', one 'a', and one 'd'."
+  },
+  "llorar": {
+    "pista1": "It's a verb.",
+    "pista2": "To shed tears because you are sad.",
+    "pista3": "The word contains two 'l's, one 'o', two 'r's, and one 'a'."
+  },
+  "luna": {
+    "pista1": "It's in the sky.",
+    "pista2": "You see it at night orbiting the Earth.",
+    "pista3": "The word contains one 'l', one 'u', one 'n', and one 'a'."
+  },
+  "madera": {
+    "pista1": "It's a material.",
+    "pista2": "The hard material that comes from trees.",
+    "pista3": "The word contains one 'm', two 'a's, one 'd', one 'e', and one 'r'."
+  },
+  "maravilla": {
+    "pista1": "It's a noun.",
+    "pista2": "Something causing wonder or amazement.",
+    "pista3": "The word contains one 'm', three 'a's, one 'r', one 'v', one 'i', and two 'l's."
+  },
+  "máquina": {
+    "pista1": "It's a device.",
+    "pista2": "A mechanical device with moving parts.",
+    "pista3": "The word contains one 'm', one 'á', one 'q', one 'u', one 'i', one 'n', and one 'a'."
+  },
+  "mentira": {
+    "pista1": "It's a noun.",
+    "pista2": "Something that is not true.",
+    "pista3": "The word contains one 'm', one 'e', one 'n', one 't', one 'i', one 'r', and one 'a'."
+  },
+  "mensaje": {
+    "pista1": "It's a noun.",
+    "pista2": "Information sent to someone.",
+    "pista3": "The word contains one 'm', two 'e's, one 'n', one 's', one 'a', and one 'j'."
+  },
+  "moda": {
+    "pista1": "It's a noun.",
+    "pista2": "A popular style of clothes or behavior.",
+    "pista3": "The word contains one 'm', one 'o', one 'd', and one 'a'."
+  },
+  "moneda": {
+    "pista1": "It's money.",
+    "pista2": "A flat, round piece of metal used as money.",
+    "pista3": "The word contains one 'm', one 'o', one 'n', one 'e', one 'd', and one 'a'."
+  },
+  "mundo": {
+    "pista1": "It's a place.",
+    "pista2": "The earth and all people and things on it.",
+    "pista3": "The word contains one 'm', one 'u', one 'n', one 'd', and one 'o'."
+  },
+  "naturaleza": {
+    "pista1": "It's a noun.",
+    "pista2": "The physical world, including plants and animals.",
+    "pista3": "The word contains one 'n', three 'a's, one 't', one 'u', one 'r', one 'l', one 'e', and one 'z'."
+  },
+  "noticia": {
+    "pista1": "It's a noun.",
+    "pista2": "New information about something.",
+    "pista3": "The word contains one 'n', one 'o', one 't', two 'i's, one 'c', and one 'a'."
+  },
+  "novela": {
+    "pista1": "It's a book.",
+    "pista2": "A long written story about imaginary people.",
+    "pista3": "The word contains one 'n', one 'o', one 'v', one 'e', one 'l', and one 'a'."
+  },
+  "obligación": {
+    "pista1": "It's a noun.",
+    "pista2": "Something you must do.",
+    "pista3": "The word contains two 'o's, one 'b', one 'l', two 'i's, one 'g', one 'a', one 'c', one 'ó', and one 'n'."
+  },
+  "oscuridad": {
+    "pista1": "It's a noun.",
+    "pista2": "The absence of light.",
+    "pista3": "The word contains one 'o', one 's', one 'c', one 'u', one 'r', one 'i', two 'd's, and one 'a'."
+  },
+  "pájaro": {
+    "pista1": "It's an animal.",
+    "pista2": "An animal with feathers and wings that can fly.",
+    "pista3": "The word contains one 'p', one 'á', one 'j', one 'a', one 'r', and one 'o'."
+  },
+  "pantalla": {
+    "pista1": "It's part of a device.",
+    "pista2": "The part of a computer or phone where you see images.",
+    "pista3": "The word contains one 'p', three 'a's, one 'n', one 't', and two 'l's."
+  },
+  "parque": {
+    "pista1": "It's a place.",
+    "pista2": "A public area with grass and trees for relaxing.",
+    "pista3": "The word contains one 'p', one 'a', one 'r', one 'q', one 'u', and one 'e'."
+  },
+  "partido": {
+    "pista1": "It's an event.",
+    "pista2": "A game or match in sports.",
+    "pista3": "The word contains one 'p', one 'a', one 'r', one 't', one 'i', one 'd', and one 'o'."
+  },
+  "paz": {
+    "pista1": "It's a concept.",
+    "pista2": "Freedom from disturbance or war.",
+    "pista3": "The word contains one 'p', one 'a', and one 'z'."
+  },
+  "película": {
+    "pista1": "It's entertainment.",
+    "pista2": "A story shown in moving pictures; a movie.",
+    "pista3": "The word contains one 'p', one 'e', two 'l's, one 'í', one 'c', one 'u', and one 'a'."
+  },
+  "periódico": {
+    "pista1": "It's a publication.",
+    "pista2": "Printed news published every day.",
+    "pista3": "The word contains one 'p', one 'e', one 'r', two 'i's, one 'ó', one 'd', one 'c', and one 'o'."
+  },
+  "piedra": {
+    "pista1": "It's a material.",
+    "pista2": "Hard solid mineral matter; a stone.",
+    "pista3": "The word contains one 'p', one 'i', one 'e', one 'd', one 'r', and one 'a'."
+  },
+  "pintura": {
+    "pista1": "It's art.",
+    "pista2": "A picture made with paint.",
+    "pista3": "The word contains one 'p', one 'i', one 'n', one 't', one 'u', one 'r', and one 'a'."
+  },
+  "plan": {
+    "pista1": "It's a noun.",
+    "pista2": "A detailed proposal for doing something.",
+    "pista3": "The word contains one 'p', one 'l', one 'a', and one 'n'."
+  },
+  "planta": {
+    "pista1": "It's a living thing.",
+    "pista2": "It grows in the earth and has a stem, leaves, and roots.",
+    "pista3": "The word contains one 'p', one 'l', two 'a's, one 'n', and one 't'."
+  },
+  "plástico": {
+    "pista1": "It's a material.",
+    "pista2": "A synthetic material used to make many objects.",
+    "pista3": "The word contains one 'p', one 'l', one 'á', one 's', one 't', one 'i', one 'c', and one 'o'."
+  },
+  "policía": {
+    "pista1": "It's a profession.",
+    "pista2": "A person who enforces the law.",
+    "pista3": "The word contains one 'p', one 'o', one 'l', two 'i's, one 'c', and one 'a'."
+  },
+  "política": {
+    "pista1": "It's a concept.",
+    "pista2": "The activities associated with governing a country.",
+    "pista3": "The word contains one 'p', one 'o', one 'l', two 'i's, one 't', one 'c', and one 'a'."
+  },
+  "premio": {
+    "pista1": "It's a noun.",
+    "pista2": "Something given for winning a competition.",
+    "pista3": "The word contains one 'p', one 'r', one 'e', one 'm', one 'i', and one 'o'."
+  },
+  "problema": {
+    "pista1": "It's a noun.",
+    "pista2": "Something difficult that needs to be solved.",
+    "pista3": "The word contains one 'p', one 'r', one 'o', one 'b', one 'l', one 'e', one 'm', and one 'a'."
+  },
+  "programa": {
+    "pista1": "It's a noun.",
+    "pista2": "A show on television or radio.",
+    "pista3": "The word contains one 'p', two 'r's, one 'o', one 'g', two 'a's, and one 'm'."
+  },
+  "proyecto": {
+    "pista1": "It's a noun.",
+    "pista2": "A planned piece of work.",
+    "pista3": "The word contains one 'p', one 'r', two 'o's, one 'y', one 'e', one 'c', and one 't'."
+  },
+  "prueba": {
+    "pista1": "It's a noun.",
+    "pista2": "A test to see if something works or is true.",
+    "pista3": "The word contains one 'p', one 'r', one 'u', one 'e', one 'b', and one 'a'."
+  },
+  "punto": {
+    "pista1": "It's a noun.",
+    "pista2": "A small dot or mark.",
+    "pista3": "The word contains one 'p', one 'u', one 'n', one 't', and one 'o'."
+  },
+  "queja": {
+    "pista1": "It's a noun.",
+    "pista2": "A statement that you are unhappy about something.",
+    "pista3": "The word contains one 'q', one 'u', one 'e', one 'j', and one 'a'."
+  },
+  "quemar": {
+    "pista1": "It's a verb.",
+    "pista2": "To damage something with fire.",
+    "pista3": "The word contains one 'q', one 'u', one 'e', one 'm', one 'a', and one 'r'."
+  },
+  "quizás": {
+    "pista1": "It's an adverb.",
+    "pista2": "Possibly or maybe.",
+    "pista3": "The word contains one 'q', one 'u', one 'i', one 'z', one 'á', and one 's'."
+  },
+  "radio": {
+    "pista1": "It's a device.",
+    "pista2": "You listen to music or news on this.",
+    "pista3": "The word contains one 'r', one 'a', one 'd', one 'i', and one 'o'."
+  },
+  "ratón": {
+    "pista1": "It's an animal.",
+    "pista2": "A small rodent, like Mickey.",
+    "pista3": "The word contains one 'r', one 'a', one 't', one 'ó', and one 'n'."
+  },
+  "razón": {
+    "pista1": "It's a noun.",
+    "pista2": "A cause or explanation for something.",
+    "pista3": "The word contains one 'r', one 'a', one 'z', one 'ó', and one 'n'."
+  },
+  "realidad": {
+    "pista1": "It's a concept.",
+    "pista2": "The state of things as they actually exist.",
+    "pista3": "The word contains one 'r', one 'e', two 'a's, one 'l', one 'i', and two 'd's."
+  },
+  "regalo": {
+    "pista1": "It's a noun.",
+    "pista2": "Something you give to someone on their birthday.",
+    "pista3": "The word contains one 'r', one 'e', one 'g', one 'a', one 'l', and one 'o'."
+  },
+  "regla": {
+    "pista1": "It's a tool.",
+    "pista2": "Used to measure length or draw straight lines.",
+    "pista3": "The word contains one 'r', one 'e', one 'g', one 'l', and one 'a'."
+  },
+  "reino": {
+    "pista1": "It's a place.",
+    "pista2": "A country ruled by a king or queen.",
+    "pista3": "The word contains one 'r', one 'e', one 'i', one 'n', and one 'o'."
+  },
+  "religión": {
+    "pista1": "It's a belief system.",
+    "pista2": "Belief in and worship of a god or gods.",
+    "pista3": "The word contains one 'r', one 'e', one 'l', two 'i's, one 'g', one 'ó', and one 'n'."
+  },
+  "revista": {
+    "pista1": "It's a publication.",
+    "pista2": "A periodical publication with articles and photos.",
+    "pista3": "The word contains one 'r', one 'e', one 'v', one 'i', one 's', and one 't', and one 'a'."
+  },
+  "rey": {
+    "pista1": "It's a person.",
+    "pista2": "The male ruler of a kingdom.",
+    "pista3": "The word contains one 'r', one 'e', and one 'y'."
+  },
+  "rincón": {
+    "pista1": "It's a place.",
+    "pista2": "A corner inside a room.",
+    "pista3": "The word contains one 'r', one 'i', one 'n', one 'c', one 'ó', and one 'n'."
+  },
+  "río": {
+    "pista1": "It's nature.",
+    "pista2": "A large natural stream of water flowing to the sea.",
+    "pista3": "The word contains one 'r', one 'í', and one 'o'."
+  },
+  "robo": {
+    "pista1": "It's a crime.",
+    "pista2": "The action of stealing something.",
+    "pista3": "The word contains one 'r', two 'o's, and one 'b'."
+  },
+  "ruido": {
+    "pista1": "It's a sound.",
+    "pista2": "A sound that is loud or unpleasant.",
+    "pista3": "The word contains one 'r', one 'u', one 'i', one 'd', and one 'o'."
+  },
+  "saltar": {
+    "pista1": "It's a verb.",
+    "pista2": "To push yourself off the ground into the air.",
+    "pista3": "The word contains one 's', two 'a's, one 'l', one 't', and one 'r'."
+  },
+  "secreto": {
+    "pista1": "It's a noun.",
+    "pista2": "Something meant to be kept unknown.",
+    "pista3": "The word contains one 's', two 'e's, one 'c', one 'r', one 't', and one 'o'."
+  },
+  "seguridad": {
+    "pista1": "It's a concept.",
+    "pista2": "The state of being safe.",
+    "pista3": "The word contains one 's', one 'e', one 'g', one 'u', one 'r', one 'i', two 'd's, and one 'a'."
+  },
+  "selva": {
+    "pista1": "It's a place.",
+    "pista2": "A tropical forest with many plants.",
+    "pista3": "The word contains one 's', one 'e', one 'l', one 'v', and one 'a'."
+  },
+  "serie": {
+    "pista1": "It's entertainment.",
+    "pista2": "A set of television episodes.",
+    "pista3": "The word contains one 's', two 'e's, one 'r', and one 'i'."
+  },
+  "silencio": {
+    "pista1": "It's a noun.",
+    "pista2": "Complete absence of sound.",
+    "pista3": "The word contains one 's', two 'i's, one 'l', one 'e', one 'n', one 'c', and one 'o'."
+  },
+  "solución": {
+    "pista1": "It's a noun.",
+    "pista2": "The answer to a problem.",
+    "pista3": "The word contains one 's', two 'o's, one 'l', one 'u', one 'c', one 'i', one 'ó', and one 'n'."
+  },
+  "suerte": {
+    "pista1": "It's a concept.",
+    "pista2": "Good things happening by chance; luck.",
+    "pista3": "The word contains one 's', one 'u', two 'e's, one 'r', and one 't'."
+  },
+  "taller": {
+    "pista1": "It's a place.",
+    "pista2": "A room or building where things are made or repaired.",
+    "pista3": "The word contains one 't', one 'a', two 'l's, one 'e', and one 'r'."
+  },
+  "teatro": {
+    "pista1": "It's a place.",
+    "pista2": "A building where plays are performed.",
+    "pista3": "The word contains two 't's, one 'e', one 'a', one 'r', and one 'o'."
+  },
+  "techo": {
+    "pista1": "It's part of a building.",
+    "pista2": "The upper interior surface of a room.",
+    "pista3": "The word contains one 't', one 'e', one 'c', one 'h', and one 'o'."
+  },
+  "tema": {
+    "pista1": "It's a noun.",
+    "pista2": "The subject of a talk or piece of writing.",
+    "pista3": "The word contains one 't', one 'e', one 'm', and one 'a'."
+  },
+  "temperatura": {
+    "pista1": "It's a measurement.",
+    "pista2": "How hot or cold something is.",
+    "pista3": "The word contains two 't's, two 'e's, one 'm', one 'p', two 'r's, two 'a's, and one 'u'."
+  },
+  "título": {
+    "pista1": "It's a noun.",
+    "pista2": "The name of a book or movie.",
+    "pista3": "The word contains two 't's, one 'í', one 'u', one 'l', and one 'o'."
+  },
+  "traducir": {
+    "pista1": "It's a verb.",
+    "pista2": "To change words from one language to another.",
+    "pista3": "The word contains one 't', two 'r's, one 'a', one 'd', one 'u', one 'c', and one 'i'."
+  },
+  "tráfico": {
+    "pista1": "It's a noun.",
+    "pista2": "Vehicles moving on a road.",
+    "pista3": "The word contains one 't', one 'r', one 'á', one 'f', one 'i', one 'c', and one 'o'."
+  },
+  "vecino": {
+    "pista1": "It's a person.",
+    "pista2": "Someone living next door to you.",
+    "pista3": "The word contains one 'v', one 'e', one 'c', one 'i', one 'n', and one 'o'."
+  },
+  "velocidad": {
+    "pista1": "It's a measurement.",
+    "pista2": "How fast something moves; speed.",
+    "pista3": "The word contains one 'v', one 'e', one 'l', one 'o', one 'c', one 'i', two 'd's, and one 'a'."
+  },
+  "verdad": {
+    "pista1": "It's a concept.",
+    "pista2": "Something that is true; not a lie.",
+    "pista3": "The word contains one 'v', one 'e', one 'r', two 'd's, and one 'a'."
+  },
+  "video": {
+    "pista1": "It's media.",
+    "pista2": "A recording of moving visual images.",
+    "pista3": "The word contains one 'v', one 'i', one 'd', one 'e', and one 'o'."
+  },
+  "voz": {
+    "pista1": "It's a sound.",
+    "pista2": "The sound produced in a person's larynx.",
+    "pista3": "The word contains one 'v', one 'o', and one 'z'."
+  },
+  "zona": {
+    "pista1": "It's a place.",
+    "pista2": "An area or region.",
+    "pista3": "The word contains one 'z', one 'o', one 'n', and one 'a'."
+  },
+  "zoo": {
+    "pista1": "It's a place.",
+    "pista2": "Where wild animals are kept for people to see.",
+    "pista3": "The word contains one 'z' and two 'o's."
+  },
+  "acabar": {
+    "pista1": "It's a verb.",
+    "pista2": "To finish or end something.",
+    "pista3": "The word contains three 'a's, one 'c', one 'b', and one 'r'."
+  },
+  "acercar": {
+    "pista1": "It's a verb.",
+    "pista2": "To move something closer.",
+    "pista3": "The word contains two 'a's, two 'c's, one 'e', and two 'r's."
+  },
+  "aconsejar": {
+    "pista1": "It's a verb.",
+    "pista2": "To give advice.",
+    "pista3": "The word contains two 'a's, one 'c', one 'o', one 'n', one 's', one 'e', one 'j', and one 'r'."
+  },
+  "acordar": {
+    "pista1": "It's a verb.",
+    "pista2": "To reach an agreement.",
+    "pista3": "The word contains two 'a's, one 'c', one 'o', two 'r's, and one 'd'."
+  },
+  "adivinar": {
+    "pista1": "It's a verb.",
+    "pista2": "To guess the answer.",
+    "pista3": "The word contains two 'a's, one 'd', two 'i's, one 'v', one 'n', and one 'r'."
+  },
+  "adulto": {
+    "pista1": "It's a person.",
+    "pista2": "A grown-up person; not a child.",
+    "pista3": "The word contains one 'a', one 'd', one 'u', one 'l', one 't', and one 'o'."
+  },
+  "aire": {
+    "pista1": "It's a gas.",
+    "pista2": "The invisible mixture of gases we breathe.",
+    "pista3": "The word contains one 'a', one 'i', one 'r', and one 'e'."
+  },
+  "amargo": {
+    "pista1": "It's an adjective.",
+    "pista2": "A sharp taste; opposite of sweet.",
+    "pista3": "The word contains two 'a's, one 'm', one 'r', one 'g', and one 'o'."
+  },
+  "antiguo": {
+    "pista1": "It's an adjective.",
+    "pista2": "Very old.",
+    "pista3": "The word contains one 'a', one 'n', one 't', one 'i', one 'g', one 'u', and one 'o'."
+  },
+  "apoyar": {
+    "pista1": "It's a verb.",
+    "pista2": "To support or lean on something.",
+    "pista3": "The word contains two 'a's, one 'p', one 'o', one 'y', and one 'r'."
+  },
+  "arena": {
+    "pista1": "It's a material.",
+    "pista2": "You find it on the beach.",
+    "pista3": "The word contains two 'a's, one 'r', one 'e', and one 'n'."
+  },
+  "avisar": {
+    "pista1": "It's a verb.",
+    "pista2": "To warn or notify someone.",
+    "pista3": "The word contains two 'a's, one 'v', one 'i', one 's', and one 'r'."
+  },
+  "bailar": {
+    "pista1": "It's a verb.",
+    "pista2": "To move your body to music.",
+    "pista3": "The word contains two 'a's, one 'b', one 'i', one 'l', and one 'r'."
+  },
+  "bebé": {
+    "pista1": "It's a person.",
+    "pista2": "A very young child.",
+    "pista3": "The word contains two 'b's and two 'e's."
+  },
+  "besar": {
+    "pista1": "It's a verb.",
+    "pista2": "To touch with your lips as a sign of love.",
+    "pista3": "The word contains one 'b', one 'e', one 's', one 'a', and one 'r'."
+  },
+  "boda": {
+    "pista1": "It's an event.",
+    "pista2": "A marriage ceremony.",
+    "pista3": "The word contains one 'b', one 'o', one 'd', and one 'a'."
+  },
+  "bolsa": {
+    "pista1": "It's an object.",
+    "pista2": "A bag used to carry things.",
+    "pista3": "The word contains one 'b', one 'o', one 'l', one 's', and one 'a'."
+  },
+  "borrar": {
+    "pista1": "It's a verb.",
+    "pista2": "To remove marks or text.",
+    "pista3": "The word contains one 'b', one 'o', three 'r's, and one 'a'."
+  },
+  "caballo": {
+    "pista1": "It's an animal.",
+    "pista2": "A large animal people ride on.",
+    "pista3": "The word contains two 'a's, one 'c', one 'b', two 'l's, and one 'o'."
+  },
+  "caer": {
+    "pista1": "It's a verb.",
+    "pista2": "To move downwards quickly, often by accident.",
+    "pista3": "The word contains one 'c', one 'a', one 'e', and one 'r'."
+  },
+  "camino": {
+    "pista1": "It's a place.",
+    "pista2": "A route or path for walking.",
+    "pista3": "The word contains one 'c', one 'a', one 'm', one 'i', one 'n', and one 'o'."
+  },
+  "cantante": {
+    "pista1": "It's a person.",
+    "pista2": "Someone who sings songs.",
+    "pista3": "The word contains one 'c', two 'a's, two 'n's, two 't's, and one 'e'."
+  },
+  "capaz": {
+    "pista1": "It's an adjective.",
+    "pista2": "Having the ability to do something.",
+    "pista3": "The word contains one 'c', two 'a's, one 'p', and one 'z'."
+  },
+  "carretera": {
+    "pista1": "It's a place.",
+    "pista2": "A main road for cars, especially between cities.",
+    "pista3": "The word contains one 'c', two 'a's, three 'r's, two 'e's, and one 't'."
+  },
+  "casar": {
+    "pista1": "It's a verb.",
+    "pista2": "To join two people in marriage.",
+    "pista3": "The word contains one 'c', two 'a's, one 's', and one 'r'."
+  },
+  "causa": {
+    "pista1": "It's a noun.",
+    "pista2": "The reason why something happens.",
+    "pista3": "The word contains two 'a's, one 'c', one 'u', and one 's'."
+  },
+  "celebrar": {
+    "pista1": "It's a verb.",
+    "pista2": "To have a party for a special occasion.",
+    "pista3": "The word contains one 'c', two 'e's, one 'l', one 'b', one 'r', and one 'a'."
+  },
+  "cerdo": {
+    "pista1": "It's an animal.",
+    "pista2": "A farm animal known for being pink and messy.",
+    "pista3": "The word contains one 'c', one 'e', one 'r', one 'd', and one 'o'."
+  },
+  "charlar": {
+    "pista1": "It's a verb.",
+    "pista2": "To talk in a friendly, informal way.",
+    "pista3": "The word contains one 'c', one 'h', two 'a's, two 'r's, and one 'l'."
+  },
+  "cierto": {
+    "pista1": "It's an adjective.",
+    "pista2": "True or sure.",
+    "pista3": "The word contains one 'c', one 'i', one 'e', one 'r', one 't', and one 'o'."
+  },
+  "ciudadano": {
+    "pista1": "It's a person.",
+    "pista2": "A legal member of a country or city.",
+    "pista3": "The word contains one 'c', one 'i', one 'u', two 'd's, two 'a's, one 'n', and one 'o'."
+  },
+  "claro": {
+    "pista1": "It's an adjective.",
+    "pista2": "Easy to see or understand; light in color.",
+    "pista3": "The word contains one 'c', one 'l', one 'a', one 'r', and one 'o'."
+  },
+  "comenzar": {
+    "pista1": "It's a verb.",
+    "pista2": "To start or begin.",
+    "pista3": "The word contains one 'c', one 'o', one 'm', one 'e', one 'n', one 'z', one 'a', and one 'r'."
+  },
+  "común": {
+    "pista1": "It's an adjective.",
+    "pista2": "Ordinary or shared by many.",
+    "pista3": "The word contains one 'c', one 'o', one 'm', one 'ú', and one 'n'."
+  },
+  "conejo": {
+    "pista1": "It's an animal.",
+    "pista2": "A small animal with long ears.",
+    "pista3": "The word contains one 'c', two 'o's, one 'n', one 'e', and one 'j'."
+  },
+  "consejo": {
+    "pista1": "It's a noun.",
+    "pista2": "A suggestion about what someone should do.",
+    "pista3": "The word contains one 'c', two 'o's, one 'n', one 's', one 'e', and one 'j'."
+  },
+  "continuar": {
+    "pista1": "It's a verb.",
+    "pista2": "To keep doing something without stopping.",
+    "pista3": "The word contains one 'c', one 'o', two 'n's, one 't', one 'i', one 'u', one 'a', and one 'r'."
+  },
+  "correcto": {
+    "pista1": "It's an adjective.",
+    "pista2": "Right; not wrong.",
+    "pista3": "The word contains one 'c', two 'o's, two 'r's, one 'e', one 'c', and one 't'."
+  },
+  "correr": {
+    "pista1": "It's a verb.",
+    "pista2": "To move faster than walking.",
+    "pista3": "The word contains one 'c', one 'o', three 'r's, and one 'e'."
+  },
+  "costar": {
+    "pista1": "It's a verb.",
+    "pista2": "To have a price.",
+    "pista3": "The word contains one 'c', one 'o', one 's', one 't', one 'a', and one 'r'."
+  },
+  "crear": {
+    "pista1": "It's a verb.",
+    "pista2": "To bring something into existence.",
+    "pista3": "The word contains one 'c', one 'r', one 'e', one 'a', and one 'r'."
+  },
+  "crecer": {
+    "pista1": "It's a verb.",
+    "pista2": "To become larger or older.",
+    "pista3": "The word contains two 'c's, one 'r', two 'e's, and one 'r'."
+  },
+  "cristal": {
+    "pista1": "It's a material.",
+    "pista2": "Clear glass used for windows.",
+    "pista3": "The word contains one 'c', one 'r', one 'i', one 's', one 't', one 'a', and one 'l'."
+  },
+  "cruce": {
+    "pista1": "It's a place.",
+    "pista2": "Where two roads meet.",
+    "pista3": "The word contains two 'c's, one 'r', one 'u', and one 'e'."
+  },
+  "cuerda": {
+    "pista1": "It's an object.",
+    "pista2": "Strong thick string.",
+    "pista3": "The word contains one 'c', one 'u', one 'e', one 'r', one 'd', and one 'a'."
+  },
+  "culpa": {
+    "pista1": "It's a noun.",
+    "pista2": "Responsibility for a mistake.",
+    "pista3": "The word contains one 'c', one 'u', one 'l', one 'p', and one 'a'."
+  },
+  "curioso": {
+    "pista1": "It's an adjective.",
+    "pista2": "Eager to know or learn something.",
+    "pista3": "The word contains one 'c', one 'u', one 'r', one 'i', two 'o's, and one 's'."
+  },
+  "descubrir": {
+    "pista1": "It's a verb.",
+    "pista2": "To find something for the first time.",
+    "pista3": "The word contains one 'd', one 'e', one 's', one 'c', one 'u', one 'b', two 'r's, and one 'i'."
+  },
+  "destruir": {
+    "pista1": "It's a verb.",
+    "pista2": "To break something completely.",
+    "pista3": "The word contains one 'd', one 'e', one 's', one 't', one 'r', one 'u', and one 'i'."
+  },
+  "devolver": {
+    "pista1": "It's a verb.",
+    "pista2": "To give something back.",
+    "pista3": "The word contains one 'd', two 'e's, two 'v's, one 'o', one 'l', and one 'r'."
+  },
+  "dibujar": {
+    "pista1": "It's a verb.",
+    "pista2": "To make a picture with a pencil.",
+    "pista3": "The word contains one 'd', one 'i', one 'b', one 'u', one 'j', one 'a', and one 'r'."
+  },
+  "disfrutar": {
+    "pista1": "It's a verb.",
+    "pista2": "To get pleasure from something.",
+    "pista3": "The word contains one 'd', one 'i', one 's', one 'f', one 'r', one 'u', one 't', one 'a', and one 'r'."
+  },
+  "distancia": {
+    "pista1": "It's a noun.",
+    "pista2": "The space between two places.",
+    "pista3": "The word contains one 'd', two 'i's, one 's', one 't', two 'a's, one 'n', and one 'c'."
+  },
+  "dudar": {
+    "pista1": "It's a verb.",
+    "pista2": "To be uncertain about something.",
+    "pista3": "The word contains two 'd's, one 'u', one 'a', and one 'r'."
+  },
+  "dulce": {
+    "pista1": "It's an adjective.",
+    "pista2": "Having the taste of sugar.",
+    "pista3": "The word contains one 'd', one 'u', one 'l', one 'c', and one 'e'."
+  },
+  "echar": {
+    "pista1": "It's a verb.",
+    "pista2": "To throw or pour something.",
+    "pista3": "The word contains one 'e', one 'c', one 'h', one 'a', and one 'r'."
+  },
+  "ejemplo": {
+    "pista1": "It's a noun.",
+    "pista2": "Something that shows what others of the same kind are like.",
+    "pista3": "The word contains two 'e's, one 'j', one 'm', one 'p', one 'l', and one 'o'."
+  },
+  "empujar": {
+    "pista1": "It's a verb.",
+    "pista2": "To use force to move something forward.",
+    "pista3": "The word contains one 'e', one 'm', one 'p', one 'u', one 'j', one 'a', and one 'r'."
+  },
+  "engañar": {
+    "pista1": "It's a verb.",
+    "pista2": "To make someone believe something false.",
+    "pista3": "The word contains one 'e', one 'n', one 'g', one 'a', one 'ñ', one 'a', and one 'r'."
+  },
+  "época": {
+    "pista1": "It's a noun.",
+    "pista2": "A period of time in history.",
+    "pista3": "The word contains one 'é', one 'p', one 'o', one 'c', and one 'a'."
+  },
+  "error": {
+    "pista1": "It's a noun.",
+    "pista2": "A mistake.",
+    "pista3": "The word contains one 'e', three 'r's, and one 'o'."
+  },
+  "espacio": {
+    "pista1": "It's a noun.",
+    "pista2": "An empty area or the universe.",
+    "pista3": "The word contains one 'e', one 's', one 'p', one 'a', one 'c', one 'i', and one 'o'."
+  },
+  "esquina": {
+    "pista1": "It's a place.",
+    "pista2": "Where two streets meet.",
+    "pista3": "The word contains one 'e', one 's', one 'q', one 'u', one 'i', one 'n', and one 'a'."
+  },
+  "este": {
+    "pista1": "It's a direction.",
+    "pista2": "Where the sun rises.",
+    "pista3": "The word contains two 'e's, one 's', and one 't'."
+  },
+  "evitar": {
+    "pista1": "It's a verb.",
+    "pista2": "To stop something from happening.",
+    "pista3": "The word contains one 'e', one 'v', one 'i', one 't', one 'a', and one 'r'."
+  },
+  "examen": {
+    "pista1": "It's a noun.",
+    "pista2": "A formal test of knowledge.",
+    "pista3": "The word contains two 'e's, one 'x', one 'a', one 'm', and one 'n'."
+  },
+  "existir": {
+    "pista1": "It's a verb.",
+    "pista2": "To be real or alive.",
+    "pista3": "The word contains one 'e', one 'x', two 'i's, one 's', one 't', and one 'r'."
+  },
+  "extraño": {
+    "pista1": "It's an adjective.",
+    "pista2": "Unusual or weird.",
+    "pista3": "The word contains one 'e', one 'x', one 't', one 'r', one 'a', one 'ñ', and one 'o'."
+  },
+  "falso": {
+    "pista1": "It's an adjective.",
+    "pista2": "Not true.",
+    "pista3": "The word contains one 'f', one 'a', one 'l', one 's', and one 'o'."
+  },
+  "falta": {
+    "pista1": "It's a noun.",
+    "pista2": "When something is missing.",
+    "pista3": "The word contains one 'f', two 'a's, one 'l', and one 't'."
+  },
+  "famoso": {
+    "pista1": "It's an adjective.",
+    "pista2": "Known by many people.",
+    "pista3": "The word contains one 'f', one 'a', one 'm', two 'o's, and one 's'."
+  },
+  "final": {
+    "pista1": "It's a noun.",
+    "pista2": "The end of something.",
+    "pista3": "The word contains one 'f', one 'i', one 'n', one 'a', and one 'l'."
+  },
+  "forma": {
+    "pista1": "It's a noun.",
+    "pista2": "The shape of something.",
+    "pista3": "The word contains one 'f', one 'o', one 'r', one 'm', and one 'a'."
+  },
+  "fuego": {
+    "pista1": "It's a noun.",
+    "pista2": "It produces heat and light and burns.",
+    "pista3": "The word contains one 'f', one 'u', one 'e', one 'g', and one 'o'."
+  },
+  "fuerza": {
+    "pista1": "It's a noun.",
+    "pista2": "Physical power or strength.",
+    "pista3": "The word contains one 'f', one 'u', one 'e', one 'r', one 'z', and one 'a'."
+  },
+  "futuro": {
+    "pista1": "It's a noun.",
+    "pista2": "The time that will come after now.",
+    "pista3": "The word contains one 'f', two 'u's, one 't', one 'r', and one 'o'."
+  },
+  "gas": {
+    "pista1": "It's a substance.",
+    "pista2": "A substance like air that is not solid or liquid.",
+    "pista3": "The word contains one 'g', one 'a', and one 's'."
+  },
+  "gasolinera": {
+    "pista1": "It's a place.",
+    "pista2": "Where you buy fuel for your car.",
+    "pista3": "The word contains one 'g', two 'a's, one 's', one 'o', one 'l', one 'i', one 'n', one 'e', and one 'r'."
+  },
+  "general": {
+    "pista1": "It's an adjective.",
+    "pista2": "Affecting most people or things; widespread.",
+    "pista3": "The word contains one 'g', two 'e's, one 'n', one 'r', one 'a', and one 'l'."
+  },
+  "girar": {
+    "pista1": "It's a verb.",
+    "pista2": "To turn or spin.",
+    "pista3": "The word contains one 'g', one 'i', two 'r's, and one 'a'."
+  },
+  "grave": {
+    "pista1": "It's an adjective.",
+    "pista2": "Very serious.",
+    "pista3": "The word contains one 'g', one 'r', one 'a', one 'v', and one 'e'."
+  },
+  "gritar": {
+    "pista1": "It's a verb.",
+    "pista2": "To speak very loudly.",
+    "pista3": "The word contains one 'g', one 'r', one 'i', one 't', one 'a', and one 'r'."
+  },
+  "grupo": {
+    "pista1": "It's a noun.",
+    "pista2": "A number of people or things together.",
+    "pista3": "The word contains one 'g', one 'r', one 'u', one 'p', and one 'o'."
+  },
+  "hierro": {
+    "pista1": "It's a material.",
+    "pista2": "A strong magnetic metal.",
+    "pista3": "The word contains one 'h', one 'i', one 'e', two 'r's, and one 'o'."
+  },
+  "humo": {
+    "pista1": "It's a noun.",
+    "pista2": "The grey gas from a fire.",
+    "pista3": "The word contains one 'h', one 'u', one 'm', and one 'o'."
+  },
+  "imposible": {
+    "pista1": "It's an adjective.",
+    "pista2": "Something that cannot happen.",
+    "pista3": "The word contains two 'i's, one 'm', one 'p', one 'o', one 's', one 'b', one 'l', and one 'e'."
+  },
+  "intentar": {
+    "pista1": "It's a verb.",
+    "pista2": "To try to do something.",
+    "pista3": "The word contains two 'i's, two 'n's, two 't's, one 'e', one 'a', and one 'r'."
+  },
+  "ladrillo": {
+    "pista1": "It's a material.",
+    "pista2": "A red block used to build walls.",
+    "pista3": "The word contains one 'l', one 'a', one 'd', one 'r', one 'i', and two 'l's and one 'o'."
+  },
+  "ladrón": {
+    "pista1": "It's a person.",
+    "pista2": "Someone who steals.",
+    "pista3": "The word contains one 'l', one 'a', one 'd', one 'r', one 'ó', and one 'n'."
+  },
+  "lago": {
+    "pista1": "It's a place.",
+    "pista2": "A large body of water surrounded by land.",
+    "pista3": "The word contains one 'l', one 'a', one 'g', and one 'o'."
+  },
+  "lleno": {
+    "pista1": "It's an adjective.",
+    "pista2": "Containing as much as possible; opposite of empty.",
+    "pista3": "The word contains two 'l's, one 'e', one 'n', and one 'o'."
+  },
+  "loco": {
+    "pista1": "It's an adjective.",
+    "pista2": "Crazy or insane.",
+    "pista3": "The word contains one 'l', two 'o's, and one 'c'."
+  },
+  "luchar": {
+    "pista1": "It's a verb.",
+    "pista2": "To fight or struggle.",
+    "pista3": "The word contains one 'l', one 'u', one 'c', one 'h', one 'a', and one 'r'."
+  },
+  "manera": {
+    "pista1": "It's a noun.",
+    "pista2": "The way something is done.",
+    "pista3": "The word contains one 'm', two 'a's, one 'n', one 'e', and one 'r'."
+  },
+  "matar": {
+    "pista1": "It's a verb.",
+    "pista2": "To end a life.",
+    "pista3": "The word contains one 'm', two 'a's, one 't', and one 'r'."
+  },
+  "mejorar": {
+    "pista1": "It's a verb.",
+    "pista2": "To make something better.",
+    "pista3": "The word contains one 'm', one 'e', one 'j', one 'o', two 'r's, and one 'a'."
+  },
+  "mente": {
+    "pista1": "It's a noun.",
+    "pista2": "The part of you that thinks.",
+    "pista3": "The word contains one 'm', two 'e's, one 'n', and one 't'."
+  },
+  "mentir": {
+    "pista1": "It's a verb.",
+    "pista2": "To say something that isn't true.",
+    "pista3": "The word contains one 'm', one 'e', one 'n', one 't', one 'i', and one 'r'."
+  },
+  "metal": {
+    "pista1": "It's a material.",
+    "pista2": "Gold, silver, and iron are types of this.",
+    "pista3": "The word contains one 'm', one 'e', one 't', one 'a', and one 'l'."
+  },
+  "mezclar": {
+    "pista1": "It's a verb.",
+    "pista2": "To combine two things together.",
+    "pista3": "The word contains one 'm', one 'e', one 'z', one 'c', one 'l', one 'a', and one 'r'."
+  },
+  "modo": {
+    "pista1": "It's a noun.",
+    "pista2": "A way or manner of doing something.",
+    "pista3": "The word contains one 'm', two 'o's, and one 'd'."
+  },
+  "mojado": {
+    "pista1": "It's an adjective.",
+    "pista2": "Covered with water; opposite of dry.",
+    "pista3": "The word contains one 'm', two 'o's, one 'j', one 'a', and one 'd'."
+  },
+  "molestar": {
+    "pista1": "It's a verb.",
+    "pista2": "To annoy or disturb someone.",
+    "pista3": "The word contains one 'm', one 'o', one 'l', one 'e', one 's', one 't', one 'a', and one 'r'."
+  },
+  "mono": {
+    "pista1": "It's an animal.",
+    "pista2": "A primate that climbs trees.",
+    "pista3": "The word contains one 'm', two 'o's, and one 'n'."
+  },
+  "morir": {
+    "pista1": "It's a verb.",
+    "pista2": "To stop living.",
+    "pista3": "The word contains one 'm', one 'o', two 'r's, and one 'i'."
+  },
+  "mostrar": {
+    "pista1": "It's a verb.",
+    "pista2": "To let someone see something.",
+    "pista3": "The word contains one 'm', one 'o', one 's', one 't', two 'r's, and one 'a'."
+  },
+  "motivo": {
+    "pista1": "It's a noun.",
+    "pista2": "A reason for doing something.",
+    "pista3": "The word contains one 'm', two 'o's, one 't', one 'i', and one 'v'."
+  },
+  "mover": {
+    "pista1": "It's a verb.",
+    "pista2": "To change position.",
+    "pista3": "The word contains one 'm', one 'o', one 'v', one 'e', and one 'r'."
+  },
+  "necesario": {
+    "pista1": "It's an adjective.",
+    "pista2": "Required; something you must have.",
+    "pista3": "The word contains one 'n', two 'e's, one 'c', one 's', one 'a', one 'r', one 'i', and one 'o'."
+  },
+  "nivel": {
+    "pista1": "It's a noun.",
+    "pista2": "A position on a scale of amount or quality.",
+    "pista3": "The word contains one 'n', one 'i', one 'v', one 'e', and one 'l'."
+  },
+  "normal": {
+    "pista1": "It's an adjective.",
+    "pista2": "Typical or expected.",
+    "pista3": "The word contains one 'n', one 'o', one 'r', one 'm', one 'a', and one 'l'."
+  },
+  "oeste": {
+    "pista1": "It's a direction.",
+    "pista2": "Where the sun sets.",
+    "pista3": "The word contains one 'o', two 'e's, one 's', and one 't'."
+  },
+  "orden": {
+    "pista1": "It's a noun.",
+    "pista2": "The arrangement of things.",
+    "pista3": "The word contains one 'o', one 'r', one 'd', one 'e', and one 'n'."
+  },
+  "organizar": {
+    "pista1": "It's a verb.",
+    "pista2": "To arrange or plan something.",
+    "pista3": "The word contains one 'o', two 'r's, one 'g', two 'a's, one 'n', one 'i', and one 'z'."
+  },
+  "oro": {
+    "pista1": "It's a material.",
+    "pista2": "A precious yellow metal.",
+    "pista3": "The word contains two 'o's and one 'r'."
+  },
+  "oso": {
+    "pista1": "It's an animal.",
+    "pista2": "A large, strong wild mammal with fur.",
+    "pista3": "The word contains two 'o's and one 's'."
+  },
+  "oveja": {
+    "pista1": "It's an animal.",
+    "pista2": "A farm animal with wool.",
+    "pista3": "The word contains one 'o', one 'v', one 'e', one 'j', and one 'a'."
+  },
+  "papelera": {
+    "pista1": "It's an object.",
+    "pista2": "A small container for waste paper.",
+    "pista3": "The word contains two 'p's, two 'a's, two 'e's, one 'l', and one 'r'."
+  },
+  "parar": {
+    "pista1": "It's a verb.",
+    "pista2": "To stop moving.",
+    "pista3": "The word contains one 'p', two 'a's, and two 'r's."
+  },
+  "pareja": {
+    "pista1": "It's a noun.",
+    "pista2": "Two people together.",
+    "pista3": "The word contains one 'p', two 'a's, one 'r', one 'e', and one 'j'."
+  },
+  "parte": {
+    "pista1": "It's a noun.",
+    "pista2": "A piece of something, not the whole.",
+    "pista3": "The word contains one 'p', one 'a', one 'r', one 't', and one 'e'."
+  },
+  "pasado": {
+    "pista1": "It's a noun.",
+    "pista2": "The time before now.",
+    "pista3": "The word contains one 'p', two 'a's, one 's', one 'd', and one 'o'."
+  },
+  "peligro": {
+    "pista1": "It's a noun.",
+    "pista2": "The possibility of harm or death.",
+    "pista3": "The word contains one 'p', one 'e', one 'l', one 'i', one 'g', one 'r', and one 'o'."
+  },
+  "peligroso": {
+    "pista1": "It's an adjective.",
+    "pista2": "Not safe.",
+    "pista3": "The word contains one 'p', one 'e', one 'l', one 'i', one 'g', one 'r', two 'o's, and one 's'."
+  },
+  "perfecto": {
+    "pista1": "It's an adjective.",
+    "pista2": "Having no mistakes.",
+    "pista3": "The word contains one 'p', two 'e's, one 'r', one 'f', one 'c', one 't', and one 'o'."
+  },
+  "permitir": {
+    "pista1": "It's a verb.",
+    "pista2": "To let someone do something.",
+    "pista3": "The word contains one 'p', one 'e', two 'r's, one 'm', two 'i's, and one 't'."
+  },
+  "pescar": {
+    "pista1": "It's a verb.",
+    "pista2": "To catch fish.",
+    "pista3": "The word contains one 'p', one 'e', one 's', one 'c', one 'a', and one 'r'."
+  },
+  "pez": {
+    "pista1": "It's an animal.",
+    "pista2": "It lives in water and swims.",
+    "pista3": "The word contains one 'p', one 'e', and one 'z'."
+  },
+  "pizarra": {
+    "pista1": "It's an object.",
+    "pista2": "A dark board used in classrooms for writing.",
+    "pista3": "The word contains one 'p', one 'i', one 'z', two 'a's, and two 'r's."
+  },
+  "planchar": {
+    "pista1": "It's a verb.",
+    "pista2": "To smooth clothes with heat.",
+    "pista3": "The word contains one 'p', one 'l', two 'a's, one 'n', one 'c', one 'h', and one 'r'."
+  },
+  "plata": {
+    "pista1": "It's a material.",
+    "pista2": "A grey precious metal.",
+    "pista3": "The word contains one 'p', one 'l', two 'a's, and one 't'."
+  },
+  "pobre": {
+    "pista1": "It's an adjective.",
+    "pista2": "Having little money.",
+    "pista3": "The word contains one 'p', one 'o', one 'b', one 'r', and one 'e'."
+  },
+  "posible": {
+    "pista1": "It's an adjective.",
+    "pista2": "Something that can happen.",
+    "pista3": "The word contains one 'p', one 'o', one 's', one 'i', one 'b', one 'l', and one 'e'."
+  },
+  "precioso": {
+    "pista1": "It's an adjective.",
+    "pista2": "Very beautiful or valuable.",
+    "pista3": "The word contains one 'p', one 'r', one 'e', one 'c', one 'i', two 'o's, and one 's'."
+  },
+  "presentar": {
+    "pista1": "It's a verb.",
+    "pista2": "To introduce someone.",
+    "pista3": "The word contains one 'p', two 'r's, two 'e's, one 's', one 'n', one 't', and one 'a'."
+  },
+  "presente": {
+    "pista1": "It's a noun.",
+    "pista2": "The time happening now.",
+    "pista3": "The word contains one 'p', one 'r', three 'e's, one 's', one 'n', and one 't'."
+  },
+  "prestar": {
+    "pista1": "It's a verb.",
+    "pista2": "To lend something to someone.",
+    "pista3": "The word contains one 'p', two 'r's, one 'e', one 's', one 't', and one 'a'."
+  },
+  "principal": {
+    "pista1": "It's an adjective.",
+    "pista2": "Most important.",
+    "pista3": "The word contains two 'p's, one 'r', two 'i's, one 'n', one 'c', one 'a', and one 'l'."
+  },
+  "prometer": {
+    "pista1": "It's a verb.",
+    "pista2": "To say you will definitely do something.",
+    "pista3": "The word contains one 'p', two 'r's, one 'o', one 'm', two 'e's, and one 't'."
+  },
+  "propio": {
+    "pista1": "It's an adjective.",
+    "pista2": "Belonging to oneself.",
+    "pista3": "The word contains two 'p's, one 'r', two 'o's, and one 'i'."
+  },
+  "público": {
+    "pista1": "It's an adjective.",
+    "pista2": "For everyone to use.",
+    "pista3": "The word contains one 'p', one 'ú', one 'b', one 'l', one 'i', one 'c', and one 'o'."
+  },
+  "puro": {
+    "pista1": "It's an adjective.",
+    "pista2": "Not mixed with anything else.",
+    "pista3": "The word contains one 'p', one 'u', one 'r', and one 'o'."
+  },
+  "quitar": {
+    "pista1": "It's a verb.",
+    "pista2": "To remove or take something away.",
+    "pista3": "The word contains one 'q', one 'u', one 'i', one 't', one 'a', and one 'r'."
+  },
+  "real": {
+    "pista1": "It's an adjective.",
+    "pista2": "Actually existing; true.",
+    "pista3": "The word contains one 'r', one 'e', one 'a', and one 'l'."
+  },
+  "reconocer": {
+    "pista1": "It's a verb.",
+    "pista2": "To identify someone you have seen before.",
+    "pista3": "The word contains two 'r's, two 'e's, two 'c's, two 'o's, and one 'n'."
+  },
+  "recuerdo": {
+    "pista1": "It's a noun.",
+    "pista2": "Something you remember from the past.",
+    "pista3": "The word contains two 'r's, two 'e's, one 'c', one 'u', one 'd', and one 'o'."
+  },
+  "redondo": {
+    "pista1": "It's an adjective.",
+    "pista2": "Shaped like a circle.",
+    "pista3": "The word contains one 'r', one 'e', two 'd's, two 'o's, and one 'n'."
+  },
+  "reír": {
+    "pista1": "It's a verb.",
+    "pista2": "To make sounds because you are happy.",
+    "pista3": "The word contains two 'r's, one 'e', and one 'í'."
+  },
+  "repetir": {
+    "pista1": "It's a verb.",
+    "pista2": "To say or do something again.",
+    "pista3": "The word contains two 'r's, two 'e's, one 'p', one 't', and one 'i'."
+  },
+  "responder": {
+    "pista1": "It's a verb.",
+    "pista2": "To give an answer.",
+    "pista3": "The word contains two 'r's, two 'e's, one 's', one 'p', one 'o', one 'n', and one 'd'."
+  },
+  "resto": {
+    "pista1": "It's a noun.",
+    "pista2": "The part left over.",
+    "pista3": "The word contains one 'r', one 'e', one 's', one 't', and one 'o'."
+  },
+  "resultado": {
+    "pista1": "It's a noun.",
+    "pista2": "The outcome of an action.",
+    "pista3": "The word contains one 'r', one 'e', one 's', one 'u', one 'l', one 't', one 'a', one 'd', and one 'o'."
+  },
+  "robar": {
+    "pista1": "It's a verb.",
+    "pista2": "To take something that isn't yours.",
+    "pista3": "The word contains two 'r's, one 'o', one 'b', and one 'a'."
+  },
+  "saco": {
+    "pista1": "It's a noun.",
+    "pista2": "A large bag made of strong material.",
+    "pista3": "The word contains one 's', one 'a', one 'c', and one 'o'."
+  },
+  "seco": {
+    "pista1": "It's an adjective.",
+    "pista2": "Not wet.",
+    "pista3": "The word contains one 's', one 'e', one 'c', and one 'o'."
+  },
+  "semáforo": {
+    "pista1": "It's an object.",
+    "pista2": "A traffic light with red, yellow, and green.",
+    "pista3": "The word contains one 's', one 'e', one 'm', one 'á', one 'f', two 'o's, and one 'r'."
+  },
+  "señal": {
+    "pista1": "It's a noun.",
+    "pista2": "A mark or sign that gives information.",
+    "pista3": "The word contains one 's', one 'e', one 'ñ', one 'a', and one 'l'."
+  },
+  "siglo": {
+    "pista1": "It's a time period.",
+    "pista2": "One hundred years.",
+    "pista3": "The word contains one 's', one 'i', one 'g', one 'l', and one 'o'."
+  },
+  "significar": {
+    "pista1": "It's a verb.",
+    "pista2": "To mean something.",
+    "pista3": "The word contains one 's', three 'i's, one 'g', one 'n', one 'f', one 'c', one 'a', and one 'r'."
+  },
+  "simple": {
+    "pista1": "It's an adjective.",
+    "pista2": "Easy to understand; not complicated.",
+    "pista3": "The word contains one 's', one 'i', one 'm', one 'p', one 'l', and one 'e'."
+  },
+  "sistema": {
+    "pista1": "It's a noun.",
+    "pista2": "A set of connected things working together.",
+    "pista3": "The word contains two 's's, one 'i', one 't', one 'e', and one 'm', and one 'a'."
+  },
+  "sonar": {
+    "pista1": "It's a verb.",
+    "pista2": "To make a noise.",
+    "pista3": "The word contains one 's', one 'o', one 'n', one 'a', and one 'r'."
+  },
+  "soñar": {
+    "pista1": "It's a verb.",
+    "pista2": "To imagine things while you sleep.",
+    "pista3": "The word contains one 's', one 'o', one 'ñ', one 'a', and one 'r'."
+  },
+  "sonreír": {
+    "pista1": "It's a verb.",
+    "pista2": "To curve your mouth up when happy.",
+    "pista3": "The word contains one 's', one 'o', one 'n', two 'r's, one 'e', and one 'í'."
+  },
+  "suceder": {
+    "pista1": "It's a verb.",
+    "pista2": "To happen or occur.",
+    "pista3": "The word contains one 's', one 'u', one 'c', two 'e's, one 'd', and one 'r'."
+  },
+  "sufrir": {
+    "pista1": "It's a verb.",
+    "pista2": "To feel pain or sadness.",
+    "pista3": "The word contains one 's', one 'u', one 'f', two 'r's, and one 'i'."
+  },
+  "suponer": {
+    "pista1": "It's a verb.",
+    "pista2": "To assume something is true.",
+    "pista3": "The word contains one 's', one 'u', one 'p', one 'o', one 'n', one 'e', and one 'r'."
+  },
+  "sur": {
+    "pista1": "It's a direction.",
+    "pista2": "Opposite of north.",
+    "pista3": "The word contains one 's', one 'u', and one 'r'."
+  },
+  "tardar": {
+    "pista1": "It's a verb.",
+    "pista2": "To take a long time to do something.",
+    "pista3": "The word contains one 't', two 'a's, two 'r's, and one 'd'."
+  },
+  "tela": {
+    "pista1": "It's a material.",
+    "pista2": "Material made for clothing.",
+    "pista3": "The word contains one 't', one 'e', one 'l', and one 'a'."
+  },
+  "temer": {
+    "pista1": "It's a verb.",
+    "pista2": "To be afraid of something.",
+    "pista3": "The word contains one 't', two 'e's, one 'm', and one 'r'."
+  },
+  "tierra": {
+    "pista1": "It's a place.",
+    "pista2": "The planet we live on; soil.",
+    "pista3": "The word contains one 't', one 'i', one 'e', two 'r's, and one 'a'."
+  },
+  "tigre": {
+    "pista1": "It's an animal.",
+    "pista2": "A large wild cat with stripes.",
+    "pista3": "The word contains one 't', one 'i', one 'g', one 'r', and one 'e'."
+  },
+  "tipo": {
+    "pista1": "It's a noun.",
+    "pista2": "A kind or sort of something.",
+    "pista3": "The word contains one 't', one 'i', one 'p', and one 'o'."
+  },
+  "tirar": {
+    "pista1": "It's a verb.",
+    "pista2": "To throw something.",
+    "pista3": "The word contains one 't', one 'i', two 'r's, and one 'a'."
+  },
+  "tratar": {
+    "pista1": "It's a verb.",
+    "pista2": "To attempt or to deal with.",
+    "pista3": "The word contains two 't's, one 'r', two 'a's, and one 'r'."
+  },
+  "universo": {
+    "pista1": "It's a place.",
+    "pista2": "All of space and everything in it.",
+    "pista3": "The word contains one 'u', one 'n', one 'i', one 'v', one 'e', one 'r', one 's', and one 'o'."
+  },
+  "vaca": {
+    "pista1": "It's an animal.",
+    "pista2": "A farm animal that gives milk.",
+    "pista3": "The word contains one 'v', two 'a's, and one 'c'."
+  },
+  "vacío": {
+    "pista1": "It's an adjective.",
+    "pista2": "Containing nothing.",
+    "pista3": "The word contains one 'v', one 'a', one 'c', one 'í', and one 'o'."
+  },
+  "valle": {
+    "pista1": "It's a place.",
+    "pista2": "Low land between hills or mountains.",
+    "pista3": "The word contains one 'v', one 'a', two 'l's, and one 'e'."
+  },
+  "valor": {
+    "pista1": "It's a noun.",
+    "pista2": "How much something is worth.",
+    "pista3": "The word contains one 'v', one 'a', one 'l', one 'o', and one 'r'."
+  },
+  "varios": {
+    "pista1": "It's an adjective.",
+    "pista2": "More than one or two; several.",
+    "pista3": "The word contains one 'v', one 'a', one 'r', one 'i', one 'o', and one 's'."
+  },
+  "vidrio": {
+    "pista1": "It's a material.",
+    "pista2": "Clear solid material used for windows.",
+    "pista3": "The word contains one 'v', two 'i's, one 'd', one 'r', and one 'o'."
+  },
+  "vivo": {
+    "pista1": "It's an adjective.",
+    "pista2": "Not dead.",
+    "pista3": "The word contains two 'v's, one 'i', and one 'o'."
+  },
+  "votar": {
+    "pista1": "It's a verb.",
+    "pista2": "To make a choice in an election.",
+    "pista3": "The word contains one 'v', one 'o', one 't', one 'a', and one 'r'."
+  }
+}

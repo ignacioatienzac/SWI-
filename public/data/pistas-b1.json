@@ -1,0 +1,2207 @@
+{
+  "abrazo": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Es el gesto de rodear a alguien con los brazos para demostrar cariño o amor.",
+    "pista3": "La palabra contiene dos 'a', una 'b', una 'o', una 'r' y una 'z'."
+  },
+  "acampar": {
+    "pista1": "Es un verbo.",
+    "pista2": "Dormir en el campo o en la montaña, normalmente dentro de una tienda de campaña.",
+    "pista3": "La palabra contiene tres 'a', una 'c', una 'm', una 'p' y una 'r'."
+  },
+  "acusar": {
+    "pista1": "Es un verbo.",
+    "pista2": "Decir que alguien ha cometido un delito o ha hecho algo malo.",
+    "pista3": "La palabra contiene dos 'a', una 'c', una 'r', una 's' y una 'u'."
+  },
+  "admirar": {
+    "pista1": "Es un verbo.",
+    "pista2": "Sentir respeto o atracción por alguien o por algo que consideras muy bueno.",
+    "pista3": "La palabra contiene dos 'a', una 'd', una 'i', una 'm' y dos 'r'."
+  },
+  "ahorrar": {
+    "pista1": "Es un verbo.",
+    "pista2": "Guardar dinero para el futuro o no gastar mucho.",
+    "pista3": "La palabra contiene dos 'a', una 'h', una 'o' y tres 'r'."
+  },
+  "albergue": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Un tipo de alojamiento económico, similar a un hotel, donde suelen dormir los jóvenes o peregrinos.",
+    "pista3": "La palabra contiene una 'a', una 'b', dos 'e', una 'g', una 'l', una 'r' y una 'u'."
+  },
+  "almacén": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Edificio o lugar donde se guardan mercancías o productos para venderlos después.",
+    "pista3": "La palabra contiene dos 'a', una 'c', una 'e', una 'l', una 'm' y una 'n'."
+  },
+  "almohada": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Objeto blando que pones debajo de la cabeza para dormir en la cama.",
+    "pista3": "La palabra contiene tres 'a', una 'd', una 'h', una 'l', una 'm' y una 'o'."
+  },
+  "alojamiento": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Lugar donde te quedas a dormir cuando viajas, como un hotel o un apartamento.",
+    "pista3": "La palabra contiene dos 'a', una 'e', una 'i', una 'j', una 'l', una 'm', una 'n', dos 'o' y una 't'."
+  },
+  "amenaza": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Acción de decir a alguien que le vas a hacer daño o causar problemas.",
+    "pista3": "La palabra contiene tres 'a', una 'e', una 'm', una 'n' y una 'z'."
+  },
+  "amistad": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "La relación de afecto y confianza entre amigos.",
+    "pista3": "La palabra contiene dos 'a', una 'd', una 'i', una 'm', una 's' y una 't'."
+  },
+  "amueblar": {
+    "pista1": "Es un verbo.",
+    "pista2": "Poner mesas, sillas, camas y otros objetos necesarios dentro de una casa.",
+    "pista3": "La palabra contiene dos 'a', una 'b', una 'e', una 'l', una 'm', una 'r' y una 'u'."
+  },
+  "anuncio": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Mensaje publicitario para vender un producto o informar de algo.",
+    "pista3": "La palabra contiene una 'a', una 'c', una 'i', dos 'n', una 'o' y una 'u'."
+  },
+  "ánimo": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Energía o ganas para hacer algo. También se refiere al estado emocional.",
+    "pista3": "La palabra contiene una 'a', una 'i', una 'm', una 'n' y una 'o'."
+  },
+  "ansiedad": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Estado de nerviosismo o preocupación muy fuerte.",
+    "pista3": "La palabra contiene dos 'a', dos 'd', una 'e', una 'i', una 'n' y una 's'."
+  },
+  "aplicación": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Programa informático diseñado para ser usado en teléfonos móviles o tabletas.",
+    "pista3": "La palabra contiene dos 'a', dos 'c', una 'i', una 'l', una 'n', una 'o' y una 'p'."
+  },
+  "aprobar": {
+    "pista1": "Es un verbo.",
+    "pista2": "Sacar una nota suficiente en un examen o aceptar algo oficialmente.",
+    "pista3": "La palabra contiene dos 'a', una 'b', una 'o', una 'p' y dos 'r'."
+  },
+  "archivo": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Documento digital en un ordenador o lugar donde se guardan documentos físicos.",
+    "pista3": "La palabra contiene una 'a', una 'c', una 'h', una 'i', una 'o', una 'r' y una 'v'."
+  },
+  "artículo": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Texto escrito en un periódico o revista; también puede ser un producto en una tienda.",
+    "pista3": "La palabra contiene una 'a', una 'c', una 'i', una 'l', una 'o', una 'r', una 't' y una 'u'."
+  },
+  "asesinato": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "El crimen de matar a una persona.",
+    "pista3": "La palabra contiene tres 'a', una 'e', una 'i', una 'n', una 'o', dos 's' y una 't'."
+  },
+  "aspiradora": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Electrodoméstico que sirve para limpiar el suelo absorbiendo el polvo.",
+    "pista3": "La palabra contiene cuatro 'a', una 'd', una 'i', una 'o', una 'p', dos 'r' y una 's'."
+  },
+  "ataque": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Acción violenta contra alguien o algo; contrario de defensa.",
+    "pista3": "La palabra contiene dos 'a', una 'e', una 'q', una 't' y una 'u'."
+  },
+  "atención": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Acción de escuchar o mirar con cuidado e interés.",
+    "pista3": "La palabra contiene una 'a', una 'c', una 'e', una 'i', dos 'n', una 'o' y una 't'."
+  },
+  "aterrizaje": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Momento en el que un avión baja y toca el suelo.",
+    "pista3": "La palabra contiene tres 'a', una 'e', una 'i', una 'j', dos 'r', una 't' y una 'z'."
+  },
+  "atmósfera": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "El aire que rodea la Tierra; también el ambiente o sensación en un lugar.",
+    "pista3": "La palabra contiene dos 'a', una 'e', una 'f', una 'm', una 'o', una 'r', una 's' y una 't'."
+  },
+  "aventura": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Experiencia emocionante, arriesgada y poco común.",
+    "pista3": "La palabra contiene dos 'a', una 'e', una 'n', una 'r', una 't', una 'u' y una 'v'."
+  },
+  "avería": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Daño que impide que una máquina o coche funcione correctamente.",
+    "pista3": "La palabra contiene dos 'a', una 'e', una 'i', una 'r' y una 'v'."
+  },
+  "barrer": {
+    "pista1": "Es un verbo.",
+    "pista2": "Limpiar el suelo moviendo el polvo con una escoba.",
+    "pista3": "La palabra contiene una 'a', una 'b', una 'e' y tres 'r'."
+  },
+  "batería": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Objeto que da energía eléctrica a aparatos como móviles o coches.",
+    "pista3": "La palabra contiene dos 'a', una 'b', una 'e', una 'i', una 'r' y una 't'."
+  },
+  "blog": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Sitio web donde una persona escribe regularmente sobre temas que le interesan.",
+    "pista3": "La palabra contiene una 'b', una 'g', una 'l' y una 'o'."
+  },
+  "bombilla": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Objeto de cristal que se pone en las lámparas para dar luz.",
+    "pista3": "La palabra contiene una 'a', dos 'b', una 'i', dos 'l', una 'm' y una 'o'."
+  },
+  "calefacción": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Sistema para calentar una casa o edificio cuando hace frío.",
+    "pista3": "La palabra contiene dos 'a', tres 'c', una 'e', una 'f', una 'i', una 'l', una 'n' y una 'o'."
+  },
+  "calidad": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Propiedad de algo que indica si es bueno o malo (alta o baja).",
+    "pista3": "La palabra contiene dos 'a', una 'c', dos 'd', una 'i' y una 'l'."
+  },
+  "canal": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Estación de televisión o vía por donde circula agua.",
+    "pista3": "La palabra contiene dos 'a', una 'c', una 'l' y una 'n'."
+  },
+  "cancelar": {
+    "pista1": "Es un verbo.",
+    "pista2": "Decidir que algo que estaba planeado ya no se va a hacer (anular).",
+    "pista3": "La palabra contiene dos 'a', una 'c', una 'e', una 'l', una 'n' y una 'r'."
+  },
+  "cantidad": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Número de cosas o volumen de algo (mucho, poco, 5 litros, 3 kilos).",
+    "pista3": "La palabra contiene dos 'a', una 'c', dos 'd', una 'i', una 'n' y una 't'."
+  },
+  "carácter": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Conjunto de rasgos que forman la personalidad de alguien.",
+    "pista3": "La palabra contiene dos 'a', dos 'c', una 'e', dos 'r' y una 't'."
+  },
+  "cárcel": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Edificio donde encierran a los prisioneros o criminales.",
+    "pista3": "La palabra contiene una 'a', dos 'c', una 'e', una 'l' y una 'r'."
+  },
+  "cargador": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Cable o aparato que sirve para llenar la batería de un dispositivo electrónico.",
+    "pista3": "La palabra contiene dos 'a', una 'c', una 'd', una 'g', una 'o' y dos 'r'."
+  },
+  "cariño": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Sentimiento de amor suave o afecto hacia otra persona.",
+    "pista3": "La palabra contiene una 'a', una 'c', una 'i', una 'ñ', una 'o' y una 'r'."
+  },
+  "carrera": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Competición de velocidad; también los estudios universitarios.",
+    "pista3": "La palabra contiene dos 'a', una 'c', una 'e' y tres 'r'."
+  },
+  "castigo": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Consecuencia negativa que se impone a alguien por haber hecho algo malo.",
+    "pista3": "La palabra contiene una 'a', una 'c', una 'g', una 'i', una 'o', una 's' y una 't'."
+  },
+  "celoso": {
+    "pista1": "Es un adjetivo.",
+    "pista2": "Persona que siente envidia o miedo de perder el cariño de alguien por otra persona.",
+    "pista3": "La palabra contiene una 'c', una 'e', una 'l', dos 'o' y una 's'."
+  },
+  "cesta": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Recipiente tejido, normalmente de mimbre, usado para transportar cosas.",
+    "pista3": "La palabra contiene una 'a', una 'c', una 'e', una 's' y una 't'."
+  },
+  "chat": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Conversación escrita en tiempo real a través de internet.",
+    "pista3": "La palabra contiene una 'a', una 'c', una 'h' y una 't'."
+  },
+  "chimenea": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Parte de una casa donde se hace fuego para calentar, y por donde sale el humo.",
+    "pista3": "La palabra contiene una 'a', una 'c', dos 'e', una 'h', una 'i', una 'm' y una 'n'."
+  },
+  "cirujano": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Médico especialista que realiza operaciones en un hospital.",
+    "pista3": "La palabra contiene una 'a', una 'c', una 'i', una 'j', una 'n', una 'o', una 'r' y una 'u'."
+  },
+  "clima": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Condiciones atmosféricas habituales de una región (temperatura, lluvia, etc.).",
+    "pista3": "La palabra contiene una 'a', una 'c', una 'i', una 'l' y una 'm'."
+  },
+  "cobertura": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "La calidad de la señal del teléfono móvil o internet en un lugar.",
+    "pista3": "La palabra contiene una 'a', una 'b', una 'c', una 'e', una 'o', dos 'r', una 't' y una 'u'."
+  },
+  "cobarde": {
+    "pista1": "Es un adjetivo.",
+    "pista2": "Persona que tiene miedo ante situaciones difíciles o peligrosas; antónimo de valiente.",
+    "pista3": "La palabra contiene una 'a', una 'b', una 'c', una 'd', una 'e', una 'o' y una 'r'."
+  },
+  "cobrar": {
+    "pista1": "Es un verbo.",
+    "pista2": "Recibir dinero como pago por un trabajo o servicio.",
+    "pista3": "La palabra contiene una 'a', una 'b', una 'c', una 'o' y dos 'r'."
+  },
+  "colchón": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "La parte blanda y grande de la cama donde te tumbas para dormir.",
+    "pista3": "La palabra contiene una 'c', una 'h', una 'l', una 'n' y dos 'o'."
+  },
+  "comercio": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Actividad de comprar y vender productos; también se refiere a una tienda.",
+    "pista3": "La palabra contiene dos 'c', una 'e', una 'i', una 'm', dos 'o' y una 'r'."
+  },
+  "confiar": {
+    "pista1": "Es un verbo.",
+    "pista2": "Tener seguridad o fe en que alguien actuará bien o que algo funcionará.",
+    "pista3": "La palabra contiene una 'a', una 'c', una 'f', una 'i', una 'n', una 'o' y una 'r'."
+  },
+  "conexión": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Unión entre dos cosas; enlace para tener acceso a internet.",
+    "pista3": "La palabra contiene una 'c', una 'e', una 'i', dos 'n', dos 'o' y una 'x'."
+  },
+  "consumidor": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Persona que compra productos o utiliza servicios.",
+    "pista3": "La palabra contiene una 'c', una 'd', una 'i', una 'm', una 'n', dos 'o', una 'r', una 's' y una 'u'."
+  },
+  "consumo": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Acción de gastar productos, energía o bienes.",
+    "pista3": "La palabra contiene una 'c', una 'm', una 'n', dos 'o', una 's' y una 'u'."
+  },
+  "contaminación": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Presencia de sustancias nocivas en el medio ambiente (aire sucio, plásticos en el mar).",
+    "pista3": "La palabra contiene dos 'a', dos 'c', dos 'i', una 'm', tres 'n', dos 'o' y una 't'."
+  },
+  "contratar": {
+    "pista1": "Es un verbo.",
+    "pista2": "Dar empleo a una persona o pagar por un servicio.",
+    "pista3": "La palabra contiene dos 'a', una 'c', una 'n', una 'o', dos 'r' y dos 't'."
+  },
+  "contrato": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Documento legal que firman dos partes para acordar obligaciones (trabajo, alquiler).",
+    "pista3": "La palabra contiene una 'a', una 'c', una 'n', dos 'o', una 'r' y dos 't'."
+  },
+  "cortina": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Tela que se cuelga delante de una ventana para tapar la luz.",
+    "pista3": "La palabra contiene una 'a', una 'c', una 'i', una 'n', una 'o', una 'r' y una 't'."
+  },
+  "crédito": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Dinero que el banco te presta y que debes devolver después.",
+    "pista3": "La palabra contiene una 'c', una 'd', una 'e', una 'i', una 'o', una 'r' y una 't'."
+  },
+  "crucero": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Viaje de vacaciones en un barco grande.",
+    "pista3": "La palabra contiene dos 'c', una 'e', una 'o', dos 'r' y una 'u'."
+  },
+  "culpable": {
+    "pista1": "Es un adjetivo.",
+    "pista2": "Persona responsable de haber cometido un error o delito; antónimo de inocente.",
+    "pista3": "La palabra contiene una 'a', una 'b', una 'c', una 'e', dos 'l', una 'p' y una 'u'."
+  },
+  "curar": {
+    "pista1": "Es un verbo.",
+    "pista2": "Sanar a un enfermo o tratar una herida para que se recupere.",
+    "pista3": "La palabra contiene una 'a', una 'c', dos 'r' y una 'u'."
+  },
+  "currículum": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Documento que resume tus estudios y experiencia laboral para buscar trabajo.",
+    "pista3": "La palabra contiene dos 'c', una 'i', una 'l', una 'm', dos 'r' y dos 'u'."
+  },
+  "defensa": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Acción de protegerse ante un ataque o peligro.",
+    "pista3": "La palabra contiene una 'a', una 'd', dos 'e', una 'f', una 'n' y una 's'."
+  },
+  "delito": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Acción ilegal o crimen que se castiga por ley.",
+    "pista3": "La palabra contiene una 'd', una 'e', una 'i', una 'l', una 'o' y una 't'."
+  },
+  "denuncia": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Declaración ante la policía informando de un crimen o algo ilegal.",
+    "pista3": "La palabra contiene una 'a', una 'c', una 'd', una 'e', una 'i', dos 'n' y una 'u'."
+  },
+  "dependiente": {
+    "pista1": "Es un sustantivo masculino/femenino.",
+    "pista2": "Persona que trabaja atendiendo a los clientes en una tienda.",
+    "pista3": "La palabra contiene una 'd', cuatro 'e', una 'i', dos 'n', una 'p' y una 't'."
+  },
+  "desastre": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Evento muy malo que causa gran destrucción o desgracia.",
+    "pista3": "La palabra contiene una 'a', una 'd', dos 'e', una 'r', dos 's' y una 't'."
+  },
+  "descargar": {
+    "pista1": "Es un verbo.",
+    "pista2": "Bajar archivos de internet al ordenador; también quitar carga de un lugar.",
+    "pista3": "La palabra contiene dos 'a', una 'c', una 'd', una 'e', una 'g', dos 'r' y una 's'."
+  },
+  "desempleo": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Situación de no tener trabajo (paro).",
+    "pista3": "La palabra contiene una 'd', tres 'e', una 'l', una 'm', una 'o', una 'p' y una 's'."
+  },
+  "desorden": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Falta de organización, caos, cosas fuera de su lugar.",
+    "pista3": "La palabra contiene dos 'd', dos 'e', una 'n', una 'o', una 'r' y una 's'."
+  },
+  "despedir": {
+    "pista1": "Es un verbo.",
+    "pista2": "Decir adiós a alguien; también echar a alguien de su trabajo.",
+    "pista3": "La palabra contiene dos 'd', dos 'e', una 'i', una 'p', una 'r' y una 's'."
+  },
+  "despegue": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Momento en el que un avión se separa del suelo y empieza a volar.",
+    "pista3": "La palabra contiene una 'd', tres 'e', una 'g', una 'p', una 's' y una 'u'."
+  },
+  "devolución": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Acción de devolver un producto a la tienda y recuperar el dinero.",
+    "pista3": "La palabra contiene una 'c', una 'd', una 'e', una 'i', una 'l', una 'n', dos 'o', una 'u' y una 'v'."
+  },
+  "dieta": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Alimentación habitual o régimen especial de comida para perder peso o por salud.",
+    "pista3": "La palabra contiene una 'a', una 'd', una 'e', una 'i' y una 't'."
+  },
+  "digital": {
+    "pista1": "Es un adjetivo.",
+    "pista2": "Relacionado con la tecnología informática y los dedos; opuesto a analógico.",
+    "pista3": "La palabra contiene una 'a', una 'd', una 'g', dos 'i', una 'l' y una 't'."
+  },
+  "disculpa": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Lo que dices para pedir perdón cuando has hecho algo mal.",
+    "pista3": "La palabra contiene una 'a', una 'c', una 'd', una 'i', una 'l', una 'p', una 's' y una 'u'."
+  },
+  "disparo": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Acción de usar un arma de fuego; el sonido que hace una pistola.",
+    "pista3": "La palabra contiene una 'a', una 'd', una 'i', una 'o', una 'p', una 'r' y una 's'."
+  },
+  "divorcio": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Separación legal y definitiva de un matrimonio.",
+    "pista3": "La palabra contiene una 'c', una 'd', dos 'i', dos 'o', una 'r' y una 'v'."
+  },
+  "dueño": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Persona que posee algo, el propietario.",
+    "pista3": "La palabra contiene una 'd', una 'e', una 'ñ', una 'o' y una 'u'."
+  },
+  "ecológico": {
+    "pista1": "Es un adjetivo.",
+    "pista2": "Que respeta el medio ambiente y no contamina.",
+    "pista3": "La palabra contiene dos 'c', una 'e', una 'g', una 'i', una 'l' y tres 'o'."
+  },
+  "educado": {
+    "pista1": "Es un adjetivo.",
+    "pista2": "Persona que tiene buenos modales y trata bien a los demás.",
+    "pista3": "La palabra contiene una 'a', una 'c', dos 'd', una 'e', una 'o' y una 'u'."
+  },
+  "egoísta": {
+    "pista1": "Es un adjetivo.",
+    "pista2": "Persona que solo piensa en sí misma y no en los demás.",
+    "pista3": "La palabra contiene una 'a', una 'e', una 'g', una 'i', una 'o', una 's' y una 't'."
+  },
+  "electricidad": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Forma de energía que hace funcionar las luces y los electrodomésticos.",
+    "pista3": "La palabra contiene una 'a', dos 'c', dos 'd', dos 'e', dos 'i', una 'l', una 'r' y una 't'."
+  },
+  "embarcar": {
+    "pista1": "Es un verbo.",
+    "pista2": "Subirse a un barco o a un avión para iniciar un viaje.",
+    "pista3": "La palabra contiene dos 'a', una 'b', una 'c', una 'e', una 'm' y dos 'r'."
+  },
+  "enchufe": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Objeto en la pared donde conectas los aparatos eléctricos.",
+    "pista3": "La palabra contiene una 'c', dos 'e', una 'f', una 'h', una 'n' y una 'u'."
+  },
+  "energía": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Fuerza o capacidad para realizar un trabajo o actividad.",
+    "pista3": "La palabra contiene una 'a', dos 'e', una 'g', una 'i', una 'n' y una 'r'."
+  },
+  "enlace": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Conexión o vínculo; texto en internet que te lleva a otra página (link).",
+    "pista3": "La palabra contiene una 'a', una 'c', dos 'e', una 'l' y una 'n'."
+  },
+  "entender": {
+    "pista1": "Es un verbo.",
+    "pista2": "Comprender el significado de algo.",
+    "pista3": "La palabra contiene una 'd', tres 'e', dos 'n', una 'r' y una 't'."
+  },
+  "entrenar": {
+    "pista1": "Es un verbo.",
+    "pista2": "Practicar un deporte o ejercicio para mejorar la forma física.",
+    "pista3": "La palabra contiene una 'a', dos 'e', dos 'n', dos 'r' y una 't'."
+  },
+  "entrevista": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Reunión donde te hacen preguntas, normalmente para conseguir un trabajo.",
+    "pista3": "La palabra contiene una 'a', dos 'e', una 'i', una 'n', una 'r', una 's', dos 't' y una 'v'."
+  },
+  "envidia": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Sentimiento de tristeza o enfado porque quieres lo que tiene otra persona.",
+    "pista3": "La palabra contiene una 'a', una 'd', una 'e', dos 'i', una 'n' y una 'v'."
+  },
+  "equilibrado": {
+    "pista1": "Es un adjetivo.",
+    "pista2": "Que tiene estabilidad, balanceado, ni mucho ni poco de algo.",
+    "pista3": "La palabra contiene una 'a', una 'b', una 'd', una 'e', una 'i', una 'l', una 'o', una 'q', una 'r' y una 'u'."
+  },
+  "escaparate": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Ventana de cristal de una tienda donde se exponen los productos.",
+    "pista3": "La palabra contiene dos 'a', una 'c', tres 'e', una 'p', una 'r', una 's' y una 't'."
+  },
+  "especie": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Grupo de animales o plantas con características similares.",
+    "pista3": "La palabra contiene una 'c', tres 'e', una 'i', una 'p' y una 's'."
+  },
+  "etiqueta": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Papel pequeño en un producto que indica el precio o la talla.",
+    "pista3": "La palabra contiene una 'a', dos 'e', una 'i', una 'q', dos 't' y una 'u'."
+  },
+  "experiencia": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Conocimiento que se gana viviendo situaciones o practicando algo.",
+    "pista3": "La palabra contiene una 'a', una 'c', tres 'e', una 'i', una 'n', una 'p', una 'r' y una 'x'."
+  },
+  "extranjero": {
+    "pista1": "Es un sustantivo o adjetivo.",
+    "pista2": "Persona que ha nacido en otro país o que viene de fuera.",
+    "pista3": "La palabra contiene una 'a', dos 'e', una 'j', una 'n', una 'o', tres 'r', una 't' y una 'x'."
+  },
+  "fregar": {
+    "pista1": "Es un verbo.",
+    "pista2": "Limpiar algo frotando con agua y jabón, como los platos o el suelo.",
+    "pista3": "La palabra contiene una 'a', una 'e', una 'f', una 'g' y dos 'r'."
+  },
+  "frontera": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Línea imaginaria o real que separa dos países o territorios.",
+    "pista3": "La palabra contiene una 'a', una 'e', una 'f', una 'n', una 'o', dos 'r' y una 't'."
+  },
+  "garantía": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Documento que promete la reparación de un producto si se rompe poco después de comprarlo.",
+    "pista3": "La palabra contiene tres 'a', una 'g', una 'i', una 'n', una 'r' y una 't'."
+  },
+  "gastronomía": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "El arte de cocinar y comer bien; cultura relacionada con la comida.",
+    "pista3": "La palabra contiene dos 'a', una 'g', una 'i', una 'm', una 'n', dos 'o', una 'r', una 's' y una 't'."
+  },
+  "generoso": {
+    "pista1": "Es un adjetivo.",
+    "pista2": "Persona a la que le gusta compartir lo que tiene con los demás; antónimo de tacaño.",
+    "pista3": "La palabra contiene dos 'e', una 'g', una 'n', dos 'o', una 'r' y una 's'."
+  },
+  "grifo": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Objeto en la cocina o el baño por donde sale el agua.",
+    "pista3": "La palabra contiene una 'f', una 'g', una 'i', una 'o' y una 'r'."
+  },
+  "gripe": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Enfermedad común causada por un virus que da fiebre y dolor de cuerpo.",
+    "pista3": "La palabra contiene una 'e', una 'g', una 'i', una 'p' y una 'r'."
+  },
+  "grosero": {
+    "pista1": "Es un adjetivo.",
+    "pista2": "Persona con mala educación o que trata mal a la gente.",
+    "pista3": "La palabra contiene una 'e', una 'g', dos 'o', dos 'r' y una 's'."
+  },
+  "herida": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Daño o corte en la piel o en el cuerpo.",
+    "pista3": "La palabra contiene una 'a', una 'd', una 'e', una 'h', una 'i' y una 'r'."
+  },
+  "hogar": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Lugar donde vive una familia y se siente segura; sinónimo de casa.",
+    "pista3": "La palabra contiene una 'a', una 'g', una 'h', una 'o' y una 'r'."
+  },
+  "honesto": {
+    "pista1": "Es un adjetivo.",
+    "pista2": "Persona que dice la verdad y actúa con justicia.",
+    "pista3": "La palabra contiene una 'e', una 'h', una 'n', dos 'o', una 's' y una 't'."
+  },
+  "huelga": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Protesta de trabajadores que dejan de trabajar para exigir mejores condiciones.",
+    "pista3": "La palabra contiene una 'a', una 'e', una 'g', una 'h', una 'l' y una 'u'."
+  },
+  "humor": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Capacidad para hacer reír o estado de ánimo de una persona.",
+    "pista3": "La palabra contiene una 'h', una 'm', una 'o', una 'r' y una 'u'."
+  },
+  "ilegal": {
+    "pista1": "Es un adjetivo.",
+    "pista2": "Algo que está prohibido por la ley.",
+    "pista3": "La palabra contiene una 'a', una 'e', una 'g', una 'i' y dos 'l'."
+  },
+  "impresora": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Máquina que sirve para pasar documentos del ordenador al papel.",
+    "pista3": "La palabra contiene una 'a', una 'e', una 'i', una 'm', una 'o', una 'p', dos 'r' y una 's'."
+  },
+  "imprimir": {
+    "pista1": "Es un verbo.",
+    "pista2": "La acción de usar una máquina para poner tinta y texto en un papel.",
+    "pista3": "La palabra contiene tres 'i', dos 'm', una 'p' y dos 'r'."
+  },
+  "incendio": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Fuego grande y peligroso que quema cosas que no deberían quemarse.",
+    "pista3": "La palabra contiene una 'c', una 'd', una 'e', dos 'i', dos 'n' y una 'o'."
+  },
+  "inocente": {
+    "pista1": "Es un adjetivo.",
+    "pista2": "Persona que no ha cometido el crimen o la falta de la que se le acusa.",
+    "pista3": "La palabra contiene una 'c', dos 'e', una 'i', dos 'n', una 'o' y una 't'."
+  },
+  "inquilino": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Persona que paga un alquiler para vivir en una casa que no es suya.",
+    "pista3": "La palabra contiene tres 'i', una 'l', dos 'n', una 'o', una 'q' y una 'u'."
+  },
+  "instalar": {
+    "pista1": "Es un verbo.",
+    "pista2": "Colocar una cosa en su lugar para que funcione (un programa, un mueble).",
+    "pista3": "La palabra contiene dos 'a', una 'i', una 'l', una 'n', una 'r', una 's' y una 't'."
+  },
+  "interruptor": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Mecanismo que sirve para encender y apagar la luz.",
+    "pista3": "La palabra contiene una 'e', una 'i', una 'n', una 'o', una 'p', cuatro 'r', una 't' y una 'u'."
+  },
+  "inundación": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Desastre natural donde el agua cubre terrenos que normalmente están secos.",
+    "pista3": "La palabra contiene una 'a', una 'c', una 'd', dos 'i', tres 'n', una 'o' y una 'u'."
+  },
+  "investigar": {
+    "pista1": "Es un verbo.",
+    "pista2": "Buscar información para descubrir la verdad sobre algo.",
+    "pista3": "La palabra contiene una 'a', una 'e', una 'g', dos 'i', una 'n', una 'r', una 's', una 't' y una 'v'."
+  },
+  "jubilación": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Etapa de la vida en la que dejas de trabajar porque ya tienes cierta edad.",
+    "pista3": "La palabra contiene una 'a', una 'b', una 'c', dos 'i', una 'j', una 'l', una 'n', una 'o' y una 'u'."
+  },
+  "juez": {
+    "pista1": "Es un sustantivo masculino/femenino.",
+    "pista2": "Persona que tiene autoridad para juzgar y sentenciar en un tribunal.",
+    "pista3": "La palabra contiene una 'e', una 'j', una 'u' y una 'z'."
+  },
+  "juicio": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Proceso legal ante un juez para resolver un conflicto.",
+    "pista3": "La palabra contiene una 'c', dos 'i', una 'j', una 'o' y una 'u'."
+  },
+  "lesión": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Daño físico causado por un golpe o enfermedad.",
+    "pista3": "La palabra contiene una 'e', una 'i', una 'l', una 'n', una 'o' y una 's'."
+  },
+  "ley": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Regla establecida por las autoridades que todos deben obedecer.",
+    "pista3": "La palabra contiene una 'e', una 'l' y una 'y'."
+  },
+  "lujo": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Riqueza, comodidad extrema o cosas caras que no son estrictamente necesarias.",
+    "pista3": "La palabra contiene una 'j', una 'l', una 'o' y una 'u'."
+  },
+  "marca": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Nombre comercial de un producto (como Nike, Apple, Zara).",
+    "pista3": "La palabra contiene dos 'a', una 'c', una 'm' y una 'r'."
+  },
+  "mareado": {
+    "pista1": "Es un adjetivo.",
+    "pista2": "Sensación de que todo da vueltas y puedes vomitar o caerte.",
+    "pista3": "La palabra contiene dos 'a', una 'd', una 'e', una 'm', una 'o' y una 'r'."
+  },
+  "martillo": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Herramienta usada para golpear clavos.",
+    "pista3": "La palabra contiene una 'a', una 'i', dos 'l', una 'm', una 'o', una 'r' y una 't'."
+  },
+  "medicina": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Ciencia que cura enfermedades; también el medicamento o pastilla.",
+    "pista3": "La palabra contiene una 'a', una 'c', una 'd', una 'e', dos 'i', una 'm' y una 'n'."
+  },
+  "mental": {
+    "pista1": "Es un adjetivo.",
+    "pista2": "Relacionado con la mente y el pensamiento.",
+    "pista3": "La palabra contiene una 'a', una 'e', una 'l', una 'm', una 'n' y una 't'."
+  },
+  "meta": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "El final de una carrera o un objetivo que quieres conseguir.",
+    "pista3": "La palabra contiene una 'a', una 'e', una 'm' y una 't'."
+  },
+  "modelo": {
+    "pista1": "Es un sustantivo masculino/femenino.",
+    "pista2": "Persona que posa para fotos o desfila con ropa; también un ejemplo a seguir.",
+    "pista3": "La palabra contiene una 'd', una 'e', una 'l', una 'm' y dos 'o'."
+  },
+  "monedero": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Objeto pequeño donde se guardan las monedas.",
+    "pista3": "La palabra contiene una 'd', dos 'e', una 'm', una 'n', dos 'o' y una 'r'."
+  },
+  "monumento": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Construcción o estatua importante por su historia o arte.",
+    "pista3": "La palabra contiene una 'e', dos 'm', dos 'n', dos 'o', una 't' y una 'u'."
+  },
+  "mudanza": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Acción de llevar tus muebles y cosas de una casa a otra para vivir allí.",
+    "pista3": "La palabra contiene dos 'a', una 'd', una 'm', una 'n', una 'u' y una 'z'."
+  },
+  "mueble": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Objeto como una mesa, silla o armario que sirve para decorar y usar una casa.",
+    "pista3": "La palabra contiene una 'b', dos 'e', una 'l', una 'm' y una 'u'."
+  },
+  "multa": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Dinero que debes pagar como castigo por hacer algo incorrecto (como conducir muy rápido).",
+    "pista3": "La palabra contiene una 'a', una 'l', una 'm', una 't' y una 'u'."
+  },
+  "negocio": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Empresa o actividad comercial para ganar dinero.",
+    "pista3": "La palabra contiene una 'c', una 'e', una 'g', una 'i', una 'n' y dos 'o'."
+  },
+  "nota": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Calificación de un examen (un 7, un 10); también un texto breve escrito.",
+    "pista3": "La palabra contiene una 'a', una 'n', una 'o' y una 't'."
+  },
+  "oferta": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Producto que se vende a un precio más bajo de lo normal.",
+    "pista3": "La palabra contiene una 'a', una 'e', una 'f', una 'o', una 'r' y una 't'."
+  },
+  "operación": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Intervención médica realizada por un cirujano.",
+    "pista3": "La palabra contiene una 'a', una 'c', una 'e', una 'i', una 'n', dos 'o', una 'p' y una 'r'."
+  },
+  "paciencia": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Capacidad de esperar o soportar problemas sin ponerse nervioso.",
+    "pista3": "La palabra contiene dos 'a', dos 'c', una 'e', dos 'i', una 'n' y una 'p'."
+  },
+  "pago": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Acción de dar dinero a cambio de un producto o servicio.",
+    "pista3": "La palabra contiene una 'a', una 'g', una 'o' y una 'p'."
+  },
+  "paisaje": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Extensión de terreno que se ve desde un lugar; vista bonita de la naturaleza.",
+    "pista3": "La palabra contiene dos 'a', una 'e', una 'i', una 'j', una 'p' y una 's'."
+  },
+  "pastilla": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Pequeña porción de medicina sólida que se traga.",
+    "pista3": "La palabra contiene dos 'a', una 'i', dos 'l', una 'p', una 's' y una 't'."
+  },
+  "perfil": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Información personal que pones en una red social; también el lado de la cara.",
+    "pista3": "La palabra contiene una 'e', una 'f', una 'i', una 'l', una 'p' y una 'r'."
+  },
+  "periodista": {
+    "pista1": "Es un sustantivo masculino/femenino.",
+    "pista2": "Persona que trabaja informando de las noticias en prensa, radio o TV.",
+    "pista3": "La palabra contiene una 'a', una 'd', dos 'e', dos 'i', una 'o', una 'p', una 'r', una 's' y una 't'."
+  },
+  "personalidad": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Conjunto de características que definen cómo es y actúa una persona.",
+    "pista3": "La palabra contiene dos 'a', una 'd', una 'e', una 'i', una 'l', una 'n', una 'o', una 'p', una 'r' y una 's'."
+  },
+  "planeta": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Cuerpo celeste que gira alrededor de una estrella, como la Tierra o Marte.",
+    "pista3": "La palabra contiene dos 'a', una 'e', una 'l', una 'n', una 'p' y una 't'."
+  },
+  "portátil": {
+    "pista1": "Es un sustantivo masculino o adjetivo.",
+    "pista2": "Ordenador que se puede mover fácilmente; objeto fácil de transportar.",
+    "pista3": "La palabra contiene una 'a', una 'i', una 'l', una 'o', una 'p', una 'r' y dos 't'."
+  },
+  "práctica": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Ejercicio o realización de una actividad para aprenderla o mejorar.",
+    "pista3": "La palabra contiene dos 'a', una 'c', una 'i', una 'p', una 'r' y una 't'."
+  },
+  "prensa": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Conjunto de periódicos y revistas, o los periodistas en general.",
+    "pista3": "La palabra contiene una 'a', una 'e', una 'n', una 'p', una 'r' y una 's'."
+  },
+  "prisión": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Lugar donde se encierra a los criminales; sinónimo de cárcel.",
+    "pista3": "La palabra contiene dos 'i', una 'n', una 'o', una 'p', una 'r' y una 's'."
+  },
+  "producto": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Cosa producida natural o artificialmente para ser vendida.",
+    "pista3": "La palabra contiene una 'c', una 'd', dos 'o', una 'p', una 'r', una 't' y una 'u'."
+  },
+  "proteger": {
+    "pista1": "Es un verbo.",
+    "pista2": "Defender a alguien o algo de un peligro o daño.",
+    "pista3": "La palabra contiene dos 'e', una 'g', una 'o', una 'p', dos 'r' y una 't'."
+  },
+  "publicidad": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Difusión de anuncios para convencer a la gente de que compre algo.",
+    "pista3": "La palabra contiene una 'a', una 'b', una 'c', dos 'd', dos 'i', una 'l', una 'p' y una 'u'."
+  },
+  "rebajas": {
+    "pista1": "Es un sustantivo femenino (plural).",
+    "pista2": "Periodo en el que las tiendas venden los productos más baratos.",
+    "pista3": "La palabra contiene dos 'a', una 'b', una 'e', una 'j', una 'r' y una 's'."
+  },
+  "recepción": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Lugar a la entrada de un hotel u oficina donde te atienden al llegar.",
+    "pista3": "La palabra contiene dos 'c', dos 'e', una 'i', una 'n', una 'o', una 'p' y una 'r'."
+  },
+  "recibo": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Papel que justifica que has pagado algo.",
+    "pista3": "La palabra contiene una 'b', una 'c', una 'e', una 'i', una 'o' y una 'r'."
+  },
+  "reciclaje": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Proceso de transformar basura (como plástico o papel) en nuevos productos.",
+    "pista3": "La palabra contiene una 'a', dos 'c', dos 'e', una 'i', una 'j', una 'l' y una 'r'."
+  },
+  "reclamar": {
+    "pista1": "Es un verbo.",
+    "pista2": "Exigir algo a lo que tienes derecho o presentar una queja formal.",
+    "pista3": "La palabra contiene dos 'a', una 'c', una 'e', una 'l', una 'm' y dos 'r'."
+  },
+  "red": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Sistema de ordenadores conectados (Internet); tejido para pescar.",
+    "pista3": "La palabra contiene una 'd', una 'e' y una 'r'."
+  },
+  "reforma": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Obra o cambio que se hace en una casa o edificio para mejorarlo.",
+    "pista3": "La palabra contiene una 'a', una 'e', una 'f', una 'm', una 'o' y dos 'r'."
+  },
+  "relación": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Conexión o trato entre dos personas (amistad, amor, trabajo).",
+    "pista3": "La palabra contiene una 'a', una 'c', una 'e', una 'i', una 'l', una 'n', una 'o' y una 'r'."
+  },
+  "reparar": {
+    "pista1": "Es un verbo.",
+    "pista2": "Arreglar algo que está roto o estropeado.",
+    "pista3": "La palabra contiene dos 'a', una 'e', una 'p' y tres 'r'."
+  },
+  "reportaje": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Trabajo periodístico extenso sobre un tema específico.",
+    "pista3": "La palabra contiene una 'a', dos 'e', una 'j', una 'o', una 'p', dos 'r' y una 't'."
+  },
+  "residuo": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Material que sobra y se tira, basura.",
+    "pista3": "La palabra contiene una 'd', una 'e', una 'i', una 'o', una 'r', dos 's' y una 'u'."
+  },
+  "retraso": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Acción de llegar tarde; demora en el horario previsto.",
+    "pista3": "La palabra contiene una 'a', una 'e', una 'o', dos 'r', una 's' y una 't'."
+  },
+  "reunión": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Encuentro de varias personas para hablar de algo, a menudo de trabajo.",
+    "pista3": "La palabra contiene una 'e', una 'i', una 'n', una 'o', una 'r' y una 'u'."
+  },
+  "sábana": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Tela grande que se pone en la cama para dormir sobre o bajo ella.",
+    "pista3": "La palabra contiene tres 'a', una 'b', una 'n' y una 's'."
+  },
+  "salario": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Dinero que recibe un trabajador cada mes; sinónimo de sueldo.",
+    "pista3": "La palabra contiene dos 'a', una 'i', una 'l', una 'o', una 'r' y una 's'."
+  },
+  "sano": {
+    "pista1": "Es un adjetivo.",
+    "pista2": "Que tiene buena salud, que no está enfermo; también comida saludable.",
+    "pista3": "La palabra contiene una 'a', una 'n', una 'o' y una 's'."
+  },
+  "sensible": {
+    "pista1": "Es un adjetivo.",
+    "pista2": "Persona que se emociona fácilmente o percibe mucho las cosas.",
+    "pista3": "La palabra contiene una 'b', dos 'e', una 'i', una 'l', una 'n' y dos 's'."
+  },
+  "sentimiento": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Estado de ánimo o emoción (amor, odio, alegría).",
+    "pista3": "La palabra contiene dos 'e', dos 'i', una 'm', dos 'n', una 'o', una 's' y dos 't'."
+  },
+  "sequía": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Periodo largo de tiempo sin lluvia y con falta de agua.",
+    "pista3": "La palabra contiene una 'a', una 'e', una 'i', una 'q', una 's' y una 'u'."
+  },
+  "sincero": {
+    "pista1": "Es un adjetivo.",
+    "pista2": "Persona que dice la verdad y no miente.",
+    "pista3": "La palabra contiene una 'c', una 'e', una 'i', una 'n', una 'o', una 'r' y una 's'."
+  },
+  "sindicato": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Asociación de trabajadores creada para defender sus intereses.",
+    "pista3": "La palabra contiene una 'a', una 'c', una 'd', dos 'i', una 'n', una 'o', una 's' y una 't'."
+  },
+  "síntoma": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Señal que indica que tienes una enfermedad (como fiebre o tos).",
+    "pista3": "La palabra contiene una 'a', una 'i', una 'm', una 'n', una 'o', una 's' y una 't'."
+  },
+  "solar": {
+    "pista1": "Es un adjetivo / sustantivo.",
+    "pista2": "Relacionado con el Sol; también un terreno vacío para construir.",
+    "pista3": "La palabra contiene una 'a', una 'l', una 'o', una 'r' y una 's'."
+  },
+  "soportar": {
+    "pista1": "Es un verbo.",
+    "pista2": "Aguantar algo molesto, difícil o pesado.",
+    "pista3": "La palabra contiene una 'a', dos 'o', una 'p', dos 'r', una 's' y una 't'."
+  },
+  "sospechoso": {
+    "pista1": "Es un adjetivo o sustantivo.",
+    "pista2": "Persona de la que se piensa que ha hecho algo malo o ilegal.",
+    "pista3": "La palabra contiene una 'c', una 'e', una 'h', tres 'o', una 'p' y tres 's'."
+  },
+  "sueldo": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Pago regular que recibe un empleado por su trabajo.",
+    "pista3": "La palabra contiene una 'd', una 'e', una 'l', una 'o', una 's' y una 'u'."
+  },
+  "suspender": {
+    "pista1": "Es un verbo.",
+    "pista2": "No aprobar un examen; también cancelar o detener algo temporalmente.",
+    "pista3": "La palabra contiene una 'd', dos 'e', una 'n', una 'p', una 'r', dos 's' y una 'u'."
+  },
+  "teclado": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Parte del ordenador con botones que usas para escribir.",
+    "pista3": "La palabra contiene una 'a', una 'c', una 'd', una 'e', una 'l', una 'o' y una 't'."
+  },
+  "tejado": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Parte superior exterior que cubre un edificio.",
+    "pista3": "La palabra contiene una 'a', una 'd', una 'e', una 'j', una 'o' y una 't'."
+  },
+  "testigo": {
+    "pista1": "Es un sustantivo masculino/femenino.",
+    "pista2": "Persona que ve un crimen o un accidente y puede contar lo que pasó.",
+    "pista3": "La palabra contiene una 'e', una 'g', una 'i', una 'o', una 's' y dos 't'."
+  },
+  "típico": {
+    "pista1": "Es un adjetivo.",
+    "pista2": "Característico o representativo de un lugar o grupo; algo muy común.",
+    "pista3": "La palabra contiene una 'c', dos 'i', una 'o', una 'p' y una 't'."
+  },
+  "título": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Nombre de un libro o película; documento que certifica estudios.",
+    "pista3": "La palabra contiene una 'i', una 'l', una 'o', dos 't' y una 'u'."
+  },
+  "tratamiento": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Conjunto de medicinas o cuidados para curar una enfermedad.",
+    "pista3": "La palabra contiene dos 'a', una 'e', una 'i', una 'm', una 'n', una 'o', una 'r' y tres 't'."
+  },
+  "usuario": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Persona que utiliza habitualmente un servicio o un ordenador.",
+    "pista3": "La palabra contiene una 'a', una 'i', una 'o', una 'r', una 's' y dos 'u'."
+  },
+  "venta": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Acción de dar un producto a cambio de dinero.",
+    "pista3": "La palabra contiene una 'a', una 'e', una 'n', una 't' y una 'v'."
+  },
+  "vía": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Camino por donde se pasa (calle, carretera, raíles del tren).",
+    "pista3": "La palabra contiene una 'a', una 'i' y una 'v'."
+  },
+  "víctima": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Persona que sufre un daño por culpa de otro o por un accidente.",
+    "pista3": "La palabra contiene una 'a', una 'c', dos 'i', una 'm', una 't' y una 'v'."
+  },
+  "violencia": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Uso de la fuerza para hacer daño a alguien.",
+    "pista3": "La palabra contiene una 'a', una 'c', una 'e', dos 'i', una 'l', una 'n', una 'o' y una 'v'."
+  },
+  "virus": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Organismo microscópico que causa enfermedades; también programa malo para el ordenador.",
+    "pista3": "La palabra contiene una 'i', una 'r', una 's', una 'u' y una 'v'."
+  },
+  "vomitar": {
+    "pista1": "Es un verbo.",
+    "pista2": "Expulsar la comida del estómago por la boca cuando estás enfermo.",
+    "pista3": "La palabra contiene una 'a', una 'i', una 'm', una 'o', una 'r', una 't' y una 'v'."
+  },
+  "acción": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Algo que se hace; también un género de cine con muchas peleas y movimiento.",
+    "pista3": "La palabra contiene una 'a', dos 'c', una 'i', una 'n' y una 'o'."
+  },
+  "anécdota": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Historia corta, curiosa o divertida que le ha pasado a alguien.",
+    "pista3": "La palabra contiene dos 'a', una 'c', una 'd', una 'e', una 'n', una 'o' y una 't'."
+  },
+  "animación": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Género de cine hecho con dibujos o gráficos por ordenador, no con actores reales.",
+    "pista3": "La palabra contiene dos 'a', una 'c', dos 'i', una 'm', dos 'n' y una 'o'."
+  },
+  "aparición": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Acción de hacerse visible de repente; a veces se refiere a un fantasma.",
+    "pista3": "La palabra contiene dos 'a', una 'c', dos 'i', una 'n', una 'o', una 'p' y una 'r'."
+  },
+  "argumento": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "La historia o asunto de una película o libro; también una razón para defender una opinión.",
+    "pista3": "La palabra contiene una 'a', una 'e', una 'g', una 'm', una 'n', una 'o', una 'r', una 't' y una 'u'."
+  },
+  "aumento": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Crecimiento o subida de algo (como el sueldo o el precio).",
+    "pista3": "La palabra contiene una 'a', una 'e', una 'm', una 'n', una 'o', una 't' y una 'u'."
+  },
+  "baja": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Periodo de tiempo en el que no trabajas porque estás enfermo (estar de...).",
+    "pista3": "La palabra contiene dos 'a', una 'b' y una 'j'."
+  },
+  "bélico": {
+    "pista1": "Es un adjetivo.",
+    "pista2": "Relacionado con la guerra (por ejemplo, una película de guerra).",
+    "pista3": "La palabra contiene una 'b', una 'c', una 'e', una 'i', una 'l' y una 'o'."
+  },
+  "biográfico": {
+    "pista1": "Es un adjetivo.",
+    "pista2": "Que cuenta la historia de la vida de una persona real.",
+    "pista3": "La palabra contiene una 'a', una 'b', una 'c', una 'f', una 'g', dos 'i', dos 'o' y una 'r'."
+  },
+  "calentamiento": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Aumento de la temperatura (global); ejercicios antes de hacer deporte.",
+    "pista3": "La palabra contiene dos 'a', una 'c', dos 'e', una 'i', una 'l', dos 'm', dos 'n', una 'o' y una 't'."
+  },
+  "cáncer": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Enfermedad grave en la que células malas crecen en el cuerpo.",
+    "pista3": "La palabra contiene una 'a', dos 'c', una 'e', una 'n' y una 'r'."
+  },
+  "candidato": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Persona que se presenta para ser elegida para un puesto de trabajo o político.",
+    "pista3": "La palabra contiene dos 'a', una 'c', dos 'd', una 'i', una 'n', una 'o' y una 't'."
+  },
+  "coordinar": {
+    "pista1": "Es un verbo.",
+    "pista2": "Organizar el trabajo de varias personas o elementos para que funcione bien.",
+    "pista3": "La palabra contiene una 'a', una 'c', una 'd', una 'i', una 'n', dos 'o' y dos 'r'."
+  },
+  "comedia": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Película, obra o libro que busca hacer reír al público.",
+    "pista3": "La palabra contiene una 'a', una 'c', una 'd', una 'e', una 'i', una 'm' y una 'o'."
+  },
+  "construcción": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Acción de hacer edificios o infraestructuras; sector de la albañilería.",
+    "pista3": "La palabra contiene dos 'c', una 'i', dos 'n', dos 'o', una 'r', una 's', una 't' y una 'u'."
+  },
+  "contar": {
+    "pista1": "Es un verbo.",
+    "pista2": "Decir los números en orden; también narrar una historia a alguien.",
+    "pista3": "La palabra contiene una 'a', una 'c', una 'n', una 'o', una 'r' y una 't'."
+  },
+  "creación": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "El acto de inventar o producir algo nuevo.",
+    "pista3": "La palabra contiene una 'a', dos 'c', una 'e', una 'i', una 'n', una 'o' y una 'r'."
+  },
+  "crecimiento": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Acción de crecer o hacerse más grande.",
+    "pista3": "La palabra contiene dos 'c', dos 'e', una 'i', una 'm', una 'n', una 'o', una 'r' y una 't'."
+  },
+  "cuento": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Historia corta, generalmente de ficción y para niños.",
+    "pista3": "La palabra contiene una 'c', una 'e', una 'n', una 'o', una 't' y una 'u'."
+  },
+  "departamento": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Sección específica dentro de una empresa; en América significa 'piso' o 'apartamento'.",
+    "pista3": "La palabra contiene dos 'a', una 'd', dos 'e', una 'm', una 'n', una 'o', una 'p', una 'r' y dos 't'."
+  },
+  "desaparición": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Hecho de dejar de estar o de ser visible.",
+    "pista3": "La palabra contiene dos 'a', una 'c', una 'd', una 'e', dos 'i', una 'n', una 'o', una 'p', una 'r' y una 's'."
+  },
+  "destrucción": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Acción de romper algo completamente, ruina total.",
+    "pista3": "La palabra contiene una 'c', una 'd', una 'e', una 'i', una 'n', una 'o', una 'r', una 's', una 't' y una 'u'."
+  },
+  "diabetes": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Enfermedad crónica en la que el cuerpo no controla bien el azúcar en la sangre.",
+    "pista3": "La palabra contiene dos 'a', una 'b', una 'd', dos 'e', una 'i', una 's' y una 't'."
+  },
+  "director": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Persona que dirige una empresa, una escuela o una película.",
+    "pista3": "La palabra contiene una 'c', una 'd', una 'e', una 'i', una 'o', dos 'r' y una 't'."
+  },
+  "doctorado": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "El nivel más alto de estudios universitarios.",
+    "pista3": "La palabra contiene una 'a', una 'c', two 'd', tres 'o', una 'r' y una 't'."
+  },
+  "documental": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Película que trata sobre hechos reales, naturaleza o historia, sin actores.",
+    "pista3": "La palabra contiene una 'a', una 'c', una 'd', una 'e', una 'l', una 'm', una 'n', una 'o', una 't' y una 'u'."
+  },
+  "drama": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Género de cine o teatro con historias serias, tristes o conflictivas.",
+    "pista3": "La palabra contiene dos 'a', una 'd', una 'm' y una 'r'."
+  },
+  "envejecimiento": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Proceso de hacerse viejo.",
+    "pista3": "La palabra contiene una 'c', cuatro 'e', una 'i', una 'j', una 'm', dos 'n', una 'o', una 't' y una 'v'."
+  },
+  "episodio": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Cada una de las partes o capítulos de una serie de televisión.",
+    "pista3": "La palabra contiene una 'd', una 'e', dos 'i', dos 'o', una 'p' y una 's'."
+  },
+  "esperanza": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Sentimiento de confianza en que ocurrirá lo que deseas.",
+    "pista3": "La palabra contiene dos 'a', dos 'e', una 'n', una 'p', una 'r', una 's' y una 'z'."
+  },
+  "extinción": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Desaparición total de una especie animal o vegetal.",
+    "pista3": "La palabra contiene una 'c', una 'e', dos 'i', dos 'n', una 'o', una 't' y una 'x'."
+  },
+  "extinguir": {
+    "pista1": "Es un verbo.",
+    "pista2": "Hacer que el fuego o una especie desaparezca; apagar.",
+    "pista3": "La palabra contiene una 'e', una 'g', two 'i', una 'n', una 'r', una 't', una 'u' y una 'x'."
+  },
+  "ficción": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Cosas inventadas, historias que no son reales.",
+    "pista3": "La palabra contiene dos 'c', una 'f', dos 'i', una 'n' y una 'o'."
+  },
+  "filial": {
+    "pista1": "Es un sustantivo femenino / adjetivo.",
+    "pista2": "Empresa que depende de otra más grande; también significa 'de los hijos'.",
+    "pista3": "La palabra contiene una 'a', una 'f', dos 'i' y dos 'l'."
+  },
+  "frenar": {
+    "pista1": "Es un verbo.",
+    "pista2": "Hacer que un vehículo vaya más despacio o se detenga.",
+    "pista3": "La palabra contiene una 'a', una 'e', una 'f', una 'n' y dos 'r'."
+  },
+  "género": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Clase o tipo al que pertenecen las cosas (ej. comedia, terror); también sexo (masculino/femenino).",
+    "pista3": "La palabra contiene dos 'e', una 'g', una 'n', una 'o' y una 'r'."
+  },
+  "grado": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Título universitario (Carrera); también unidad para medir temperatura.",
+    "pista3": "La palabra contiene una 'a', una 'd', una 'g', una 'o' y una 'r'."
+  },
+  "infantil": {
+    "pista1": "Es un adjetivo.",
+    "pista2": "Relacionado con los niños o para ellos.",
+    "pista3": "La palabra contiene una 'a', una 'f', dos 'i', una 'l', una 'n' y una 't'."
+  },
+  "invención": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Creación de algo nuevo que no existía antes.",
+    "pista3": "La palabra contiene una 'c', una 'e', dos 'i', tres 'n', una 'o' y una 'v'."
+  },
+  "inventar": {
+    "pista1": "Es un verbo.",
+    "pista2": "Crear o diseñar algo nuevo; también imaginar una mentira.",
+    "pista3": "La palabra contiene una 'a', una 'e', una 'i', dos 'n', una 'r', una 't' y una 'v'."
+  },
+  "jornada": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "El tiempo que dedicas a trabajar en un día (laboral); también un día completo.",
+    "pista3": "La palabra contiene dos 'a', una 'd', una 'j', una 'n', una 'o' y una 'r'."
+  },
+  "leyenda": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Narración popular antigua que mezcla hechos reales con fantasía.",
+    "pista3": "La palabra contiene una 'a', una 'd', dos 'e', una 'l', una 'n' y una 'y'."
+  },
+  "mando": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Aparato pequeño para controlar la televisión u otro equipo a distancia.",
+    "pista3": "La palabra contiene una 'a', una 'd', una 'm', una 'n' y una 'o'."
+  },
+  "máster": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Estudio de posgrado que se hace después de la universidad para especializarse.",
+    "pista3": "La palabra contiene una 'a', una 'e', una 'm', una 'r', una 's' y una 't'."
+  },
+  "maternidad": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "El estado o cualidad de ser madre.",
+    "pista3": "La palabra contiene dos 'a', dos 'd', una 'e', una 'i', una 'm', una 'n', una 'r' y una 't'."
+  },
+  "narrar": {
+    "pista1": "Es un verbo.",
+    "pista2": "Contar o relatar una historia o suceso.",
+    "pista3": "La palabra contiene dos 'a', una 'n' y tres 'r'."
+  },
+  "paternidad": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "El estado o cualidad de ser padre.",
+    "pista3": "La palabra contiene dos 'a', dos 'd', una 'e', una 'i', una 'n', una 'p', una 'r' y una 't'."
+  },
+  "personal": {
+    "pista1": "Es un adjetivo o sustantivo.",
+    "pista2": "Que pertenece a una sola persona; conjunto de trabajadores de una empresa.",
+    "pista3": "La palabra contiene una 'a', una 'e', una 'l', una 'n', una 'o', una 'p', una 'r' y una 's'."
+  },
+  "plantilla": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "El conjunto de empleados que trabajan en una empresa.",
+    "pista3": "La palabra contiene dos 'a', una 'i', tres 'l', una 'n', una 'p' y una 't'."
+  },
+  "población": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Conjunto de personas que viven en un lugar o país.",
+    "pista3": "La palabra contiene una 'a', una 'b', una 'c', una 'i', una 'l', una 'n', dos 'o' y una 'p'."
+  },
+  "precario": {
+    "pista1": "Es un adjetivo.",
+    "pista2": "Que es inestable, inseguro o de mala calidad (se usa mucho para el trabajo).",
+    "pista3": "La palabra contiene una 'a', una 'c', una 'e', una 'i', una 'o', una 'p' y dos 'r'."
+  },
+  "prevenir": {
+    "pista1": "Es un verbo.",
+    "pista2": "Tomar medidas para evitar que pase algo malo.",
+    "pista3": "La palabra contiene dos 'e', una 'i', una 'n', una 'p', dos 'r' y una 'v'."
+  },
+  "protagonista": {
+    "pista1": "Es un sustantivo masculino/femenino.",
+    "pista2": "Personaje principal de una obra, película o libro.",
+    "pista3": "La palabra contiene dos 'a', una 'g', una 'i', una 'n', dos 'o', una 'p', una 'r', una 's' y dos 't'."
+  },
+  "puesto": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Empleo o cargo en una empresa; lugar específico.",
+    "pista3": "La palabra contiene una 'e', una 'o', una 'p', una 's', una 't' y una 'u'."
+  },
+  "reducir": {
+    "pista1": "Es un verbo.",
+    "pista2": "Hacer algo más pequeño o disminuir la cantidad.",
+    "pista3": "La palabra contiene una 'c', una 'd', una 'e', una 'i', dos 'r' y una 'u'."
+  },
+  "relato": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Narración breve o cuento.",
+    "pista3": "La palabra contiene una 'a', una 'e', una 'l', una 'o', una 'r' y una 't'."
+  },
+  "romántico": {
+    "pista1": "Es un adjetivo.",
+    "pista2": "Relacionado con el amor o que expresa sentimientos amorosos.",
+    "pista3": "La palabra contiene una 'a', una 'c', una 'i', una 'm', una 'n', dos 'o', una 'r' y una 't'."
+  },
+  "saga": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Serie de películas o libros que cuentan la historia de los mismos personajes.",
+    "pista3": "La palabra contiene dos 'a', una 'g' y una 's'."
+  },
+  "sector": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Parte de una actividad económica (ej. servicios, industria) o zona de un lugar.",
+    "pista3": "La palabra contiene una 'c', una 'e', una 'o', una 'r', una 's' y una 't'."
+  },
+  "sede": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Lugar principal o central de una organización o empresa.",
+    "pista3": "La palabra contiene una 'd', dos 'e' y una 's'."
+  },
+  "solicitar": {
+    "pista1": "Es un verbo.",
+    "pista2": "Pedir algo de manera formal (un trabajo, información).",
+    "pista3": "La palabra contiene una 'a', una 'c', dos 'i', una 'l', una 'o', una 'r', una 's' y una 't'."
+  },
+  "suspense": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Género de cine o literatura que mantiene al espectador tenso y emocionado esperando qué pasará.",
+    "pista3": "La palabra contiene dos 'e', una 'n', una 'p', tres 's' y una 'u'."
+  },
+  "temporal": {
+    "pista1": "Es un adjetivo.",
+    "pista2": "Que dura solo un tiempo limitado, no es fijo.",
+    "pista3": "La palabra contiene una 'a', una 'e', una 'l', una 'm', una 'o', una 'p', una 'r' y una 't'."
+  },
+  "terror": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Miedo muy intenso; género de cine que busca asustar.",
+    "pista3": "La palabra contiene una 'e', una 'o', tres 'r' y una 't'."
+  },
+  "abandono": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Acción de dejar a alguien o algo solo y sin cuidado.",
+    "pista3": "La palabra contiene dos 'a', una 'b', una 'd', dos 'n' y dos 'o'."
+  },
+  "activismo": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Comportamiento activo para defender una causa política o social.",
+    "pista3": "La palabra contiene dos 'a', una 'c', dos 'i', una 'm', una 'o', una 's', una 't' y una 'v'."
+  },
+  "actuación": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Trabajo que hace un actor en una película o teatro.",
+    "pista3": "La palabra contiene dos 'a', dos 'c', una 'i', una 'n', una 'o', una 't' y una 'u'."
+  },
+  "alzhéimer": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Enfermedad mental progresiva que causa pérdida de memoria.",
+    "pista3": "La palabra contiene una 'a', una 'e', una 'h', una 'i', una 'l', una 'm', una 'r' y una 'z'."
+  },
+  "atrevido": {
+    "pista1": "Es un adjetivo.",
+    "pista2": "Persona valiente que hace cosas arriesgadas o nuevas sin miedo.",
+    "pista3": "La palabra contiene una 'a', una 'd', una 'e', una 'i', una 'o', una 'r', una 't' y una 'v'."
+  },
+  "aumentar": {
+    "pista1": "Es un verbo.",
+    "pista2": "Hacer que algo sea más grande, más fuerte o más caro.",
+    "pista3": "La palabra contiene dos 'a', una 'e', una 'm', una 'n', una 'r', una 't' y una 'u'."
+  },
+  "autostop": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Forma de viajar esperando en la carretera a que alguien te lleve gratis en su coche.",
+    "pista3": "La palabra contiene una 'a', dos 'o', una 'p', dos 's', dos 't' y una 'u'."
+  },
+  "banner": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Anuncio publicitario, generalmente rectangular, en una página web.",
+    "pista3": "La palabra contiene una 'a', una 'b', una 'e', dos 'n' y una 'r'."
+  },
+  "belleza": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Cualidad de una persona o cosa que es muy bonita de mirar.",
+    "pista3": "La palabra contiene una 'a', una 'b', dos 'e', una 'l' y una 'z'."
+  },
+  "bienestar": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Estado de la persona que está sana, feliz y tiene lo necesario para vivir bien.",
+    "pista3": "La palabra contiene una 'a', una 'b', dos 'e', una 'i', una 'n', una 'r', una 's' y una 't'."
+  },
+  "campaña": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Conjunto de actividades para conseguir un objetivo (electoral, publicitaria).",
+    "pista3": "La palabra contiene tres 'a', una 'c', una 'm', una 'ñ' y una 'p'."
+  },
+  "cartel": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Anuncio impreso en papel o cartón que se pega en las paredes.",
+    "pista3": "La palabra contiene una 'a', una 'c', una 'e', una 'l', una 'r' y una 't'."
+  },
+  "cierre": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Acción de cerrar algo, como un negocio o una puerta.",
+    "pista3": "La palabra contiene una 'c', dos 'e', una 'i' y dos 'r'."
+  },
+  "colgar": {
+    "pista1": "Es un verbo.",
+    "pista2": "Poner algo suspendido (en la pared); subir algo a internet; cortar una llamada.",
+    "pista3": "La palabra contiene una 'a', una 'c', una 'g', una 'l', una 'o' y una 'r'."
+  },
+  "comentar": {
+    "pista1": "Es un verbo.",
+    "pista2": "Expresar una opinión o explicar algo sobre un tema.",
+    "pista3": "La palabra contiene una 'a', una 'c', una 'e', una 'm', una 'n', una 'o', una 'r' y una 't'."
+  },
+  "completo": {
+    "pista1": "Es un adjetivo.",
+    "pista2": "Que tiene todas sus partes, que no le falta nada.",
+    "pista3": "La palabra contiene una 'c', una 'e', una 'l', una 'm', dos 'o', una 'p' y una 't'."
+  },
+  "concienciar": {
+    "pista1": "Es un verbo.",
+    "pista2": "Hacer que alguien comprenda la importancia de un problema (social, ambiental).",
+    "pista3": "La palabra contiene una 'a', tres 'c', una 'e', dos 'i', dos 'n', una 'o' y una 'r'."
+  },
+  "convencer": {
+    "pista1": "Es un verbo.",
+    "pista2": "Persuadir a alguien para que cambie de opinión o haga algo.",
+    "pista3": "La palabra contiene dos 'c', dos 'e', una 'n', una 'o', una 'r' y una 'v'."
+  },
+  "corrupción": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Práctica deshonesta o ilegal, especialmente en política o negocios.",
+    "pista3": "La palabra contiene una 'c', una 'i', una 'n', dos 'o', una 'p', dos 'r' y una 'u'."
+  },
+  "creativo": {
+    "pista1": "Es un adjetivo.",
+    "pista2": "Persona que tiene mucha imaginación para inventar cosas nuevas.",
+    "pista3": "La palabra contiene una 'a', una 'c', una 'e', una 'i', una 'o', una 'r', una 't' y una 'v'."
+  },
+  "defender": {
+    "pista1": "Es un verbo.",
+    "pista2": "Proteger a alguien o algo de un daño o ataque.",
+    "pista3": "La palabra contiene dos 'd', tres 'e', una 'f', una 'n' y una 'r'."
+  },
+  "demanda": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Petición o solicitud de algo (mercado); también una denuncia judicial.",
+    "pista3": "La palabra contiene dos 'a', dos 'd', una 'e', una 'm' y una 'n'."
+  },
+  "descanso": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Pausa en el trabajo o actividad para recuperarse.",
+    "pista3": "La palabra contiene una 'a', una 'c', una 'd', una 'e', una 'n', una 'o' y dos 's'."
+  },
+  "desigualdad": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Falta de equilibrio o justicia entre personas o cosas; lo contrario de igualdad.",
+    "pista3": "La palabra contiene dos 'a', dos 'd', dos 'e', una 'g', una 'i', una 'l', una 's' y una 'u'."
+  },
+  "digno": {
+    "pista1": "Es un adjetivo.",
+    "pista2": "Que merece respeto o es adecuado y correcto.",
+    "pista3": "La palabra contiene una 'd', una 'g', una 'i', una 'n' y una 'o'."
+  },
+  "dirigir": {
+    "pista1": "Es un verbo.",
+    "pista2": "Guiar, mandar o ser el jefe de un grupo o proyecto.",
+    "pista3": "La palabra contiene una 'd', una 'g', tres 'i' y dos 'r'."
+  },
+  "discriminación": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Trato injusto a una persona por su raza, género o religión.",
+    "pista3": "La palabra contiene una 'a', dos 'c', una 'd', cuatro 'i', una 'm', dos 'n', una 'o', una 'r' y una 's'."
+  },
+  "disminuir": {
+    "pista1": "Es un verbo.",
+    "pista2": "Hacer menor la cantidad o intensidad de algo; reducir.",
+    "pista3": "La palabra contiene una 'd', tres 'i', una 'm', una 'n', una 'r', una 's' y una 'u'."
+  },
+  "diversidad": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Variedad, diferencia, existencia de cosas o personas distintas.",
+    "pista3": "La palabra contiene una 'a', dos 'd', una 'e', two 'i', una 'r', una 's' y una 'v'."
+  },
+  "divertido": {
+    "pista1": "Es un adjetivo.",
+    "pista2": "Que entretiene y hace reír.",
+    "pista3": "La palabra contiene dos 'd', una 'e', dos 'i', una 'o', una 'r', una 't' y una 'v'."
+  },
+  "efectivo": {
+    "pista1": "Es un adjetivo / sustantivo.",
+    "pista2": "Que funciona bien; también se refiere al dinero en metálico (monedas y billetes).",
+    "pista3": "La palabra contiene una 'c', dos 'e', una 'f', una 'i', una 'o', una 't' y una 'v'."
+  },
+  "emocionar": {
+    "pista1": "Es un verbo.",
+    "pista2": "Causar sentimientos fuertes de alegría, tristeza o ilusión en alguien.",
+    "pista3": "La palabra contiene una 'a', una 'c', una 'e', una 'i', una 'm', una 'n', dos 'o' y una 'r'."
+  },
+  "emotivo": {
+    "pista1": "Es un adjetivo.",
+    "pista2": "Que produce emoción o es sensible.",
+    "pista3": "La palabra contiene una 'e', una 'i', una 'm', dos 'o', una 't' y una 'v'."
+  },
+  "encuesta": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Serie de preguntas que se hace a muchas personas para saber su opinión.",
+    "pista3": "La palabra contiene una 'a', una 'c', dos 'e', una 'n', una 's', una 't' y una 'u'."
+  },
+  "enológico": {
+    "pista1": "Es un adjetivo.",
+    "pista2": "Relacionado con el vino y su elaboración.",
+    "pista3": "La palabra contiene una 'c', una 'e', una 'g', una 'i', una 'l', una 'n' y tres 'o'."
+  },
+  "escala": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Parada que hace un avión o barco en un viaje antes del destino final; también tamaño o proporción.",
+    "pista3": "La palabra contiene dos 'a', una 'c', una 'e', una 'l' y una 's'."
+  },
+  "eslogan": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Frase corta y fácil de recordar usada en publicidad.",
+    "pista3": "La palabra contiene una 'a', una 'e', una 'g', una 'l', una 'n', una 'o' y una 's'."
+  },
+  "estreno": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Primera vez que se proyecta una película o se presenta un espectáculo.",
+    "pista3": "La palabra contiene dos 'e', una 'n', una 'o', una 'r', una 's' y una 't'."
+  },
+  "exigir": {
+    "pista1": "Es un verbo.",
+    "pista2": "Pedir algo de forma imperiosa o enérgica porque tienes derecho.",
+    "pista3": "La palabra contiene una 'e', una 'g', dos 'i', una 'r' y una 'x'."
+  },
+  "éxito": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Resultado muy bueno o feliz de un negocio o actuación; triunfo.",
+    "pista3": "La palabra contiene una 'e', una 'i', una 'o', una 't' y una 'x'."
+  },
+  "facturar": {
+    "pista1": "Es un verbo.",
+    "pista2": "Entregar el equipaje en el aeropuerto; también emitir una factura.",
+    "pista3": "La palabra contiene dos 'a', una 'c', una 'f', dos 'r', una 't' y una 'u'."
+  },
+  "fantástico": {
+    "pista1": "Es un adjetivo.",
+    "pista2": "Algo irreal o imaginario; también significa que algo es muy bueno.",
+    "pista3": "La palabra contiene dos 'a', una 'c', una 'f', una 'i', una 'n', una 'o', una 's' y dos 't'."
+  },
+  "folleto": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Papel impreso con información turística o publicitaria.",
+    "pista3": "La palabra contiene una 'e', una 'f', dos 'l', dos 'o' y una 't'."
+  },
+  "guion": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Texto escrito que contiene los diálogos de una película.",
+    "pista3": "La palabra contiene una 'g', una 'i', una 'n', una 'o' y una 'u'."
+  },
+  "igualdad": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Principio que dice que todas las personas tienen los mismos derechos.",
+    "pista3": "La palabra contiene dos 'a', dos 'd', una 'g', una 'i', una 'l' y una 'u'."
+  },
+  "impactante": {
+    "pista1": "Es un adjetivo.",
+    "pista2": "Que causa una impresión muy fuerte o sorpresa.",
+    "pista3": "La palabra contiene dos 'a', una 'c', una 'e', una 'i', una 'm', una 'n', una 'p' y dos 't'."
+  },
+  "impactar": {
+    "pista1": "Es un verbo.",
+    "pista2": "Chocar con fuerza; impresionar o dejar huella en alguien.",
+    "pista3": "La palabra contiene dos 'a', una 'c', una 'i', una 'm', una 'p', una 'r' y una 't'."
+  },
+  "indefinido": {
+    "pista1": "Es un adjetivo.",
+    "pista2": "Que no tiene un límite claro o fecha de finalización (como un contrato fijo).",
+    "pista3": "La palabra contiene dos 'd', una 'e', una 'f', tres 'i', dos 'n' y una 'o'."
+  },
+  "independencia": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Cualidad de no depender de otro; libertad de un país.",
+    "pista3": "La palabra contiene una 'a', una 'c', dos 'd', tres 'e', dos 'i', tres 'n' y una 'p'."
+  },
+  "influencer": {
+    "pista1": "Es un sustantivo masculino/femenino.",
+    "pista2": "Persona famosa en redes sociales que influye en las decisiones de otros.",
+    "pista3": "La palabra contiene una 'c', dos 'e', una 'f', una 'i', una 'l', dos 'n', una 'r' y una 'u'."
+  },
+  "injusto": {
+    "pista1": "Es un adjetivo.",
+    "pista2": "Que no actúa con justicia o equidad.",
+    "pista3": "La palabra contiene una 'i', una 'j', una 'n', una 'o', una 's', una 't' y una 'u'."
+  },
+  "innovación": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Acción de introducir novedades o crear cosas nuevas y modernas.",
+    "pista3": "La palabra contiene una 'a', una 'c', dos 'i', tres 'n', dos 'o' y una 'v'."
+  },
+  "juventud": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Etapa de la vida entre la infancia y la madurez.",
+    "pista3": "La palabra contiene una 'd', una 'e', una 'j', una 'n', una 't', dos 'u' y una 'v'."
+  },
+  "libertad": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Facultad de las personas para actuar según su propia voluntad.",
+    "pista3": "La palabra contiene una 'a', una 'b', una 'd', una 'e', una 'i', una 'l', una 'r' y una 't'."
+  },
+  "luchar": {
+    "pista1": "Es un verbo.",
+    "pista2": "Pelear, combatir o esforzarse mucho para conseguir algo.",
+    "pista3": "La palabra contiene una 'a', una 'c', una 'h', una 'l', una 'r' y una 'u'."
+  },
+  "meme": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Imagen o vídeo humorístico que se comparte rápidamente por internet.",
+    "pista3": "La palabra contiene dos 'e' y dos 'm'."
+  },
+  "normativa": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Conjunto de reglas o leyes que regulan una materia.",
+    "pista3": "La palabra contiene dos 'a', una 'i', una 'm', una 'n', una 'o', una 'r', una 't' y una 'v'."
+  },
+  "ocupación": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Trabajo o actividad que realiza alguien; acción de llenar un lugar.",
+    "pista3": "La palabra contiene una 'a', dos 'c', una 'i', una 'n', dos 'o', una 'p' y una 'u'."
+  },
+  "parcial": {
+    "pista1": "Es un adjetivo.",
+    "pista2": "Que no es total o completo; se usa para contratos de pocas horas.",
+    "pista3": "La palabra contiene dos 'a', una 'c', una 'i', una 'l', una 'p' y una 'r'."
+  },
+  "paro": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Situación de desempleo; interrupción de una actividad.",
+    "pista3": "La palabra contiene una 'a', una 'o', una 'p' y una 'r'."
+  },
+  "pausa": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Breve interrupción en una actividad o trabajo.",
+    "pista3": "La palabra contiene dos 'a', una 'p', una 's' y una 'u'."
+  },
+  "permiso": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Autorización para hacer algo; días libres en el trabajo.",
+    "pista3": "La palabra contiene una 'e', una 'i', una 'm', una 'o', una 'p', una 'r' y una 's'."
+  },
+  "persuadir": {
+    "pista1": "Es un verbo.",
+    "pista2": "Convencer a alguien con razones para que haga algo.",
+    "pista3": "La palabra contiene una 'a', una 'd', una 'e', una 'i', una 'p', dos 'r', una 's' y una 'u'."
+  },
+  "placer": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Sensación de gusto, satisfacción o alegría.",
+    "pista3": "La palabra contiene una 'a', una 'c', una 'e', una 'l', una 'p' y una 'r'."
+  },
+  "polémico": {
+    "pista1": "Es un adjetivo.",
+    "pista2": "Que provoca discusión o controversia.",
+    "pista3": "La palabra contiene una 'c', una 'e', una 'i', una 'l', una 'm', dos 'o' y una 'p'."
+  },
+  "pop-up": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Ventana emergente que aparece de repente en la pantalla del ordenador.",
+    "pista3": "La palabra contiene una 'o', tres 'p' y una 'u'."
+  },
+  "postal": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Tarjeta con una imagen de un lugar turístico que se envía por correo.",
+    "pista3": "La palabra contiene una 'a', una 'l', una 'o', una 'p', una 's' y una 't'."
+  },
+  "presentación": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Acto de mostrar algo o a alguien ante un público.",
+    "pista3": "La palabra contiene una 'a', una 'c', dos 'e', una 'i', dos 'n', una 'o', una 'p', una 'r', una 's' y una 't'."
+  },
+  "promocionar": {
+    "pista1": "Es un verbo.",
+    "pista2": "Hacer publicidad de algo para venderlo; ascender a alguien en el trabajo.",
+    "pista3": "La palabra contiene una 'a', una 'c', una 'i', una 'm', una 'n', tres 'o', una 'p' y dos 'r'."
+  },
+  "protestar": {
+    "pista1": "Es un verbo.",
+    "pista2": "Expresar queja o disconformidad, a menudo públicamente.",
+    "pista3": "La palabra contiene una 'a', una 'e', una 'o', una 'p', dos 'r', una 's' y dos 't'."
+  },
+  "provocador": {
+    "pista1": "Es un adjetivo.",
+    "pista2": "Que busca una reacción, molestar o excitar a los demás.",
+    "pista3": "La palabra contiene una 'a', una 'c', una 'd', tres 'o', una 'p', dos 'r' y una 'v'."
+  },
+  "publicar": {
+    "pista1": "Es un verbo.",
+    "pista2": "Hacer que un libro o noticia sea conocido por la gente.",
+    "pista3": "La palabra contiene una 'a', una 'b', una 'c', una 'i', una 'l', una 'p', una 'r' y una 'u'."
+  },
+  "publicista": {
+    "pista1": "Es un sustantivo masculino/femenino.",
+    "pista2": "Persona que trabaja creando anuncios y campañas de publicidad.",
+    "pista3": "La palabra contiene una 'a', una 'b', una 'c', dos 'i', una 'l', una 'p', dos 's', una 't' y una 'u'."
+  },
+  "puntual": {
+    "pista1": "Es un adjetivo.",
+    "pista2": "Persona que llega a la hora exacta o cosa que ocurre a su hora.",
+    "pista3": "La palabra contiene una 'a', una 'l', una 'n', una 'p', una 't' y dos 'u'."
+  },
+  "reducción": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Acción de hacer algo más pequeño o bajar el precio.",
+    "pista3": "La palabra contiene dos 'c', una 'd', una 'e', una 'i', una 'n', una 'o', una 'r' y una 'u'."
+  },
+  "refugio": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Lugar seguro para protegerse del peligro o del clima.",
+    "pista3": "La palabra contiene una 'e', una 'f', una 'g', una 'i', una 'o', una 'r' y dos 'u'."
+  },
+  "reivindicar": {
+    "pista1": "Es un verbo.",
+    "pista2": "Reclamar algo a lo que se cree tener derecho; defender una causa.",
+    "pista3": "La palabra contiene una 'a', una 'c', una 'd', una 'e', tres 'i', una 'n', dos 'r' y una 'v'."
+  },
+  "remunerado": {
+    "pista1": "Es un adjetivo.",
+    "pista2": "Trabajo o actividad por la que se paga dinero.",
+    "pista3": "La palabra contiene una 'a', una 'd', dos 'e', una 'm', una 'n', dos 'o', dos 'r' y una 'u'."
+  },
+  "reserva": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Acción de guardar una plaza en un hotel, restaurante o avión.",
+    "pista3": "La palabra contiene una 'a', dos 'e', dos 'r', una 's' y una 'v'."
+  },
+  "rural": {
+    "pista1": "Es un adjetivo.",
+    "pista2": "Relacionado con el campo y los pueblos pequeños; opuesto a urbano.",
+    "pista3": "La palabra contiene una 'a', una 'l', dos 'r' y una 'u'."
+  },
+  "safari": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Excursión para ver y fotografiar animales salvajes en libertad.",
+    "pista3": "La palabra contiene dos 'a', una 'f', una 'i', una 'r' y una 's'."
+  },
+  "seducir": {
+    "pista1": "Es un verbo.",
+    "pista2": "Atraer o enamorar a alguien; convencer con encanto.",
+    "pista3": "La palabra contiene una 'c', una 'd', una 'e', una 'i', una 'r', una 's' y una 'u'."
+  },
+  "seguro": {
+    "pista1": "Es un adjetivo / sustantivo.",
+    "pista2": "Que no tiene peligro; contrato que te protege si tienes un accidente.",
+    "pista3": "La palabra contiene una 'e', una 'g', una 'o', una 'r', una 's' y dos 'u'."
+  },
+  "sexista": {
+    "pista1": "Es un adjetivo.",
+    "pista2": "Actitud discriminatoria basada en el género de las personas.",
+    "pista3": "La palabra contiene una 'a', una 'e', una 'i', dos 's', una 't' y una 'x'."
+  },
+  "solidaridad": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Apoyo a causas o intereses de otros, especialmente en situaciones difíciles.",
+    "pista3": "La palabra contiene dos 'a', tres 'd', dos 'i', una 'l', una 'o', una 'r' y una 's'."
+  },
+  "solidario": {
+    "pista1": "Es un adjetivo.",
+    "pista2": "Persona dispuesta a ayudar y apoyar a los demás.",
+    "pista3": "La palabra contiene una 'a', una 'd', dos 'i', una 'l', dos 'o', una 'r' y una 's'."
+  },
+  "subida": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Acción de ir hacia arriba o aumento de precio.",
+    "pista3": "La palabra contiene una 'a', una 'b', una 'd', una 'i', una 's' y una 'u'."
+  },
+  "superhéroe": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Personaje de ficción con poderes extraordinarios que salva al mundo.",
+    "pista3": "La palabra contiene tres 'e', una 'h', una 'o', una 'p', dos 'r', una 's' y una 'u'."
+  },
+  "trasladar": {
+    "pista1": "Es un verbo.",
+    "pista2": "Llevar a alguien o algo de un lugar a otro.",
+    "pista3": "La palabra contiene tres 'a', una 'd', una 'l', dos 'r', una 's' y una 't'."
+  },
+  "traslado": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Acción de mover algo o mudarse de sitio.",
+    "pista3": "La palabra contiene dos 'a', una 'd', una 'l', una 'o', una 'r', una 's' y una 't'."
+  },
+  "urbano": {
+    "pista1": "Es un adjetivo.",
+    "pista2": "Relacionado con la ciudad; opuesto a rural.",
+    "pista3": "La palabra contiene una 'a', una 'b', una 'n', una 'o', una 'r' y una 'u'."
+  },
+  "visado": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Documento o sello necesario en el pasaporte para entrar a algunos países.",
+    "pista3": "La palabra contiene una 'a', una 'd', una 'i', una 'o', una 's' y una 'v'."
+  },
+  "aburrimiento": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Sensación de cansancio o falta de interés porque no hay nada divertido.",
+    "pista3": "La palabra contiene una 'a', una 'b', una 'e', dos 'i', dos 'm', una 'n', una 'o', dos 'r', una 't' y dos 'u'."
+  },
+  "absurdo": {
+    "pista1": "Es un adjetivo.",
+    "pista2": "Que no tiene lógica ni sentido; algo tonto o irracional.",
+    "pista3": "La palabra contiene una 'a', una 'b', una 'd', una 'o', una 'r', una 's' y una 'u'."
+  },
+  "alegría": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Sentimiento de felicidad y satisfacción.",
+    "pista3": "La palabra contiene dos 'a', una 'e', una 'g', una 'i', una 'l' y una 'r'."
+  },
+  "apertura": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Acción de abrir algo o iniciar un evento.",
+    "pista3": "La palabra contiene dos 'a', una 'e', una 'p', dos 'r', una 't' y una 'u'."
+  },
+  "apartamento": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Vivienda, generalmente pequeña, dentro de un edificio.",
+    "pista3": "La palabra contiene tres 'a', una 'e', una 'm', una 'n', dos 'o', una 'p', una 'r' y dos 't'."
+  },
+  "apto": {
+    "pista1": "Es un adjetivo.",
+    "pista2": "Que tiene la capacidad o habilidad necesaria para hacer algo.",
+    "pista3": "La palabra contiene una 'a', una 'o', una 'p' y una 't'."
+  },
+  "asco": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Sensación desagradable en el estómago provocada por algo que huele o sabe mal.",
+    "pista3": "La palabra contiene una 'a', una 'c', una 'o' y una 's'."
+  },
+  "asqueroso": {
+    "pista1": "Es un adjetivo.",
+    "pista2": "Algo que produce asco o es muy desagradable.",
+    "pista3": "La palabra contiene una 'a', una 'e', dos 'o', una 'q', una 'r', dos 's' y una 'u'."
+  },
+  "ayuda": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Acción de colaborar o socorrer a alguien que lo necesita.",
+    "pista3": "La palabra contiene dos 'a', una 'd', una 'u' y una 'y'."
+  },
+  "biodegradable": {
+    "pista1": "Es un adjetivo.",
+    "pista2": "Material que puede descomponerse de forma natural sin contaminar.",
+    "pista3": "La palabra contiene dos 'a', dos 'b', dos 'd', dos 'e', una 'g', una 'i', una 'l', una 'o' y una 'r'."
+  },
+  "blando": {
+    "pista1": "Es un adjetivo.",
+    "pista2": "Que no es duro, que cede al tacto.",
+    "pista3": "La palabra contiene una 'a', una 'b', una 'd', una 'l', una 'n' y una 'o'."
+  },
+  "camping": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Lugar al aire libre acondicionado para acampar con tiendas o caravanas.",
+    "pista3": "La palabra contiene una 'a', una 'c', una 'g', una 'i', una 'm', una 'n' y una 'p'."
+  },
+  "cerámica": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Arte de fabricar objetos de barro o porcelana.",
+    "pista3": "La palabra contiene dos 'a', dos 'c', una 'e', una 'i', una 'm' y una 'r'."
+  },
+  "chiste": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Historia breve y graciosa que se cuenta para hacer reír.",
+    "pista3": "La palabra contiene una 'c', una 'e', una 'h', una 'i', una 's' y una 't'."
+  },
+  "círculo": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Figura geométrica redonda; grupo de personas.",
+    "pista3": "La palabra contiene dos 'c', una 'i', una 'l', una 'o', una 'r' y una 'u'."
+  },
+  "colorido": {
+    "pista1": "Es un adjetivo / sustantivo.",
+    "pista2": "Que tiene muchos colores vivos.",
+    "pista3": "La palabra contiene una 'c', una 'd', una 'i', una 'l', tres 'o' y una 'r'."
+  },
+  "compartir": {
+    "pista1": "Es un verbo.",
+    "pista2": "Dar parte de lo que tienes a otros o usar algo en común.",
+    "pista3": "La palabra contiene una 'a', una 'c', una 'i', una 'm', una 'o', una 'p', dos 'r' y una 't'."
+  },
+  "compra": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Acción de adquirir algo pagando dinero.",
+    "pista3": "La palabra contiene una 'a', una 'c', una 'm', una 'o', una 'p' y una 'r'."
+  },
+  "cuadrado": {
+    "pista1": "Es un sustantivo masculino / adjetivo.",
+    "pista2": "Figura geométrica de cuatro lados iguales.",
+    "pista3": "La palabra contiene dos 'a', una 'c', dos 'd', una 'o', una 'r' y una 'u'."
+  },
+  "curso": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Periodo de estudios; clase o materia escolar.",
+    "pista3": "La palabra contiene una 'c', una 'o', una 'r', una 's' y una 'u'."
+  },
+  "delicado": {
+    "pista1": "Es un adjetivo.",
+    "pista2": "Que es fino, suave o fácil de romper; que requiere cuidado.",
+    "pista3": "La palabra contiene una 'a', una 'c', dos 'd', una 'e', una 'i', una 'l' y una 'o'."
+  },
+  "electrónico": {
+    "pista1": "Es un adjetivo.",
+    "pista2": "Que funciona con electricidad y chips (como un correo...).",
+    "pista3": "La palabra contiene dos 'c', dos 'e', una 'i', una 'l', una 'n', dos 'o', una 'r' y una 't'."
+  },
+  "enfado": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Sentimiento de disgusto o ira contra alguien.",
+    "pista3": "La palabra contiene una 'a', una 'd', una 'e', una 'f', una 'n' y una 'o'."
+  },
+  "estupendo": {
+    "pista1": "Es un adjetivo.",
+    "pista2": "Admirable, maravilloso, muy bueno.",
+    "pista3": "La palabra contiene una 'd', dos 'e', una 'n', una 'o', una 'p', una 's', una 't' y una 'u'."
+  },
+  "ético": {
+    "pista1": "Es un adjetivo.",
+    "pista2": "Que es moralmente correcto o conforme a las normas del bien.",
+    "pista3": "La palabra contiene una 'c', una 'e', una 'i', una 'o' y una 't'."
+  },
+  "extravagante": {
+    "pista1": "Es un adjetivo.",
+    "pista2": "Que es raro, extraño o fuera de lo común.",
+    "pista3": "La palabra contiene tres 'a', dos 'e', una 'g', una 'n', una 'r', una 't', dos 'v' y una 'x'."
+  },
+  "fomentar": {
+    "pista1": "Es un verbo.",
+    "pista2": "Promover o impulsar el desarrollo de algo.",
+    "pista3": "La palabra contiene una 'a', una 'e', una 'f', una 'm', una 'n', una 'o', una 'r' y una 't'."
+  },
+  "fomento": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Acción de apoyar o promover algo.",
+    "pista3": "La palabra contiene una 'e', una 'f', una 'm', una 'n', dos 'o' y una 't'."
+  },
+  "frágil": {
+    "pista1": "Es un adjetivo.",
+    "pista2": "Que se rompe con facilidad; débil.",
+    "pista3": "La palabra contiene una 'a', una 'f', una 'g', una 'i', una 'l' y una 'r'."
+  },
+  "horror": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Sentimiento de miedo muy intenso o aversión.",
+    "pista3": "La palabra contiene una 'h', dos 'o' y tres 'r'."
+  },
+  "horroroso": {
+    "pista1": "Es un adjetivo.",
+    "pista2": "Que causa horror, muy feo o terrible.",
+    "pista3": "La palabra contiene una 'h', cuatro 'o', tres 'r' y una 's'."
+  },
+  "ilusión": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Esperanza o alegría por algo que se desea; también algo imaginario.",
+    "pista3": "La palabra contiene dos 'i', una 'l', una 'n', una 'o', una 's' y una 'u'."
+  },
+  "ilógico": {
+    "pista1": "Es un adjetivo.",
+    "pista2": "Que no tiene sentido común o va contra la lógica.",
+    "pista3": "La palabra contiene una 'c', una 'g', dos 'i', una 'l' y dos 'o'."
+  },
+  "imagen": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Figura o representación visual de algo; foto.",
+    "pista3": "La palabra contiene una 'a', una 'e', una 'g', una 'i', una 'm' y una 'n'."
+  },
+  "impuesto": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Dinero que los ciudadanos deben pagar al Estado.",
+    "pista3": "La palabra contiene una 'e', una 'i', una 'm', una 'o', una 'p', una 's', una 't' y una 'u'."
+  },
+  "informar": {
+    "pista1": "Es un verbo.",
+    "pista2": "Dar noticias o datos a alguien sobre algo.",
+    "pista3": "La palabra contiene una 'a', una 'f', una 'i', una 'm', una 'n', una 'o' y dos 'r'."
+  },
+  "innecesario": {
+    "pista1": "Es un adjetivo.",
+    "pista2": "Que no hace falta, que se puede prescindir de ello.",
+    "pista3": "La palabra contiene una 'a', una 'c', dos 'e', dos 'i', dos 'n', una 'o', una 'r' y una 's'."
+  },
+  "insuficiente": {
+    "pista1": "Es un adjetivo.",
+    "pista2": "Que no es bastante para lo que se necesita.",
+    "pista3": "La palabra contiene una 'c', dos 'e', una 'f', dos 'i', dos 'n', una 's', una 't' y una 'u'."
+  },
+  "institucional": {
+    "pista1": "Es un adjetivo.",
+    "pista2": "Relacionado con una organización oficial o institución pública.",
+    "pista3": "La palabra contiene una 'a', una 'c', tres 'i', una 'l', dos 'n', una 'o', una 's', dos 't' y una 'u'."
+  },
+  "intolerable": {
+    "pista1": "Es un adjetivo.",
+    "pista2": "Que no se puede aguantar o permitir.",
+    "pista3": "La palabra contiene una 'a', una 'b', dos 'e', una 'i', dos 'l', una 'n', una 'o', una 'r' y una 't'."
+  },
+  "justo": {
+    "pista1": "Es un adjetivo.",
+    "pista2": "Que actúa con objetividad y justicia; exacto.",
+    "pista3": "La palabra contiene una 'j', una 'o', una 's', una 't' y una 'u'."
+  },
+  "llamada": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Acto de comunicar por teléfono.",
+    "pista3": "La palabra contiene tres 'a', una 'd', dos 'l' y una 'm'."
+  },
+  "llamativo": {
+    "pista1": "Es un adjetivo.",
+    "pista2": "Que atrae mucho la atención porque es brillante, diferente o muy visible.",
+    "pista3": "La palabra contiene dos 'a', una 'i', dos 'l', una 'm', una 'o', una 't' y una 'v'."
+  },
+  "locura": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Falta de razón o juicio; acción muy imprudente o exagerada.",
+    "pista3": "La palabra contiene una 'a', una 'c', una 'l', una 'o', una 'r' y una 'u'."
+  },
+  "lógico": {
+    "pista1": "Es un adjetivo.",
+    "pista2": "Que tiene sentido común, es racional o sigue las leyes de la razón.",
+    "pista3": "La palabra contiene una 'c', una 'g', una 'i', una 'l' y dos 'o'."
+  },
+  "lujoso": {
+    "pista1": "Es un adjetivo.",
+    "pista2": "Que tiene mucho lujo, es muy caro, elegante y de gran calidad.",
+    "pista3": "La palabra contiene una 'j', una 'l', dos 'o', una 's' y una 'u'."
+  },
+  "municipal": {
+    "pista1": "Es un adjetivo.",
+    "pista2": "Relacionado con el municipio o el ayuntamiento de una ciudad.",
+    "pista3": "La palabra contiene una 'a', una 'c', dos 'i', una 'l', una 'm', una 'n', una 'p' y una 'u'."
+  },
+  "nerviosismo": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Estado de inquietud, falta de tranquilidad o agitación.",
+    "pista3": "La palabra contiene una 'e', dos 'i', una 'm', una 'n', dos 'o', una 'r', tres 's' y una 'v'."
+  },
+  "objetivos": {
+    "pista1": "Es un sustantivo masculino (plural).",
+    "pista2": "Metas, fines o propósitos que se quieren conseguir.",
+    "pista3": "La palabra contiene una 'b', una 'e', una 'i', una 'j', dos 'o', una 's', una 't' y una 'v'."
+  },
+  "opinión": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Idea, juicio o pensamiento personal sobre algo o alguien.",
+    "pista3": "La palabra contiene dos 'i', dos 'n', dos 'o' y una 'p'."
+  },
+  "orgánico": {
+    "pista1": "Es un adjetivo.",
+    "pista2": "Que es natural y no ha sido tratado con productos químicos artificiales.",
+    "pista3": "La palabra contiene una 'a', una 'c', una 'g', una 'i', una 'n', dos 'o' y una 'r'."
+  },
+  "ovalado": {
+    "pista1": "Es un adjetivo.",
+    "pista2": "Que tiene forma de óvalo o de huevo.",
+    "pista3": "La palabra contiene dos 'a', una 'd', una 'l', dos 'o' y una 'v'."
+  },
+  "pena": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Sentimiento de tristeza o dolor; también significa lástima.",
+    "pista3": "La palabra contiene una 'a', una 'e', una 'n' y una 'p'."
+  },
+  "pereza": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Falta de ganas de trabajar o de hacer cosas; lentitud.",
+    "pista3": "La palabra contiene una 'a', dos 'e', una 'p', una 'r' y una 'z'."
+  },
+  "personajes": {
+    "pista1": "Es un sustantivo masculino (plural).",
+    "pista2": "Seres reales o imaginarios que intervienen en una obra de teatro, cine o libro.",
+    "pista3": "La palabra contiene una 'a', dos 'e', una 'j', una 'n', una 'o', una 'p', una 'r' y dos 's'."
+  },
+  "policíaca": {
+    "pista1": "Es un adjetivo (femenino).",
+    "pista2": "Relacionado con la policía; género de novelas o películas sobre crímenes.",
+    "pista3": "La palabra contiene dos 'a', dos 'c', dos 'i', una 'l', una 'o' y una 'p'."
+  },
+  "poliéster": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Tipo de tela sintética artificial muy usada para fabricar ropa.",
+    "pista3": "La palabra contiene dos 'e', una 'i', una 'l', una 'o', una 'p', una 'r', una 's' y una 't'."
+  },
+  "práctico": {
+    "pista1": "Es un adjetivo.",
+    "pista2": "Que es útil, eficaz o fácil de usar; opuesto a teórico.",
+    "pista3": "La palabra contiene una 'a', una 'c', una 'i', una 'o', una 'p', una 'r' y una 't'."
+  },
+  "proximidad": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Cercanía, cualidad de estar cerca en el espacio o el tiempo.",
+    "pista3": "La palabra contiene una 'a', dos 'd', dos 'i', una 'm', una 'o', una 'p', una 'r' y una 'x'."
+  },
+  "rabia": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Enfado muy grande y violento; furia.",
+    "pista3": "La palabra contiene dos 'a', una 'b', una 'i' y una 'r'."
+  },
+  "reciclable": {
+    "pista1": "Es un adjetivo.",
+    "pista2": "Que se puede reciclar para ser utilizado de nuevo.",
+    "pista3": "La palabra contiene una 'a', una 'b', dos 'c', dos 'e', una 'i', una 'l' y una 'r'."
+  },
+  "reciclado": {
+    "pista1": "Es un adjetivo.",
+    "pista2": "Material que ha pasado por un proceso de recuperación para ser usado otra vez.",
+    "pista3": "La palabra contiene una 'a', dos 'c', una 'd', una 'e', una 'i', una 'l', una 'o' y una 'r'."
+  },
+  "rectangular": {
+    "pista1": "Es un adjetivo.",
+    "pista2": "Que tiene forma de rectángulo, como una puerta o una mesa típica.",
+    "pista3": "La palabra contiene dos 'a', una 'c', una 'e', una 'g', una 'l', una 'n', dos 'r', una 't' y una 'u'."
+  },
+  "reutilizable": {
+    "pista1": "Es un adjetivo.",
+    "pista2": "Que se puede volver a utilizar varias veces, no es de usar y tirar.",
+    "pista3": "La palabra contiene una 'a', una 'b', dos 'e', dos 'i', una 'l', una 'r', una 't', una 'u' y una 'z'."
+  },
+  "reutilización": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Acción de volver a usar algo en lugar de tirarlo a la basura.",
+    "pista3": "La palabra contiene una 'a', una 'c', una 'e', tres 'i', una 'l', una 'n', una 'o', una 'r', una 't', una 'u' y una 'z'."
+  },
+  "reutilizar": {
+    "pista1": "Es un verbo.",
+    "pista2": "Usar algo de nuevo, bien para la misma función o para otra distinta.",
+    "pista3": "La palabra contiene una 'a', una 'e', dos 'i', una 'l', dos 'r', una 't', una 'u' y una 'z'."
+  },
+  "reversible": {
+    "pista1": "Es un adjetivo.",
+    "pista2": "Que puede volver a su estado anterior; prenda de ropa que se usa por los dos lados.",
+    "pista3": "La palabra contiene una 'b', tres 'e', una 'i', una 'l', dos 'r', una 's' y una 'v'."
+  },
+  "rombo": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Figura geométrica de cuatro lados iguales pero sin ángulos rectos (como el diamante de las cartas).",
+    "pista3": "La palabra contiene una 'b', una 'm', dos 'o' y una 'r'."
+  },
+  "rugoso": {
+    "pista1": "Es un adjetivo.",
+    "pista2": "Que tiene arrugas o textura irregular, no es suave al tacto.",
+    "pista3": "La palabra contiene una 'g', dos 'o', una 'r', una 's' y una 'u'."
+  },
+  "sanidad": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Sistema de servicios médicos y salud pública de un país.",
+    "pista3": "La palabra contiene dos 'a', dos 'd', una 'i', una 'n' y una 's'."
+  },
+  "sencillo": {
+    "pista1": "Es un adjetivo.",
+    "pista2": "Que no es complicado ni difícil; simple.",
+    "pista3": "La palabra contiene una 'c', una 'e', una 'i', dos 'l', una 'n', una 'o' y una 's'."
+  },
+  "sólido": {
+    "pista1": "Es un adjetivo.",
+    "pista2": "Estado de la materia duro y firme (no líquido ni gas); fuerte.",
+    "pista3": "La palabra contiene una 'd', una 'i', una 'l', dos 'o' y una 's'."
+  },
+  "sorprendente": {
+    "pista1": "Es un adjetivo.",
+    "pista2": "Que causa sorpresa o admiración porque es inesperado.",
+    "pista3": "La palabra contiene una 'd', tres 'e', dos 'n', una 'o', una 'p', dos 'r', una 's' y una 't'."
+  },
+  "sorpresa": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Emoción causada por algo imprevisto o repentino.",
+    "pista3": "La palabra contiene una 'a', una 'e', una 'o', una 'p', dos 'r' y dos 's'."
+  },
+  "suficiente": {
+    "pista1": "Es un adjetivo.",
+    "pista2": "Bastante, la cantidad necesaria, ni más ni menos.",
+    "pista3": "La palabra contiene una 'c', dos 'e', una 'f', dos 'i', una 'n', una 's', una 't' y una 'u'."
+  },
+  "terrible": {
+    "pista1": "Es un adjetivo.",
+    "pista2": "Muy malo, que causa miedo o es muy intenso.",
+    "pista3": "La palabra contiene una 'b', dos 'e', una 'i', una 'l', dos 'r' y una 't'."
+  },
+  "texto": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Conjunto de palabras escritas que forman un mensaje.",
+    "pista3": "La palabra contiene una 'e', una 'o', dos 't' y una 'x'."
+  },
+  "tontería": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Cosa de poca importancia, estúpida o dicha sin sentido.",
+    "pista3": "La palabra contiene una 'a', una 'e', una 'i', una 'n', una 'o', una 'r' y dos 't'."
+  },
+  "triangular": {
+    "pista1": "Es un adjetivo.",
+    "pista2": "Que tiene forma de triángulo (tres lados).",
+    "pista3": "La palabra contiene dos 'a', una 'g', una 'i', una 'l', una 'n', dos 'r', una 't' y una 'u'."
+  },
+  "tristeza": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Sentimiento de dolor emocional o pena; opuesto a alegría.",
+    "pista3": "La palabra contiene una 'a', una 'e', una 'i', una 'r', una 's', dos 't' y una 'z'."
+  },
+  "uso": {
+    "pista1": "Es un sustantivo masculino.",
+    "pista2": "Acción o efecto de usar algo.",
+    "pista3": "La palabra contiene una 'o', una 's' y una 'u'."
+  },
+  "valla": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Cerca o barrera (de madera o metal) para cerrar o delimitar un terreno.",
+    "pista3": "La palabra contiene dos 'a', dos 'l' y una 'v'."
+  },
+  "vegano": {
+    "pista1": "Es un adjetivo / sustantivo.",
+    "pista2": "Persona que no come ni usa ningún producto de origen animal.",
+    "pista3": "La palabra contiene una 'a', una 'e', una 'g', una 'n', una 'o' y una 'v'."
+  },
+  "vergüenza": {
+    "pista1": "Es un sustantivo femenino.",
+    "pista2": "Sentimiento de incomodidad por haber hecho algo ridículo, malo o por timidez.",
+    "pista3": "La palabra contiene una 'a', dos 'e', una 'g', una 'n', una 'r', una 'u', una 'v' y una 'z'."
+  }
+}

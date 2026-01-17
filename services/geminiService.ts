@@ -1,9 +1,46 @@
 import { GoogleGenAI, Type } from "@google/genai";
-import { VerbChallenge, SecretWord } from "../types";
-import { a1Words } from './a1_words';
+import { VerbChallenge } from "../types";
+import { vocabularioA1 } from './vocabulario_a1';
+import { vocabularioA2 } from './vocabulario_a2';
+import { vocabularioB1 } from './vocabulario_b1';
 
 // Initialize Gemini Client
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
+
+// Get vocabulary by level, filtered to 3-6 letter words only
+const getVocabulary = (level: string): string[] => {
+  let vocab: string[] = [];
+  switch(level.toLowerCase()) {
+    case 'a1': vocab = vocabularioA1; break;
+    case 'a2': vocab = vocabularioA2; break;
+    case 'b1': vocab = vocabularioB1; break;
+    default: vocab = vocabularioA1;
+  }
+  
+  // Filter to only words with 3-6 letters
+  return vocab.filter(word => word.length >= 3 && word.length <= 6);
+};
+
+// Simple hash function for deterministic daily word selection
+const hashDateToIndex = (dateStr: string, vocabLength: number): number => {
+  let hash = 0;
+  for (let i = 0; i < dateStr.length; i++) {
+    hash = ((hash << 5) - hash) + dateStr.charCodeAt(i);
+    hash |= 0;
+  }
+  return Math.abs(hash) % vocabLength;
+};
+
+// Get word of the day for a given level and date
+export const getWordOfDay = (level: string, date: string): string => {
+  const vocab = getVocabulary(level);
+  if (vocab.length === 0) {
+    console.warn(`No words found for level ${level}`);
+    return 'GATO'; // fallback
+  }
+  const index = hashDateToIndex(date, vocab.length);
+  return vocab[index];
+};
 
 export const generateVerbChallenge = async (difficulty: string): Promise<VerbChallenge | null> => {
   if (!process.env.API_KEY) {
@@ -50,70 +87,6 @@ export const generateVerbChallenge = async (difficulty: string): Promise<VerbCha
   } catch (error) {
     console.error("Error generating challenge:", error);
     return getMockChallenge();
-  }
-};
-
-export const generateSecretWord = async (level: string, date?: string): Promise<SecretWord | null> => {
-  // Use predefined list for A1 to improve speed and quality
-  if (level === 'A1') {
-      const dateStr = date || new Date().toLocaleDateString('es-ES');
-      // Simple hash function for the date string to get a deterministic index for daily words
-      let hash = 0;
-      for (let i = 0; i < dateStr.length; i++) {
-          hash = ((hash << 5) - hash) + dateStr.charCodeAt(i);
-          hash |= 0; // Convert to 32bit integer
-      }
-      const index = Math.abs(hash) % a1Words.length;
-      const wordData = a1Words[index];
-      
-      // Map local data to SecretWord interface
-      // Using pista1 as translation since it provides the context/category in English
-      return {
-          word: wordData.palabra.toUpperCase(),
-          hint: wordData.pista2,
-          translation: wordData.pista1 
-      };
-  }
-
-  if (!process.env.API_KEY) {
-    return { word: "MUNDO", hint: "El planeta donde vivimos", translation: "World" };
-  }
-
-  const modelName = 'gemini-3-flash-preview';
-  // Include date in prompt to simulate daily challenge
-  const dateContext = date ? ` for the date ${date}` : '';
-  
-  const prompt = `Generate a random 5-letter Spanish word suitable for a student at CEFR level ${level}${dateContext}.
-  Do not use accents/tildes in the 'word' field (normalize it).
-  Return JSON:
-  - word: The 5 letter word (uppercase).
-  - hint: A simple definition or synonym in Spanish.
-  - translation: English translation.`;
-
-  try {
-    const response = await ai.models.generateContent({
-      model: modelName,
-      contents: prompt,
-      config: {
-        responseMimeType: "application/json",
-        responseSchema: {
-          type: Type.OBJECT,
-          properties: {
-            word: { type: Type.STRING },
-            hint: { type: Type.STRING },
-            translation: { type: Type.STRING },
-          },
-          required: ["word", "hint", "translation"]
-        }
-      }
-    });
-
-    const jsonText = response.text;
-    if (!jsonText) throw new Error("No text returned");
-    return JSON.parse(jsonText) as SecretWord;
-  } catch (error) {
-    console.error(error);
-    return { word: "LIBRO", hint: "Hojas de papel encuadernadas", translation: "Book" };
   }
 }
 
