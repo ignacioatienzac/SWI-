@@ -19,7 +19,7 @@ const AboutMe: React.FC = () => {
                
                <div className="relative w-full h-full rounded-[2rem] overflow-hidden shadow-2xl border-4 border-white">
                 <img 
-                  src="/images/avatar-ignacio.webp" 
+                  src="/data/images/avatar-ignacio.webp" 
                   alt="Ignacio - Profesor de Español" 
                   className="w-full h-full object-cover bg-cream"
                 />
