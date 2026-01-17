@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
-import { ChevronLeft, RefreshCw, Play, Pause, Info, X } from 'lucide-react';
+import { ChevronLeft, Info, X } from 'lucide-react';
 import { powerVerbsData } from '../services/powerVerbsData';
 import { PowerVerb, GameDifficulty, GameMode } from '../types';
 
@@ -8,8 +8,6 @@ interface PowerOfVerbsGameProps {
 }
 
 // --- GAME CONSTANTS & CONFIGURATION ---
-const CANVAS_ASPECT_RATIO = 16 / 9;
-
 const DIFFICULTY_SETTINGS = {
   facil: {
     label: 'Fácil',
@@ -211,7 +209,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
     }
   };
 
-  const updateEntities = (canvasWidth: number) => {
+  const updateEntities = () => {
     monstersRef.current.forEach(m => { m.x -= m.speed; });
     projectilesRef.current.forEach(p => { p.x += p.speed; });
 
@@ -323,7 +321,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
         const ctx = canvas.getContext('2d');
         if (ctx) {
             spawnMonster(canvas.width, canvas.height, time);
-            updateEntities(canvas.width);
+            updateEntities();
             checkCollisions();
             draw(ctx, canvas.width, canvas.height);
         }
@@ -357,12 +355,6 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
         setAttackPower(prev => Math.max(1, prev - 1));
         setFeedbackMsg({ text: `Incorrecto. Era: ${validAnswers[0]}`, type: 'error' });
     }
-  };
-
-  const insertChar = (char: string) => {
-      setUserInput(prev => prev + char);
-      const input = document.getElementById('verb-input');
-      if (input) input.focus();
   };
 
   // --- RENDER HELPERS ---
