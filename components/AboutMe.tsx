@@ -1,4 +1,5 @@
 import React from 'react';
+import avatarImage from '../public/data/images/avatar-ignacio.webp';
 
 const AboutMe: React.FC = () => {
   return (
@@ -19,7 +20,7 @@ const AboutMe: React.FC = () => {
                
                <div className="relative w-full h-full rounded-[2rem] overflow-hidden shadow-2xl border-4 border-white">
                 <img 
-                  src="/data/images/avatar-ignacio.webp" 
+                  src={avatarImage}
                   alt="Ignacio - Profesor de Español" 
                   className="w-full h-full object-cover bg-cream"
                 />
