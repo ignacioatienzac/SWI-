@@ -75,6 +75,7 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
   const [showHint, setShowHint] = useState(false);
   const [displayMonth, setDisplayMonth] = useState<Date>(new Date());
   const [hints, setHints] = useState<string[]>([]);
+  const [activeFlipRow, setActiveFlipRow] = useState<number | null>(null);
 
   const DIFFICULTIES = [
     { value: 'a1', label: 'A1 - Principiante' },
@@ -157,20 +158,32 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
     const newHints = await getHintsForAttempt(secretWord, attemptNumber, difficulty);
     setHints(newHints);
 
-    if (currentGuess === secretWord) {
-      setStatus('WON');
-      setMessage(`¡Ganaste! La palabra es ${secretWord}`);
-      playSound('win');
-    } else if (newGuesses.length >= MAX_GUESSES) {
-      setStatus('LOST');
-      setMessage(`¡Game over! La palabra era ${secretWord}`);
-      playSound('lose');
-    } else {
-      setMessage('');
-      playSound('absent');
-    }
-
+    // Trigger staggered flip animation for the newly submitted row
+    const rowIndex = newGuesses.length - 1;
+    setActiveFlipRow(rowIndex);
     setCurrentGuess('');
+
+    // Delay win/loss evaluation until animation finishes (stagger per letter)
+    const delayPerLetter = 150; // ms
+    const totalDelay = (wordLength * delayPerLetter) + 250;
+
+    setTimeout(() => {
+      if (currentGuess === secretWord) {
+        setStatus('WON');
+        setMessage(`¡Ganaste! La palabra es ${secretWord}`);
+        playSound('win');
+      } else if (newGuesses.length >= MAX_GUESSES) {
+        setStatus('LOST');
+        setMessage(`¡Game over! La palabra era ${secretWord}`);
+        playSound('lose');
+      } else {
+        setMessage('');
+        playSound('absent');
+      }
+
+      // Clear active flip row after animation
+      setActiveFlipRow(null);
+    }, totalDelay);
   }, [currentGuess, secretWord, guesses, wordLength, MAX_GUESSES, difficulty]);
 
   // Get letter status for a specific guess position with proper duplicate handling
@@ -435,20 +448,27 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
           gap: '8px',
         }}>
           {guesses.map((guess, guessIdx) => (
-            guess.split('').map((letter, letterIdx) => (
-              <div
-                key={`${guessIdx}-${letterIdx}`}
-                className={`w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center text-lg sm:text-xl font-bold rounded-lg transition tile-flip ${
-                  getLetterStatusInGuess(guess, letterIdx) === 'correct'
-                    ? 'bg-green-500 text-white'
-                    : getLetterStatusInGuess(guess, letterIdx) === 'present'
-                    ? 'bg-yellow-500 text-white'
-                    : 'bg-gray-400 text-white'
-                }`}
-              >
-                {letter}
-              </div>
-            ))
+            guess.split('').map((letter, letterIdx) => {
+              const status = getLetterStatusInGuess(guess, letterIdx);
+              const isFlipping = activeFlipRow === guessIdx;
+              const style: React.CSSProperties = isFlipping ? { animationDelay: `${letterIdx * 150}ms` } : {};
+
+              return (
+                <div
+                  key={`${guessIdx}-${letterIdx}`}
+                  style={style}
+                  className={`w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center text-lg sm:text-xl font-bold rounded-lg transition ${isFlipping ? 'tile-flip' : ''} ${
+                    status === 'correct'
+                      ? 'bg-green-500 text-white'
+                      : status === 'present'
+                      ? 'bg-yellow-500 text-white'
+                      : 'bg-gray-400 text-white'
+                  }`}
+                >
+                  {letter}
+                </div>
+              );
+            })
           ))}
 
           {currentGuess.split('').map((letter, idx) => (

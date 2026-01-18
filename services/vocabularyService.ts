@@ -10,7 +10,8 @@ export const loadVocabulary = async (level: string): Promise<string[]> => {
   }
 
   try {
-    const response = await fetch(`/data/vocabularios/vocabulario-${level.toLowerCase()}.json`);
+    const base = import.meta.env.BASE_URL || '/';
+    const response = await fetch(`${base}data/vocabularios/vocabulario-${level.toLowerCase()}.json`);
     if (!response.ok) throw new Error(`Failed to load vocabulary for level ${level}`);
     
     const data = await response.json();
