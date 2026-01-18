@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { RotateCcw, Calendar, Lightbulb, ChevronLeft, ChevronRight } from 'lucide-react';
-import { getWordOfDay } from '../services/geminiService';
+import { getWordOfDay } from '../services/vocabularyService';
 import { isValidWord, getHintsForAttempt } from '../services/wordleService';
 
 type GameStatus = 'SELECT_LEVEL' | 'PLAYING' | 'WON' | 'LOST';
@@ -89,7 +89,7 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
   const MAX_GUESSES = 6;
 
   // Start new game
-  const startGame = useCallback((level: string, date: string) => {
+  const startGame = useCallback(async (level: string, date: string) => {
     setDifficulty(level);
     setSelectedDate(date);
     setGuesses([]);
@@ -97,7 +97,7 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
     setMessage('');
     setShowHint(false);
 
-    const word = getWordOfDay(level, date);
+    const word = await getWordOfDay(level, date);
     if (word && word.length > 0 && word.length >= 3 && word.length <= 6) {
       setSecretWord(word);
       setStatus('PLAYING');

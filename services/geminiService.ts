@@ -1,46 +1,12 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { VerbChallenge } from "../types";
-import { vocabularioA1 } from './vocabulario_a1';
-import { vocabularioA2 } from './vocabulario_a2';
-import { vocabularioB1 } from './vocabulario_b1';
+import { getWordOfDay } from './vocabularyService';
 
 // Initialize Gemini Client
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
 
-// Get vocabulary by level, filtered to 3-6 letter words only
-const getVocabulary = (level: string): string[] => {
-  let vocab: string[] = [];
-  switch(level.toLowerCase()) {
-    case 'a1': vocab = vocabularioA1; break;
-    case 'a2': vocab = vocabularioA2; break;
-    case 'b1': vocab = vocabularioB1; break;
-    default: vocab = vocabularioA1;
-  }
-  
-  // Filter to only words with 3-6 letters
-  return vocab.filter(word => word.length >= 3 && word.length <= 6);
-};
-
-// Simple hash function for deterministic daily word selection
-const hashDateToIndex = (dateStr: string, vocabLength: number): number => {
-  let hash = 0;
-  for (let i = 0; i < dateStr.length; i++) {
-    hash = ((hash << 5) - hash) + dateStr.charCodeAt(i);
-    hash |= 0;
-  }
-  return Math.abs(hash) % vocabLength;
-};
-
-// Get word of the day for a given level and date
-export const getWordOfDay = (level: string, date: string): string => {
-  const vocab = getVocabulary(level);
-  if (vocab.length === 0) {
-    console.warn(`No words found for level ${level}`);
-    return 'GATO'; // fallback
-  }
-  const index = hashDateToIndex(date, vocab.length);
-  return vocab[index];
-};
+// Re-export getWordOfDay from vocabularyService for backward compatibility
+export { getWordOfDay } from './vocabularyService';
 
 export const generateVerbChallenge = async (difficulty: string): Promise<VerbChallenge | null> => {
   if (!process.env.API_KEY) {
