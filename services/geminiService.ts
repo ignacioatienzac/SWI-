@@ -1,6 +1,5 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { VerbChallenge } from "../types";
-import { getWordOfDay } from './vocabularyService';
 
 // Initialize Gemini Client
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });

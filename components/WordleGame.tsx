@@ -152,6 +152,7 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
 
     const newGuesses = [...guesses, currentGuess];
     const attemptNumber = newGuesses.length;
+    const lastGuess = currentGuess; // Store current guess before clearing
     setGuesses(newGuesses);
 
     // Update hints based on attempt number
@@ -168,7 +169,7 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
     const totalDelay = (wordLength * delayPerLetter) + 250;
 
     setTimeout(() => {
-      if (currentGuess === secretWord) {
+      if (lastGuess === secretWord) {
         setStatus('WON');
         setMessage(`¡Ganaste! La palabra es ${secretWord}`);
         playSound('win');
