@@ -330,8 +330,13 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
           {/* Hint Button */}
           <button
             onClick={() => setShowHint(!showHint)}
-            className="p-2 bg-blue-100 text-blue-600 rounded-lg hover:bg-blue-200 transition"
-            title="Pista"
+            disabled={guesses.length < 3}
+            className={`p-2 rounded-lg transition ${
+              guesses.length < 3 
+                ? 'bg-gray-200 text-gray-400 cursor-not-allowed' 
+                : 'bg-blue-100 text-blue-600 hover:bg-blue-200'
+            }`}
+            title={guesses.length < 3 ? "Pistas disponibles desde el 4º intento" : "Pista"}
           >
             <Lightbulb size={20} />
           </button>
@@ -433,13 +438,86 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
 
       {/* Word grid */}
       <style>{`
-        @keyframes flip {
-          0% { transform: rotateX(0); }
-          50% { transform: rotateX(90deg); }
-          100% { transform: rotateX(0); }
+        @keyframes flipToCorrect {
+          0% { 
+            transform: rotateX(0); 
+            background-color: white;
+            color: #374151;
+            border-color: #9ca3af;
+          }
+          49% { 
+            transform: rotateX(90deg); 
+            background-color: white;
+            color: #374151;
+          }
+          51% { 
+            transform: rotateX(90deg); 
+            background-color: #22c55e;
+            color: white;
+            border-color: #22c55e;
+          }
+          100% { 
+            transform: rotateX(0); 
+            background-color: #22c55e;
+            color: white;
+          }
         }
-        .tile-flip {
-          animation: flip 0.6s ease-in-out;
+        @keyframes flipToPresent {
+          0% { 
+            transform: rotateX(0); 
+            background-color: white;
+            color: #374151;
+            border-color: #9ca3af;
+          }
+          49% { 
+            transform: rotateX(90deg); 
+            background-color: white;
+            color: #374151;
+          }
+          51% { 
+            transform: rotateX(90deg); 
+            background-color: #eab308;
+            color: white;
+            border-color: #eab308;
+          }
+          100% { 
+            transform: rotateX(0); 
+            background-color: #eab308;
+            color: white;
+          }
+        }
+        @keyframes flipToAbsent {
+          0% { 
+            transform: rotateX(0); 
+            background-color: white;
+            color: #374151;
+            border-color: #9ca3af;
+          }
+          49% { 
+            transform: rotateX(90deg); 
+            background-color: white;
+            color: #374151;
+          }
+          51% { 
+            transform: rotateX(90deg); 
+            background-color: #9ca3af;
+            color: white;
+            border-color: #9ca3af;
+          }
+          100% { 
+            transform: rotateX(0); 
+            background-color: #9ca3af;
+            color: white;
+          }
+        }
+        .tile-flip-correct {
+          animation: flipToCorrect 0.6s ease-in-out forwards;
+        }
+        .tile-flip-present {
+          animation: flipToPresent 0.6s ease-in-out forwards;
+        }
+        .tile-flip-absent {
+          animation: flipToAbsent 0.6s ease-in-out forwards;
         }
       `}</style>
       <div className="mb-8 flex justify-center overflow-x-auto">
@@ -458,12 +536,20 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
                 <div
                   key={`${guessIdx}-${letterIdx}`}
                   style={style}
-                  className={`w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center text-lg sm:text-xl font-bold rounded-lg transition ${isFlipping ? 'tile-flip' : ''} ${
-                    status === 'correct'
+                  className={`w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center text-lg sm:text-xl font-bold rounded-lg ${
+                    isFlipping && status === 'correct'
+                      ? 'tile-flip-correct'
+                      : isFlipping && status === 'present'
+                      ? 'tile-flip-present'
+                      : isFlipping && status === 'absent'
+                      ? 'tile-flip-absent'
+                      : !isFlipping && status === 'correct'
                       ? 'bg-green-500 text-white'
-                      : status === 'present'
+                      : !isFlipping && status === 'present'
                       ? 'bg-yellow-500 text-white'
-                      : 'bg-gray-400 text-white'
+                      : !isFlipping && status === 'absent'
+                      ? 'bg-gray-400 text-white'
+                      : 'bg-white border-2 border-gray-300'
                   }`}
                 >
                   {letter}
@@ -472,7 +558,7 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
             })
           ))}
 
-          {currentGuess.split('').map((letter, idx) => (
+          {status === 'PLAYING' && currentGuess.split('').map((letter, idx) => (
             <div
               key={`current-${idx}`}
               className="w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center text-lg sm:text-xl font-bold rounded-lg bg-white border-2 border-gray-400 animate-pulse"
@@ -481,14 +567,14 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
             </div>
           ))}
 
-          {Array.from({ length: wordLength - currentGuess.length }).map((_, idx) => (
+          {status === 'PLAYING' && Array.from({ length: wordLength - currentGuess.length }).map((_, idx) => (
             <div
               key={`empty-${idx}`}
               className="w-12 h-12 sm:w-14 sm:h-14 rounded-lg bg-white border-2 border-gray-200"
             />
           ))}
 
-          {Array.from({ length: MAX_GUESSES - guesses.length }).map((_, rowIdx) =>
+          {status === 'PLAYING' && Array.from({ length: MAX_GUESSES - guesses.length - 1 }).map((_, rowIdx) =>
             Array.from({ length: wordLength }).map((_, colIdx) => (
               <div
                 key={`empty-row-${rowIdx}-${colIdx}`}
