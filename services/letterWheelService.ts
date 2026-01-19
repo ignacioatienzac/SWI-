@@ -18,7 +18,8 @@ export async function loadLetterWheelVocabulary(difficulty: Difficulty): Promise
   }
 
   try {
-    const url = `/data/vocabularios/vocabulario-rueda-${difficulty}.json`;
+    const base = import.meta.env.BASE_URL || '/';
+    const url = `${base}data/vocabularios/vocabulario-rueda-${difficulty}.json`;
     const response = await fetch(url);
     if (!response.ok) {
       throw new Error(`Failed to load vocabulary: ${response.status}`);

@@ -624,7 +624,7 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
                   playSound('present');
                 }
               }}
-              className={`px-2 sm:px-3 py-2 rounded font-semibold text-xs sm:text-sm transition ${getKeyColor(key)} text-white`}
+              className={`px-3 sm:px-3 py-3 sm:py-2 rounded font-semibold text-sm sm:text-sm transition ${getKeyColor(key)} text-white`}
               disabled={status !== 'PLAYING'}
             >
               {key}
@@ -641,7 +641,7 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
                   playSound('present');
                 }
               }}
-              className={`px-2 sm:px-3 py-2 rounded font-semibold text-xs sm:text-sm transition ${getKeyColor(key)} text-white`}
+              className={`px-3 sm:px-3 py-3 sm:py-2 rounded font-semibold text-sm sm:text-sm transition ${getKeyColor(key)} text-white`}
               disabled={status !== 'PLAYING'}
             >
               {key}
@@ -654,7 +654,7 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
                 playSound('present');
               }
             }}
-            className={`px-2 sm:px-3 py-2 rounded font-semibold text-xs sm:text-sm transition ${getKeyColor('Ñ')} text-white`}
+            className={`px-3 sm:px-3 py-3 sm:py-2 rounded font-semibold text-sm sm:text-sm transition ${getKeyColor('Ñ')} text-white`}
             disabled={status !== 'PLAYING'}
           >
             Ñ
@@ -663,7 +663,7 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
         <div className="flex gap-1 flex-wrap justify-center">
           <button
             onClick={() => setCurrentGuess(prev => prev.slice(0, -1))}
-            className="px-2 sm:px-3 py-2 rounded font-semibold text-xs sm:text-sm bg-red-500 text-white hover:bg-red-600 transition"
+            className="px-3 sm:px-3 py-3 sm:py-2 rounded font-semibold text-sm sm:text-sm bg-red-500 text-white hover:bg-red-600 transition"
             disabled={status !== 'PLAYING'}
           >
             DEL
@@ -677,7 +677,7 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
                   playSound('present');
                 }
               }}
-              className={`px-2 sm:px-3 py-2 rounded font-semibold text-xs sm:text-sm transition ${getKeyColor(key)} text-white`}
+              className={`px-3 sm:px-3 py-3 sm:py-2 rounded font-semibold text-sm sm:text-sm transition ${getKeyColor(key)} text-white`}
               disabled={status !== 'PLAYING'}
             >
               {key}
