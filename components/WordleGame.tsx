@@ -151,12 +151,11 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
     }
 
     const newGuesses = [...guesses, currentGuess];
-    const attemptNumber = newGuesses.length;
     const lastGuess = currentGuess; // Store current guess before clearing
     setGuesses(newGuesses);
 
-    // Update hints based on attempt number
-    const newHints = await getHintsForAttempt(secretWord, attemptNumber, difficulty);
+    // Update hints based on attempt number (using newGuesses.length so hints show for NEXT attempt)
+    const newHints = await getHintsForAttempt(secretWord, newGuesses.length, difficulty);
     setHints(newHints);
 
     // Trigger staggered flip animation for the newly submitted row
@@ -445,12 +444,7 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
             color: #374151;
             border-color: #9ca3af;
           }
-          49% { 
-            transform: rotateX(90deg); 
-            background-color: white;
-            color: #374151;
-          }
-          51% { 
+          50% { 
             transform: rotateX(90deg); 
             background-color: #22c55e;
             color: white;
@@ -469,12 +463,7 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
             color: #374151;
             border-color: #9ca3af;
           }
-          49% { 
-            transform: rotateX(90deg); 
-            background-color: white;
-            color: #374151;
-          }
-          51% { 
+          50% { 
             transform: rotateX(90deg); 
             background-color: #eab308;
             color: white;
@@ -493,12 +482,7 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
             color: #374151;
             border-color: #9ca3af;
           }
-          49% { 
-            transform: rotateX(90deg); 
-            background-color: white;
-            color: #374151;
-          }
-          51% { 
+          50% { 
             transform: rotateX(90deg); 
             background-color: #9ca3af;
             color: white;
@@ -574,7 +558,7 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
             />
           ))}
 
-          {status === 'PLAYING' && Array.from({ length: MAX_GUESSES - guesses.length - 1 }).map((_, rowIdx) =>
+          {status === 'PLAYING' && Array.from({ length: MAX_GUESSES - guesses.length - (activeFlipRow !== null ? 2 : 1) }).map((_, rowIdx) =>
             Array.from({ length: wordLength }).map((_, colIdx) => (
               <div
                 key={`empty-row-${rowIdx}-${colIdx}`}

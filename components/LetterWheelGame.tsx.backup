@@ -1,0 +1,851 @@
+import React, { useState, useEffect, useRef } from 'react';
+import { ChevronLeft, ChevronRight, Calendar, Eye, EyeOff, Shuffle, Delete, Check } from 'lucide-react';
+import { loadLetterWheelVocabulary, getRandomWordForDate, getRelatedWords, normalizeWord } from '../services/letterWheelService';
+
+interface LetterWheelGameProps {
+  onBack: () => void;
+}
+
+interface VocabWord {
+  palabra: string;
+  pistas: string;
+}
+
+interface PlacedWord {
+  wordObj: VocabWord;
+  x: number;
+  y: number;
+  dir: 'H' | 'V';
+  normalized: string;
+}
+
+interface GameState {
+  words: PlacedWord[];
+  baseWordNormalized: string;
+  gridWidth: number;
+  gridHeight: number;
+  baseWordObj: VocabWord;
+}
+
+type GameStatus = 'MENU' | 'LOADING' | 'PLAYING' | 'VICTORY';
+
+const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack }) => {
+  const [gameStatus, setGameStatus] = useState<GameStatus>('MENU');
+  const [gameState, setGameState] = useState<GameState | null>(null);
+  const [solvedWords, setSolvedWords] = useState<Set<string>>(new Set());
+  const [guessStack, setGuessStack] = useState<Array<{ index: number; char: string }>>([]);
+  const [wheelOrder, setWheelOrder] = useState<number[]>([]);
+  const [cluesVisible, setCluesVisible] = useState(false);
+  const [feedback, setFeedback] = useState<{ text: string; type: 'success' | 'error' | '' }>({ text: '', type: '' });
+  const [selectedDate, setSelectedDate] = useState<string>(new Date().toISOString().split('T')[0]);
+  const [showCalendar, setShowCalendar] = useState(false);
+  const [displayMonth, setDisplayMonth] = useState<Date>(new Date());
+  const [isDragging, setIsDragging] = useState(false);
+  const [difficulty, setDifficulty] = useState<'a1' | 'a2' | 'b1' | 'b2'>('a1');
+
+  const wheelRef = useRef<HTMLDivElement>(null);
+  const audioCtxRef = useRef<AudioContext | null>(null);
+
+  // Constants
+  const WHEEL_RADIUS = 80;
+  const WHEEL_CENTER = 120;
+
+  // Handle mouse up globally to end drag
+  useEffect(() => {
+    const handleMouseUp = () => {
+      if (isDragging) {
+        setIsDragging(false);
+        if (guessStack.length > 0) {
+          submitGuess();
+        }
+      }
+    };
+    
+    window.addEventListener('mouseup', handleMouseUp);
+    return () => window.removeEventListener('mouseup', handleMouseUp);
+  }, [isDragging, guessStack]);
+
+  // Handle keyboard input for desktop
+  useEffect(() => {
+    if (gameStatus !== 'PLAYING' || !gameState) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const key = e.key.toLowerCase();
+
+      // Backspace to remove last letter
+      if (key === 'backspace') {
+        e.preventDefault();
+        handleBackspace();
+        return;
+      }
+
+      // Enter to submit
+      if (key === 'enter') {
+        e.preventDefault();
+        submitGuess();
+        return;
+      }
+
+      // Letter keys - find matching letter in wheel
+      if (/^[a-zñ]$/.test(key)) {
+        e.preventDefault();
+        const normalizedKey = key;
+        
+        // Find first unused matching letter in base word
+        for (let i = 0; i < gameState.baseWordNormalized.length; i++) {
+          const wheelLetter = gameState.baseWordNormalized[i];
+          const alreadyUsed = guessStack.some(item => item.index === i);
+          
+          if (wheelLetter === normalizedKey && !alreadyUsed) {
+            addLetterToGuess(i);
+            break;
+          }
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [gameStatus, gameState, guessStack]);
+
+  // Normalize function now uses service
+  const normalize = (str: string): string => {
+    return normalizeWord(str).toLowerCase();
+  };
+
+  // Date to seed RNG
+  const dateToSeededRng = (dateStr: string) => {
+    let hash = 0;
+    for (let i = 0; i < dateStr.length; i++) {
+      const char = dateStr.charCodeAt(i);
+      hash = ((hash << 5) - hash) + char;
+    }
+    let seed = Math.abs(hash);
+    return () => {
+      seed = (seed * 9301 + 49297) % 233280;
+      return seed / 233280;
+    };
+  };
+
+  // Audio
+  const playTone = (frequency: number, duration: number, type: OscillatorType = 'sine') => {
+    if (!audioCtxRef.current) {
+      audioCtxRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+    }
+    const ctx = audioCtxRef.current;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = type;
+    osc.frequency.value = frequency;
+    gain.gain.setValueAtTime(0.2, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+    osc.connect(gain).connect(ctx.destination);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + duration);
+  };
+
+  const playSuccess = () => {
+    playTone(520, 0.15, 'triangle');
+    setTimeout(() => playTone(660, 0.18, 'sine'), 80);
+  };
+
+  const playError = () => {
+    playTone(220, 0.12, 'sawtooth');
+    setTimeout(() => playTone(180, 0.12, 'square'), 50);
+  };
+
+  const playPop = () => {
+    playTone(420, 0.08, 'sine');
+  };
+
+  // Generate crossword from vocabulary
+  const generateCrossword = async (dateStr: string, level: 'a1' | 'a2' | 'b1' | 'b2'): Promise<GameState | null> => {
+    const allWords = await loadLetterWheelVocabulary(level);
+    if (allWords.length === 0) return null;
+
+    // Get base word (7-10 letters)
+    const baseWordObj = getRandomWordForDate(allWords, dateStr, 7, 10);
+    if (!baseWordObj) return null;
+
+    const baseWord = normalize(baseWordObj.palabra);
+    
+    // Get related words (words that share letters with base word)
+    const relatedWords = getRelatedWords(allWords, baseWordObj.palabra, 6);
+
+    // Simple crossword layout: base word horizontal, others vertical intersecting
+    const placedWords: PlacedWord[] = [
+      { wordObj: baseWordObj, x: 0, y: 0, dir: 'H', normalized: baseWord }
+    ];
+
+    // Place related words vertically, intersecting with base word
+    relatedWords.forEach((wordObj) => {
+      const normalized = normalize(wordObj.palabra);
+      // Find intersection point with base word
+      let intersectionFound = false;
+      for (let i = 0; i < normalized.length && !intersectionFound; i++) {
+        const letter = normalized[i];
+        const baseIdx = baseWord.indexOf(letter);
+        if (baseIdx !== -1) {
+          // Place word vertically, intersecting at this letter
+          placedWords.push({
+            wordObj,
+            x: baseIdx,
+            y: -i,
+            dir: 'V',
+            normalized
+          });
+          intersectionFound = true;
+        }
+      }
+    });
+
+    // Calculate grid bounds
+    let minX = 0, maxX = 0, minY = 0, maxY = 0;
+    placedWords.forEach(w => {
+      const endX = w.dir === 'H' ? w.x + w.normalized.length - 1 : w.x;
+      const endY = w.dir === 'V' ? w.y + w.normalized.length - 1 : w.y;
+      minX = Math.min(minX, w.x);
+      maxX = Math.max(maxX, endX);
+      minY = Math.min(minY, w.y);
+      maxY = Math.max(maxY, endY);
+    });
+
+    // Normalize coordinates
+    const offsetX = -minX;
+    const offsetY = -minY;
+    const normalizedWords = placedWords.map(w => ({
+      ...w,
+      x: w.x + offsetX,
+      y: w.y + offsetY,
+    }));
+
+    return {
+      words: normalizedWords,
+      baseWordNormalized: baseWord,
+      gridWidth: maxX - minX + 1,
+      gridHeight: maxY - minY + 1,
+      baseWordObj,
+    };
+  };
+
+  // Start game function
+  const startGame = async (level: 'a1' | 'a2' | 'b1' | 'b2', date: string) => {
+    setGameStatus('LOADING');
+    setDifficulty(level);
+    setSelectedDate(date);
+    setGuessStack([]);
+    setFeedback({ text: '', type: '' });
+
+    const newGameState = await generateCrossword(date, level);
+    if (!newGameState) {
+      setGameStatus('MENU');
+      return;
+    }
+
+    setGameState(newGameState);
+    setSolvedWords(new Set([newGameState.baseWordNormalized]));
+    
+    // Initialize wheel order
+    const letters = newGameState.baseWordNormalized.split('');
+    const rng = dateToSeededRng(date);
+    const indices = letters.map((_, i) => i);
+    // Shuffle
+    for (let i = indices.length - 1; i > 0; i--) {
+      const j = Math.floor(rng() * (i + 1));
+      [indices[i], indices[j]] = [indices[j], indices[i]];
+    }
+    setWheelOrder(indices);
+    setGameStatus('PLAYING');
+  };
+
+  // Calculate letter position on wheel
+  const getLetterPosition = (index: number, total: number) => {
+    const angle = (index / total) * 2 * Math.PI - Math.PI / 2;
+    const x = WHEEL_CENTER + WHEEL_RADIUS * Math.cos(angle);
+    const y = WHEEL_CENTER + WHEEL_RADIUS * Math.sin(angle);
+    return { x, y };
+  };
+
+  // Handle letter selection
+  const addLetterToGuess = (index: number) => {
+    if (!gameState) return;
+    const letter = gameState.baseWordNormalized[index];
+    const alreadyUsed = guessStack.some(item => item.index === index);
+    if (alreadyUsed) return;
+
+    playPop();
+    setGuessStack([...guessStack, { index, char: letter }]);
+  };
+
+  // Handle backspace
+  const handleBackspace = () => {
+    if (guessStack.length > 0) {
+      setGuessStack(guessStack.slice(0, -1));
+    }
+  };
+
+  // Shuffle wheel
+  const shuffleWheel = () => {
+    if (!gameState) return;
+    const indices = [...wheelOrder];
+    for (let i = indices.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [indices[i], indices[j]] = [indices[j], indices[i]];
+    }
+    setWheelOrder(indices);
+  };
+
+  // Submit guess
+  const submitGuess = () => {
+    if (!gameState || guessStack.length === 0) return;
+
+    const guessWord = guessStack.map(l => l.char).join('');
+    const matchingWord = gameState.words.find(w => w.normalized === guessWord);
+
+    if (matchingWord && !solvedWords.has(guessWord)) {
+      playSuccess();
+      setFeedback({ text: '¡Correcto! Palabra encontrada.', type: 'success' });
+      setSolvedWords(new Set([...solvedWords, guessWord]));
+      setGuessStack([]);
+
+      // Check victory
+      if (solvedWords.size + 1 >= gameState.words.length) {
+        setTimeout(() => setGameStatus('VICTORY'), 500);
+      }
+    } else if (solvedWords.has(guessWord)) {
+      setFeedback({ text: 'Ya has encontrado esta palabra.', type: 'error' });
+    } else {
+      playError();
+      setFeedback({ text: 'Esa palabra no está en el crucigrama.', type: 'error' });
+    }
+
+    setTimeout(() => setFeedback({ text: '', type: '' }), 2000);
+  };
+
+  // Build grid map
+  const buildGridMap = () => {
+    if (!gameState) return new Map();
+    const map = new Map<string, { char: string; wordIds: string[]; number?: number }>();
+    
+    gameState.words.forEach((word, wordIdx) => {
+      for (let i = 0; i < word.normalized.length; i++) {
+        const x = word.dir === 'H' ? word.x + i : word.x;
+        const y = word.dir === 'V' ? word.y + i : word.y;
+        const key = `${x},${y}`;
+        const char = word.normalized[i];
+        
+        if (!map.has(key)) {
+          map.set(key, { char, wordIds: [], number: i === 0 ? wordIdx + 1 : undefined });
+        }
+        map.get(key)!.wordIds.push(`${word.dir}-${word.x}-${word.y}`);
+      }
+    });
+    
+    return map;
+  };
+
+  const gridMap = buildGridMap();
+
+  // Render grid
+  const renderGrid = () => {
+    if (!gameState) return null;
+
+    const cells = [];
+    for (let y = 0; y < gameState.gridHeight; y++) {
+      for (let x = 0; x < gameState.gridWidth; x++) {
+        const key = `${x},${y}`;
+        const cell = gridMap.get(key);
+        
+        if (!cell) {
+          cells.push(
+            <div key={`${x}-${y}`} className="w-10 h-10 sm:w-12 sm:h-12" />
+          );
+        } else {
+          const isInSolvedWord = cell.wordIds.some((wid: string) => {
+            const word = gameState.words.find(w => `${w.dir}-${w.x}-${w.y}` === wid);
+            return word && solvedWords.has(word.normalized);
+          });
+
+          cells.push(
+            <div
+              key={`${x}-${y}`}
+              className={`w-10 h-10 sm:w-12 sm:h-12 rounded-lg border-2 flex items-center justify-center font-bold text-lg relative transition-all ${
+                isInSolvedWord
+                  ? 'bg-green-100 border-green-500 text-green-800'
+                  : 'bg-white border-gray-300'
+              }`}
+            >
+              {cell.number && (
+                <span className="absolute top-0.5 left-1 text-xs text-gray-500">
+                  {cell.number}
+                </span>
+              )}
+              <span className={isInSolvedWord ? 'opacity-100' : 'opacity-0'}>
+                {cell.char.toUpperCase()}
+              </span>
+            </div>
+          );
+        }
+      }
+    }
+
+    return (
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: `repeat(${gameState.gridWidth}, 2.5rem)`,
+          gap: '0.375rem',
+        }}
+        className="sm:gap-2"
+      >
+        {cells}
+      </div>
+    );
+  };
+
+  if (gameStatus === 'MENU') {
+    const DIFFICULTIES = [
+      { value: 'a1' as const, label: 'A1 - Principiante' },
+      { value: 'a2' as const, label: 'A2 - Elemental' },
+      { value: 'b1' as const, label: 'B1 - Intermedio' },
+      { value: 'b2' as const, label: 'B2 - Intermedio-Alto' }
+    ];
+
+    // Calendar logic
+    const today = new Date().toISOString().split('T')[0];
+    const daysInMonth = new Date(displayMonth.getFullYear(), displayMonth.getMonth() + 1, 0).getDate();
+    const firstDay = new Date(displayMonth.getFullYear(), displayMonth.getMonth(), 1).getDay();
+    const calendarDays: (string | null)[] = [];
+    
+    // Adjust for Monday start (getDay: 0=Sunday)
+    const adjustedFirstDay = firstDay === 0 ? 6 : firstDay - 1;
+    
+    for (let i = 0; i < adjustedFirstDay; i++) {
+      calendarDays.push(null);
+    }
+    
+    for (let day = 1; day <= daysInMonth; day++) {
+      const dateStr = `${displayMonth.getFullYear()}-${String(displayMonth.getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+      calendarDays.push(dateStr);
+    }
+
+    return (
+      <div className="min-h-screen bg-cream p-4 flex items-center justify-center">
+        <div className="bg-white rounded-3xl p-8 max-w-2xl w-full shadow-2xl">
+          <button
+            onClick={onBack}
+            className="flex items-center gap-2 text-gray-600 hover:text-gray-800 mb-6 transition-colors"
+          >
+            <ChevronLeft size={20} />
+            ← Atrás
+          </button>
+
+          <h1 className="text-4xl font-black text-deep-blue mb-2 text-center">La Rueda de Letras</h1>
+          <p className="text-center text-gray-600 mb-8">
+            Forma palabras usando las letras de la rueda para completar el crucigrama
+          </p>
+
+          {/* Difficulty selector */}
+          <div className="mb-6">
+            <label className="block text-lg font-bold text-deep-blue mb-3">Selecciona tu nivel:</label>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {DIFFICULTIES.map(({ value, label }) => (
+                <button
+                  key={value}
+                  onClick={() => setDifficulty(value)}
+                  className={`p-4 rounded-xl border-2 font-bold transition-all ${
+                    difficulty === value
+                      ? 'bg-spanish-red text-white border-spanish-red'
+                      : 'bg-white text-gray-700 border-gray-300 hover:border-spanish-red'
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Date selector */}
+          <div className="mb-6">
+            <label className="block text-lg font-bold text-deep-blue mb-3">Elige la fecha:</label>
+            <div className="bg-gray-50 p-4 rounded-xl">
+              {/* Month navigation */}
+              <div className="flex items-center justify-between mb-4">
+                <button
+                  onClick={() => setDisplayMonth(new Date(displayMonth.getFullYear(), displayMonth.getMonth() - 1))}
+                  className="p-2 hover:bg-gray-200 rounded-full transition-colors"
+                >
+                  <ChevronLeft size={20} />
+                </button>
+                <div className="text-center font-bold text-gray-800">
+                  {displayMonth.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' })}
+                </div>
+                <button
+                  onClick={() => setDisplayMonth(new Date(displayMonth.getFullYear(), displayMonth.getMonth() + 1))}
+                  className="p-2 hover:bg-gray-200 rounded-full transition-colors"
+                >
+                  <ChevronRight size={20} />
+                </button>
+              </div>
+
+              {/* Calendar grid */}
+              <div className="grid grid-cols-7 gap-1">
+                {['L', 'M', 'X', 'J', 'V', 'S', 'D'].map(day => (
+                  <div key={day} className="text-center text-xs font-semibold text-gray-600 py-1">
+                    {day}
+                  </div>
+                ))}
+                {calendarDays.map((dateStr, idx) => {
+                  const isSelected = dateStr === selectedDate;
+                  const isToday = dateStr === today;
+                  const isFuture = !!(dateStr && dateStr > today);
+                  
+                  return (
+                    <button
+                      key={idx}
+                      onClick={() => {
+                        if (dateStr && !isFuture) {
+                          setSelectedDate(dateStr);
+                        }
+                      }}
+                      disabled={isFuture || !dateStr}
+                      className={`py-2 text-sm font-semibold rounded transition-colors ${
+                        !dateStr
+                          ? ''
+                          : isSelected
+                          ? 'bg-spanish-red text-white'
+                          : isToday
+                          ? 'bg-green-500 text-white'
+                          : isFuture
+                          ? 'text-gray-300 cursor-not-allowed'
+                          : 'bg-white text-gray-800 hover:bg-gray-200 border border-gray-200'
+                      }`}
+                    >
+                      {dateStr ? new Date(dateStr + 'T00:00:00').getDate() : ''}
+                    </button>
+                  );
+                })}
+              </div>
+              
+              <div className="mt-3 text-center text-sm text-gray-600">
+                Fecha seleccionada: {new Date(selectedDate + 'T00:00:00').toLocaleDateString('es-ES', { 
+                  day: 'numeric', 
+                  month: 'long', 
+                  year: 'numeric' 
+                })}
+              </div>
+            </div>
+          </div>
+
+          {/* Start button */}
+          <button
+            onClick={() => startGame(difficulty, selectedDate)}
+            className="w-full bg-deep-blue hover:bg-blue-900 text-white font-bold py-4 rounded-xl transition-colors text-lg"
+          >
+            ¡Jugar!
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (gameStatus === 'LOADING') {
+    return (
+      <div className="min-h-screen bg-cream p-4 flex items-center justify-center">
+        <div className="text-deep-blue text-xl font-bold">Cargando juego...</div>
+      </div>
+    );
+  }
+
+  if (gameStatus === 'VICTORY') {
+    return (
+      <div className="min-h-screen bg-cream p-4 flex items-center justify-center">
+        <div className="bg-white rounded-3xl p-8 max-w-md text-center shadow-2xl">
+          <p className="text-7xl mb-4">🎉</p>
+          <h1 className="text-4xl font-black text-green-600 mb-4">¡Felicidades!</h1>
+          <p className="text-xl text-deep-blue mb-6">Has completado el crucigrama</p>
+          <div className="space-y-3">
+            <button
+              onClick={() => setGameStatus('MENU')}
+              className="w-full bg-deep-blue hover:bg-blue-900 text-white font-bold py-3 rounded-lg transition-colors"
+            >
+              Jugar de Nuevo
+            </button>
+            <button
+              onClick={onBack}
+              className="w-full bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 rounded-lg transition-colors"
+            >
+              Volver al Menú
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-cream p-2 sm:p-4">
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-4 sm:mb-6">
+          <button
+            onClick={onBack}
+            className="p-2 hover:bg-white/50 rounded-full transition-colors"
+          >
+            <ChevronLeft size={28} className="text-deep-blue sm:w-8 sm:h-8" />
+          </button>
+          <h1 className="text-2xl sm:text-3xl font-black text-deep-blue">La Rueda de Letras</h1>
+          <div className="w-8 sm:w-10" />
+        </div>
+
+        {/* Toolbar */}
+        <div className="flex items-center justify-between mb-4 sm:mb-6 bg-white rounded-xl sm:rounded-2xl p-3 sm:p-4 shadow-lg">
+          <div className="flex items-center gap-2 sm:gap-4">
+            <button
+              onClick={() => setShowCalendar(!showCalendar)}
+              className="p-1.5 sm:p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              title="Elegir otro día"
+            >
+              <Calendar className="text-spanish-red" size={20} />
+            </button>
+            <h2 className="text-sm sm:text-lg font-bold text-deep-blue">
+              {new Date(selectedDate + 'T00:00:00').toLocaleDateString('es-ES', { day: 'numeric', month: 'long' })}
+            </h2>
+          </div>
+          <div className="bg-red-50 text-spanish-red px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-sm sm:text-base font-bold border border-red-200">
+            {solvedWords.size} / {gameState?.words.length || 0}
+          </div>
+        </div>
+
+        {/* Calendar Picker */}
+        {showCalendar && (
+          <div className="mb-6 bg-white rounded-2xl p-4 shadow-lg">
+            {/* Month navigation */}
+            <div className="flex items-center justify-between mb-4">
+              <button
+                onClick={() => setDisplayMonth(new Date(displayMonth.getFullYear(), displayMonth.getMonth() - 1))}
+                className="p-2 hover:bg-gray-200 rounded-full transition-colors"
+              >
+                <ChevronLeft size={20} />
+              </button>
+              <div className="text-center font-bold text-gray-800">
+                {displayMonth.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' })}
+              </div>
+              <button
+                onClick={() => setDisplayMonth(new Date(displayMonth.getFullYear(), displayMonth.getMonth() + 1))}
+                className="p-2 hover:bg-gray-200 rounded-full transition-colors"
+              >
+                <ChevronRight size={20} />
+              </button>
+            </div>
+
+            {/* Calendar grid */}
+            <div className="grid grid-cols-7 gap-1">
+              {['L', 'M', 'X', 'J', 'V', 'S', 'D'].map(day => (
+                <div key={day} className="text-center text-xs font-semibold text-gray-600 py-1">
+                  {day}
+                </div>
+              ))}
+              {(() => {
+                const today = new Date().toISOString().split('T')[0];
+                const daysInMonth = new Date(displayMonth.getFullYear(), displayMonth.getMonth() + 1, 0).getDate();
+                const firstDay = new Date(displayMonth.getFullYear(), displayMonth.getMonth(), 1).getDay();
+                const calendarDays: (string | null)[] = [];
+                
+                const adjustedFirstDay = firstDay === 0 ? 6 : firstDay - 1;
+                
+                for (let i = 0; i < adjustedFirstDay; i++) {
+                  calendarDays.push(null);
+                }
+                
+                for (let day = 1; day <= daysInMonth; day++) {
+                  const dateStr = `${displayMonth.getFullYear()}-${String(displayMonth.getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                  calendarDays.push(dateStr);
+                }
+
+                return calendarDays.map((dateStr, idx) => {
+                  const isSelected = dateStr === selectedDate;
+                  const isToday = dateStr === today;
+                  const isFuture = !!(dateStr && dateStr > today);
+                  
+                  return (
+                    <button
+                      key={idx}
+                      onClick={() => {
+                        if (dateStr && !isFuture) {
+                          setSelectedDate(dateStr);
+                          startGame(difficulty, dateStr);
+                          setShowCalendar(false);
+                        }
+                      }}
+                      disabled={isFuture || !dateStr}
+                      className={`py-2 text-sm font-semibold rounded transition-colors ${
+                        !dateStr
+                          ? ''
+                          : isSelected
+                          ? 'bg-spanish-red text-white'
+                          : isToday
+                          ? 'bg-green-500 text-white'
+                          : isFuture
+                          ? 'text-gray-300 cursor-not-allowed'
+                          : 'bg-white text-gray-800 hover:bg-gray-200 border border-gray-200'
+                      }`}
+                    >
+                      {dateStr ? new Date(dateStr + 'T00:00:00').getDate() : ''}
+                    </button>
+                  );
+                });
+              })()}
+            </div>
+          </div>
+        )}
+
+        {/* Game Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr,380px] gap-4 sm:gap-6">
+          {/* Left: Grid */}
+          <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-2xl flex items-center justify-center overflow-x-auto">
+            {renderGrid()}
+          </div>
+
+          {/* Right: Wheel & Controls */}
+          <div className="space-y-3 sm:space-y-4">
+            {/* Wheel Card */}
+            <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-2xl">
+              {/* Wheel */}
+              <div
+                ref={wheelRef}
+                className="relative mx-auto mb-4 sm:mb-6"
+                style={{ width: '200px', height: '200px' }}
+              >
+                <div className="absolute inset-0 rounded-full bg-white border-2 border-gray-200 shadow-xl" />
+                {gameState && wheelOrder.map((originalIndex, idx) => {
+                  const { x, y } = getLetterPosition(idx, wheelOrder.length);
+                  const letter = gameState.baseWordNormalized[originalIndex];
+                  const isSelected = guessStack.some(item => item.index === originalIndex);
+
+                  return (
+                    <button
+                      key={originalIndex}
+                      onClick={() => addLetterToGuess(originalIndex)}
+                      onMouseDown={() => {
+                        setIsDragging(true);
+                        addLetterToGuess(originalIndex);
+                      }}
+                      onMouseEnter={() => {
+                        if (isDragging) addLetterToGuess(originalIndex);
+                      }}
+                      className={`absolute w-10 h-10 sm:w-12 sm:h-12 rounded-full font-black text-base sm:text-lg flex items-center justify-center transition-all cursor-pointer ${
+                        isSelected
+                          ? 'bg-spanish-red text-white border-2 border-red-800 shadow-md scale-110'
+                          : 'bg-white text-spanish-red border-2 border-gray-200 hover:shadow-lg hover:scale-105'
+                      }`}
+                      style={{
+                        left: `${(x / 240) * 200 - 20}px`,
+                        top: `${(y / 240) * 200 - 20}px`,
+                      }}
+                    >
+                      {letter.toUpperCase()}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Guess Display */}
+              <div className="min-h-10 sm:min-h-12 border-2 border-dashed border-gray-300 rounded-xl bg-gray-50 flex items-center justify-center mb-2 sm:mb-3 px-2">
+                <span className="text-lg sm:text-xl font-black text-deep-blue tracking-wider">
+                  {guessStack.map(l => l.char.toUpperCase()).join('') || '\u00a0'}
+                </span>
+              </div>
+
+              {/* Keyboard hint for desktop */}
+              <p className="hidden sm:block text-xs text-gray-500 text-center mb-3">
+                💡 También puedes usar el teclado: letras para seleccionar, <kbd className="px-1 py-0.5 bg-gray-200 rounded text-xs">Enter</kbd> para enviar, <kbd className="px-1 py-0.5 bg-gray-200 rounded text-xs">Backspace</kbd> para borrar
+              </p>
+
+              {/* Actions */}
+              <div className="grid grid-cols-3 gap-2">
+                <button
+                  onClick={shuffleWheel}
+                  className="flex items-center justify-center gap-1 sm:gap-2 bg-spanish-red hover:bg-red-700 text-white font-bold py-2.5 sm:py-3 rounded-xl transition-colors"
+                  title="Mezclar"
+                >
+                  <Shuffle size={16} className="sm:w-5 sm:h-5" />
+                </button>
+                <button
+                  onClick={handleBackspace}
+                  className="flex items-center justify-center gap-1 sm:gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-2.5 sm:py-3 rounded-xl transition-colors"
+                  title="Borrar"
+                >
+                  <Delete size={16} className="sm:w-5 sm:h-5" />
+                </button>
+                <button
+                  onClick={submitGuess}
+                  className="flex items-center justify-center gap-1 sm:gap-2 bg-spanish-red hover:bg-red-700 text-white font-bold py-2.5 sm:py-3 rounded-xl transition-colors"
+                  title="Comprobar"
+                >
+                  <Check size={16} className="sm:w-5 sm:h-5" />
+                </button>
+              </div>
+
+              {/* Feedback */}
+              {feedback.text && (
+                <div
+                  className={`mt-3 sm:mt-4 p-2.5 sm:p-3 rounded-lg text-center text-sm sm:text-base font-bold ${
+                    feedback.type === 'success'
+                      ? 'bg-green-100 text-green-800'
+                      : 'bg-red-100 text-red-800'
+                  }`}
+                >
+                  {feedback.text}
+                </div>
+              )}
+            </div>
+
+            {/* Clues Card */}
+            <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-2xl">
+              <button
+                onClick={() => setCluesVisible(!cluesVisible)}
+                className="w-full flex items-center justify-center gap-2 bg-deep-blue hover:bg-blue-900 text-white font-bold py-2.5 sm:py-3 rounded-xl transition-colors mb-3 sm:mb-4 text-sm sm:text-base"
+              >
+                {cluesVisible ? <EyeOff size={16} className="sm:w-5 sm:h-5" /> : <Eye size={16} className="sm:w-5 sm:h-5" />}
+                {cluesVisible ? 'Ocultar pistas' : 'Mostrar pistas'}
+              </button>
+
+              {cluesVisible && gameState && (
+                <div className="space-y-2 sm:space-y-3 max-h-80 sm:max-h-96 overflow-y-auto">
+                  {gameState.words.map((word, idx) => {
+                    const isSolved = solvedWords.has(word.normalized);
+                    return (
+                      <div
+                        key={idx}
+                        className={`p-2.5 sm:p-3 rounded-xl flex items-start gap-2 sm:gap-3 ${
+                          isSolved
+                            ? 'bg-green-100 border-2 border-green-500'
+                            : 'bg-gray-50 border-2 border-gray-200'
+                        }`}
+                      >
+                        <span className="bg-gray-200 text-gray-700 px-2 py-0.5 sm:py-1 rounded-full text-xs font-bold flex-shrink-0">
+                          {idx + 1}
+                        </span>
+                        <div className="flex-1 min-w-0">
+                          <p className={`text-xs sm:text-sm ${isSolved ? 'text-green-800' : 'text-gray-700'}`}>
+                            {word.wordObj.pistas}
+                          </p>
+                          <p className="text-xs text-gray-500 mt-0.5 sm:mt-1">
+                            {word.normalized.length} letras
+                          </p>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default LetterWheelGame;

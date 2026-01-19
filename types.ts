@@ -47,3 +47,4 @@ export interface PowerVerb {
 
 export type GameDifficulty = 'facil' | 'intermedio' | 'dificil';
 export type GameMode = 'write' | 'choice';
+export type BattleMode = 'contrarreloj' | 'jefe';

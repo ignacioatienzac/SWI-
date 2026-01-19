@@ -77,17 +77,16 @@ export const getHintsForAttempt = async (word: string, attemptNumber: number, di
   const hints = await loadHints(difficulty);
   const wordHints = hints[word.toUpperCase()] || [];
   
-  // Reveal hints progressively:
-  // Attempt 1-3: no hints
-  // Attempt 4: 1 hint
-  // Attempt 5: 2 hints
-  // Attempt 6: 3 hints
+  // Reveal hints progressively based on failed attempts:
+  // After 3+ failed attempts (attempting 4th): 1 hint
+  // After 4+ failed attempts (attempting 5th): 2 hints
+  // After 5+ failed attempts (attempting 6th): 3 hints
   
-  if (attemptNumber < 4) {
+  if (attemptNumber < 3) {
     return [];
-  } else if (attemptNumber === 4) {
+  } else if (attemptNumber === 3) {
     return wordHints.slice(0, 1);
-  } else if (attemptNumber === 5) {
+  } else if (attemptNumber === 4) {
     return wordHints.slice(0, 2);
   } else {
     return wordHints.slice(0, 3);

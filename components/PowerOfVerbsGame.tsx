@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { ChevronLeft, Info, X } from 'lucide-react';
-import { powerVerbsData } from '../services/powerVerbsData';
-import { PowerVerb, GameDifficulty, GameMode } from '../types';
+import { getFilteredVerbs, getAvailableTenses } from '../services/powerVerbsService';
+import { PowerVerb, GameDifficulty, GameMode, BattleMode } from '../types';
 
 interface PowerOfVerbsGameProps {
   onBack: () => void;
@@ -16,6 +16,9 @@ const DIFFICULTY_SETTINGS = {
     spawnRate: 3500,
     minSpawnRate: 1200,
     enemySpeedMultiplier: 0.8,
+    bossHp: 50,
+    bossAppearTime: 30000, // 30 segundos
+    bossSpeed: 0.15, // Muy lento
   },
   intermedio: {
     label: 'Intermedio',
@@ -24,6 +27,9 @@ const DIFFICULTY_SETTINGS = {
     spawnRate: 3000,
     minSpawnRate: 800,
     enemySpeedMultiplier: 1.0,
+    bossHp: 100,
+    bossAppearTime: 25000,
+    bossSpeed: 0.25, // Medio
   },
   dificil: {
     label: 'Difícil',
@@ -32,6 +38,9 @@ const DIFFICULTY_SETTINGS = {
     spawnRate: 2500,
     minSpawnRate: 500,
     enemySpeedMultiplier: 1.3,
+    bossHp: 200,
+    bossAppearTime: 20000,
+    bossSpeed: 0.35, // Más rápido
   },
 };
 
@@ -61,6 +70,14 @@ interface Projectile extends Entity {
   emoji: string;
 }
 
+interface Boss extends Entity {
+  hp: number;
+  maxHp: number;
+  emoji: string;
+  defeated: boolean;
+  speed: number;
+}
+
 // --- COMPONENT ---
 const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
   // UI State
@@ -68,6 +85,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
   const [selectedGrammar, setSelectedGrammar] = useState<string>('indicativo');
   const [selectedTense, setSelectedTense] = useState<string>('');
   const [selectedVerbType, setSelectedVerbType] = useState<string>('');
+  const [selectedBattleMode, setSelectedBattleMode] = useState<BattleMode | null>(null);
   const [selectedMode, setSelectedMode] = useState<GameMode | null>(null);
   const [selectedDifficulty, setSelectedDifficulty] = useState<GameDifficulty | null>(null);
   const [feedbackMsg, setFeedbackMsg] = useState<{ text: string; type: 'success' | 'error' | '' }>({ text: '', type: '' });
@@ -81,6 +99,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
   const [attackPower, setAttackPower] = useState(1);
   const [verbsPool, setVerbsPool] = useState<PowerVerb[]>([]);
   const [choiceOptions, setChoiceOptions] = useState<string[]>([]);
+  const [consecutiveFailures, setConsecutiveFailures] = useState(0);
   
   // Canvas Refs (Mutable game state to avoid re-renders)
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -88,51 +107,83 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
   const lastTimeRef = useRef<number>(0);
   const lastSpawnRef = useRef<number>(0);
   const lastShotRef = useRef<number>(0);
+  const audioCtxRef = useRef<AudioContext | null>(null);
   
   const heroRef = useRef({ x: 50, y: 0, width: 40, height: 40 }); // Y position set dynamically
   const monstersRef = useRef<Monster[]>([]);
   const projectilesRef = useRef<Projectile[]>([]);
+  const bossRef = useRef<Boss | null>(null);
+  const gameStartTimeRef = useRef<number>(0);
+
+  // --- AUDIO HELPERS ---
+  const playTone = (frequency: number, duration: number, type: OscillatorType = 'sine') => {
+    if (!audioCtxRef.current) {
+      audioCtxRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+    }
+    const ctx = audioCtxRef.current;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = type;
+    osc.frequency.value = frequency;
+    gain.gain.setValueAtTime(0.15, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+    osc.connect(gain).connect(ctx.destination);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + duration);
+  };
+
+  const playShoot = () => {
+    playTone(880, 0.08, 'square');
+    setTimeout(() => playTone(1100, 0.05, 'square'), 40);
+  };
+
+  const playHit = () => {
+    playTone(320, 0.12, 'sawtooth');
+  };
+
+  const playSuccess = () => {
+    playTone(520, 0.15, 'triangle');
+    setTimeout(() => playTone(660, 0.18, 'sine'), 80);
+  };
+
+  const playError = () => {
+    playTone(220, 0.12, 'sawtooth');
+    setTimeout(() => playTone(180, 0.12, 'square'), 50);
+  };
+
+  const playVictory = () => {
+    playTone(523, 0.15);
+    setTimeout(() => playTone(659, 0.15), 150);
+    setTimeout(() => playTone(784, 0.3), 300);
+  };
+
+  const playGameOver = () => {
+    playTone(440, 0.2, 'sawtooth');
+    setTimeout(() => playTone(330, 0.2, 'sawtooth'), 200);
+    setTimeout(() => playTone(220, 0.4, 'sawtooth'), 400);
+  };
   
   // --- DYNAMIC DATA HELPERS ---
-  const availableTenses = useMemo<string[]>(() => {
-    const tenses = new Set<string>();
-    powerVerbsData.forEach(v => {
-      const mode = v.mode || 'indicativo';
-      if (mode === selectedGrammar) {
-        tenses.add(v.tense);
-      }
-    });
-    // Explicit comparator for strings to satisfy strict TS configurations if necessary
-    return Array.from(tenses).sort((a, b) => a.localeCompare(b));
-  }, [selectedGrammar]);
+  const [availableTenses, setAvailableTenses] = useState<string[]>([]);
 
-  // Reset tense or select first available when grammar mode changes
+  // Load available tenses when grammar mode changes
   useEffect(() => {
-    if (availableTenses.length > 0) {
-        if (!selectedTense || !availableTenses.includes(selectedTense)) {
-            // Auto-select the first tense to help the user
-            setSelectedTense(availableTenses[0]);
-        }
-    } else {
-        setSelectedTense('');
-    }
-  }, [selectedGrammar, availableTenses, selectedTense]);
+    const loadTenses = async () => {
+      const tenses = await getAvailableTenses(selectedGrammar);
+      setAvailableTenses(tenses);
+      if (tenses.length > 0 && (!selectedTense || !tenses.includes(selectedTense))) {
+        setSelectedTense(tenses[0]);
+      }
+    };
+    loadTenses();
+  }, [selectedGrammar]);
 
   // --- SELECTION LOGIC ---
 
-  const getFilteredVerbs = () => {
-    return powerVerbsData.filter(v => {
-      const mode = v.mode || 'indicativo';
-      return mode === selectedGrammar &&
-             v.tense === selectedTense &&
-             (selectedVerbType === 'mixed' ? true : selectedVerbType === 'regular' ? v.regular : !v.regular);
-    });
-  };
-
-  const handleStartGame = () => {
-    if (!selectedTense || !selectedVerbType || !selectedMode || !selectedDifficulty) return;
+  const handleStartGame = async () => {
+    if (!selectedTense || !selectedVerbType || !selectedMode || !selectedDifficulty || !selectedBattleMode) return;
     
-    const pool = getFilteredVerbs();
+    const pool = await getFilteredVerbs(selectedGrammar, selectedTense, selectedVerbType);
     if (pool.length === 0) {
       setFeedbackMsg({ text: 'No hay verbos disponibles para esta configuración.', type: 'error' });
       return;
@@ -144,6 +195,8 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
     setLives(DIFFICULTY_SETTINGS[selectedDifficulty].castleLives);
     monstersRef.current = [];
     projectilesRef.current = [];
+    bossRef.current = null;
+    gameStartTimeRef.current = performance.now();
     setGameState('PLAYING');
     pickNewVerb(pool);
   };
@@ -154,6 +207,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
     setCurrentVerb(randomVerb);
     setUserInput('');
     setFeedbackMsg({ text: '', type: '' });
+    setConsecutiveFailures(0); // Reset consecutive failures on new verb
 
     if (selectedMode === 'choice') {
       // Get correct answer (if array, pick first)
@@ -181,6 +235,22 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
     if (!selectedDifficulty) return;
     const settings = DIFFICULTY_SETTINGS[selectedDifficulty];
     
+    // Check if boss should appear (only in boss mode)
+    if (selectedBattleMode === 'jefe' && !bossRef.current && (time - gameStartTimeRef.current) >= settings.bossAppearTime) {
+      const groundLevel = canvasHeight - 40;
+      bossRef.current = {
+        x: canvasWidth - 150,
+        y: groundLevel - 120,
+        width: 120,
+        height: 120,
+        hp: settings.bossHp,
+        maxHp: settings.bossHp,
+        emoji: '🐉',
+        defeated: false,
+        speed: settings.bossSpeed
+      };
+    }
+    
     const currentSpawnRate = Math.max(settings.minSpawnRate, settings.spawnRate - (score * 2));
 
     if (time - lastSpawnRef.current > currentSpawnRate) {
@@ -192,14 +262,17 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
       ];
       const type = types[Math.floor(Math.random() * types.length)];
       
+      // In boss mode, adjust enemy HP based on difficulty
+      const hpMultiplier = selectedBattleMode === 'jefe' ? 1.5 : 1;
+      
       monstersRef.current.push({
         id: Date.now(),
         x: canvasWidth + 50,
         y: groundLevel - 40,
         width: 40,
         height: 40,
-        hp: type.hp,
-        maxHp: type.hp,
+        hp: Math.ceil(type.hp * hpMultiplier),
+        maxHp: Math.ceil(type.hp * hpMultiplier),
         speed: type.speed * settings.enemySpeedMultiplier,
         emoji: type.emoji,
         color: type.color,
@@ -212,6 +285,16 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
   const updateEntities = () => {
     monstersRef.current.forEach(m => { m.x -= m.speed; });
     projectilesRef.current.forEach(p => { p.x += p.speed; });
+    
+    // Move boss towards player if exists and not defeated
+    if (bossRef.current && !bossRef.current.defeated) {
+      bossRef.current.x -= bossRef.current.speed;
+      
+      // Check if boss reached the castle
+      if (bossRef.current.x <= 50) {
+        setGameState('GAMEOVER');
+      }
+    }
 
     const now = performance.now();
     if (now - lastShotRef.current > 1000) { 
@@ -225,6 +308,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
          power: Math.max(1, attackPower),
          emoji: '🔥'
        });
+       playShoot(); // Play shoot sound
        lastShotRef.current = now;
     }
   };
@@ -233,21 +317,47 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
     for (let i = projectilesRef.current.length - 1; i >= 0; i--) {
       const p = projectilesRef.current[i];
       let hit = false;
-      for (let j = monstersRef.current.length - 1; j >= 0; j--) {
-        const m = monstersRef.current[j];
+      
+      // Check collision with boss first
+      if (bossRef.current && !bossRef.current.defeated) {
+        const boss = bossRef.current;
         if (
-          p.x < m.x + m.width && p.x + p.width > m.x &&
-          p.y < m.y + m.height && p.y + p.height > m.y
+          p.x < boss.x + boss.width && p.x + p.width > boss.x &&
+          p.y < boss.y + boss.height && p.y + p.height > boss.y
         ) {
-          m.hp -= p.power;
+          boss.hp -= p.power;
           hit = true;
-          if (m.hp <= 0) {
-            setScore(prev => prev + m.points);
-            monstersRef.current.splice(j, 1);
+          playHit(); // Play hit sound
+          if (boss.hp <= 0) {
+            boss.defeated = true;
+            if (selectedBattleMode === 'jefe') {
+              playVictory(); // Play victory sound
+              setGameState('VICTORY');
+            }
           }
-          break;
         }
       }
+      
+      // Check collision with regular monsters
+      if (!hit) {
+        for (let j = monstersRef.current.length - 1; j >= 0; j--) {
+          const m = monstersRef.current[j];
+          if (
+            p.x < m.x + m.width && p.x + p.width > m.x &&
+            p.y < m.y + m.height && p.y + p.height > m.y
+          ) {
+            m.hp -= p.power;
+            hit = true;
+            playHit(); // Play hit sound
+            if (m.hp <= 0) {
+              setScore(prev => prev + m.points);
+              monstersRef.current.splice(j, 1);
+            }
+            break;
+          }
+        }
+      }
+      
       if (hit || p.x > 1000) projectilesRef.current.splice(i, 1);
     }
 
@@ -256,14 +366,19 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
         if (m.x <= 50) {
             setLives(prev => {
                 const newLives = prev - 1;
-                if (newLives <= 0) setGameState('GAMEOVER');
+                if (newLives <= 0) {
+                  playGameOver(); // Play game over sound
+                  setGameState('GAMEOVER');
+                }
                 return newLives;
             });
             monstersRef.current.splice(i, 1);
         }
     }
 
-    if (selectedDifficulty && score >= DIFFICULTY_SETTINGS[selectedDifficulty].targetScore) {
+    // In contrarreloj mode, check target score
+    if (selectedBattleMode === 'contrarreloj' && selectedDifficulty && score >= DIFFICULTY_SETTINGS[selectedDifficulty].targetScore) {
+        playVictory(); // Play victory sound
         setGameState('VICTORY');
     }
   };
@@ -304,6 +419,28 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
         ctx.fillStyle = '#00ff00';
         ctx.fillRect(m.x, m.y - 10, 40 * (m.hp / m.maxHp), 5);
     });
+    
+    // Draw boss if exists
+    if (bossRef.current && !bossRef.current.defeated) {
+        const boss = bossRef.current;
+        ctx.font = '120px Arial';
+        ctx.fillText(boss.emoji, boss.x, boss.y + 100);
+        
+        // Boss health bar (larger)
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+        ctx.fillRect(boss.x, boss.y - 30, boss.width, 20);
+        ctx.fillStyle = 'red';
+        ctx.fillRect(boss.x, boss.y - 30, boss.width, 20);
+        ctx.fillStyle = '#00ff00';
+        ctx.fillRect(boss.x, boss.y - 30, boss.width * (boss.hp / boss.maxHp), 20);
+        
+        // Boss HP text
+        ctx.fillStyle = 'white';
+        ctx.font = 'bold 16px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText(`${Math.ceil(boss.hp)}/${boss.maxHp}`, boss.x + boss.width / 2, boss.y - 12);
+        ctx.textAlign = 'left';
+    }
 
     projectilesRef.current.forEach(p => {
         ctx.font = '20px Arial';
@@ -348,12 +485,22 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
     const isCorrect = validAnswers.some(a => a.toLowerCase() === answer.toLowerCase().trim());
     
     if (isCorrect) {
+        playSuccess();
         setAttackPower(prev => Math.min(prev + 1, 10));
         setFeedbackMsg({ text: '¡Correcto! +Poder', type: 'success' });
         setTimeout(() => pickNewVerb(verbsPool), 600);
     } else {
+        playError();
+        const newFailureCount = consecutiveFailures + 1;
+        setConsecutiveFailures(newFailureCount);
         setAttackPower(prev => Math.max(1, prev - 1));
-        setFeedbackMsg({ text: `Incorrecto. Era: ${validAnswers[0]}`, type: 'error' });
+        
+        // Only show answer after 3 consecutive failures
+        if (newFailureCount >= 3) {
+          setFeedbackMsg({ text: `Incorrecto. La respuesta es: ${validAnswers[0]}`, type: 'error' });
+        } else {
+          setFeedbackMsg({ text: `Incorrecto. Intenta de nuevo (${newFailureCount}/3)`, type: 'error' });
+        }
     }
   };
 
@@ -380,7 +527,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
                     <button
                         key={g}
                         onClick={() => setSelectedGrammar(g)}
-                        className={`flex-1 py-3 rounded-xl border-2 font-bold capitalize transition-all ${
+                        className={`flex-1 py-3 rounded-xl border-2 font-bold text-base capitalize transition-all ${
                             selectedGrammar === g ? 'border-spanish-red bg-red-50 text-spanish-red' : 'border-gray-200 text-gray-600 hover:border-gray-300'
                         }`}
                     >
@@ -399,7 +546,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
                         <button
                             key={t}
                             onClick={() => setSelectedTense(t)}
-                            className={`py-2 px-4 rounded-lg border font-medium capitalize text-sm transition-all ${
+                            className={`py-2 px-4 rounded-lg border font-medium capitalize text-base transition-all ${
                                 selectedTense === t ? 'bg-deep-blue text-white border-deep-blue' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
                             }`}
                         >
@@ -420,7 +567,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
                     <button
                         key={t}
                         onClick={() => setSelectedVerbType(t)}
-                        className={`flex-1 py-2 rounded-lg border font-medium capitalize transition-all ${
+                        className={`flex-1 py-2 rounded-lg border font-medium text-base capitalize transition-all ${
                             selectedVerbType === t ? 'bg-spanish-yellow text-deep-blue border-spanish-yellow' : 'bg-white text-gray-600 border-gray-200'
                         }`}
                     >
@@ -430,34 +577,57 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
                </div>
             </div>
 
-            {/* Step 4: Mode */}
+            {/* Step 4: Battle Mode */}
             <div>
-               <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-3">4. Modo de Juego</h3>
+               <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-3">4. Modo de Batalla</h3>
+               <div className="grid grid-cols-2 gap-4">
+                  <button 
+                    onClick={() => setSelectedBattleMode('contrarreloj')}
+                    className={`p-6 rounded-xl border-2 text-center transition-all ${selectedBattleMode === 'contrarreloj' ? 'border-spanish-red bg-red-50 ring-2 ring-red-200' : 'border-gray-200 hover:bg-gray-50'}`}
+                  >
+                      <div className="text-5xl mb-2">⏱️</div>
+                      <span className="block font-bold text-base text-deep-blue">Contrarreloj</span>
+                      <span className="block text-sm text-gray-500 mt-1">Alcanza la puntuación objetivo</span>
+                  </button>
+                  <button 
+                    onClick={() => setSelectedBattleMode('jefe')}
+                    className={`p-6 rounded-xl border-2 text-center transition-all ${selectedBattleMode === 'jefe' ? 'border-spanish-red bg-red-50 ring-2 ring-red-200' : 'border-gray-200 hover:bg-gray-50'}`}
+                  >
+                      <div className="text-5xl mb-2">🐉</div>
+                      <span className="block font-bold text-base text-deep-blue">Modo Jefe</span>
+                      <span className="block text-sm text-gray-500 mt-1">Derrota al dragón</span>
+                  </button>
+               </div>
+            </div>
+
+            {/* Step 5: Mode */}
+            <div>
+               <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-3">5. Modo de Respuesta</h3>
                <div className="flex gap-4">
                   <button 
                     onClick={() => setSelectedMode('write')}
                     className={`flex-1 p-4 rounded-xl border-2 text-center transition-all ${selectedMode === 'write' ? 'border-deep-blue bg-blue-50 ring-2 ring-blue-100' : 'border-gray-200 hover:bg-gray-50'}`}
                   >
-                      <span className="block font-bold text-lg text-deep-blue">Escribir</span>
+                      <span className="block font-bold text-base text-deep-blue">Escribir</span>
                   </button>
                   <button 
                     onClick={() => setSelectedMode('choice')}
                     className={`flex-1 p-4 rounded-xl border-2 text-center transition-all ${selectedMode === 'choice' ? 'border-deep-blue bg-blue-50 ring-2 ring-blue-100' : 'border-gray-200 hover:bg-gray-50'}`}
                   >
-                      <span className="block font-bold text-lg text-deep-blue">Selección</span>
+                      <span className="block font-bold text-base text-deep-blue">Selección</span>
                   </button>
                </div>
             </div>
 
-             {/* Step 5: Difficulty */}
+             {/* Step 6: Difficulty */}
              <div>
-               <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-3">5. Dificultad</h3>
+               <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-3">6. Dificultad</h3>
                <div className="flex gap-3">
                  {(Object.keys(DIFFICULTY_SETTINGS) as GameDifficulty[]).map(d => (
                     <button
                         key={d}
                         onClick={() => setSelectedDifficulty(d)}
-                        className={`flex-1 py-3 rounded-lg border font-bold capitalize transition-all ${
+                        className={`flex-1 py-3 rounded-lg border font-bold text-base capitalize transition-all ${
                             selectedDifficulty === d ? 'border-spanish-red bg-red-50 text-spanish-red' : 'border-gray-200 text-gray-600 hover:border-gray-300'
                         }`}
                     >
@@ -470,7 +640,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
             {/* Start Button */}
             <button
               onClick={handleStartGame}
-              disabled={!selectedTense || !selectedVerbType || !selectedMode || !selectedDifficulty}
+              disabled={!selectedTense || !selectedVerbType || !selectedBattleMode || !selectedMode || !selectedDifficulty}
               className="w-full py-4 bg-gradient-to-r from-spanish-red to-spanish-red hover:from-red-700 hover:to-red-700 disabled:from-gray-300 disabled:to-gray-300 text-white font-bold text-xl rounded-xl transition-all shadow-lg"
             >
               Iniciar Batalla
@@ -590,7 +760,8 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
                 <p>👾 <strong>Monstruos atacan:</strong> Usa tu poder para defenderlos</p>
                 <p>🏰 <strong>Protege el castillo:</strong> Si pierdes vidas, pierdes el juego</p>
                 <p>⚡ <strong>Ataca automáticamente:</strong> Cada segundo dispara proyectiles</p>
-                <p>🎯 <strong>Objetivo:</strong> Alcanza la puntuación objetivo para ganar</p>
+                <p>🎯 <strong>Modo Contrarreloj:</strong> Alcanza la puntuación objetivo para ganar</p>
+                <p>🐉 <strong>Modo Jefe:</strong> Derrota al dragón gigante que aparece después de un tiempo</p>
               </div>
               <button
                 onClick={() => setInstructionsOpen(false)}
@@ -618,6 +789,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
               setGameState('SELECTION');
               setSelectedDifficulty(null);
               setSelectedMode(null);
+              setSelectedBattleMode(null);
             }}
             className="w-full bg-deep-blue hover:bg-blue-900 text-white font-bold py-3 rounded-lg"
           >
@@ -641,6 +813,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
               setGameState('SELECTION');
               setSelectedDifficulty(null);
               setSelectedMode(null);
+              setSelectedBattleMode(null);
             }}
             className="w-full bg-deep-blue hover:bg-blue-900 text-white font-bold py-3 rounded-lg"
           >

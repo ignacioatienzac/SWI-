@@ -3,6 +3,7 @@ import { GameDefinition } from '../types';
 import VerbGame from './VerbGame';
 import WordleGame from './WordleGame';
 import PowerOfVerbsGame from './PowerOfVerbsGame';
+import LetterWheelGame from './LetterWheelGame';
 import { Gamepad2, Layers, Zap, Grid3X3, Sword } from 'lucide-react';
 
 interface GamesProps {
@@ -27,6 +28,14 @@ const Games: React.FC<GamesProps> = ({ activeGameId, setActiveGameId }) => {
       iconName: 'Grid3X3',
       isAiPowered: true,
       difficulty: 'Easy'
+    },
+    {
+      id: 'letter-wheel',
+      title: 'La Rueda de Letras',
+      description: 'Forma palabras usando las letras de la rueda para completar el crucigrama del día.',
+      iconName: 'Layers',
+      isAiPowered: false,
+      difficulty: 'Medium'
     },
     {
       id: 'verb-master',
@@ -74,7 +83,15 @@ const Games: React.FC<GamesProps> = ({ activeGameId, setActiveGameId }) => {
              <PowerOfVerbsGame onBack={() => setActiveGameId(null)} />
         </div>
     );
-}
+  }
+
+  if (activeGameId === 'letter-wheel') {
+    return (
+        <div className="w-full bg-cream min-h-screen">
+             <LetterWheelGame onBack={() => setActiveGameId(null)} />
+        </div>
+    );
+  }
 
   // Placeholder for other games
   if (activeGameId) {
