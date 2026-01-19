@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { ChevronLeft, Info, X } from 'lucide-react';
 import { getFilteredVerbs, getAvailableTenses } from '../services/powerVerbsService';
 import { PowerVerb, GameDifficulty, GameMode, BattleMode } from '../types';
