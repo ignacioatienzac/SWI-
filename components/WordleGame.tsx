@@ -613,8 +613,9 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
       )}
 
       {/* Keyboard */}
-      <div className="mb-6">
-        <div className="flex gap-1 flex-wrap justify-center mb-2">
+      <div className="mb-6 max-w-xl mx-auto">
+        {/* Row 1 */}
+        <div className="flex gap-1 justify-center mb-2">
           {['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'].map(key => (
             <button
               key={key}
@@ -624,15 +625,16 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
                   playSound('present');
                 }
               }}
-              className={`px-3 sm:px-3 py-3 sm:py-2 rounded font-semibold text-sm sm:text-sm transition ${getKeyColor(key)} text-white`}
+              className={`w-8 h-12 sm:w-10 sm:h-12 flex items-center justify-center rounded font-bold text-base transition ${getKeyColor(key)} text-white`}
               disabled={status !== 'PLAYING'}
             >
               {key}
             </button>
           ))}
         </div>
-        <div className="flex gap-1 flex-wrap justify-center mb-2">
-          {['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L'].map(key => (
+        {/* Row 2 */}
+        <div className="flex gap-1 justify-center mb-2">
+          {['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'Ñ'].map(key => (
             <button
               key={key}
               onClick={() => {
@@ -641,32 +643,26 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
                   playSound('present');
                 }
               }}
-              className={`px-3 sm:px-3 py-3 sm:py-2 rounded font-semibold text-sm sm:text-sm transition ${getKeyColor(key)} text-white`}
+              className={`w-8 h-12 sm:w-10 sm:h-12 flex items-center justify-center rounded font-bold text-base transition ${getKeyColor(key)} text-white`}
               disabled={status !== 'PLAYING'}
             >
               {key}
             </button>
           ))}
+        </div>
+        {/* Row 3 */}
+        <div className="flex gap-1 justify-center">
           <button
             onClick={() => {
-              if (currentGuess.length < wordLength) {
-                setCurrentGuess(prev => prev + 'Ñ');
-                playSound('present');
+              if (currentGuess.length > 0 && currentGuess.length === wordLength) {
+                submitGuess();
               }
             }}
-            className={`px-3 sm:px-3 py-3 sm:py-2 rounded font-semibold text-sm sm:text-sm transition ${getKeyColor('Ñ')} text-white`}
-            disabled={status !== 'PLAYING'}
+            className="w-12 h-12 sm:w-14 sm:h-12 flex items-center justify-center rounded font-bold text-base bg-blue-500 text-white hover:bg-blue-600 transition"
+            disabled={status !== 'PLAYING' || currentGuess.length !== wordLength}
+            title="Enviar"
           >
-            Ñ
-          </button>
-        </div>
-        <div className="flex gap-1 flex-wrap justify-center">
-          <button
-            onClick={() => setCurrentGuess(prev => prev.slice(0, -1))}
-            className="px-3 sm:px-3 py-3 sm:py-2 rounded font-semibold text-sm sm:text-sm bg-red-500 text-white hover:bg-red-600 transition"
-            disabled={status !== 'PLAYING'}
-          >
-            DEL
+            ↑
           </button>
           {['Z', 'X', 'C', 'V', 'B', 'N', 'M'].map(key => (
             <button
@@ -677,12 +673,20 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
                   playSound('present');
                 }
               }}
-              className={`px-3 sm:px-3 py-3 sm:py-2 rounded font-semibold text-sm sm:text-sm transition ${getKeyColor(key)} text-white`}
+              className={`w-8 h-12 sm:w-10 sm:h-12 flex items-center justify-center rounded font-bold text-base transition ${getKeyColor(key)} text-white`}
               disabled={status !== 'PLAYING'}
             >
               {key}
             </button>
           ))}
+          <button
+            onClick={() => setCurrentGuess(prev => prev.slice(0, -1))}
+            className="w-12 h-12 sm:w-14 sm:h-12 flex items-center justify-center rounded font-bold text-base bg-red-500 text-white hover:bg-red-600 transition"
+            disabled={status !== 'PLAYING'}
+            title="Borrar"
+          >
+            ⌫
+          </button>
         </div>
       </div>
 

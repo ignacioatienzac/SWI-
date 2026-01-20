@@ -662,6 +662,43 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack }) => {
               </button>
             </div>
             <div className="space-y-3">
+              {/* Base word hint (★) */}
+              {(() => {
+                const baseFound = foundWords.has(gameState.baseWordNormalized);
+                return (
+                  <div
+                    key="base-word"
+                    className={`p-4 rounded-xl transition-all ${
+                      baseFound 
+                        ? 'bg-gradient-to-r from-purple-50 to-blue-50 border-2 border-purple-400' 
+                        : 'bg-gradient-to-r from-yellow-50 to-orange-50 border-2 border-yellow-300'
+                    }`}
+                  >
+                    <div className="flex items-center gap-4">
+                      <span className={`w-10 h-10 rounded-xl flex items-center justify-center text-lg font-black ${
+                        baseFound 
+                          ? 'bg-gradient-to-br from-purple-500 to-blue-600 text-white' 
+                          : 'bg-gradient-to-br from-yellow-400 to-orange-500 text-white'
+                      }`}>
+                        ★
+                      </span>
+                      <div className="flex-1">
+                        <p className={`font-medium ${baseFound ? 'text-purple-800' : 'text-gray-700'}`}>
+                          {gameState.baseWord.pistas || 'Palabra principal'}
+                        </p>
+                        <p className="text-xs text-gray-500 mt-1">
+                          {gameState.baseWordNormalized.length} letras
+                          {baseFound && <span className="ml-2 text-purple-600 font-semibold">• {gameState.baseWordNormalized.toUpperCase()}</span>}
+                        </p>
+                      </div>
+                      {baseFound && (
+                        <span className="text-2xl">✅</span>
+                      )}
+                    </div>
+                  </div>
+                );
+              })()}
+              {/* Target words hints */}
               {gameState.targetWords.map((item) => {
                 const found = foundWords.has(item.normalized);
                 return (
@@ -780,67 +817,6 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack }) => {
               )}
             </div>
 
-            {/* Hints List */}
-            <div className="bg-white rounded-2xl p-4 shadow-xl">
-              <h2 className="text-lg font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent mb-3 flex items-center gap-2">
-                📝 Pistas
-              </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-48 overflow-y-auto">
-                {/* Base word hint (number 0) */}
-                {(() => {
-                  const baseFound = foundWords.has(gameState.baseWordNormalized);
-                  return (
-                    <div
-                      key="base-word"
-                      className={`flex items-center gap-2 p-2 rounded-lg text-sm transition-all ${
-                        baseFound 
-                          ? 'bg-purple-100 text-purple-800' 
-                          : 'bg-gradient-to-r from-purple-50 to-blue-50 text-gray-700 hover:from-purple-100 hover:to-blue-100'
-                      }`}
-                    >
-                      <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${
-                        baseFound 
-                          ? 'bg-purple-500 text-white' 
-                          : 'bg-gradient-to-br from-yellow-400 to-orange-500 text-white'
-                      }`}>
-                        ★
-                      </span>
-                      <span className={`truncate ${baseFound ? 'line-through' : ''}`}>
-                        {gameState.baseWord.pistas || `Palabra principal (${gameState.baseWordNormalized.length} letras)`}
-                      </span>
-                      {baseFound && <span className="ml-auto text-purple-600 font-bold text-xs">{gameState.baseWordNormalized.toUpperCase()}</span>}
-                    </div>
-                  );
-                })()}
-                {/* Target words hints */}
-                {gameState.targetWords.map((item) => {
-                  const found = foundWords.has(item.normalized);
-                  return (
-                    <div
-                      key={item.number}
-                      className={`flex items-center gap-2 p-2 rounded-lg text-sm transition-all ${
-                        found 
-                          ? 'bg-green-100 text-green-800' 
-                          : 'bg-gray-50 text-gray-700 hover:bg-purple-50'
-                      }`}
-                    >
-                      <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${
-                        found 
-                          ? 'bg-green-500 text-white' 
-                          : 'bg-gradient-to-br from-purple-500 to-blue-600 text-white'
-                      }`}>
-                        {item.number}
-                      </span>
-                      <span className={`truncate ${found ? 'line-through' : ''}`}>
-                        {item.word.pistas || `${item.normalized.length} letras`}
-                      </span>
-                      {found && <span className="ml-auto text-green-600 font-bold text-xs">{item.normalized.toUpperCase()}</span>}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
             {/* Feedback */}
             {feedback.text && (
               <div className={`p-4 rounded-xl font-bold text-center transition-all transform ${
@@ -858,14 +834,6 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack }) => {
 
           {/* Right: Letter Wheel */}
           <div className="space-y-4">
-            {/* Base Word */}
-            <div className="bg-gradient-to-r from-purple-600 to-blue-600 rounded-2xl p-6 shadow-xl text-white">
-              <h2 className="text-center text-sm font-bold mb-2 opacity-90">PALABRA BASE</h2>
-              <div className="text-4xl font-black text-center tracking-widest">
-                {gameState.baseWordNormalized.toUpperCase()}
-              </div>
-            </div>
-
             {/* Input Area */}
             <div className="bg-white rounded-2xl p-6 shadow-xl">
               <div className="min-h-20 bg-gradient-to-r from-blue-50 to-purple-50 border-3 border-dashed border-blue-300 rounded-xl flex items-center justify-center mb-4">
@@ -942,11 +910,13 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack }) => {
                       onClick={() => selectLetter(originalIndex)}
                       onMouseDown={(e) => {
                         e.preventDefault();
+                        e.stopPropagation();
                         setIsDragging(true);
                         selectLetter(originalIndex);
                       }}
                       onTouchStart={(e) => {
                         e.preventDefault();
+                        e.stopPropagation();
                         setIsDragging(true);
                         selectLetter(originalIndex);
                       }}
@@ -956,24 +926,31 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack }) => {
                       onTouchMove={(e) => {
                         if (!isDragging) return;
                         e.preventDefault();
+                        e.stopPropagation();
                         const touch = e.touches[0];
-                        const element = document.elementFromPoint(touch.clientX, touch.clientY) as HTMLElement;
+                        // Get position relative to viewport
+                        const x = touch.clientX;
+                        const y = touch.clientY;
+                        const element = document.elementFromPoint(x, y) as HTMLElement;
+                        
+                        // Check if we're over a letter button
                         if (element?.hasAttribute('data-letter-index')) {
                           const idx = parseInt(element.getAttribute('data-letter-index')!);
-                          if (!isNaN(idx)) {
+                          if (!isNaN(idx) && idx !== originalIndex) {
                             selectLetter(idx);
                           }
                         }
                       }}
                       data-letter-index={originalIndex}
-                      className={`absolute w-14 h-14 rounded-full text-xl font-black transition-all touch-none ${
+                      className={`absolute w-16 h-16 sm:w-14 sm:h-14 rounded-full text-xl font-black transition-all ${
                         used
                           ? 'bg-gradient-to-br from-red-400 to-pink-500 text-white scale-90 shadow-lg'
                           : 'bg-gradient-to-br from-blue-500 to-purple-600 text-white hover:scale-125 shadow-md active:scale-95'
                       }`}
                       style={{
-                        left: `${x - 28}px`,
-                        top: `${y - 28}px`,
+                        left: `${x - 32}px`,
+                        top: `${y - 32}px`,
+                        touchAction: 'none',
                       }}
                     >
                       {letter.toUpperCase()}
