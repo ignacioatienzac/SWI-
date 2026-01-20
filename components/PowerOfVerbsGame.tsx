@@ -950,7 +950,6 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
                 <p>⚡ <strong>Ataca automáticamente:</strong> Cada segundo dispara proyectiles</p>
                 <p>🎯 <strong>Modo Contrarreloj:</strong> Alcanza la puntuación objetivo para ganar</p>
                 <p>📝 <strong>Modo Escritura:</strong> Usa las teclas 1-5 para vocales con tilde (1=á, 2=é, 3=í, 4=ó, 5=ú)</p>
-              </div>
                 <p>🐉 <strong>Modo Jefe:</strong> Derrota al dragón gigante que aparece después de un tiempo</p>
               </div>
               <button
