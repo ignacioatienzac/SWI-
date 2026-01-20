@@ -13,34 +13,34 @@ const DIFFICULTY_SETTINGS = {
     label: 'Fácil',
     castleLives: 10,
     targetScore: 500,
-    spawnRate: 3500,
-    minSpawnRate: 1200,
-    enemySpeedMultiplier: 0.8,
+    spawnRate: 4000,
+    minSpawnRate: 1500,
+    enemySpeedMultiplier: 0.6,
     bossHp: 50,
     bossAppearTime: 30000, // 30 segundos
-    bossSpeed: 0.15, // Muy lento
+    bossSpeed: 0.12, // Muy lento
   },
   intermedio: {
     label: 'Intermedio',
     castleLives: 5,
     targetScore: 1000,
-    spawnRate: 3000,
-    minSpawnRate: 800,
-    enemySpeedMultiplier: 1.0,
+    spawnRate: 3500,
+    minSpawnRate: 1000,
+    enemySpeedMultiplier: 0.75,
     bossHp: 100,
     bossAppearTime: 25000,
-    bossSpeed: 0.25, // Medio
+    bossSpeed: 0.2, // Medio
   },
   dificil: {
     label: 'Difícil',
     castleLives: 3,
     targetScore: 2000,
-    spawnRate: 2500,
-    minSpawnRate: 500,
-    enemySpeedMultiplier: 1.3,
+    spawnRate: 3000,
+    minSpawnRate: 600,
+    enemySpeedMultiplier: 1.0,
     bossHp: 200,
     bossAppearTime: 20000,
-    bossSpeed: 0.35, // Más rápido
+    bossSpeed: 0.28, // Más rápido
   },
 };
 
@@ -239,10 +239,10 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
     if (selectedBattleMode === 'jefe' && !bossRef.current && (time - gameStartTimeRef.current) >= settings.bossAppearTime) {
       const groundLevel = canvasHeight - 40;
       bossRef.current = {
-        x: canvasWidth - 150,
-        y: groundLevel - 120,
-        width: 120,
-        height: 120,
+        x: canvasWidth - 200,
+        y: groundLevel - 180,
+        width: 180,
+        height: 180,
         hp: settings.bossHp,
         maxHp: settings.bossHp,
         emoji: '🐉',
@@ -268,9 +268,9 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
       monstersRef.current.push({
         id: Date.now(),
         x: canvasWidth + 50,
-        y: groundLevel - 40,
-        width: 40,
-        height: 40,
+        y: groundLevel - 60,
+        width: 60,
+        height: 60,
         hp: Math.ceil(type.hp * hpMultiplier),
         maxHp: Math.ceil(type.hp * hpMultiplier),
         speed: type.speed * settings.enemySpeedMultiplier,
@@ -397,11 +397,11 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
     ctx.fillStyle = '#556B2F';
     ctx.fillRect(0, groundY, canvasWidth, groundHeight);
 
-    ctx.font = '60px Arial';
+    ctx.font = '90px Arial';
     ctx.fillText('🏰', 10, groundY - 5);
     
-    heroRef.current.y = groundY - 50;
-    ctx.font = '40px Arial';
+    heroRef.current.y = groundY - 70;
+    ctx.font = '60px Arial';
     ctx.fillText('🧙‍♂️', heroRef.current.x, groundY - 10);
     
     if (attackPower > 1) {
@@ -412,19 +412,19 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
     }
 
     monstersRef.current.forEach(m => {
-        ctx.font = '35px Arial';
-        ctx.fillText(m.emoji, m.x, m.y + 35);
+        ctx.font = '52px Arial';
+        ctx.fillText(m.emoji, m.x, m.y + 52);
         ctx.fillStyle = 'red';
-        ctx.fillRect(m.x, m.y - 10, 40, 5);
+        ctx.fillRect(m.x, m.y - 10, 60, 5);
         ctx.fillStyle = '#00ff00';
-        ctx.fillRect(m.x, m.y - 10, 40 * (m.hp / m.maxHp), 5);
+        ctx.fillRect(m.x, m.y - 10, 60 * (m.hp / m.maxHp), 5);
     });
     
     // Draw boss if exists
     if (bossRef.current && !bossRef.current.defeated) {
         const boss = bossRef.current;
-        ctx.font = '120px Arial';
-        ctx.fillText(boss.emoji, boss.x, boss.y + 100);
+        ctx.font = '180px Arial';
+        ctx.fillText(boss.emoji, boss.x, boss.y + 150);
         
         // Boss health bar (larger)
         ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';

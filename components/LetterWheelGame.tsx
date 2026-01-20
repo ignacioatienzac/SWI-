@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { ChevronLeft, Info, X, Lightbulb } from 'lucide-react';
+import { ChevronLeft, Info, X, Lightbulb, Calendar, ChevronRight } from 'lucide-react';
 import { loadLetterWheelVocabulary, getRandomWordForDate, getRelatedWords } from '../services/letterWheelService';
 
 interface LetterWheelGameProps {
@@ -52,6 +52,9 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [letterPositions, setLetterPositions] = useState<number[]>([]);
   const [revealingCells, setRevealingCells] = useState<Set<string>>(new Set());
+  const [selectedDate, setSelectedDate] = useState<string>(new Date().toISOString().split('T')[0]);
+  const [showCalendar, setShowCalendar] = useState(false);
+  const [displayMonth, setDisplayMonth] = useState<Date>(new Date());
 
   const audioCtxRef = useRef<AudioContext | null>(null);
 
@@ -304,16 +307,18 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack }) => {
   };
 
   // Start game
-  const startGame = async (level: 'a1' | 'a2' | 'b1' | 'b2') => {
+  const startGame = async (level: 'a1' | 'a2' | 'b1' | 'b2', date?: string) => {
+    const gameDate = date || new Date().toISOString().split('T')[0];
     setGameStatus('LOADING');
     setDifficulty(level);
+    setSelectedDate(gameDate);
     setCurrentWord('');
     setUsedIndices([]);
     setFeedback({ text: '', type: '' });
     setFoundWords(new Set());
     setRevealingCells(new Set());
 
-    const newGameState = await generateGame(new Date().toISOString().split('T')[0], level);
+    const newGameState = await generateGame(gameDate, level);
     
     if (!newGameState) {
       alert('Error al generar el juego. Por favor, intenta de nuevo.');
@@ -477,6 +482,37 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack }) => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [gameStatus, gameState, usedIndices, currentWord]);
 
+  // Calendar helper functions
+  const getDaysInMonth = (date: Date) => {
+    return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+  };
+
+  const getFirstDayOfMonth = (date: Date) => {
+    return new Date(date.getFullYear(), date.getMonth(), 1).getDay();
+  };
+
+  const getCalendarDays = () => {
+    const year = displayMonth.getFullYear();
+    const month = displayMonth.getMonth();
+    const daysInMonth = getDaysInMonth(displayMonth);
+    const firstDay = getFirstDayOfMonth(displayMonth);
+    const days = [];
+
+    for (let i = 0; i < firstDay; i++) {
+      days.push(null);
+    }
+
+    for (let i = 1; i <= daysInMonth; i++) {
+      const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+      days.push(dateStr);
+    }
+
+    return days;
+  };
+
+  const today = new Date().toISOString().split('T')[0];
+  const calendarDays = showCalendar ? getCalendarDays() : [];
+
   // MENU
   if (gameStatus === 'MENU') {
     return (
@@ -606,6 +642,13 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack }) => {
                 <Lightbulb size={24} className="text-yellow-600" />
               </button>
               <button
+                onClick={() => setShowCalendar(!showCalendar)}
+                className="p-2 bg-purple-100 text-purple-600 rounded-lg hover:bg-purple-200 transition"
+                title="Calendario"
+              >
+                <Calendar size={20} />
+              </button>
+              <button
                 onClick={() => setShowInstructions(!showInstructions)}
                 className={`p-2 rounded-full transition-colors ${showInstructions ? 'bg-blue-100' : 'hover:bg-gray-100'}`}
               >
@@ -627,6 +670,73 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack }) => {
           </div>
         </div>
       </div>
+
+      {/* Calendar selector - Monthly view */}
+      {showCalendar && (
+        <div className="max-w-6xl mx-auto px-4 pt-4">
+          <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+            {/* Month navigation */}
+            <div className="flex items-center justify-between mb-4">
+              <button
+                onClick={() => setDisplayMonth(new Date(displayMonth.getFullYear(), displayMonth.getMonth() - 1))}
+                className="p-2 hover:bg-gray-200 rounded"
+              >
+                <ChevronLeft size={20} />
+              </button>
+              <div className="text-center font-semibold">
+                {displayMonth.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' })}
+              </div>
+              <button
+                onClick={() => setDisplayMonth(new Date(displayMonth.getFullYear(), displayMonth.getMonth() + 1))}
+                className="p-2 hover:bg-gray-200 rounded"
+              >
+                <ChevronRight size={20} />
+              </button>
+            </div>
+
+            {/* Calendar grid */}
+            <div className="grid grid-cols-7 gap-1">
+              {['L', 'M', 'X', 'J', 'V', 'S', 'D'].map(day => (
+                <div key={day} className="text-center text-xs font-semibold text-gray-600 py-1">
+                  {day}
+                </div>
+              ))}
+              {calendarDays.map((dateStr, idx) => {
+                const isSelected = dateStr === selectedDate;
+                const isToday = dateStr === today;
+                const isFuture = !!(dateStr && dateStr > today);
+                
+                return (
+                  <button
+                    key={idx}
+                    onClick={() => {
+                      if (dateStr && !isFuture) {
+                        setSelectedDate(dateStr);
+                        startGame(difficulty, dateStr);
+                        setShowCalendar(false);
+                      }
+                    }}
+                    disabled={isFuture}
+                    className={`py-2 text-xs font-semibold rounded ${
+                      !dateStr
+                        ? ''
+                        : isSelected
+                        ? 'bg-purple-600 text-white'
+                        : isToday
+                        ? 'bg-green-500 text-white'
+                        : isFuture
+                        ? 'text-gray-300 cursor-not-allowed'
+                        : 'bg-white text-gray-800 hover:bg-gray-200 border border-gray-200'
+                    }`}
+                  >
+                    {dateStr ? new Date(dateStr).getDate() : ''}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Instructions Modal */}
       {showInstructions && (
@@ -942,14 +1052,14 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack }) => {
                         }
                       }}
                       data-letter-index={originalIndex}
-                      className={`absolute w-16 h-16 sm:w-14 sm:h-14 rounded-full text-xl font-black transition-all ${
+                      className={`absolute w-20 h-20 md:w-16 md:h-16 lg:w-14 lg:h-14 rounded-full text-xl font-black transition-all ${
                         used
                           ? 'bg-gradient-to-br from-red-400 to-pink-500 text-white scale-90 shadow-lg'
                           : 'bg-gradient-to-br from-blue-500 to-purple-600 text-white hover:scale-125 shadow-md active:scale-95'
                       }`}
                       style={{
-                        left: `${x - 32}px`,
-                        top: `${y - 32}px`,
+                        left: `${x - 40}px`,
+                        top: `${y - 40}px`,
                         touchAction: 'none',
                       }}
                     >
