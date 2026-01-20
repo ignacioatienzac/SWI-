@@ -57,6 +57,7 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack }) => {
   const [displayMonth, setDisplayMonth] = useState<Date>(new Date());
 
   const audioCtxRef = useRef<AudioContext | null>(null);
+  const lastAddedIndexRef = useRef<number | null>(null);
 
   // Audio functions
   const playTone = (frequency: number, duration: number, type: OscillatorType = 'sine') => {
@@ -345,7 +346,7 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack }) => {
     setGameStatus('PLAYING');
   };
 
-  // Letter selection with toggle
+  // Letter selection with toggle (for click)
   const selectLetter = (index: number) => {
     if (!gameState) return;
     
@@ -357,12 +358,30 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack }) => {
       const newWord = newIndices.map(i => gameState.baseWordNormalized[i]).join('');
       setUsedIndices(newIndices);
       setCurrentWord(newWord);
+      lastAddedIndexRef.current = newIndices.length > 0 ? newIndices[newIndices.length - 1] : null;
       return;
     }
     
     playPop();
     setUsedIndices([...usedIndices, index]);
     setCurrentWord(currentWord + gameState.baseWordNormalized[index]);
+    lastAddedIndexRef.current = index;
+  };
+
+  // Add letter during drag (doesn't toggle - only adds if not already selected)
+  const addLetterDrag = (index: number) => {
+    if (!gameState) return;
+    
+    // Prevent re-triggering if we're still on the same letter
+    if (lastAddedIndexRef.current === index) return;
+    
+    // If already selected, don't do anything (no toggle during drag)
+    if (usedIndices.includes(index)) return;
+    
+    playPop();
+    setUsedIndices(prev => [...prev, index]);
+    setCurrentWord(prev => prev + gameState.baseWordNormalized[index]);
+    lastAddedIndexRef.current = index;
   };
 
   // Actions
@@ -437,6 +456,7 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack }) => {
     const handleMouseUp = () => {
       if (isDragging) {
         setIsDragging(false);
+        lastAddedIndexRef.current = null;
         // Auto-submit when releasing mouse if word is not empty
         if (currentWord.length > 0) {
           setTimeout(() => submitWord(), 100);
@@ -964,12 +984,21 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack }) => {
                 </div>
                 
                 {/* SVG for connecting lines */}
-                <svg className="absolute inset-0 pointer-events-none" width="300" height="300">
-                  {usedIndices.length > 1 && usedIndices.map((currentIdx, i) => {
+                <svg className="absolute inset-0 pointer-events-none z-10" width="300" height="300">
+                  <defs>
+                    <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" style={{ stopColor: '#ec4899', stopOpacity: 0.9 }} />
+                      <stop offset="100%" style={{ stopColor: '#8b5cf6', stopOpacity: 0.9 }} />
+                    </linearGradient>
+                  </defs>
+                  {usedIndices.length >= 1 && usedIndices.map((currentIdx, i) => {
                     if (i === 0) return null;
                     const prevIdx = usedIndices[i - 1];
                     const actualPrevPos = letterPositions.indexOf(prevIdx);
                     const actualCurrentPos = letterPositions.indexOf(currentIdx);
+                    
+                    // Safety check - skip if positions not found
+                    if (actualPrevPos === -1 || actualCurrentPos === -1) return null;
                     
                     const total = gameState.baseWordNormalized.length;
                     const prevAngle = (actualPrevPos / total) * 2 * Math.PI - Math.PI / 2;
@@ -983,24 +1012,17 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack }) => {
                     
                     return (
                       <line
-                        key={`line-${i}`}
+                        key={`line-${i}-${prevIdx}-${currentIdx}`}
                         x1={x1}
                         y1={y1}
                         x2={x2}
                         y2={y2}
                         stroke="url(#lineGradient)"
-                        strokeWidth="4"
+                        strokeWidth="6"
                         strokeLinecap="round"
-                        className="animate-pulse"
                       />
                     );
                   })}
-                  <defs>
-                    <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                      <stop offset="0%" style={{ stopColor: '#ec4899', stopOpacity: 0.8 }} />
-                      <stop offset="100%" style={{ stopColor: '#8b5cf6', stopOpacity: 0.8 }} />
-                    </linearGradient>
-                  </defs>
                 </svg>
                 
                 {/* Letters in circle (randomized positions) */}
@@ -1017,21 +1039,25 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack }) => {
                   return (
                     <button
                       key={`${originalIndex}-${visualPosition}`}
-                      onClick={() => selectLetter(originalIndex)}
+                      onClick={() => {
+                        if (!isDragging) selectLetter(originalIndex);
+                      }}
                       onMouseDown={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
                         setIsDragging(true);
-                        selectLetter(originalIndex);
+                        lastAddedIndexRef.current = null;
+                        addLetterDrag(originalIndex);
                       }}
                       onTouchStart={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
                         setIsDragging(true);
-                        selectLetter(originalIndex);
+                        lastAddedIndexRef.current = null;
+                        addLetterDrag(originalIndex);
                       }}
                       onMouseEnter={() => {
-                        if (isDragging) selectLetter(originalIndex);
+                        if (isDragging) addLetterDrag(originalIndex);
                       }}
                       onTouchMove={(e) => {
                         if (!isDragging) return;
@@ -1039,15 +1065,15 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack }) => {
                         e.stopPropagation();
                         const touch = e.touches[0];
                         // Get position relative to viewport
-                        const x = touch.clientX;
-                        const y = touch.clientY;
-                        const element = document.elementFromPoint(x, y) as HTMLElement;
+                        const touchX = touch.clientX;
+                        const touchY = touch.clientY;
+                        const element = document.elementFromPoint(touchX, touchY) as HTMLElement;
                         
                         // Check if we're over a letter button
                         if (element?.hasAttribute('data-letter-index')) {
                           const idx = parseInt(element.getAttribute('data-letter-index')!);
-                          if (!isNaN(idx) && idx !== originalIndex) {
-                            selectLetter(idx);
+                          if (!isNaN(idx)) {
+                            addLetterDrag(idx);
                           }
                         }
                       }}

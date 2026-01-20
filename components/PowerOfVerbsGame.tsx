@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { ChevronLeft, Info, X } from 'lucide-react';
+import { ChevronLeft, Info, X, Pause, Play } from 'lucide-react';
 import { getFilteredVerbs, getAvailableTenses } from '../services/powerVerbsService';
 import { PowerVerb, GameDifficulty, GameMode, BattleMode } from '../types';
 
@@ -15,10 +15,10 @@ const DIFFICULTY_SETTINGS = {
     targetScore: 500,
     spawnRate: 4000,
     minSpawnRate: 1500,
-    enemySpeedMultiplier: 0.45,
+    enemySpeedMultiplier: 0.35,
     bossHp: 50,
     bossAppearTime: 30000, // 30 segundos
-    bossSpeed: 0.09, // Muy lento
+    bossSpeed: 0.07, // Muy lento
   },
   intermedio: {
     label: 'Intermedio',
@@ -26,10 +26,10 @@ const DIFFICULTY_SETTINGS = {
     targetScore: 1000,
     spawnRate: 3500,
     minSpawnRate: 1000,
-    enemySpeedMultiplier: 0.55,
+    enemySpeedMultiplier: 0.45,
     bossHp: 100,
     bossAppearTime: 25000,
-    bossSpeed: 0.15, // Medio
+    bossSpeed: 0.12, // Medio
   },
   dificil: {
     label: 'Difícil',
@@ -37,10 +37,10 @@ const DIFFICULTY_SETTINGS = {
     targetScore: 2000,
     spawnRate: 3000,
     minSpawnRate: 600,
-    enemySpeedMultiplier: 0.75,
+    enemySpeedMultiplier: 0.6,
     bossHp: 200,
     bossAppearTime: 20000,
-    bossSpeed: 0.21, // Más rápido
+    bossSpeed: 0.17, // Más rápido
   },
 };
 
@@ -238,8 +238,8 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
     // Check if boss should appear (only in boss mode)
     if (selectedBattleMode === 'jefe' && !bossRef.current && (time - gameStartTimeRef.current) >= settings.bossAppearTime) {
       const groundLevel = canvasHeight - 40;
-      // Boss should occupy 80% of game area height
-      const bossSize = Math.floor((canvasHeight - 40) * 0.8);
+      // Boss should occupy 60% of game area height
+      const bossSize = Math.floor((canvasHeight - 40) * 0.6);
       bossRef.current = {
         x: canvasWidth - bossSize - 20,
         y: groundLevel - bossSize,
@@ -267,8 +267,8 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
       // In boss mode, adjust enemy HP based on difficulty
       const hpMultiplier = selectedBattleMode === 'jefe' ? 1.5 : 1;
       
-      // Monster size should be 40% of game area height
-      const monsterSize = Math.floor((canvasHeight - 40) * 0.4);
+      // Monster size should be 30% of game area height
+      const monsterSize = Math.floor((canvasHeight - 40) * 0.3);
       
       monstersRef.current.push({
         id: Date.now(),
@@ -402,8 +402,8 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
     ctx.fillStyle = '#556B2F';
     ctx.fillRect(0, groundY, canvasWidth, groundHeight);
 
-    // Elements should be 40% of game area height
-    const elementSize = Math.floor((canvasHeight - groundHeight) * 0.4);
+    // Elements should be 30% of game area height
+    const elementSize = Math.floor((canvasHeight - groundHeight) * 0.3);
     const castleFontSize = Math.floor(elementSize * 1.2);
     const wizardFontSize = Math.floor(elementSize * 0.9);
     
@@ -485,6 +485,29 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
     if (gameState === 'PLAYING') requestRef.current = requestAnimationFrame(gameLoop);
     return () => { if (requestRef.current) cancelAnimationFrame(requestRef.current); };
   }, [gameState, gameLoop]);
+
+  // Pause game when tab/window loses focus
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.hidden && gameState === 'PLAYING') {
+        setGameState('PAUSED');
+      }
+    };
+    
+    const handleBlur = () => {
+      if (gameState === 'PLAYING') {
+        setGameState('PAUSED');
+      }
+    };
+    
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('blur', handleBlur);
+    
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('blur', handleBlur);
+    };
+  }, [gameState]);
 
   // --- INTERACTION HANDLERS ---
 
@@ -687,6 +710,9 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
               <p className="text-sm opacity-70">Vidas</p>
               <p className="text-4xl font-black text-red-400">{lives}</p>
             </div>
+            <button onClick={() => setGameState('PAUSED')} className="p-2 hover:bg-white/10 rounded-full">
+              <Pause size={32} />
+            </button>
             <button onClick={() => setInstructionsOpen(true)} className="p-2 hover:bg-white/10 rounded-full">
               <Info size={32} />
             </button>
@@ -696,8 +722,8 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
           <div className="bg-white rounded-2xl overflow-hidden shadow-2xl mb-6">
             <canvas
               ref={canvasRef}
-              width={960}
-              height={540}
+              width={872}
+              height={396}
               className="w-full"
             />
           </div>
@@ -786,6 +812,39 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
             </div>
           </div>
         )}
+      </div>
+    );
+  }
+
+  // --- PAUSED STATE ---
+  if (gameState === 'PAUSED') {
+    return (
+      <div className="min-h-screen bg-deep-blue p-4 flex items-center justify-center">
+        <div className="bg-white rounded-3xl p-8 max-w-md text-center shadow-2xl">
+          <p className="text-7xl mb-4">⏸️</p>
+          <h1 className="text-4xl font-black text-deep-blue mb-2">Juego Pausado</h1>
+          <p className="text-lg text-gray-600 mb-6">Puntuación actual: {score}</p>
+          <div className="space-y-3">
+            <button
+              onClick={() => setGameState('PLAYING')}
+              className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 rounded-lg flex items-center justify-center gap-2"
+            >
+              <Play size={24} />
+              Continuar
+            </button>
+            <button
+              onClick={() => {
+                setGameState('SELECTION');
+                setSelectedDifficulty(null);
+                setSelectedMode(null);
+                setSelectedBattleMode(null);
+              }}
+              className="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-3 rounded-lg"
+            >
+              Salir al Menú
+            </button>
+          </div>
+        </div>
       </div>
     );
   }
