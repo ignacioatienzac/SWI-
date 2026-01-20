@@ -15,10 +15,10 @@ const DIFFICULTY_SETTINGS = {
     targetScore: 500,
     spawnRate: 4000,
     minSpawnRate: 1500,
-    enemySpeedMultiplier: 0.6,
+    enemySpeedMultiplier: 0.45,
     bossHp: 50,
     bossAppearTime: 30000, // 30 segundos
-    bossSpeed: 0.12, // Muy lento
+    bossSpeed: 0.09, // Muy lento
   },
   intermedio: {
     label: 'Intermedio',
@@ -26,10 +26,10 @@ const DIFFICULTY_SETTINGS = {
     targetScore: 1000,
     spawnRate: 3500,
     minSpawnRate: 1000,
-    enemySpeedMultiplier: 0.75,
+    enemySpeedMultiplier: 0.55,
     bossHp: 100,
     bossAppearTime: 25000,
-    bossSpeed: 0.2, // Medio
+    bossSpeed: 0.15, // Medio
   },
   dificil: {
     label: 'Difícil',
@@ -37,10 +37,10 @@ const DIFFICULTY_SETTINGS = {
     targetScore: 2000,
     spawnRate: 3000,
     minSpawnRate: 600,
-    enemySpeedMultiplier: 1.0,
+    enemySpeedMultiplier: 0.75,
     bossHp: 200,
     bossAppearTime: 20000,
-    bossSpeed: 0.28, // Más rápido
+    bossSpeed: 0.21, // Más rápido
   },
 };
 
@@ -238,11 +238,13 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
     // Check if boss should appear (only in boss mode)
     if (selectedBattleMode === 'jefe' && !bossRef.current && (time - gameStartTimeRef.current) >= settings.bossAppearTime) {
       const groundLevel = canvasHeight - 40;
+      // Boss should occupy 80% of game area height
+      const bossSize = Math.floor((canvasHeight - 40) * 0.8);
       bossRef.current = {
-        x: canvasWidth - 200,
-        y: groundLevel - 180,
-        width: 180,
-        height: 180,
+        x: canvasWidth - bossSize - 20,
+        y: groundLevel - bossSize,
+        width: bossSize,
+        height: bossSize,
         hp: settings.bossHp,
         maxHp: settings.bossHp,
         emoji: '🐉',
@@ -265,12 +267,15 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
       // In boss mode, adjust enemy HP based on difficulty
       const hpMultiplier = selectedBattleMode === 'jefe' ? 1.5 : 1;
       
+      // Monster size should be 40% of game area height
+      const monsterSize = Math.floor((canvasHeight - 40) * 0.4);
+      
       monstersRef.current.push({
         id: Date.now(),
         x: canvasWidth + 50,
-        y: groundLevel - 60,
-        width: 60,
-        height: 60,
+        y: groundLevel - monsterSize,
+        width: monsterSize,
+        height: monsterSize,
         hp: Math.ceil(type.hp * hpMultiplier),
         maxHp: Math.ceil(type.hp * hpMultiplier),
         speed: type.speed * settings.enemySpeedMultiplier,
@@ -397,11 +402,18 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
     ctx.fillStyle = '#556B2F';
     ctx.fillRect(0, groundY, canvasWidth, groundHeight);
 
-    ctx.font = '90px Arial';
+    // Elements should be 40% of game area height
+    const elementSize = Math.floor((canvasHeight - groundHeight) * 0.4);
+    const castleFontSize = Math.floor(elementSize * 1.2);
+    const wizardFontSize = Math.floor(elementSize * 0.9);
+    
+    ctx.font = `${castleFontSize}px Arial`;
     ctx.fillText('🏰', 10, groundY - 5);
     
-    heroRef.current.y = groundY - 70;
-    ctx.font = '60px Arial';
+    heroRef.current.y = groundY - wizardFontSize * 0.9;
+    heroRef.current.width = wizardFontSize;
+    heroRef.current.height = wizardFontSize;
+    ctx.font = `${wizardFontSize}px Arial`;
     ctx.fillText('🧙‍♂️', heroRef.current.x, groundY - 10);
     
     if (attackPower > 1) {
@@ -412,19 +424,21 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
     }
 
     monstersRef.current.forEach(m => {
-        ctx.font = '52px Arial';
-        ctx.fillText(m.emoji, m.x, m.y + 52);
+        const monsterFontSize = Math.floor(m.height * 0.85);
+        ctx.font = `${monsterFontSize}px Arial`;
+        ctx.fillText(m.emoji, m.x, m.y + m.height * 0.85);
         ctx.fillStyle = 'red';
-        ctx.fillRect(m.x, m.y - 10, 60, 5);
+        ctx.fillRect(m.x, m.y - 10, m.width, 5);
         ctx.fillStyle = '#00ff00';
-        ctx.fillRect(m.x, m.y - 10, 60 * (m.hp / m.maxHp), 5);
+        ctx.fillRect(m.x, m.y - 10, m.width * (m.hp / m.maxHp), 5);
     });
     
     // Draw boss if exists
     if (bossRef.current && !bossRef.current.defeated) {
         const boss = bossRef.current;
-        ctx.font = '180px Arial';
-        ctx.fillText(boss.emoji, boss.x, boss.y + 150);
+        const bossFontSize = Math.floor(boss.height * 0.9);
+        ctx.font = `${bossFontSize}px Arial`;
+        ctx.fillText(boss.emoji, boss.x, boss.y + boss.height * 0.85);
         
         // Boss health bar (larger)
         ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';

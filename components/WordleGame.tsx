@@ -223,7 +223,8 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
 
   // Get key color based on best status found
   const getKeyColor = useCallback((letter: string) => {
-    let bestStatus = 'absent';
+    // Check if letter has been used in any guess
+    let bestStatus = 'unused';
     
     for (const guess of guesses) {
       for (let i = 0; i < guess.length; i++) {
@@ -233,14 +234,18 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
             bestStatus = 'correct';
           } else if (status === 'present' && bestStatus !== 'correct') {
             bestStatus = 'present';
+          } else if (bestStatus === 'unused') {
+            bestStatus = 'absent';
           }
         }
       }
     }
     
-    if (bestStatus === 'correct') return 'bg-green-500';
-    if (bestStatus === 'present') return 'bg-yellow-500';
-    return 'bg-gray-400';
+    if (bestStatus === 'correct') return 'bg-green-500 text-white';
+    if (bestStatus === 'present') return 'bg-yellow-500 text-white';
+    if (bestStatus === 'absent') return 'bg-gray-400 text-white';
+    // Unused keys: light gray background with black text
+    return 'bg-gray-200 text-gray-800';
   }, [guesses, getLetterStatus]);
 
   // Calendar - get all dates in current month
@@ -558,7 +563,8 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
             />
           ))}
 
-          {status === 'PLAYING' && Array.from({ length: MAX_GUESSES - guesses.length - (activeFlipRow !== null ? 2 : 1) }).map((_, rowIdx) =>
+          {/* Always show remaining empty rows to complete 6 rows */}
+          {Array.from({ length: Math.max(0, MAX_GUESSES - guesses.length - (status === 'PLAYING' ? 1 : 0)) }).map((_, rowIdx) =>
             Array.from({ length: wordLength }).map((_, colIdx) => (
               <div
                 key={`empty-row-${rowIdx}-${colIdx}`}
@@ -625,7 +631,7 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
                   playSound('present');
                 }
               }}
-              className={`w-8 h-12 sm:w-10 sm:h-12 flex items-center justify-center rounded font-bold text-base transition ${getKeyColor(key)} text-white`}
+              className={`w-8 h-12 sm:w-10 sm:h-12 flex items-center justify-center rounded font-bold text-base transition ${getKeyColor(key)}`}
               disabled={status !== 'PLAYING'}
             >
               {key}
@@ -643,7 +649,7 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
                   playSound('present');
                 }
               }}
-              className={`w-8 h-12 sm:w-10 sm:h-12 flex items-center justify-center rounded font-bold text-base transition ${getKeyColor(key)} text-white`}
+              className={`w-8 h-12 sm:w-10 sm:h-12 flex items-center justify-center rounded font-bold text-base transition ${getKeyColor(key)}`}
               disabled={status !== 'PLAYING'}
             >
               {key}
@@ -673,7 +679,7 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
                   playSound('present');
                 }
               }}
-              className={`w-8 h-12 sm:w-10 sm:h-12 flex items-center justify-center rounded font-bold text-base transition ${getKeyColor(key)} text-white`}
+              className={`w-8 h-12 sm:w-10 sm:h-12 flex items-center justify-center rounded font-bold text-base transition ${getKeyColor(key)}`}
               disabled={status !== 'PLAYING'}
             >
               {key}
