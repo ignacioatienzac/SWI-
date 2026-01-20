@@ -1,6 +1,5 @@
 import React from 'react';
 import { GameDefinition } from '../types';
-import VerbGame from './VerbGame';
 import WordleGame from './WordleGame';
 import PowerOfVerbsGame from './PowerOfVerbsGame';
 import LetterWheelGame from './LetterWheelGame';
