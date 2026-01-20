@@ -60,6 +60,7 @@ interface Monster extends Entity {
   maxHp: number;
   speed: number;
   emoji: string;
+  imageIndex: number; // 0-5 for enemigo_1 to enemigo_6
   color: string;
   points: number;
 }
@@ -114,6 +115,12 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
   const projectilesRef = useRef<Projectile[]>([]);
   const bossRef = useRef<Boss | null>(null);
   const gameStartTimeRef = useRef<number>(0);
+  
+  // Image refs for rendering
+  const enemyImagesRef = useRef<HTMLImageElement[]>([]);
+  const bossImageRef = useRef<HTMLImageElement | null>(null);
+  const wizardImageRef = useRef<HTMLImageElement | null>(null);
+  const imagesLoadedRef = useRef<boolean>(false);
 
   // --- AUDIO HELPERS ---
   const playTone = (frequency: number, duration: number, type: OscillatorType = 'sine') => {
@@ -162,6 +169,46 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
     setTimeout(() => playTone(330, 0.2, 'sawtooth'), 200);
     setTimeout(() => playTone(220, 0.4, 'sawtooth'), 400);
   };
+  
+  // Load images on mount
+  useEffect(() => {
+    const baseUrl = import.meta.env.BASE_URL || '/';
+    
+    // Load enemy images
+    for (let i = 1; i <= 6; i++) {
+      const img = new Image();
+      img.src = `${baseUrl}data/images/enemigo_${i}.png`;
+      enemyImagesRef.current.push(img);
+    }
+    
+    // Load boss image
+    const bossImg = new Image();
+    bossImg.src = `${baseUrl}data/images/Jefe.png`;
+    bossImageRef.current = bossImg;
+    
+    // Load wizard image
+    const wizardImg = new Image();
+    wizardImg.src = `${baseUrl}data/images/Mago.png`;
+    wizardImageRef.current = wizardImg;
+    
+    // Wait for all images to load
+    Promise.all([
+      ...enemyImagesRef.current.map(img => new Promise(resolve => {
+        img.onload = resolve;
+        img.onerror = resolve; // Continue even if image fails
+      })),
+      new Promise(resolve => {
+        bossImg.onload = resolve;
+        bossImg.onerror = resolve;
+      }),
+      new Promise(resolve => {
+        wizardImg.onload = resolve;
+        wizardImg.onerror = resolve;
+      })
+    ]).then(() => {
+      imagesLoadedRef.current = true;
+    });
+  }, []);
   
   // --- DYNAMIC DATA HELPERS ---
   const [availableTenses, setAvailableTenses] = useState<string[]>([]);
@@ -257,12 +304,35 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
 
     if (time - lastSpawnRef.current > currentSpawnRate) {
       const groundLevel = canvasHeight - 40;
-      const types = [
-        { hp: 3, speed: 0.8, emoji: '👾', points: 10, color: '#8b5cf6' },
-        { hp: 6, speed: 0.5, emoji: '👹', points: 20, color: '#ef4444' },
-        { hp: 2, speed: 1.2, emoji: '👻', points: 15, color: '#ec4899' },
+      
+      // Define 6 enemy types with progressive difficulty
+      // enemigo_1 (weakest) to enemigo_6 (strongest)
+      const enemyTypes = [
+        { imageIndex: 0, hp: 2, speed: 0.9, emoji: '👾', points: 10, color: '#8b5cf6', minScore: 0 },      // Enemigo 1 - muy débil
+        { imageIndex: 1, hp: 4, speed: 0.75, emoji: '👹', points: 15, color: '#ec4899', minScore: 0 },    // Enemigo 2 - débil
+        { imageIndex: 2, hp: 6, speed: 0.65, emoji: '👻', points: 25, color: '#3b82f6', minScore: 100 },  // Enemigo 3 - medio
+        { imageIndex: 3, hp: 9, speed: 0.55, emoji: '👺', points: 35, color: '#ef4444', minScore: 250 },  // Enemigo 4 - medio-fuerte
+        { imageIndex: 4, hp: 12, speed: 0.5, emoji: '💀', points: 50, color: '#f59e0b', minScore: 400 }, // Enemigo 5 - fuerte
+        { imageIndex: 5, hp: 16, speed: 0.45, emoji: '☠️', points: 75, color: '#dc2626', minScore: 600 }   // Enemigo 6 - muy fuerte
       ];
-      const type = types[Math.floor(Math.random() * types.length)];
+      
+      // Filter enemies based on difficulty and score progression
+      let availableEnemies = enemyTypes.filter(enemy => {
+        // Enemigo 1 no aparece en difícil
+        if (selectedDifficulty === 'dificil' && enemy.imageIndex === 0) return false;
+        // Enemigo 6 no aparece en fácil
+        if (selectedDifficulty === 'facil' && enemy.imageIndex === 5) return false;
+        // Solo aparecen enemigos para los que el jugador tiene suficiente score
+        return score >= enemy.minScore;
+      });
+      
+      // Ensure at least one enemy is available
+      if (availableEnemies.length === 0) {
+        availableEnemies = [enemyTypes[0]];
+      }
+      
+      // Select random enemy from available ones
+      const type = availableEnemies[Math.floor(Math.random() * availableEnemies.length)];
       
       // In boss mode, adjust enemy HP based on difficulty
       const hpMultiplier = selectedBattleMode === 'jefe' ? 1.5 : 1;
@@ -280,6 +350,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
         maxHp: Math.ceil(type.hp * hpMultiplier),
         speed: type.speed * settings.enemySpeedMultiplier,
         emoji: type.emoji,
+        imageIndex: type.imageIndex,
         color: type.color,
         points: type.points
       });
@@ -304,11 +375,13 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
     const now = performance.now();
     if (now - lastShotRef.current > 1000) { 
        const heroY = heroRef.current.y;
+       // Increase projectile size to match larger elements
+       const projectileSize = 35;
        projectilesRef.current.push({
          x: 80,
          y: heroY + 10,
-         width: 20,
-         height: 20,
+         width: projectileSize,
+         height: projectileSize,
          speed: 6,
          power: Math.max(1, attackPower),
          emoji: '🔥'
@@ -405,40 +478,63 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
     // Elements should be 30% of game area height
     const elementSize = Math.floor((canvasHeight - groundHeight) * 0.3);
     const castleFontSize = Math.floor(elementSize * 1.2);
-    const wizardFontSize = Math.floor(elementSize * 0.9);
+    const wizardSize = Math.floor(elementSize * 0.9);
     
+    // Draw castle (still using emoji)
     ctx.font = `${castleFontSize}px Arial`;
     ctx.fillText('🏰', 10, groundY - 5);
     
-    heroRef.current.y = groundY - wizardFontSize * 0.9;
-    heroRef.current.width = wizardFontSize;
-    heroRef.current.height = wizardFontSize;
-    ctx.font = `${wizardFontSize}px Arial`;
-    ctx.fillText('🧙‍♂️', heroRef.current.x, groundY - 10);
+    // Draw wizard using image
+    heroRef.current.y = groundY - wizardSize * 0.9;
+    heroRef.current.width = wizardSize;
+    heroRef.current.height = wizardSize;
     
+    if (imagesLoadedRef.current && wizardImageRef.current && wizardImageRef.current.complete) {
+      ctx.drawImage(wizardImageRef.current, heroRef.current.x, heroRef.current.y - wizardSize + 10, wizardSize, wizardSize);
+    } else {
+      // Fallback to emoji if image not loaded
+      ctx.font = `${wizardSize}px Arial`;
+      ctx.fillText('🧙‍♂️', heroRef.current.x, groundY - 10);
+    }
+    
+    // Power aura around wizard
     if (attackPower > 1) {
         ctx.beginPath();
-        ctx.arc(heroRef.current.x + 20, groundY - 30, 25 + (attackPower * 2), 0, Math.PI * 2);
+        ctx.arc(heroRef.current.x + wizardSize/2, heroRef.current.y + wizardSize/2, 25 + (attackPower * 2), 0, Math.PI * 2);
         ctx.fillStyle = `rgba(255, 215, 0, ${Math.min(0.5, attackPower * 0.1)})`;
         ctx.fill();
     }
 
+    // Draw monsters using images
     monstersRef.current.forEach(m => {
-        const monsterFontSize = Math.floor(m.height * 0.85);
-        ctx.font = `${monsterFontSize}px Arial`;
-        ctx.fillText(m.emoji, m.x, m.y + m.height * 0.85);
+        if (imagesLoadedRef.current && enemyImagesRef.current[m.imageIndex] && enemyImagesRef.current[m.imageIndex].complete) {
+          ctx.drawImage(enemyImagesRef.current[m.imageIndex], m.x, m.y, m.width, m.height);
+        } else {
+          // Fallback to emoji if image not loaded
+          const monsterFontSize = Math.floor(m.height * 0.85);
+          ctx.font = `${monsterFontSize}px Arial`;
+          ctx.fillText(m.emoji, m.x, m.y + m.height * 0.85);
+        }
+        
+        // Health bar
         ctx.fillStyle = 'red';
         ctx.fillRect(m.x, m.y - 10, m.width, 5);
         ctx.fillStyle = '#00ff00';
         ctx.fillRect(m.x, m.y - 10, m.width * (m.hp / m.maxHp), 5);
     });
     
-    // Draw boss if exists
+    // Draw boss using image
     if (bossRef.current && !bossRef.current.defeated) {
         const boss = bossRef.current;
-        const bossFontSize = Math.floor(boss.height * 0.9);
-        ctx.font = `${bossFontSize}px Arial`;
-        ctx.fillText(boss.emoji, boss.x, boss.y + boss.height * 0.85);
+        
+        if (imagesLoadedRef.current && bossImageRef.current && bossImageRef.current.complete) {
+          ctx.drawImage(bossImageRef.current, boss.x, boss.y, boss.width, boss.height);
+        } else {
+          // Fallback to emoji if image not loaded
+          const bossFontSize = Math.floor(boss.height * 0.9);
+          ctx.font = `${bossFontSize}px Arial`;
+          ctx.fillText(boss.emoji, boss.x, boss.y + boss.height * 0.85);
+        }
         
         // Boss health bar (larger)
         ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
@@ -456,9 +552,10 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
         ctx.textAlign = 'left';
     }
 
+    // Draw projectiles (fire emoji)
     projectilesRef.current.forEach(p => {
-        ctx.font = '20px Arial';
-        ctx.fillText(p.emoji, p.x, p.y + 20);
+        ctx.font = `${p.width}px Arial`;
+        ctx.fillText(p.emoji, p.x, p.y + p.height);
     });
   };
 
