@@ -16,8 +16,8 @@ const DIFFICULTY_SETTINGS = {
     spawnRate: 4000,
     minSpawnRate: 1500,
     enemySpeedMultiplier: 0.35,
-    bossHp: 50,
-    bossAppearTime: 30000, // 30 segundos
+    bossHp: 80,
+    bossAppearTime: 45000, // 45 segundos
     bossSpeed: 0.07, // Muy lento
   },
   intermedio: {
@@ -27,8 +27,8 @@ const DIFFICULTY_SETTINGS = {
     spawnRate: 3500,
     minSpawnRate: 1000,
     enemySpeedMultiplier: 0.45,
-    bossHp: 100,
-    bossAppearTime: 25000,
+    bossHp: 150,
+    bossAppearTime: 40000,
     bossSpeed: 0.12, // Medio
   },
   dificil: {
@@ -38,8 +38,8 @@ const DIFFICULTY_SETTINGS = {
     spawnRate: 3000,
     minSpawnRate: 600,
     enemySpeedMultiplier: 0.6,
-    bossHp: 200,
-    bossAppearTime: 20000,
+    bossHp: 250,
+    bossAppearTime: 35000,
     bossSpeed: 0.17, // Más rápido
   },
 };
@@ -337,8 +337,8 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
       // In boss mode, adjust enemy HP based on difficulty
       const hpMultiplier = selectedBattleMode === 'jefe' ? 1.5 : 1;
       
-      // Monster size should be 30% of game area height
-      const monsterSize = Math.floor((canvasHeight - 40) * 0.3);
+      // Monster size should be 10% of game area height
+      const monsterSize = Math.floor((canvasHeight - 40) * 0.1);
       
       monstersRef.current.push({
         id: Date.now(),
@@ -475,22 +475,24 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
     ctx.fillStyle = '#556B2F';
     ctx.fillRect(0, groundY, canvasWidth, groundHeight);
 
-    // Elements should be 30% of game area height
-    const elementSize = Math.floor((canvasHeight - groundHeight) * 0.3);
-    const castleFontSize = Math.floor(elementSize * 1.2);
-    const wizardSize = Math.floor(elementSize * 0.9);
+    // Monsters should be 10% of game area height, castle/wizard larger for visibility
+    const monsterSize = Math.floor((canvasHeight - groundHeight) * 0.1);
+    const castleFontSize = Math.floor((canvasHeight - groundHeight) * 0.35);
+    const wizardSize = Math.floor((canvasHeight - groundHeight) * 0.3);
     
     // Draw castle (still using emoji)
     ctx.font = `${castleFontSize}px Arial`;
     ctx.fillText('🏰', 10, groundY - 5);
     
-    // Draw wizard using image
-    heroRef.current.y = groundY - wizardSize * 0.9;
+    // Draw wizard using image - positioned at same height as castle (in front)
+    const castleWidth = 60; // Approximate castle emoji width
+    heroRef.current.x = 10 + castleWidth + 10; // 10px padding from castle
+    heroRef.current.y = groundY - wizardSize;
     heroRef.current.width = wizardSize;
     heroRef.current.height = wizardSize;
     
     if (imagesLoadedRef.current && wizardImageRef.current && wizardImageRef.current.complete) {
-      ctx.drawImage(wizardImageRef.current, heroRef.current.x, heroRef.current.y - wizardSize + 10, wizardSize, wizardSize);
+      ctx.drawImage(wizardImageRef.current, heroRef.current.x, heroRef.current.y, wizardSize, wizardSize);
     } else {
       // Fallback to emoji if image not loaded
       ctx.font = `${wizardSize}px Arial`;
@@ -829,12 +831,15 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
           <div className="bg-white rounded-2xl p-8 shadow-2xl">
             {currentVerb ? (
               <div>
-                <h2 className="text-2xl font-bold text-deep-blue mb-4">
-                  {currentVerb.verb} - {currentVerb.tense}
-                </h2>
-                <p className="text-lg text-gray-600 mb-6">
-                  Conjuga para: <span className="font-bold">{currentVerb.pronoun}</span>
-                </p>
+                {/* Nuevo layout: verbo,pronombre a la izquierda, tiempo verbal en rectángulo azul a la derecha */}
+                <div className="flex justify-between items-center mb-6">
+                  <h2 className="text-2xl font-bold text-deep-blue">
+                    {currentVerb.verb}, {currentVerb.pronoun}
+                  </h2>
+                  <div className="bg-deep-blue text-white px-6 py-2 rounded-lg font-bold">
+                    {currentVerb.tense}
+                  </div>
+                </div>
 
                 {selectedMode === 'write' ? (
                   <div className="space-y-4">
@@ -845,6 +850,52 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
                       onChange={(e) => setUserInput(e.target.value)}
                       onKeyDown={(e) => {
                         if (e.key === 'Enter') handleAnswer(userInput);
+                        // Teclas numéricas para vocales con tilde
+                        if (e.key === '1') {
+                          e.preventDefault();
+                          const input = e.currentTarget;
+                          const start = input.selectionStart || 0;
+                          const end = input.selectionEnd || 0;
+                          const newValue = userInput.slice(0, start) + 'á' + userInput.slice(end);
+                          setUserInput(newValue);
+                          setTimeout(() => input.setSelectionRange(start + 1, start + 1), 0);
+                        }
+                        if (e.key === '2') {
+                          e.preventDefault();
+                          const input = e.currentTarget;
+                          const start = input.selectionStart || 0;
+                          const end = input.selectionEnd || 0;
+                          const newValue = userInput.slice(0, start) + 'é' + userInput.slice(end);
+                          setUserInput(newValue);
+                          setTimeout(() => input.setSelectionRange(start + 1, start + 1), 0);
+                        }
+                        if (e.key === '3') {
+                          e.preventDefault();
+                          const input = e.currentTarget;
+                          const start = input.selectionStart || 0;
+                          const end = input.selectionEnd || 0;
+                          const newValue = userInput.slice(0, start) + 'í' + userInput.slice(end);
+                          setUserInput(newValue);
+                          setTimeout(() => input.setSelectionRange(start + 1, start + 1), 0);
+                        }
+                        if (e.key === '4') {
+                          e.preventDefault();
+                          const input = e.currentTarget;
+                          const start = input.selectionStart || 0;
+                          const end = input.selectionEnd || 0;
+                          const newValue = userInput.slice(0, start) + 'ó' + userInput.slice(end);
+                          setUserInput(newValue);
+                          setTimeout(() => input.setSelectionRange(start + 1, start + 1), 0);
+                        }
+                        if (e.key === '5') {
+                          e.preventDefault();
+                          const input = e.currentTarget;
+                          const start = input.selectionStart || 0;
+                          const end = input.selectionEnd || 0;
+                          const newValue = userInput.slice(0, start) + 'ú' + userInput.slice(end);
+                          setUserInput(newValue);
+                          setTimeout(() => input.setSelectionRange(start + 1, start + 1), 0);
+                        }
                       }}
                       placeholder="Escribe tu respuesta..."
                       className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-deep-blue text-lg"
@@ -898,6 +949,8 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
                 <p>🏰 <strong>Protege el castillo:</strong> Si pierdes vidas, pierdes el juego</p>
                 <p>⚡ <strong>Ataca automáticamente:</strong> Cada segundo dispara proyectiles</p>
                 <p>🎯 <strong>Modo Contrarreloj:</strong> Alcanza la puntuación objetivo para ganar</p>
+                <p>📝 <strong>Modo Escritura:</strong> Usa las teclas 1-5 para vocales con tilde (1=á, 2=é, 3=í, 4=ó, 5=ú)</p>
+              </div>
                 <p>🐉 <strong>Modo Jefe:</strong> Derrota al dragón gigante que aparece después de un tiempo</p>
               </div>
               <button
