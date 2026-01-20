@@ -475,8 +475,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
     ctx.fillStyle = '#556B2F';
     ctx.fillRect(0, groundY, canvasWidth, groundHeight);
 
-    // Monsters should be 10% of game area height, castle/wizard larger for visibility
-    const monsterSize = Math.floor((canvasHeight - groundHeight) * 0.1);
+    // Castle/wizard sizes for visibility
     const castleFontSize = Math.floor((canvasHeight - groundHeight) * 0.35);
     const wizardSize = Math.floor((canvasHeight - groundHeight) * 0.3);
     
