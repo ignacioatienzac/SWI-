@@ -4,6 +4,7 @@ import VerbGame from './VerbGame';
 import WordleGame from './WordleGame';
 import PowerOfVerbsGame from './PowerOfVerbsGame';
 import LetterWheelGame from './LetterWheelGame';
+import VerbMasterGame from './VerbMasterGame';
 import { Gamepad2, Layers, Zap, Grid3X3, Sword } from 'lucide-react';
 
 interface GamesProps {
@@ -18,53 +19,42 @@ const Games: React.FC<GamesProps> = ({ activeGameId, setActiveGameId }) => {
       title: 'El Poder de los Verbos',
       description: '¡Defiende el castillo! Responde correctamente para potenciar a tu héroe y derrotar a los monstruos.',
       iconName: 'Sword',
-      isAiPowered: false,
-      difficulty: 'Medium'
+      isAiPowered: false
     },
     {
       id: 'wordle-game',
       title: 'Adivina la Palabra',
       description: 'El clásico juego de palabras. Tienes 6 intentos para descubrir la palabra oculta.',
       iconName: 'Grid3X3',
-      isAiPowered: true,
-      difficulty: 'Easy'
+      isAiPowered: false
     },
     {
       id: 'letter-wheel',
       title: 'La Rueda de Letras',
       description: 'Forma palabras usando las letras de la rueda para completar el crucigrama del día.',
       iconName: 'Layers',
-      isAiPowered: false,
-      difficulty: 'Medium'
+      isAiPowered: false
     },
     {
       id: 'verb-master',
       title: 'Maestro de Verbos',
-      description: 'Practica conjugaciones infinitas con nuestra IA inteligente que se adapta a tu nivel.',
+      description: '¡Explota las burbujas antes de que lleguen al suelo! Practica conjugaciones en un juego estilo Tetris.',
       iconName: 'Zap',
-      isAiPowered: true,
-      difficulty: 'Medium'
+      isAiPowered: false
     },
     {
       id: 'phrase-builder',
       title: 'Constructor de Frases',
       description: 'Ordena las palabras para formar oraciones gramaticalmente correctas.',
       iconName: 'Gamepad2',
-      isAiPowered: false,
-      difficulty: 'Hard'
+      isAiPowered: false
     }
   ];
 
   if (activeGameId === 'verb-master') {
     return (
-      <div className="max-w-4xl mx-auto px-4 py-12">
-        <button 
-          onClick={() => setActiveGameId(null)}
-          className="mb-6 text-gray-500 hover:text-deep-blue font-medium flex items-center gap-2 transition-colors"
-        >
-          ← Volver a Juegos
-        </button>
-        <VerbGame />
+      <div className="w-full bg-cream min-h-screen">
+        <VerbMasterGame onBack={() => setActiveGameId(null)} />
       </div>
     );
   }
@@ -131,12 +121,6 @@ const Games: React.FC<GamesProps> = ({ activeGameId, setActiveGameId }) => {
             onClick={() => setActiveGameId(game.id)}
             className="group bg-white rounded-2xl p-8 shadow-sm hover:shadow-xl border border-gray-100 hover:border-spanish-red/20 transition-all duration-300 cursor-pointer transform hover:-translate-y-1 relative overflow-hidden"
           >
-            {game.isAiPowered && (
-              <div className="absolute top-0 right-0 bg-gradient-to-l from-spanish-yellow to-yellow-300 text-deep-blue text-xs font-bold px-3 py-1 rounded-bl-xl shadow-sm">
-                AI POWERED
-              </div>
-            )}
-            
             <div className={`w-14 h-14 rounded-xl flex items-center justify-center mb-6 text-white shadow-md transition-colors ${
               game.id === 'power-verbs' ? 'bg-orange-500' :
               game.id === 'verb-master' ? 'bg-spanish-red' : 'bg-deep-blue'
@@ -155,10 +139,7 @@ const Games: React.FC<GamesProps> = ({ activeGameId, setActiveGameId }) => {
               {game.description}
             </p>
 
-            <div className="flex items-center justify-between mt-auto">
-              <span className={`text-xs font-bold px-2 py-1 rounded bg-gray-100 text-gray-600 uppercase`}>
-                {game.difficulty}
-              </span>
+            <div className="flex items-center justify-end mt-auto">
               <span className="text-deep-blue font-semibold group-hover:translate-x-1 transition-transform inline-flex items-center">
                 Jugar ahora →
               </span>

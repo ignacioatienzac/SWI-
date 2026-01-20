@@ -18,7 +18,6 @@ export interface GameDefinition {
   description: string;
   iconName: string;
   isAiPowered: boolean;
-  difficulty: 'Easy' | 'Medium' | 'Hard';
 }
 
 export interface VerbChallenge {

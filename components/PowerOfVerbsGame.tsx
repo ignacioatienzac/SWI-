@@ -337,8 +337,8 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
       // In boss mode, adjust enemy HP based on difficulty
       const hpMultiplier = selectedBattleMode === 'jefe' ? 1.5 : 1;
       
-      // Monster size should be 10% of game area height
-      const monsterSize = Math.floor((canvasHeight - 40) * 0.1);
+      // Monster size should be 15% of game area height
+      const monsterSize = Math.floor((canvasHeight - 40) * 0.15);
       
       monstersRef.current.push({
         id: Date.now(),
@@ -477,16 +477,16 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
 
     // Castle/wizard sizes for visibility
     const castleFontSize = Math.floor((canvasHeight - groundHeight) * 0.35);
-    const wizardSize = Math.floor((canvasHeight - groundHeight) * 0.3);
+    const wizardSize = Math.floor((canvasHeight - groundHeight) * 0.28);
     
     // Draw castle (still using emoji)
     ctx.font = `${castleFontSize}px Arial`;
     ctx.fillText('🏰', 10, groundY - 5);
     
-    // Draw wizard using image - positioned at same height as castle (in front)
+    // Draw wizard using image - positioned so feet are at ground level (same as castle base)
     const castleWidth = 60; // Approximate castle emoji width
     heroRef.current.x = 10 + castleWidth + 10; // 10px padding from castle
-    heroRef.current.y = groundY - wizardSize;
+    heroRef.current.y = groundY - wizardSize + 5; // Adjust so feet touch ground
     heroRef.current.width = wizardSize;
     heroRef.current.height = wizardSize;
     
@@ -495,7 +495,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
     } else {
       // Fallback to emoji if image not loaded
       ctx.font = `${wizardSize}px Arial`;
-      ctx.fillText('🧙‍♂️', heroRef.current.x, groundY - 10);
+      ctx.fillText('🧙‍♂️', heroRef.current.x, groundY - 5);
     }
     
     // Power aura around wizard
