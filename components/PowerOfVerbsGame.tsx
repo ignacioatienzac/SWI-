@@ -662,8 +662,8 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
                     <button
                         key={g}
                         onClick={() => setSelectedGrammar(g)}
-                        className={`flex-1 py-3 rounded-xl border-2 font-bold text-base capitalize transition-all ${
-                            selectedGrammar === g ? 'border-spanish-red bg-red-50 text-spanish-red' : 'border-gray-200 text-gray-600 hover:border-gray-300'
+                        className={`flex-1 py-3 rounded-lg border font-bold text-base capitalize transition-all ${
+                            selectedGrammar === g ? 'bg-deep-blue text-white border-deep-blue' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
                         }`}
                     >
                         {g}
@@ -681,7 +681,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
                         <button
                             key={t}
                             onClick={() => setSelectedTense(t)}
-                            className={`py-2 px-4 rounded-lg border font-medium capitalize text-base transition-all ${
+                            className={`py-3 px-4 rounded-lg border font-bold capitalize text-base transition-all ${
                                 selectedTense === t ? 'bg-deep-blue text-white border-deep-blue' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
                             }`}
                         >
@@ -702,8 +702,8 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
                     <button
                         key={t}
                         onClick={() => setSelectedVerbType(t)}
-                        className={`flex-1 py-2 rounded-lg border font-medium text-base capitalize transition-all ${
-                            selectedVerbType === t ? 'bg-spanish-yellow text-deep-blue border-spanish-yellow' : 'bg-white text-gray-600 border-gray-200'
+                        className={`flex-1 py-3 rounded-lg border font-bold text-base capitalize transition-all ${
+                            selectedVerbType === t ? 'bg-deep-blue text-white border-deep-blue' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
                         }`}
                     >
                         {t === 'mixed' ? 'Todos' : t}
@@ -741,15 +741,15 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
                <div className="flex gap-4">
                   <button 
                     onClick={() => setSelectedMode('write')}
-                    className={`flex-1 p-4 rounded-xl border-2 text-center transition-all ${selectedMode === 'write' ? 'border-deep-blue bg-blue-50 ring-2 ring-blue-100' : 'border-gray-200 hover:bg-gray-50'}`}
+                    className={`flex-1 py-3 rounded-lg border text-center transition-all font-bold text-base ${selectedMode === 'write' ? 'bg-deep-blue text-white border-deep-blue' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'}`}
                   >
-                      <span className="block font-bold text-base text-deep-blue">Escribir</span>
+                      Escribir
                   </button>
                   <button 
                     onClick={() => setSelectedMode('choice')}
-                    className={`flex-1 p-4 rounded-xl border-2 text-center transition-all ${selectedMode === 'choice' ? 'border-deep-blue bg-blue-50 ring-2 ring-blue-100' : 'border-gray-200 hover:bg-gray-50'}`}
+                    className={`flex-1 py-3 rounded-lg border text-center transition-all font-bold text-base ${selectedMode === 'choice' ? 'bg-deep-blue text-white border-deep-blue' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'}`}
                   >
-                      <span className="block font-bold text-base text-deep-blue">Selección</span>
+                      Selección
                   </button>
                </div>
             </div>
@@ -763,7 +763,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
                         key={d}
                         onClick={() => setSelectedDifficulty(d)}
                         className={`flex-1 py-3 rounded-lg border font-bold text-base capitalize transition-all ${
-                            selectedDifficulty === d ? 'border-spanish-red bg-red-50 text-spanish-red' : 'border-gray-200 text-gray-600 hover:border-gray-300'
+                            selectedDifficulty === d ? 'bg-deep-blue text-white border-deep-blue' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
                         }`}
                     >
                         {DIFFICULTY_SETTINGS[d].label}

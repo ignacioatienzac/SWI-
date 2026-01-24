@@ -1003,7 +1003,8 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack }) => {
                     const total = gameState.baseWordNormalized.length;
                     const prevAngle = (actualPrevPos / total) * 2 * Math.PI - Math.PI / 2;
                     const currentAngle = (actualCurrentPos / total) * 2 * Math.PI - Math.PI / 2;
-                    const radius = 115;
+                    // Radio ajustado para que los botones queden dentro del círculo de fondo
+                    const radius = 90;
                     
                     const x1 = 150 + radius * Math.cos(prevAngle);
                     const y1 = 150 + radius * Math.sin(prevAngle);
@@ -1030,11 +1031,17 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack }) => {
                   const letter = gameState.baseWordNormalized[originalIndex];
                   const total = gameState.baseWordNormalized.length;
                   const angle = (visualPosition / total) * 2 * Math.PI - Math.PI / 2;
-                  const radius = 115;
+                  // Radio ajustado para que los botones queden dentro del círculo de fondo
+                  // Botones: 48px (w-12) en móvil, 44px en md, 40px en lg
+                  // El centro está en 150px, radio del círculo de fondo = 144px
+                  // Para que queden dentro con margen: 144 - 24 (radio botón) - 30 (margen) = 90px
+                  const radius = 90;
                   const x = 150 + radius * Math.cos(angle);
                   const y = 150 + radius * Math.sin(angle);
                   const used = usedIndices.includes(originalIndex);
                   const usedPosition = usedIndices.indexOf(originalIndex);
+                  // Tamaño del botón para centrar correctamente: 48px en móvil, 44px en md, 40px en lg
+                  const buttonOffset = 24; // La mitad del tamaño del botón más grande (48px / 2)
                   
                   return (
                     <button
@@ -1078,14 +1085,14 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack }) => {
                         }
                       }}
                       data-letter-index={originalIndex}
-                      className={`absolute w-20 h-20 md:w-16 md:h-16 lg:w-14 lg:h-14 rounded-full text-xl font-black transition-all ${
+                      className={`absolute w-12 h-12 md:w-11 md:h-11 lg:w-10 lg:h-10 rounded-full text-lg font-black transition-all ${
                         used
                           ? 'bg-gradient-to-br from-red-400 to-pink-500 text-white scale-90 shadow-lg'
-                          : 'bg-gradient-to-br from-blue-500 to-purple-600 text-white hover:scale-125 shadow-md active:scale-95'
+                          : 'bg-gradient-to-br from-blue-500 to-purple-600 text-white hover:scale-110 shadow-md active:scale-95'
                       }`}
                       style={{
-                        left: `${x - 40}px`,
-                        top: `${y - 40}px`,
+                        left: `${x - buttonOffset}px`,
+                        top: `${y - buttonOffset}px`,
                         touchAction: 'none',
                       }}
                     >

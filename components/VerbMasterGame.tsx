@@ -150,24 +150,69 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack }) => {
           return false;
         }
         
-        // Draw bubble
-        const gradient = ctx.createRadialGradient(
-          bubble.x, bubble.y - bubble.radius * 0.3, bubble.radius * 0.2,
+        // Draw bubble with realistic glass/soap bubble effect
+        ctx.save();
+        
+        // Main bubble body - transparent with subtle gradient
+        const mainGradient = ctx.createRadialGradient(
+          bubble.x - bubble.radius * 0.3, bubble.y - bubble.radius * 0.3, bubble.radius * 0.1,
           bubble.x, bubble.y, bubble.radius
         );
-        gradient.addColorStop(0, 'rgba(255, 255, 255, 0.8)');
-        gradient.addColorStop(0.5, 'rgba(100, 200, 255, 0.6)');
-        gradient.addColorStop(1, 'rgba(50, 150, 255, 0.8)');
+        mainGradient.addColorStop(0, 'rgba(255, 255, 255, 0.1)');
+        mainGradient.addColorStop(0.4, 'rgba(200, 230, 255, 0.15)');
+        mainGradient.addColorStop(0.7, 'rgba(150, 200, 255, 0.2)');
+        mainGradient.addColorStop(1, 'rgba(100, 180, 255, 0.25)');
         
-        ctx.fillStyle = gradient;
+        ctx.fillStyle = mainGradient;
         ctx.beginPath();
         ctx.arc(bubble.x, bubble.y, bubble.radius, 0, Math.PI * 2);
         ctx.fill();
         
-        // Draw bubble border
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
-        ctx.lineWidth = 2;
+        // Bubble border with rainbow iridescent effect
+        const borderGradient = ctx.createLinearGradient(
+          bubble.x - bubble.radius, bubble.y - bubble.radius,
+          bubble.x + bubble.radius, bubble.y + bubble.radius
+        );
+        borderGradient.addColorStop(0, 'rgba(255, 150, 200, 0.4)');
+        borderGradient.addColorStop(0.25, 'rgba(200, 150, 255, 0.4)');
+        borderGradient.addColorStop(0.5, 'rgba(150, 200, 255, 0.4)');
+        borderGradient.addColorStop(0.75, 'rgba(150, 255, 200, 0.4)');
+        borderGradient.addColorStop(1, 'rgba(255, 200, 150, 0.4)');
+        
+        ctx.strokeStyle = borderGradient;
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        ctx.arc(bubble.x, bubble.y, bubble.radius, 0, Math.PI * 2);
         ctx.stroke();
+        
+        // Top highlight (bright reflection)
+        const highlightGradient = ctx.createRadialGradient(
+          bubble.x - bubble.radius * 0.35, bubble.y - bubble.radius * 0.35, 0,
+          bubble.x - bubble.radius * 0.35, bubble.y - bubble.radius * 0.35, bubble.radius * 0.4
+        );
+        highlightGradient.addColorStop(0, 'rgba(255, 255, 255, 0.6)');
+        highlightGradient.addColorStop(0.5, 'rgba(255, 255, 255, 0.2)');
+        highlightGradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+        
+        ctx.fillStyle = highlightGradient;
+        ctx.beginPath();
+        ctx.arc(bubble.x - bubble.radius * 0.35, bubble.y - bubble.radius * 0.35, bubble.radius * 0.4, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Bottom light catch (secondary reflection)
+        const bottomLightGradient = ctx.createRadialGradient(
+          bubble.x + bubble.radius * 0.25, bubble.y + bubble.radius * 0.4, 0,
+          bubble.x + bubble.radius * 0.25, bubble.y + bubble.radius * 0.4, bubble.radius * 0.25
+        );
+        bottomLightGradient.addColorStop(0, 'rgba(255, 255, 255, 0.3)');
+        bottomLightGradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+        
+        ctx.fillStyle = bottomLightGradient;
+        ctx.beginPath();
+        ctx.arc(bubble.x + bubble.radius * 0.25, bubble.y + bubble.radius * 0.4, bubble.radius * 0.25, 0, Math.PI * 2);
+        ctx.fill();
+        
+        ctx.restore();
         
         // Draw text
         ctx.fillStyle = '#003D5B';

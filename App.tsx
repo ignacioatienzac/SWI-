@@ -60,8 +60,8 @@ const App: React.FC = () => {
             <p className="text-gray-400 text-sm mt-2">© 2024 Todos los derechos reservados.</p>
           </div>
           <div className="flex space-x-6 text-sm text-gray-300">
-            <a href="#" className="hover:text-white transition-colors">Instagram</a>
-            <a href="#" className="hover:text-white transition-colors">YouTube</a>
+            <a href="https://www.instagram.com/spanishwithignacio/" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Instagram</a>
+            <a href="https://www.youtube.com/@SpanishwithIgnacio" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">YouTube</a>
             <a href="#" className="hover:text-white transition-colors">Contacto</a>
           </div>
         </div>
