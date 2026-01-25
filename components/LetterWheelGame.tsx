@@ -55,9 +55,17 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack }) => {
   const [selectedDate, setSelectedDate] = useState<string>(new Date().toISOString().split('T')[0]);
   const [showCalendar, setShowCalendar] = useState(false);
   const [displayMonth, setDisplayMonth] = useState<Date>(new Date());
+  const [, forceUpdate] = useState({});
 
   const audioCtxRef = useRef<AudioContext | null>(null);
   const lastAddedIndexRef = useRef<number | null>(null);
+
+  // Force re-render on window resize for responsive positioning
+  useEffect(() => {
+    const handleResize = () => forceUpdate({});
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Audio functions
   const playTone = (frequency: number, duration: number, type: OscillatorType = 'sine') => {
@@ -985,12 +993,6 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack }) => {
                 
                 {/* SVG for connecting lines */}
                 <svg className="absolute inset-0 pointer-events-none z-10" width="300" height="300">
-                  <defs>
-                    <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                      <stop offset="0%" style={{ stopColor: '#ec4899', stopOpacity: 0.9 }} />
-                      <stop offset="100%" style={{ stopColor: '#8b5cf6', stopOpacity: 0.9 }} />
-                    </linearGradient>
-                  </defs>
                   {usedIndices.length >= 1 && usedIndices.map((currentIdx, i) => {
                     if (i === 0) return null;
                     const prevIdx = usedIndices[i - 1];
@@ -1004,24 +1006,35 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack }) => {
                     const prevAngle = (actualPrevPos / total) * 2 * Math.PI - Math.PI / 2;
                     const currentAngle = (actualCurrentPos / total) * 2 * Math.PI - Math.PI / 2;
                     // Radio ajustado para que los botones queden dentro del círculo de fondo
-                    const radius = 90;
+                    // Mismo tamaño en todas las versiones: radio 108px para botones de 56px
+                    const radius = 108;
                     
                     const x1 = 150 + radius * Math.cos(prevAngle);
                     const y1 = 150 + radius * Math.sin(prevAngle);
                     const x2 = 150 + radius * Math.cos(currentAngle);
                     const y2 = 150 + radius * Math.sin(currentAngle);
                     
+                    // Create unique gradient ID for each line to ensure proper rendering
+                    const gradientId = `lineGradient-${i}-${prevIdx}-${currentIdx}`;
+                    
                     return (
-                      <line
-                        key={`line-${i}-${prevIdx}-${currentIdx}`}
-                        x1={x1}
-                        y1={y1}
-                        x2={x2}
-                        y2={y2}
-                        stroke="url(#lineGradient)"
-                        strokeWidth="6"
-                        strokeLinecap="round"
-                      />
+                      <g key={`line-${i}-${prevIdx}-${currentIdx}`}>
+                        <defs>
+                          <linearGradient id={gradientId} x1={x1} y1={y1} x2={x2} y2={y2} gradientUnits="userSpaceOnUse">
+                            <stop offset="0%" style={{ stopColor: '#ec4899', stopOpacity: 0.9 }} />
+                            <stop offset="100%" style={{ stopColor: '#8b5cf6', stopOpacity: 0.9 }} />
+                          </linearGradient>
+                        </defs>
+                        <line
+                          x1={x1}
+                          y1={y1}
+                          x2={x2}
+                          y2={y2}
+                          stroke={`url(#${gradientId})`}
+                          strokeWidth="6"
+                          strokeLinecap="round"
+                        />
+                      </g>
                     );
                   })}
                 </svg>
@@ -1032,16 +1045,14 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack }) => {
                   const total = gameState.baseWordNormalized.length;
                   const angle = (visualPosition / total) * 2 * Math.PI - Math.PI / 2;
                   // Radio ajustado para que los botones queden dentro del círculo de fondo
-                  // Botones: 48px (w-12) en móvil, 44px en md, 40px en lg
-                  // El centro está en 150px, radio del círculo de fondo = 144px
-                  // Para que queden dentro con margen: 144 - 24 (radio botón) - 30 (margen) = 90px
-                  const radius = 90;
+                  // Mismo tamaño en todas las versiones: botones 56px (w-14), radio 108px, offset 28px
+                  const radius = 108;
+                  const buttonOffset = 28;
+                  
                   const x = 150 + radius * Math.cos(angle);
                   const y = 150 + radius * Math.sin(angle);
                   const used = usedIndices.includes(originalIndex);
                   const usedPosition = usedIndices.indexOf(originalIndex);
-                  // Tamaño del botón para centrar correctamente: 48px en móvil, 44px en md, 40px en lg
-                  const buttonOffset = 24; // La mitad del tamaño del botón más grande (48px / 2)
                   
                   return (
                     <button
@@ -1085,7 +1096,7 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack }) => {
                         }
                       }}
                       data-letter-index={originalIndex}
-                      className={`absolute w-12 h-12 md:w-11 md:h-11 lg:w-10 lg:h-10 rounded-full text-lg font-black transition-all ${
+                      className={`absolute w-14 h-14 rounded-full text-xl font-black transition-all ${
                         used
                           ? 'bg-gradient-to-br from-red-400 to-pink-500 text-white scale-90 shadow-lg'
                           : 'bg-gradient-to-br from-blue-500 to-purple-600 text-white hover:scale-110 shadow-md active:scale-95'

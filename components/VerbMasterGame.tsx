@@ -150,75 +150,158 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack }) => {
           return false;
         }
         
-        // Draw bubble with realistic glass/soap bubble effect
+        // Draw photorealistic soap bubble effect
         ctx.save();
         
-        // Main bubble body - transparent with subtle gradient
-        const mainGradient = ctx.createRadialGradient(
-          bubble.x - bubble.radius * 0.3, bubble.y - bubble.radius * 0.3, bubble.radius * 0.1,
+        // LAYER 1: Base transparency - almost completely transparent center
+        const baseGradient = ctx.createRadialGradient(
+          bubble.x, bubble.y, 0,
           bubble.x, bubble.y, bubble.radius
         );
-        mainGradient.addColorStop(0, 'rgba(255, 255, 255, 0.1)');
-        mainGradient.addColorStop(0.4, 'rgba(200, 230, 255, 0.15)');
-        mainGradient.addColorStop(0.7, 'rgba(150, 200, 255, 0.2)');
-        mainGradient.addColorStop(1, 'rgba(100, 180, 255, 0.25)');
+        baseGradient.addColorStop(0, 'rgba(255, 255, 255, 0.05)');
+        baseGradient.addColorStop(0.5, 'rgba(240, 248, 255, 0.08)');
+        baseGradient.addColorStop(0.85, 'rgba(200, 220, 240, 0.12)');
+        baseGradient.addColorStop(1, 'rgba(180, 200, 230, 0.18)');
         
-        ctx.fillStyle = mainGradient;
+        ctx.fillStyle = baseGradient;
         ctx.beginPath();
         ctx.arc(bubble.x, bubble.y, bubble.radius, 0, Math.PI * 2);
         ctx.fill();
         
-        // Bubble border with rainbow iridescent effect
-        const borderGradient = ctx.createLinearGradient(
-          bubble.x - bubble.radius, bubble.y - bubble.radius,
-          bubble.x + bubble.radius, bubble.y + bubble.radius
-        );
-        borderGradient.addColorStop(0, 'rgba(255, 150, 200, 0.4)');
-        borderGradient.addColorStop(0.25, 'rgba(200, 150, 255, 0.4)');
-        borderGradient.addColorStop(0.5, 'rgba(150, 200, 255, 0.4)');
-        borderGradient.addColorStop(0.75, 'rgba(150, 255, 200, 0.4)');
-        borderGradient.addColorStop(1, 'rgba(255, 200, 150, 0.4)');
+        // LAYER 2: Iridescent interference pattern (thin film effect)
+        // Creating swirling rainbow colors
+        ctx.globalCompositeOperation = 'screen';
         
-        ctx.strokeStyle = borderGradient;
-        ctx.lineWidth = 2.5;
+        // First iridescent layer - cyan/magenta swirl
+        const irid1 = ctx.createRadialGradient(
+          bubble.x - bubble.radius * 0.3, bubble.y - bubble.radius * 0.2, 0,
+          bubble.x, bubble.y, bubble.radius * 0.9
+        );
+        irid1.addColorStop(0, 'rgba(0, 255, 255, 0.08)');
+        irid1.addColorStop(0.3, 'rgba(255, 0, 255, 0.12)');
+        irid1.addColorStop(0.6, 'rgba(255, 255, 0, 0.08)');
+        irid1.addColorStop(1, 'rgba(0, 255, 200, 0.06)');
+        
+        ctx.fillStyle = irid1;
+        ctx.beginPath();
+        ctx.arc(bubble.x, bubble.y, bubble.radius, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Second iridescent layer - complementary colors
+        const irid2 = ctx.createRadialGradient(
+          bubble.x + bubble.radius * 0.2, bubble.y + bubble.radius * 0.3, 0,
+          bubble.x, bubble.y, bubble.radius
+        );
+        irid2.addColorStop(0, 'rgba(255, 100, 200, 0.1)');
+        irid2.addColorStop(0.4, 'rgba(100, 200, 255, 0.12)');
+        irid2.addColorStop(0.7, 'rgba(200, 255, 100, 0.08)');
+        irid2.addColorStop(1, 'rgba(255, 150, 255, 0.06)');
+        
+        ctx.fillStyle = irid2;
+        ctx.beginPath();
+        ctx.arc(bubble.x, bubble.y, bubble.radius, 0, Math.PI * 2);
+        ctx.fill();
+        
+        ctx.globalCompositeOperation = 'source-over';
+        
+        // LAYER 3: Fresnel edge effect (thicker glass appearance at edges)
+        const fresnelGradient = ctx.createRadialGradient(
+          bubble.x, bubble.y, bubble.radius * 0.7,
+          bubble.x, bubble.y, bubble.radius
+        );
+        fresnelGradient.addColorStop(0, 'rgba(255, 255, 255, 0)');
+        fresnelGradient.addColorStop(0.7, 'rgba(200, 230, 255, 0.15)');
+        fresnelGradient.addColorStop(0.9, 'rgba(180, 210, 240, 0.3)');
+        fresnelGradient.addColorStop(1, 'rgba(160, 190, 230, 0.4)');
+        
+        ctx.fillStyle = fresnelGradient;
+        ctx.beginPath();
+        ctx.arc(bubble.x, bubble.y, bubble.radius, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // LAYER 4: Sharp white border (outer edge definition)
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+        ctx.lineWidth = 2;
         ctx.beginPath();
         ctx.arc(bubble.x, bubble.y, bubble.radius, 0, Math.PI * 2);
         ctx.stroke();
         
-        // Top highlight (bright reflection)
-        const highlightGradient = ctx.createRadialGradient(
-          bubble.x - bubble.radius * 0.35, bubble.y - bubble.radius * 0.35, 0,
-          bubble.x - bubble.radius * 0.35, bubble.y - bubble.radius * 0.35, bubble.radius * 0.4
-        );
-        highlightGradient.addColorStop(0, 'rgba(255, 255, 255, 0.6)');
-        highlightGradient.addColorStop(0.5, 'rgba(255, 255, 255, 0.2)');
-        highlightGradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
-        
-        ctx.fillStyle = highlightGradient;
+        // Inner glow edge
+        ctx.strokeStyle = 'rgba(200, 230, 255, 0.3)';
+        ctx.lineWidth = 1;
         ctx.beginPath();
-        ctx.arc(bubble.x - bubble.radius * 0.35, bubble.y - bubble.radius * 0.35, bubble.radius * 0.4, 0, Math.PI * 2);
+        ctx.arc(bubble.x, bubble.y, bubble.radius - 1.5, 0, Math.PI * 2);
+        ctx.stroke();
+        
+        // LAYER 5: Main specular highlight (large curved reflection)
+        const mainHighlight = ctx.createRadialGradient(
+          bubble.x - bubble.radius * 0.4, bubble.y - bubble.radius * 0.4, 0,
+          bubble.x - bubble.radius * 0.4, bubble.y - bubble.radius * 0.4, bubble.radius * 0.5
+        );
+        mainHighlight.addColorStop(0, 'rgba(255, 255, 255, 0.85)');
+        mainHighlight.addColorStop(0.2, 'rgba(255, 255, 255, 0.6)');
+        mainHighlight.addColorStop(0.5, 'rgba(255, 255, 255, 0.25)');
+        mainHighlight.addColorStop(1, 'rgba(255, 255, 255, 0)');
+        
+        ctx.fillStyle = mainHighlight;
+        ctx.beginPath();
+        ctx.arc(bubble.x - bubble.radius * 0.4, bubble.y - bubble.radius * 0.4, bubble.radius * 0.5, 0, Math.PI * 2);
         ctx.fill();
         
-        // Bottom light catch (secondary reflection)
-        const bottomLightGradient = ctx.createRadialGradient(
-          bubble.x + bubble.radius * 0.25, bubble.y + bubble.radius * 0.4, 0,
-          bubble.x + bubble.radius * 0.25, bubble.y + bubble.radius * 0.4, bubble.radius * 0.25
+        // LAYER 6: Secondary sharp highlight (small intense spot)
+        const sharpHighlight = ctx.createRadialGradient(
+          bubble.x - bubble.radius * 0.3, bubble.y - bubble.radius * 0.35, 0,
+          bubble.x - bubble.radius * 0.3, bubble.y - bubble.radius * 0.35, bubble.radius * 0.15
         );
-        bottomLightGradient.addColorStop(0, 'rgba(255, 255, 255, 0.3)');
-        bottomLightGradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+        sharpHighlight.addColorStop(0, 'rgba(255, 255, 255, 0.95)');
+        sharpHighlight.addColorStop(0.5, 'rgba(255, 255, 255, 0.4)');
+        sharpHighlight.addColorStop(1, 'rgba(255, 255, 255, 0)');
         
-        ctx.fillStyle = bottomLightGradient;
+        ctx.fillStyle = sharpHighlight;
         ctx.beginPath();
-        ctx.arc(bubble.x + bubble.radius * 0.25, bubble.y + bubble.radius * 0.4, bubble.radius * 0.25, 0, Math.PI * 2);
+        ctx.arc(bubble.x - bubble.radius * 0.3, bubble.y - bubble.radius * 0.35, bubble.radius * 0.15, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // LAYER 7: Bottom light catch (opposite side reflection)
+        const bottomHighlight = ctx.createRadialGradient(
+          bubble.x + bubble.radius * 0.35, bubble.y + bubble.radius * 0.45, 0,
+          bubble.x + bubble.radius * 0.35, bubble.y + bubble.radius * 0.45, bubble.radius * 0.3
+        );
+        bottomHighlight.addColorStop(0, 'rgba(255, 255, 255, 0.5)');
+        bottomHighlight.addColorStop(0.4, 'rgba(255, 255, 255, 0.2)');
+        bottomHighlight.addColorStop(1, 'rgba(255, 255, 255, 0)');
+        
+        ctx.fillStyle = bottomHighlight;
+        ctx.beginPath();
+        ctx.arc(bubble.x + bubble.radius * 0.35, bubble.y + bubble.radius * 0.45, bubble.radius * 0.3, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // LAYER 8: Subtle rim light on right side
+        const rimLight = ctx.createRadialGradient(
+          bubble.x + bubble.radius * 0.7, bubble.y, 0,
+          bubble.x + bubble.radius * 0.7, bubble.y, bubble.radius * 0.4
+        );
+        rimLight.addColorStop(0, 'rgba(180, 220, 255, 0.3)');
+        rimLight.addColorStop(1, 'rgba(180, 220, 255, 0)');
+        
+        ctx.fillStyle = rimLight;
+        ctx.beginPath();
+        ctx.arc(bubble.x + bubble.radius * 0.7, bubble.y, bubble.radius * 0.4, 0, Math.PI * 2);
         ctx.fill();
         
         ctx.restore();
         
-        // Draw text
+        // Draw text with enhanced legibility
         ctx.fillStyle = '#003D5B';
         ctx.font = 'bold 18px Arial';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
+        
+        // Add subtle shadow for text separation from complex background
+        ctx.shadowColor = 'rgba(255, 255, 255, 0.8)';
+        ctx.shadowBlur = 4;
+        ctx.shadowOffsetX = 0;
+        ctx.shadowOffsetY = 0;
         
         const text = bubble.challenge.displayText;
         const maxWidth = bubble.radius * 1.6;
@@ -230,6 +313,10 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack }) => {
         } else {
           ctx.fillText(text, bubble.x, bubble.y);
         }
+        
+        // Reset shadow
+        ctx.shadowColor = 'transparent';
+        ctx.shadowBlur = 0;
         
         return true;
       });
