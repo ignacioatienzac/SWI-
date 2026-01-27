@@ -2,6 +2,7 @@
 
 export type VerbLevel = 'A1' | 'A2' | 'B1' | 'B2';
 export type VerbType = 'regular' | 'irregular' | 'all';
+export type VerbMode = 'indicativo' | 'subjuntivo' | 'imperativo';
 export type GameMode = 'conjugate' | 'identify'; // Mode 1: conjugate, Mode 2: identify
 
 export interface VerbData {
@@ -10,6 +11,7 @@ export interface VerbData {
   pronoun: string;
   answer: string;
   regular: boolean;
+  mode?: string; // Optional: 'subjuntivo', 'imperativo'. If not present, it's indicativo
 }
 
 export interface BubbleChallenge {
@@ -50,18 +52,19 @@ export async function loadVerbData(): Promise<VerbData[]> {
   }
 }
 
-// Filter verbs by level, type, and tense
+// Filter verbs by level, type, tense, and mode
 export async function getFilteredVerbs(
   level: VerbLevel,
   verbType: VerbType,
-  tense: string = 'presente'
+  tense: string = 'presente',
+  verbMode: VerbMode = 'indicativo'
 ): Promise<VerbData[]> {
   const allVerbs = await loadVerbData();
   
   // Get verbs for this level
   const levelVerbs = VERB_LEVELS[level];
   
-  // Filter by level, tense, and type
+  // Filter by level, tense, type, and mode
   return allVerbs.filter(v => {
     const matchesLevel = levelVerbs.includes(v.verb);
     const matchesTense = v.tense === tense;
@@ -70,7 +73,15 @@ export async function getFilteredVerbs(
       verbType === 'regular' ? v.regular :
       !v.regular;
     
-    return matchesLevel && matchesTense && matchesType;
+    // Filter by mode: indicativo has no 'mode' field, subjuntivo/imperativo have 'mode' field
+    let matchesMode = false;
+    if (verbMode === 'indicativo') {
+      matchesMode = !v.mode; // Indicativo verbs don't have 'mode' field
+    } else {
+      matchesMode = v.mode === verbMode;
+    }
+    
+    return matchesLevel && matchesTense && matchesType && matchesMode;
   });
 }
 
@@ -114,7 +125,42 @@ export function validateAnswer(challenge: BubbleChallenge, userInput: string): b
   const normalized = userInput.trim().toLowerCase();
   const correct = challenge.correctAnswer.toLowerCase();
   
-  return normalized === correct;
+  // Direct match
+  if (normalized === correct) return true;
+  
+  // For identify mode, check alternative pronoun variations
+  if (challenge.mode === 'identify') {
+    // Split the correct answer into verb and pronoun
+    const correctParts = correct.split(',').map(p => p.trim());
+    const userParts = normalized.split(',').map(p => p.trim());
+    
+    // Must have 2 parts: verb, pronoun
+    if (correctParts.length !== 2 || userParts.length !== 2) return false;
+    
+    const [correctVerb, correctPronoun] = correctParts;
+    const [userVerb, userPronoun] = userParts;
+    
+    // Verb must match exactly
+    if (correctVerb !== userVerb) return false;
+    
+    // Check pronoun variations for third person
+    // Third person singular: él/ella/usted are interchangeable
+    const thirdSingular = ['él', 'ella', 'usted', 'él/ella'];
+    if (thirdSingular.includes(correctPronoun) && thirdSingular.includes(userPronoun)) {
+      return true;
+    }
+    
+    // Third person plural: ellos/ellas/ustedes are interchangeable
+    const thirdPlural = ['ellos', 'ellas', 'ustedes', 'ellos/ellas'];
+    if (thirdPlural.includes(correctPronoun) && thirdPlural.includes(userPronoun)) {
+      return true;
+    }
+    
+    // If not third person, pronoun must match exactly
+    return correctPronoun === userPronoun;
+  }
+  
+  return false;
 }
 
 // Calculate score based on game level and streak
@@ -137,9 +183,9 @@ export function getFallSpeed(level: number): number {
 
 // Calculate spawn rate based on game level (milliseconds between spawns)
 export function getSpawnRate(level: number): number {
-  const baseRate = 3000; // 3 seconds
-  const rateDecrease = level * 150;
-  const minRate = 1000; // 1 second minimum
+  const baseRate = 2000; // 2 seconds - allows multiple bubbles
+  const rateDecrease = level * 100;
+  const minRate = 800; // 0.8 seconds minimum for higher levels
   
   return Math.max(baseRate - rateDecrease, minRate);
 }

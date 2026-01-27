@@ -39,29 +39,6 @@ const Hero: React.FC<HeroProps> = ({ onStart }) => {
           </div>
         </div>
       </div>
-      
-      {/* Features strip */}
-      <div className="bg-white border-y border-gray-100">
-        <div className="max-w-7xl mx-auto px-4 py-12">
-            <div className="grid md:grid-cols-3 gap-8 text-center">
-                <div className="p-4">
-                    <div className="text-4xl mb-2">🚀</div>
-                    <h3 className="font-bold text-deep-blue">Aprendizaje Rápido</h3>
-                    <p className="text-gray-500 text-sm mt-2">Métodos probados para acelerar tu fluidez.</p>
-                </div>
-                <div className="p-4">
-                    <div className="text-4xl mb-2">🎮</div>
-                    <h3 className="font-bold text-deep-blue">Gamificación</h3>
-                    <p className="text-gray-500 text-sm mt-2">Aprende sin aburrirte con nuestros juegos.</p>
-                </div>
-                <div className="p-4">
-                    <div className="text-4xl mb-2">🤖</div>
-                    <h3 className="font-bold text-deep-blue">Potenciado por IA</h3>
-                    <p className="text-gray-500 text-sm mt-2">Ejercicios infinitos generados por inteligencia artificial.</p>
-                </div>
-            </div>
-        </div>
-      </div>
     </div>
   );
 };

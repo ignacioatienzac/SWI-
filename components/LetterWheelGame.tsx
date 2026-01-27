@@ -383,8 +383,23 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack }) => {
     // Prevent re-triggering if we're still on the same letter
     if (lastAddedIndexRef.current === index) return;
     
-    // If already selected, don't do anything (no toggle during drag)
-    if (usedIndices.includes(index)) return;
+    // Check if this letter is already in the path
+    const existingPosition = usedIndices.indexOf(index);
+    
+    if (existingPosition !== -1) {
+      // Letter already selected - implement deselection logic
+      // Remove all letters after this position (going back in the path)
+      if (existingPosition < usedIndices.length - 1) {
+        // Only deselect if it's not the last letter (going backwards)
+        playPop();
+        const newUsedIndices = usedIndices.slice(0, existingPosition + 1);
+        const newWord = newUsedIndices.map(idx => gameState.baseWordNormalized[idx]).join('');
+        setUsedIndices(newUsedIndices);
+        setCurrentWord(newWord);
+        lastAddedIndexRef.current = index;
+      }
+      return;
+    }
     
     playPop();
     setUsedIndices(prev => [...prev, index]);

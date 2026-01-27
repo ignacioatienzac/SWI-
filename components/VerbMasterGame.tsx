@@ -6,10 +6,10 @@ import {
   generateChallenge,
   validateAnswer,
   calculateScore,
-  getFallSpeed,
   getSpawnRate,
   VerbLevel,
   VerbType,
+  VerbMode,
   GameMode,
   BubbleChallenge,
   VerbData
@@ -19,7 +19,37 @@ interface VerbMasterGameProps {
   onBack: () => void;
 }
 
-type GameState = 'LEVEL_SELECT' | 'PLAYING' | 'PAUSED' | 'GAMEOVER';
+type GameState = 'LEVEL_SELECT' | 'PLAYING' | 'PAUSED' | 'GAMEOVER' | 'LEVEL_TRANSITION';
+
+// Level progression configuration (10 levels)
+const LEVEL_SETTINGS = [
+  { level: 1, fallDuration: 30.0, pointsRequired: 0 },      // Starting level - Very slow
+  { level: 2, fallDuration: 27.6, pointsRequired: 100 },   // +100 = 100 total
+  { level: 3, fallDuration: 25.1, pointsRequired: 300 },   // +200 = 300 total
+  { level: 4, fallDuration: 22.7, pointsRequired: 600 },   // +300 = 600 total
+  { level: 5, fallDuration: 20.2, pointsRequired: 1000 },  // +400 = 1000 total
+  { level: 6, fallDuration: 17.8, pointsRequired: 1500 },  // +500 = 1500 total
+  { level: 7, fallDuration: 15.3, pointsRequired: 2100 },  // +600 = 2100 total
+  { level: 8, fallDuration: 12.9, pointsRequired: 2800 },  // +700 = 2800 total
+  { level: 9, fallDuration: 10.4, pointsRequired: 3600 },  // +800 = 3600 total
+  { level: 10, fallDuration: 8.0, pointsRequired: 4500 }   // +900 = 4500 total (max level)
+];
+
+// Background colors for each level
+const LEVEL_COLORS = [
+  '#E0F2F1', // Level 1 - Teal
+  '#E1F5FE', // Level 2 - Light Blue
+  '#F3E5F5', // Level 3 - Purple
+  '#FFF9C4', // Level 4 - Yellow
+  '#FFE0B2', // Level 5 - Orange
+  '#FFCCBC', // Level 6 - Deep Orange
+  '#F8BBD0', // Level 7 - Pink
+  '#D1C4E9', // Level 8 - Deep Purple
+  '#FFAB91', // Level 9 - Deep Orange
+  '#CFD8DC'  // Level 10 - Blue Grey
+];
+
+const MAX_LEVEL = 10;
 
 interface Bubble {
   id: string;
@@ -28,13 +58,34 @@ interface Bubble {
   y: number;
   radius: number;
   speed: number;
+  birthTime: number; // Time when bubble was created, for wobble animation
+  isPopping: boolean; // Is the bubble currently popping (correct answer)?
+  popStartTime: number; // When the pop animation started
+  isSplatting: boolean; // Is the bubble splatting on ground?
+  splatStartTime: number; // When the splat animation started
+  isShrinking: boolean; // Is shrinking during level transition?
+  shrinkStartTime: number; // When shrink animation started
 }
 
 const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack }) => {
   // Game configuration
-  const [selectedLevel, setSelectedLevel] = useState<VerbLevel | null>(null);
+  const [selectedVerbMode, setSelectedVerbMode] = useState<VerbMode>('indicativo');
   const [selectedVerbType, setSelectedVerbType] = useState<VerbType | null>(null);
-  const [selectedMode, setSelectedMode] = useState<GameMode | null>(null);
+  const [selectedGameMode, setSelectedGameMode] = useState<GameMode | null>(null);
+  const [selectedTense, setSelectedTense] = useState<string>('presente');
+  const [selectedLevel] = useState<VerbLevel>('A1');
+  
+  // Update tense when verb mode changes
+  const handleVerbModeChange = (mode: VerbMode) => {
+    setSelectedVerbMode(mode);
+    if (mode === 'imperativo') {
+      setSelectedTense('afirmativo');
+    } else if (mode === 'indicativo') {
+      setSelectedTense('presente');
+    } else if (mode === 'subjuntivo') {
+      setSelectedTense('presente');
+    }
+  };
   
   // Game state
   const [gameState, setGameState] = useState<GameState>('LEVEL_SELECT');
@@ -42,6 +93,11 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack }) => {
   const [gameLevel, setGameLevel] = useState(1);
   const [streak, setStreak] = useState(0);
   const [lives, setLives] = useState(5);
+  
+  // Level transition state
+  const [showLevelTitle, setShowLevelTitle] = useState(false);
+  const [countdown, setCountdown] = useState(0);
+  const [backgroundColor, setBackgroundColor] = useState(LEVEL_COLORS[0]);
   
   // Input state
   const [userInput, setUserInput] = useState('');
@@ -53,21 +109,97 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animationFrameRef = useRef<number>(0);
   const lastSpawnRef = useRef<number>(0);
+  const audioCtxRef = useRef<AudioContext | null>(null);
   
   const canvasWidth = 800;
   const canvasHeight = 600;
   const groundY = canvasHeight - 50;
+
+  // Audio functions
+  const playTone = (frequency: number, duration: number, type: OscillatorType = 'sine') => {
+    if (!audioCtxRef.current) {
+      audioCtxRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+    }
+    const ctx = audioCtxRef.current;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = type;
+    osc.frequency.value = frequency;
+    gain.gain.setValueAtTime(0.3, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+    osc.connect(gain).connect(ctx.destination);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + duration);
+  };
+
+  const playBubblePop = () => {
+    // Bubble pop sound: quick ascending chirp
+    playTone(400, 0.08, 'sine');
+    setTimeout(() => playTone(600, 0.08, 'sine'), 40);
+    setTimeout(() => playTone(800, 0.1, 'sine'), 80);
+  };
+
+  const playGroundHit = () => {
+    // Error sound: descending buzz
+    playTone(200, 0.15, 'sawtooth');
+    setTimeout(() => playTone(150, 0.15, 'square'), 50);
+  };
+
+  const playLevelUp = () => {
+    // Level up: triumphant ascending sequence
+    playTone(523, 0.15, 'triangle'); // C
+    setTimeout(() => playTone(659, 0.15, 'triangle'), 150); // E
+    setTimeout(() => playTone(784, 0.25, 'sine'), 300); // G
+    setTimeout(() => playTone(1047, 0.3, 'sine'), 450); // C (octave higher)
+  };
+
+  const playCountdown = () => {
+    // Countdown beep: short high beep
+    playTone(800, 0.12, 'square');
+  };
+
+  // Calculate fall speed based on level settings and canvas dimensions
+  const calculateFallSpeed = (level: number): number => {
+    // Clamp level between 1 and MAX_LEVEL
+    const clampedLevel = Math.max(1, Math.min(level, MAX_LEVEL));
+    const levelConfig = LEVEL_SETTINGS[clampedLevel - 1];
+    
+    // Distance bubble needs to travel (from top to ground)
+    const fallDistance = canvasHeight + 60; // Extra padding for radius
+    
+    // Assuming 60 FPS, calculate pixels per frame
+    const FPS = 60;
+    const totalFrames = levelConfig.fallDuration * FPS;
+    const speed = fallDistance / totalFrames;
+    
+    return speed;
+  };
 
   // Load verb data on mount
   useEffect(() => {
     loadVerbData();
   }, []);
 
+  // Auto-pause when player switches tabs/windows
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.hidden && gameState === 'PLAYING') {
+        setGameState('PAUSED');
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [gameState]);
+
   // Start game
   const handleStartGame = async () => {
-    if (!selectedLevel || !selectedVerbType || !selectedMode) return;
+    if (!selectedVerbType || !selectedGameMode) return;
     
-    const verbs = await getFilteredVerbs(selectedLevel, selectedVerbType, 'presente');
+    const verbs = await getFilteredVerbs(selectedLevel, selectedVerbType, selectedTense, selectedVerbMode);
     if (verbs.length === 0) {
       alert('No hay verbos disponibles para esta configuración');
       return;
@@ -78,16 +210,69 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack }) => {
     setGameLevel(1);
     setStreak(0);
     setLives(5);
+    setBackgroundColor(LEVEL_COLORS[0]);
     bubblesRef.current = [];
     setGameState('PLAYING');
+  };
+
+  // Start level transition sequence
+  const startLevelTransition = (newLevel: number) => {
+    // Play level up sound
+    playLevelUp();
+    
+    // 1. Mark all bubbles for shrinking
+    const currentTime = performance.now();
+    bubblesRef.current.forEach(bubble => {
+      bubble.isShrinking = true;
+      bubble.shrinkStartTime = currentTime;
+    });
+    
+    // 2. Update game level and background color immediately
+    setGameLevel(newLevel);
+    setBackgroundColor(LEVEL_COLORS[newLevel - 1]);
+    
+    // 3. Show level title after 500ms (shrink duration)
+    setTimeout(() => {
+      setShowLevelTitle(true);
+      
+      // 4. Hide title and start countdown after 2 seconds
+      setTimeout(() => {
+        setShowLevelTitle(false);
+        setCountdown(3);
+        playCountdown(); // First countdown beep
+        
+        // Countdown sequence
+        let currentCount = 3;
+        const countdownInterval = setInterval(() => {
+          currentCount--;
+          if (currentCount > 0) {
+            setCountdown(currentCount);
+            playCountdown(); // Beep for each count
+          } else {
+            clearInterval(countdownInterval);
+            setCountdown(0);
+          }
+        }, 1000);
+      }, 2000);
+    }, 500);
   };
 
   // Spawn new bubble
   const spawnBubble = (verbs: VerbData[], currentTime: number) => {
     const spawnRate = getSpawnRate(gameLevel);
     
+    // Limit max bubbles on screen based on level
+    // Levels 1-3: max 2 bubbles
+    // Levels 4-6: max 3 bubbles
+    // Levels 7-8: max 4 bubbles
+    // Levels 9-10: max 5 bubbles
+    const maxBubbles = gameLevel <= 3 ? 2 : gameLevel <= 6 ? 3 : gameLevel <= 8 ? 4 : 5;
+    const currentBubbleCount = bubblesRef.current.filter(b => !b.isShrinking && !b.isPopping && !b.isSplatting).length;
+    
+    if (currentBubbleCount >= maxBubbles) return;
+    
     if (currentTime - lastSpawnRef.current > spawnRate && verbs.length > 0) {
-      const challenge = generateChallenge(verbs, selectedMode!);
+      const challenge = generateChallenge(verbs, selectedGameMode!);
       if (!challenge) return;
       
       const radius = 40 + Math.random() * 20;
@@ -99,7 +284,14 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack }) => {
         x,
         y: -radius,
         radius,
-        speed: getFallSpeed(gameLevel)
+        speed: calculateFallSpeed(gameLevel),
+        birthTime: currentTime, // Store creation time for wobble animation
+        isPopping: false,
+        popStartTime: 0,
+        isSplatting: false,
+        splatStartTime: 0,
+        isShrinking: false,
+        shrinkStartTime: 0
       });
       
       lastSpawnRef.current = currentTime;
@@ -122,23 +314,197 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack }) => {
     if (!ctx) return;
 
     const gameLoop = (currentTime: number) => {
-      // Clear canvas
-      ctx.fillStyle = '#E8F4F8';
+      // Clear canvas with current level background color
+      ctx.fillStyle = backgroundColor;
       ctx.fillRect(0, 0, canvasWidth, canvasHeight);
       
       // Draw ground
       ctx.fillStyle = '#8B7355';
       ctx.fillRect(0, groundY, canvasWidth, canvasHeight - groundY);
       
-      // Spawn bubbles
-      spawnBubble(verbPool, currentTime);
+      // Spawn bubbles (only if not in transition)
+      if (!showLevelTitle && countdown === 0) {
+        spawnBubble(verbPool, currentTime);
+      }
       
       // Update and draw bubbles
       bubblesRef.current = bubblesRef.current.filter(bubble => {
-        bubble.y += bubble.speed;
+        // Check if bubble is shrinking (level transition animation)
+        if (bubble.isShrinking) {
+          const SHRINK_DURATION = 500; // 500ms shrink animation
+          const shrinkAge = currentTime - bubble.shrinkStartTime;
+          const shrinkProgress = Math.min(shrinkAge / SHRINK_DURATION, 1);
+          
+          // If animation finished, remove bubble
+          if (shrinkProgress >= 1) {
+            return false;
+          }
+          
+          // SHRINK ANIMATION: Scale down and fade out
+          ctx.save();
+          
+          const scale = 1 - shrinkProgress; // Scale from 1 to 0
+          const opacity = 1 - shrinkProgress; // Fade from 1 to 0
+          
+          ctx.globalAlpha = opacity;
+          ctx.translate(bubble.x, bubble.y);
+          ctx.scale(scale, scale);
+          ctx.translate(-bubble.x, -bubble.y);
+          
+          // Draw simplified bubble
+          const shrinkGradient = ctx.createRadialGradient(
+            bubble.x, bubble.y, 0,
+            bubble.x, bubble.y, bubble.radius
+          );
+          shrinkGradient.addColorStop(0, 'rgba(255, 255, 255, 0.1)');
+          shrinkGradient.addColorStop(1, 'rgba(200, 230, 255, 0.25)');
+          
+          ctx.fillStyle = shrinkGradient;
+          ctx.beginPath();
+          ctx.arc(bubble.x, bubble.y, bubble.radius, 0, Math.PI * 2);
+          ctx.fill();
+          
+          ctx.restore();
+          return true; // Keep bubble in array until animation completes
+        }
+        
+        // Check if bubble is popping (correct answer animation)
+        if (bubble.isPopping) {
+          const POP_DURATION = 250; // 250ms for explosive pop animation
+          const popAge = currentTime - bubble.popStartTime;
+          const popProgress = Math.min(popAge / POP_DURATION, 1);
+          
+          // If animation finished, remove bubble
+          if (popProgress >= 1) {
+            return false;
+          }
+          
+          // POP ANIMATION: Explosive expansion with fade out
+          ctx.save();
+          
+          // Phase 1 (0% - 40%): Rapid expansion (tension breaking)
+          // Phase 2 (40% - 100%): Continue expanding while fading out
+          let scale, opacity;
+          
+          if (popProgress < 0.4) {
+            // Rapid expansion phase (0 to 0.4 = first 100ms)
+            const phase1Progress = popProgress / 0.4;
+            scale = 1 + (phase1Progress * 0.25); // Scale from 1.0 to 1.25
+            opacity = 1; // Full opacity during expansion
+          } else {
+            // Fade out phase (0.4 to 1.0 = last 150ms)
+            const phase2Progress = (popProgress - 0.4) / 0.6;
+            scale = 1.25 + (phase2Progress * 0.15); // Continue to 1.4
+            opacity = 1 - Math.pow(phase2Progress, 2); // Quadratic fade out
+          }
+          
+          // Apply transformation
+          ctx.globalAlpha = opacity;
+          ctx.translate(bubble.x, bubble.y);
+          ctx.scale(scale, scale);
+          ctx.translate(-bubble.x, -bubble.y);
+          
+          // Draw simplified bubble (no wobble during pop)
+          const popGradient = ctx.createRadialGradient(
+            bubble.x, bubble.y, 0,
+            bubble.x, bubble.y, bubble.radius
+          );
+          popGradient.addColorStop(0, 'rgba(255, 255, 255, 0.1)');
+          popGradient.addColorStop(0.5, 'rgba(220, 240, 255, 0.15)');
+          popGradient.addColorStop(1, 'rgba(200, 230, 255, 0.25)');
+          
+          ctx.fillStyle = popGradient;
+          ctx.beginPath();
+          ctx.arc(bubble.x, bubble.y, bubble.radius, 0, Math.PI * 2);
+          ctx.fill();
+          
+          // Draw border
+          ctx.strokeStyle = `rgba(255, 255, 255, ${0.6 * opacity})`;
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          ctx.arc(bubble.x, bubble.y, bubble.radius, 0, Math.PI * 2);
+          ctx.stroke();
+          
+          ctx.restore();
+          return true; // Keep bubble in array until animation completes
+        }
+        
+        // Check if bubble is splatting on ground
+        if (bubble.isSplatting) {
+          const SPLAT_DURATION = 300; // 300ms for ground splat animation
+          const splatAge = currentTime - bubble.splatStartTime;
+          const splatProgress = Math.min(splatAge / SPLAT_DURATION, 1);
+          
+          // If animation finished, remove bubble
+          if (splatProgress >= 1) {
+            return false;
+          }
+          
+          // SPLAT ANIMATION: Squash against ground
+          ctx.save();
+          
+          // Transform origin: bottom center (where bubble touches ground)
+          const groundContactY = groundY;
+          
+          // Ease-out for smooth squashing
+          const easeOut = 1 - Math.pow(1 - splatProgress, 2);
+          
+          // Squash vertically (compress to almost flat)
+          const scaleY = 1 - (easeOut * 0.95); // From 1.0 to 0.05
+          
+          // Expand horizontally (becomes wider as it flattens)
+          const scaleX = 1 + (easeOut * 0.8); // From 1.0 to 1.8
+          
+          // Fade out
+          const opacity = 1 - Math.pow(splatProgress, 1.5);
+          
+          // Apply transformation with bottom-center pivot
+          ctx.globalAlpha = opacity;
+          ctx.translate(bubble.x, groundContactY);
+          ctx.scale(scaleX, scaleY);
+          ctx.translate(-bubble.x, -groundContactY);
+          
+          // Draw simplified bubble during splat
+          const splatGradient = ctx.createRadialGradient(
+            bubble.x, bubble.y, 0,
+            bubble.x, bubble.y, bubble.radius
+          );
+          splatGradient.addColorStop(0, 'rgba(255, 255, 255, 0.1)');
+          splatGradient.addColorStop(0.5, 'rgba(220, 240, 255, 0.15)');
+          splatGradient.addColorStop(1, 'rgba(200, 230, 255, 0.25)');
+          
+          ctx.fillStyle = splatGradient;
+          ctx.beginPath();
+          ctx.arc(bubble.x, bubble.y, bubble.radius, 0, Math.PI * 2);
+          ctx.fill();
+          
+          // Draw border
+          ctx.strokeStyle = `rgba(255, 255, 255, ${0.5 * opacity})`;
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          ctx.arc(bubble.x, bubble.y, bubble.radius, 0, Math.PI * 2);
+          ctx.stroke();
+          
+          ctx.restore();
+          return true; // Keep bubble in array until animation completes
+        }
+        
+        // Normal bubble behavior (not popping or splatting)
+        // Only move bubbles if not in transition (no countdown)
+        if (countdown === 0 && !showLevelTitle) {
+          bubble.y += bubble.speed;
+        }
         
         // Check if bubble reached ground
         if (bubble.y + bubble.radius >= groundY) {
+          // Trigger splat animation instead of immediate removal
+          bubble.isSplatting = true;
+          bubble.splatStartTime = currentTime;
+          
+          // Play ground hit error sound
+          playGroundHit();
+          
+          // Lose life
           setLives(prev => {
             const newLives = prev - 1;
             if (newLives <= 0) {
@@ -147,11 +513,39 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack }) => {
             return newLives;
           });
           setStreak(0);
-          return false;
+          return true; // Keep bubble for splat animation
         }
         
-        // Draw photorealistic soap bubble effect
+        // Draw photorealistic soap bubble effect with wobble animation
         ctx.save();
+        
+        // WOBBLE ANIMATION: Liquid oscillation effect (squash and stretch)
+        // Calculate elapsed time since bubble birth for animation
+        const age = (currentTime - bubble.birthTime) / 1000; // Convert to seconds
+        
+        // Create organic, chaotic wobble using multiple sine waves with different frequencies
+        // This creates a non-robotic, liquid-like oscillation
+        const wobbleSpeed1 = 0.8; // Primary slow wave
+        const wobbleSpeed2 = 1.3; // Secondary medium wave
+        const wobbleSpeed3 = 2.1; // Tertiary fast wave (chaotic element)
+        
+        // Combine multiple sine waves with different phases for organic feel
+        const wobble1 = Math.sin(age * Math.PI * wobbleSpeed1) * 0.04;
+        const wobble2 = Math.sin(age * Math.PI * wobbleSpeed2 + 1.2) * 0.025;
+        const wobble3 = Math.sin(age * Math.PI * wobbleSpeed3 + 2.7) * 0.015;
+        
+        // Combine wobbles for complex, organic movement
+        const totalWobble = wobble1 + wobble2 + wobble3;
+        
+        // Apply squash and stretch transformation
+        // When stretched vertically, compress horizontally (and vice versa) to maintain volume
+        const scaleY = 1 + totalWobble;
+        const scaleX = 1 - totalWobble * 0.8; // Slightly less inverse for natural look
+        
+        // Translate to bubble center, apply scale, translate back
+        ctx.translate(bubble.x, bubble.y);
+        ctx.scale(scaleX, scaleY);
+        ctx.translate(-bubble.x, -bubble.y);
         
         // LAYER 1: Base transparency - almost completely transparent center
         const baseGradient = ctx.createRadialGradient(
@@ -168,125 +562,236 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack }) => {
         ctx.arc(bubble.x, bubble.y, bubble.radius, 0, Math.PI * 2);
         ctx.fill();
         
-        // LAYER 2: Iridescent interference pattern (thin film effect)
-        // Creating swirling rainbow colors
+        // LAYER 2: Complex Iridescent Interference Pattern (Vibrant Rainbow Swirls)
+        // This creates the characteristic "oil on water" soap bubble effect
+        
+        // Enable screen blend mode for luminous color mixing
         ctx.globalCompositeOperation = 'screen';
         
-        // First iridescent layer - cyan/magenta swirl
+        // Iridescent Layer 1: Magenta swirl (top-left quadrant)
         const irid1 = ctx.createRadialGradient(
-          bubble.x - bubble.radius * 0.3, bubble.y - bubble.radius * 0.2, 0,
-          bubble.x, bubble.y, bubble.radius * 0.9
+          bubble.x - bubble.radius * 0.4, bubble.y - bubble.radius * 0.5, 0,
+          bubble.x - bubble.radius * 0.2, bubble.y - bubble.radius * 0.2, bubble.radius * 0.8
         );
-        irid1.addColorStop(0, 'rgba(0, 255, 255, 0.08)');
-        irid1.addColorStop(0.3, 'rgba(255, 0, 255, 0.12)');
-        irid1.addColorStop(0.6, 'rgba(255, 255, 0, 0.08)');
-        irid1.addColorStop(1, 'rgba(0, 255, 200, 0.06)');
+        irid1.addColorStop(0, 'hsla(300, 100%, 50%, 0.35)'); // Vibrant magenta
+        irid1.addColorStop(0.3, 'hsla(280, 100%, 60%, 0.28)'); // Purple-magenta
+        irid1.addColorStop(0.6, 'hsla(320, 90%, 55%, 0.15)'); // Pink-magenta
+        irid1.addColorStop(1, 'hsla(300, 80%, 50%, 0)');
         
         ctx.fillStyle = irid1;
         ctx.beginPath();
         ctx.arc(bubble.x, bubble.y, bubble.radius, 0, Math.PI * 2);
         ctx.fill();
         
-        // Second iridescent layer - complementary colors
+        // Iridescent Layer 2: Cyan swirl (right side)
         const irid2 = ctx.createRadialGradient(
-          bubble.x + bubble.radius * 0.2, bubble.y + bubble.radius * 0.3, 0,
-          bubble.x, bubble.y, bubble.radius
+          bubble.x + bubble.radius * 0.5, bubble.y, 0,
+          bubble.x + bubble.radius * 0.2, bubble.y, bubble.radius * 0.7
         );
-        irid2.addColorStop(0, 'rgba(255, 100, 200, 0.1)');
-        irid2.addColorStop(0.4, 'rgba(100, 200, 255, 0.12)');
-        irid2.addColorStop(0.7, 'rgba(200, 255, 100, 0.08)');
-        irid2.addColorStop(1, 'rgba(255, 150, 255, 0.06)');
+        irid2.addColorStop(0, 'hsla(180, 100%, 50%, 0.40)'); // Vibrant cyan
+        irid2.addColorStop(0.35, 'hsla(190, 100%, 55%, 0.30)'); // Cyan-blue
+        irid2.addColorStop(0.7, 'hsla(170, 90%, 60%, 0.18)'); // Turquoise
+        irid2.addColorStop(1, 'hsla(180, 80%, 50%, 0)');
         
         ctx.fillStyle = irid2;
         ctx.beginPath();
         ctx.arc(bubble.x, bubble.y, bubble.radius, 0, Math.PI * 2);
         ctx.fill();
         
+        // Iridescent Layer 3: Yellow-lime swirl (bottom)
+        const irid3 = ctx.createRadialGradient(
+          bubble.x, bubble.y + bubble.radius * 0.4, 0,
+          bubble.x + bubble.radius * 0.1, bubble.y + bubble.radius * 0.3, bubble.radius * 0.6
+        );
+        irid3.addColorStop(0, 'hsla(60, 100%, 50%, 0.32)'); // Vibrant yellow
+        irid3.addColorStop(0.4, 'hsla(75, 100%, 55%, 0.25)'); // Yellow-lime
+        irid3.addColorStop(0.7, 'hsla(90, 90%, 60%, 0.15)'); // Lime green
+        irid3.addColorStop(1, 'hsla(60, 80%, 50%, 0)');
+        
+        ctx.fillStyle = irid3;
+        ctx.beginPath();
+        ctx.arc(bubble.x, bubble.y, bubble.radius, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Switch to overlay mode for more complex color interaction
+        ctx.globalCompositeOperation = 'overlay';
+        
+        // Iridescent Layer 4: Orange-red accent (left bottom)
+        const irid4 = ctx.createRadialGradient(
+          bubble.x - bubble.radius * 0.3, bubble.y + bubble.radius * 0.3, 0,
+          bubble.x - bubble.radius * 0.1, bubble.y + bubble.radius * 0.2, bubble.radius * 0.5
+        );
+        irid4.addColorStop(0, 'hsla(30, 100%, 50%, 0.28)'); // Orange
+        irid4.addColorStop(0.4, 'hsla(15, 100%, 55%, 0.20)'); // Red-orange
+        irid4.addColorStop(0.7, 'hsla(345, 90%, 60%, 0.12)'); // Pink-red
+        irid4.addColorStop(1, 'hsla(30, 80%, 50%, 0)');
+        
+        ctx.fillStyle = irid4;
+        ctx.beginPath();
+        ctx.arc(bubble.x, bubble.y, bubble.radius, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Switch to color-dodge for intense luminous mixing
+        ctx.globalCompositeOperation = 'color-dodge';
+        
+        // Iridescent Layer 5: Blue-violet accent (top right)
+        const irid5 = ctx.createRadialGradient(
+          bubble.x + bubble.radius * 0.3, bubble.y - bubble.radius * 0.4, 0,
+          bubble.x + bubble.radius * 0.15, bubble.y - bubble.radius * 0.2, bubble.radius * 0.55
+        );
+        irid5.addColorStop(0, 'hsla(240, 100%, 60%, 0.25)'); // Blue-violet
+        irid5.addColorStop(0.35, 'hsla(260, 100%, 65%, 0.18)'); // Violet
+        irid5.addColorStop(0.65, 'hsla(220, 90%, 60%, 0.10)'); // Blue
+        irid5.addColorStop(1, 'hsla(240, 80%, 60%, 0)');
+        
+        ctx.fillStyle = irid5;
+        ctx.beginPath();
+        ctx.arc(bubble.x, bubble.y, bubble.radius, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Iridescent Layer 6: Green swirl (center-left, creates depth)
+        const irid6 = ctx.createRadialGradient(
+          bubble.x - bubble.radius * 0.2, bubble.y + bubble.radius * 0.1, 0,
+          bubble.x, bubble.y, bubble.radius * 0.65
+        );
+        irid6.addColorStop(0, 'hsla(150, 100%, 50%, 0.22)'); // Emerald green
+        irid6.addColorStop(0.4, 'hsla(140, 90%, 55%, 0.16)'); // Green
+        irid6.addColorStop(0.7, 'hsla(160, 85%, 60%, 0.10)'); // Teal-green
+        irid6.addColorStop(1, 'hsla(150, 80%, 50%, 0)');
+        
+        ctx.fillStyle = irid6;
+        ctx.beginPath();
+        ctx.arc(bubble.x, bubble.y, bubble.radius, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Return to normal blending for subsequent layers
         ctx.globalCompositeOperation = 'source-over';
         
-        // LAYER 3: Fresnel edge effect (thicker glass appearance at edges)
+        // LAYER 3: Ultra-Thin Fresnel Edge (thin film light bending)
+        // Creates the illusion of an incredibly thin soap film
         const fresnelGradient = ctx.createRadialGradient(
-          bubble.x, bubble.y, bubble.radius * 0.7,
+          bubble.x, bubble.y, bubble.radius * 0.92,
           bubble.x, bubble.y, bubble.radius
         );
         fresnelGradient.addColorStop(0, 'rgba(255, 255, 255, 0)');
-        fresnelGradient.addColorStop(0.7, 'rgba(200, 230, 255, 0.15)');
-        fresnelGradient.addColorStop(0.9, 'rgba(180, 210, 240, 0.3)');
-        fresnelGradient.addColorStop(1, 'rgba(160, 190, 230, 0.4)');
+        fresnelGradient.addColorStop(0.5, 'rgba(220, 240, 255, 0.25)'); // Subtle light catch
+        fresnelGradient.addColorStop(0.85, 'rgba(200, 230, 255, 0.45)'); // Brighter edge
+        fresnelGradient.addColorStop(1, 'rgba(180, 220, 250, 0.6)'); // Sharp bright rim
         
         ctx.fillStyle = fresnelGradient;
         ctx.beginPath();
         ctx.arc(bubble.x, bubble.y, bubble.radius, 0, Math.PI * 2);
         ctx.fill();
         
-        // LAYER 4: Sharp white border (outer edge definition)
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
-        ctx.lineWidth = 2;
+        // LAYER 4: Crisp Outer Edge (ultra-thin bright line)
+        // This is the actual membrane of the bubble - must be razor-sharp
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)'; // Brighter white
+        ctx.lineWidth = 1.5; // Thinner line for film appearance
         ctx.beginPath();
         ctx.arc(bubble.x, bubble.y, bubble.radius, 0, Math.PI * 2);
         ctx.stroke();
         
-        // Inner glow edge
-        ctx.strokeStyle = 'rgba(200, 230, 255, 0.3)';
-        ctx.lineWidth = 1;
+        // LAYER 4B: Inner Fresnel Glow (inset effect for thin film)
+        // Creates the "inset" look - light bending at the inner edge
+        ctx.strokeStyle = 'rgba(240, 250, 255, 0.5)'; // Bright blue-white
+        ctx.lineWidth = 1; // Ultra-thin
         ctx.beginPath();
-        ctx.arc(bubble.x, bubble.y, bubble.radius - 1.5, 0, Math.PI * 2);
+        ctx.arc(bubble.x, bubble.y, bubble.radius - 1, 0, Math.PI * 2);
         ctx.stroke();
         
-        // LAYER 5: Main specular highlight (large curved reflection)
+        // LAYER 4C: Sharp inner highlight ring (Fresnel reflection)
+        // This simulates light refracting through the thin membrane
+        ctx.strokeStyle = 'rgba(200, 235, 255, 0.35)';
+        ctx.lineWidth = 0.8;
+        ctx.beginPath();
+        ctx.arc(bubble.x, bubble.y, bubble.radius - 2, 0, Math.PI * 2);
+        ctx.stroke();
+        
+        // LAYER 5: Sharp Main Specular Highlight (curved "banana" shape)
+        // Ultra-sharp, pure white, intense reflection on top-left
+        
+        // Draw curved highlight using elliptical path
+        ctx.save();
+        ctx.translate(bubble.x - bubble.radius * 0.35, bubble.y - bubble.radius * 0.35);
+        ctx.rotate(-Math.PI / 4); // Rotate 45 degrees for curved effect
+        
+        // Create sharp gradient with pure white center
         const mainHighlight = ctx.createRadialGradient(
-          bubble.x - bubble.radius * 0.4, bubble.y - bubble.radius * 0.4, 0,
-          bubble.x - bubble.radius * 0.4, bubble.y - bubble.radius * 0.4, bubble.radius * 0.5
+          0, 0, 0,
+          0, 0, bubble.radius * 0.28
         );
-        mainHighlight.addColorStop(0, 'rgba(255, 255, 255, 0.85)');
-        mainHighlight.addColorStop(0.2, 'rgba(255, 255, 255, 0.6)');
-        mainHighlight.addColorStop(0.5, 'rgba(255, 255, 255, 0.25)');
+        mainHighlight.addColorStop(0, '#ffffff'); // Pure white, full opacity
+        mainHighlight.addColorStop(0.15, 'rgba(255, 255, 255, 0.98)'); // Almost pure white
+        mainHighlight.addColorStop(0.35, 'rgba(255, 255, 255, 0.75)'); // Sharp falloff
+        mainHighlight.addColorStop(0.6, 'rgba(255, 255, 255, 0.25)');
         mainHighlight.addColorStop(1, 'rgba(255, 255, 255, 0)');
         
         ctx.fillStyle = mainHighlight;
         ctx.beginPath();
-        ctx.arc(bubble.x - bubble.radius * 0.4, bubble.y - bubble.radius * 0.4, bubble.radius * 0.5, 0, Math.PI * 2);
+        // Elliptical shape for curved "banana" highlight
+        ctx.ellipse(0, 0, bubble.radius * 0.28, bubble.radius * 0.18, 0, 0, Math.PI * 2);
         ctx.fill();
         
-        // LAYER 6: Secondary sharp highlight (small intense spot)
+        ctx.restore();
+        
+        // LAYER 6: Ultra-Sharp Secondary Highlight (intense pinpoint)
+        // This creates the "burning" white spot effect
         const sharpHighlight = ctx.createRadialGradient(
-          bubble.x - bubble.radius * 0.3, bubble.y - bubble.radius * 0.35, 0,
-          bubble.x - bubble.radius * 0.3, bubble.y - bubble.radius * 0.35, bubble.radius * 0.15
+          bubble.x - bubble.radius * 0.28, bubble.y - bubble.radius * 0.32, 0,
+          bubble.x - bubble.radius * 0.28, bubble.y - bubble.radius * 0.32, bubble.radius * 0.08
         );
-        sharpHighlight.addColorStop(0, 'rgba(255, 255, 255, 0.95)');
-        sharpHighlight.addColorStop(0.5, 'rgba(255, 255, 255, 0.4)');
+        sharpHighlight.addColorStop(0, '#ffffff'); // Pure white core
+        sharpHighlight.addColorStop(0.25, 'rgba(255, 255, 255, 0.95)'); // Very sharp edge
+        sharpHighlight.addColorStop(0.6, 'rgba(255, 255, 255, 0.4)');
         sharpHighlight.addColorStop(1, 'rgba(255, 255, 255, 0)');
         
         ctx.fillStyle = sharpHighlight;
         ctx.beginPath();
-        ctx.arc(bubble.x - bubble.radius * 0.3, bubble.y - bubble.radius * 0.35, bubble.radius * 0.15, 0, Math.PI * 2);
+        ctx.arc(bubble.x - bubble.radius * 0.28, bubble.y - bubble.radius * 0.32, bubble.radius * 0.08, 0, Math.PI * 2);
         ctx.fill();
         
-        // LAYER 7: Bottom light catch (opposite side reflection)
+        // LAYER 7: Crisp Bottom Light Catch (sharp opposite reflection)
         const bottomHighlight = ctx.createRadialGradient(
-          bubble.x + bubble.radius * 0.35, bubble.y + bubble.radius * 0.45, 0,
-          bubble.x + bubble.radius * 0.35, bubble.y + bubble.radius * 0.45, bubble.radius * 0.3
+          bubble.x + bubble.radius * 0.38, bubble.y + bubble.radius * 0.42, 0,
+          bubble.x + bubble.radius * 0.38, bubble.y + bubble.radius * 0.42, bubble.radius * 0.2
         );
-        bottomHighlight.addColorStop(0, 'rgba(255, 255, 255, 0.5)');
-        bottomHighlight.addColorStop(0.4, 'rgba(255, 255, 255, 0.2)');
+        bottomHighlight.addColorStop(0, 'rgba(255, 255, 255, 0.85)'); // Bright white
+        bottomHighlight.addColorStop(0.3, 'rgba(255, 255, 255, 0.5)'); // Sharp dropoff
+        bottomHighlight.addColorStop(0.7, 'rgba(255, 255, 255, 0.15)');
         bottomHighlight.addColorStop(1, 'rgba(255, 255, 255, 0)');
         
         ctx.fillStyle = bottomHighlight;
         ctx.beginPath();
-        ctx.arc(bubble.x + bubble.radius * 0.35, bubble.y + bubble.radius * 0.45, bubble.radius * 0.3, 0, Math.PI * 2);
+        ctx.arc(bubble.x + bubble.radius * 0.38, bubble.y + bubble.radius * 0.42, bubble.radius * 0.2, 0, Math.PI * 2);
         ctx.fill();
         
-        // LAYER 8: Subtle rim light on right side
+        // LAYER 8: Sharp Rim Light (edge definition on right)
         const rimLight = ctx.createRadialGradient(
-          bubble.x + bubble.radius * 0.7, bubble.y, 0,
-          bubble.x + bubble.radius * 0.7, bubble.y, bubble.radius * 0.4
+          bubble.x + bubble.radius * 0.7, bubble.y - bubble.radius * 0.05, 0,
+          bubble.x + bubble.radius * 0.7, bubble.y - bubble.radius * 0.05, bubble.radius * 0.25
         );
-        rimLight.addColorStop(0, 'rgba(180, 220, 255, 0.3)');
+        rimLight.addColorStop(0, 'rgba(255, 255, 255, 0.7)'); // Bright center
+        rimLight.addColorStop(0.4, 'rgba(230, 245, 255, 0.4)'); // Crisp edge
+        rimLight.addColorStop(0.8, 'rgba(200, 230, 255, 0.1)');
         rimLight.addColorStop(1, 'rgba(180, 220, 255, 0)');
         
         ctx.fillStyle = rimLight;
         ctx.beginPath();
-        ctx.arc(bubble.x + bubble.radius * 0.7, bubble.y, bubble.radius * 0.4, 0, Math.PI * 2);
+        ctx.arc(bubble.x + bubble.radius * 0.7, bubble.y - bubble.radius * 0.05, bubble.radius * 0.25, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // LAYER 9: Additional Sharp Accent Light (micro-highlight for extra crispness)
+        const microHighlight = ctx.createRadialGradient(
+          bubble.x - bubble.radius * 0.42, bubble.y - bubble.radius * 0.38, 0,
+          bubble.x - bubble.radius * 0.42, bubble.y - bubble.radius * 0.38, bubble.radius * 0.05
+        );
+        microHighlight.addColorStop(0, '#ffffff'); // Pure white
+        microHighlight.addColorStop(0.4, 'rgba(255, 255, 255, 0.8)');
+        microHighlight.addColorStop(1, 'rgba(255, 255, 255, 0)');
+        
+        ctx.fillStyle = microHighlight;
+        ctx.beginPath();
+        ctx.arc(bubble.x - bubble.radius * 0.42, bubble.y - bubble.radius * 0.38, bubble.radius * 0.05, 0, Math.PI * 2);
         ctx.fill();
         
         ctx.restore();
@@ -321,9 +826,19 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack }) => {
         return true;
       });
       
-      // Check for level up
-      if (score > 0 && score % 100 === 0 && score !== (gameLevel - 1) * 100) {
-        setGameLevel(prev => prev + 1);
+      // Check for level up based on score thresholds
+      let newLevel = gameLevel;
+      for (let i = gameLevel; i < MAX_LEVEL; i++) {
+        if (score >= LEVEL_SETTINGS[i].pointsRequired) {
+          newLevel = LEVEL_SETTINGS[i].level;
+        } else {
+          break;
+        }
+      }
+      
+      if (newLevel !== gameLevel && newLevel <= MAX_LEVEL) {
+        // Trigger level transition
+        startLevelTransition(newLevel);
       }
       
       animationFrameRef.current = requestAnimationFrame(gameLoop);
@@ -336,7 +851,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack }) => {
         cancelAnimationFrame(animationFrameRef.current);
       }
     };
-  }, [gameState, verbPool, gameLevel, selectedMode, score]);
+  }, [gameState, verbPool, selectedGameMode, score, showLevelTitle, countdown, backgroundColor]);
 
   // Handle answer submission
   const handleSubmit = () => {
@@ -344,17 +859,22 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack }) => {
     
     // Try to match with any bubble
     let matched = false;
-    bubblesRef.current = bubblesRef.current.filter(bubble => {
-      if (!matched && validateAnswer(bubble.challenge, userInput)) {
+    bubblesRef.current.forEach(bubble => {
+      if (!matched && !bubble.isPopping && validateAnswer(bubble.challenge, userInput)) {
         matched = true;
+        // Mark bubble for popping animation instead of removing immediately
+        bubble.isPopping = true;
+        bubble.popStartTime = performance.now();
+        
+        // Play bubble pop sound
+        playBubblePop();
+        
         const points = calculateScore(gameLevel, streak);
         setScore(prev => prev + points);
         setStreak(prev => prev + 1);
         setFeedback({ text: `¡Correcto! +${points}`, type: 'success' });
         setTimeout(() => setFeedback(null), 1000);
-        return false;
       }
-      return true;
     });
     
     if (!matched) {
@@ -389,26 +909,106 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack }) => {
               </p>
             </div>
 
-            {/* Level Selection */}
+            {/* Verb Mode Selection */}
             <div className="mb-6">
               <label className="block text-sm font-bold text-gray-700 mb-2">
-                Nivel de Español
+                Modo Verbal
               </label>
-              <div className="grid grid-cols-4 gap-3">
-                {(['A1', 'A2', 'B1', 'B2'] as VerbLevel[]).map(level => (
+              <div className="grid grid-cols-3 gap-3">
+                {[
+                  { value: 'indicativo' as VerbMode, label: 'Indicativo', disabled: false },
+                  { value: 'subjuntivo' as VerbMode, label: 'Subjuntivo', disabled: false },
+                  { value: 'imperativo' as VerbMode, label: 'Imperativo', disabled: false }
+                ].map(option => (
                   <button
-                    key={level}
-                    onClick={() => setSelectedLevel(level)}
+                    key={option.value}
+                    onClick={() => !option.disabled && handleVerbModeChange(option.value)}
+                    disabled={option.disabled}
                     className={`py-3 rounded-lg border-2 font-bold transition-all ${
-                      selectedLevel === level
+                      selectedVerbMode === option.value
                         ? 'border-deep-blue bg-deep-blue text-white'
+                        : option.disabled
+                        ? 'border-gray-200 text-gray-400 cursor-not-allowed opacity-50'
                         : 'border-gray-200 text-gray-600 hover:border-gray-300'
                     }`}
                   >
-                    {level}
+                    {option.label}
                   </button>
                 ))}
               </div>
+            </div>
+
+            {/* Tense Selection */}
+            <div className="mb-6">
+              <label className="block text-sm font-bold text-gray-700 mb-2">
+                Tiempo Verbal
+              </label>
+              {selectedVerbMode === 'indicativo' && (
+                <div className="grid grid-cols-2 gap-3">
+                  {[
+                    { value: 'presente', label: 'Presente' },
+                    { value: 'imperfecto', label: 'Imperfecto' },
+                    { value: 'indefinido', label: 'Pretérito Indefinido' },
+                    { value: 'futuro simple', label: 'Futuro Simple' },
+                    { value: 'condicional simple', label: 'Condicional Simple' },
+                    { value: 'pretérito perfecto', label: 'Pretérito Perfecto' }
+                  ].map(option => (
+                    <button
+                      key={option.value}
+                      onClick={() => setSelectedTense(option.value)}
+                      className={`py-3 rounded-lg border-2 font-bold transition-all ${
+                        selectedTense === option.value
+                          ? 'border-deep-blue bg-deep-blue text-white'
+                          : 'border-gray-200 text-gray-600 hover:border-gray-300'
+                      }`}
+                    >
+                      {option.label}
+                    </button>
+                  ))}
+                </div>
+              )}
+              {selectedVerbMode === 'imperativo' && (
+                <div className="grid grid-cols-2 gap-3">
+                  {[
+                    { value: 'afirmativo', label: 'Afirmativo' },
+                    { value: 'negativo', label: 'Negativo' }
+                  ].map(option => (
+                    <button
+                      key={option.value}
+                      onClick={() => setSelectedTense(option.value)}
+                      className={`py-3 rounded-lg border-2 font-bold transition-all ${
+                        selectedTense === option.value
+                          ? 'border-deep-blue bg-deep-blue text-white'
+                          : 'border-gray-200 text-gray-600 hover:border-gray-300'
+                      }`}
+                    >
+                      {option.label}
+                    </button>
+                  ))}
+                </div>
+              )}
+              {selectedVerbMode === 'subjuntivo' && (
+                <div className="grid grid-cols-2 gap-3">
+                  {[
+                    { value: 'presente', label: 'Presente' },
+                    { value: 'imperfecto', label: 'Imperfecto' },
+                    { value: 'pretérito perfecto', label: 'Pretérito Perfecto' },
+                    { value: 'pretérito pluscuamperfecto', label: 'Pretérito Pluscuamperfecto' }
+                  ].map(option => (
+                    <button
+                      key={option.value}
+                      onClick={() => setSelectedTense(option.value)}
+                      className={`py-3 rounded-lg border-2 font-bold transition-all ${
+                        selectedTense === option.value
+                          ? 'border-deep-blue bg-deep-blue text-white'
+                          : 'border-gray-200 text-gray-600 hover:border-gray-300'
+                      }`}
+                    >
+                      {option.label}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Verb Type Selection */}
@@ -427,7 +1027,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack }) => {
                     onClick={() => setSelectedVerbType(option.value)}
                     className={`py-3 rounded-lg border-2 font-bold transition-all ${
                       selectedVerbType === option.value
-                        ? 'border-spanish-red bg-spanish-red text-white'
+                        ? 'border-deep-blue bg-deep-blue text-white'
                         : 'border-gray-200 text-gray-600 hover:border-gray-300'
                     }`}
                   >
@@ -437,35 +1037,43 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack }) => {
               </div>
             </div>
 
-            {/* Mode Selection */}
+            {/* Game Mode Selection */}
             <div className="mb-8">
               <label className="block text-sm font-bold text-gray-700 mb-2">
                 Modo de Juego
               </label>
               <div className="grid grid-cols-2 gap-3">
                 <button
-                  onClick={() => setSelectedMode('conjugate')}
+                  onClick={() => setSelectedGameMode('conjugate')}
                   className={`p-4 rounded-lg border-2 transition-all ${
-                    selectedMode === 'conjugate'
-                      ? 'border-green-500 bg-green-50'
+                    selectedGameMode === 'conjugate'
+                      ? 'border-deep-blue bg-deep-blue'
                       : 'border-gray-200 hover:border-gray-300'
                   }`}
                 >
-                  <div className="font-bold text-gray-800 mb-1">Conjugar</div>
-                  <div className="text-sm text-gray-600">
+                  <div className={`font-bold mb-1 ${
+                    selectedGameMode === 'conjugate' ? 'text-white' : 'text-gray-800'
+                  }`}>Conjugar</div>
+                  <div className={`text-sm ${
+                    selectedGameMode === 'conjugate' ? 'text-blue-100' : 'text-gray-600'
+                  }`}>
                     Ver: "hablar, yo" → Escribir: "hablo"
                   </div>
                 </button>
                 <button
-                  onClick={() => setSelectedMode('identify')}
+                  onClick={() => setSelectedGameMode('identify')}
                   className={`p-4 rounded-lg border-2 transition-all ${
-                    selectedMode === 'identify'
-                      ? 'border-purple-500 bg-purple-50'
+                    selectedGameMode === 'identify'
+                      ? 'border-deep-blue bg-deep-blue'
                       : 'border-gray-200 hover:border-gray-300'
                   }`}
                 >
-                  <div className="font-bold text-gray-800 mb-1">Identificar</div>
-                  <div className="text-sm text-gray-600">
+                  <div className={`font-bold mb-1 ${
+                    selectedGameMode === 'identify' ? 'text-white' : 'text-gray-800'
+                  }`}>Identificar</div>
+                  <div className={`text-sm ${
+                    selectedGameMode === 'identify' ? 'text-blue-100' : 'text-gray-600'
+                  }`}>
                     Ver: "hablo" → Escribir: "hablar, yo"
                   </div>
                 </button>
@@ -475,8 +1083,8 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack }) => {
             {/* Start Button */}
             <button
               onClick={handleStartGame}
-              disabled={!selectedLevel || !selectedVerbType || !selectedMode}
-              className="w-full py-4 bg-gradient-to-r from-deep-blue to-blue-600 hover:from-blue-700 hover:to-blue-800 disabled:from-gray-300 disabled:to-gray-400 text-white font-bold text-xl rounded-xl transition-all shadow-lg"
+              disabled={!selectedVerbType || !selectedGameMode}
+              className="w-full py-4 bg-gradient-to-r from-spanish-red to-spanish-red hover:from-red-700 hover:to-red-700 disabled:from-gray-300 disabled:to-gray-300 text-white font-bold text-xl rounded-xl transition-all shadow-lg"
             >
               Comenzar Juego
             </button>
@@ -489,7 +1097,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack }) => {
   // --- PLAYING STATE ---
   if (gameState === 'PLAYING') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-50 p-4">
+      <div className="min-h-screen bg-gray-50 p-4 relative">
         <div className="max-w-4xl mx-auto">
           {/* Header */}
           <div className="flex justify-between items-center mb-4 bg-white rounded-2xl p-4 shadow-md">
@@ -526,7 +1134,10 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack }) => {
           </div>
 
           {/* Canvas */}
-          <div className="bg-white rounded-2xl overflow-hidden shadow-xl mb-4">
+          <div 
+            className="rounded-2xl overflow-hidden shadow-xl mb-4 transition-colors duration-[2000ms] ease-in-out"
+            style={{ backgroundColor }}
+          >
             <canvas
               ref={canvasRef}
               width={canvasWidth}
@@ -574,6 +1185,74 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack }) => {
             </p>
           </div>
         </div>
+
+        {/* Level Transition Overlay */}
+        {showLevelTitle && (
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-30 z-50">
+            <div style={{
+              animation: 'popIn 0.6s ease-out',
+              animationFillMode: 'both'
+            }}>
+              <h1 
+                className="text-8xl font-black text-white tracking-wider"
+                style={{
+                  textShadow: '0 0 30px rgba(59, 130, 246, 0.8), 0 0 60px rgba(59, 130, 246, 0.4), 4px 4px 8px rgba(0, 0, 0, 0.6)',
+                  WebkitTextStroke: '2px rgba(30, 64, 175, 0.8)'
+                }}
+              >
+                NIVEL {gameLevel}
+              </h1>
+            </div>
+          </div>
+        )}
+
+        {/* Countdown Overlay */}
+        {countdown > 0 && !showLevelTitle && (
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-20 z-50">
+            <div style={{
+              animation: 'scaleIn 0.3s ease-out',
+              animationFillMode: 'both'
+            }}>
+              <p 
+                className="text-9xl font-black text-white"
+                style={{
+                  textShadow: '0 0 40px rgba(239, 68, 68, 0.8), 0 0 80px rgba(239, 68, 68, 0.4), 4px 4px 12px rgba(0, 0, 0, 0.7)',
+                  WebkitTextStroke: '3px rgba(185, 28, 28, 0.8)'
+                }}
+              >
+                {countdown}
+              </p>
+            </div>
+          </div>
+        )}
+
+        <style dangerouslySetInnerHTML={{__html: `
+          @keyframes popIn {
+            0% {
+              transform: scale(0);
+              opacity: 0;
+            }
+            50% {
+              transform: scale(1.2);
+              opacity: 1;
+            }
+            100% {
+              transform: scale(1);
+              opacity: 1;
+            }
+          }
+          
+          @keyframes scaleIn {
+            0% {
+              transform: scale(0.5);
+              opacity: 0;
+            }
+            100% {
+              transform: scale(1);
+              opacity: 1;
+            }
+          }
+        `}} />
       </div>
     );
   }

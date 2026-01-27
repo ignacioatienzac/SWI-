@@ -374,12 +374,18 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
 
     const now = performance.now();
     if (now - lastShotRef.current > 1000) { 
-       const heroY = heroRef.current.y;
+       // Calculate wizard size and position (same as render logic)
+       const canvasHeight = 600;
+       const groundHeight = 100;
+       const groundY = canvasHeight - groundHeight;
+       const wizardSize = Math.floor((canvasHeight - groundHeight) * 0.15);
+       const wizardY = groundY - wizardSize + 5;
+       
        // Increase projectile size to match larger elements
        const projectileSize = 35;
        projectilesRef.current.push({
          x: 80,
-         y: heroY + 10,
+         y: wizardY + 10,
          width: projectileSize,
          height: projectileSize,
          speed: 6,
@@ -477,7 +483,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
 
     // Castle/wizard sizes for visibility
     const castleFontSize = Math.floor((canvasHeight - groundHeight) * 0.35);
-    const wizardSize = Math.floor((canvasHeight - groundHeight) * 0.28);
+    const wizardSize = Math.floor((canvasHeight - groundHeight) * 0.15);
     
     // Draw castle (still using emoji)
     ctx.font = `${castleFontSize}px Arial`;
