@@ -375,18 +375,16 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
 
     const now = performance.now();
     if (now - lastShotRef.current > 1000) { 
-       // Calculate wizard size and position (same as render logic)
-       const canvasHeight = 600;
-       const groundHeight = 40;
-       const groundY = canvasHeight - groundHeight;
-       const wizardSize = Math.floor((canvasHeight - groundHeight) * 0.15);
-       const wizardY = groundY - wizardSize + 5;
-       
        // Increase projectile size to match larger elements
        const projectileSize = 35;
+       
+       // Shoot from wizard's current position (center of wizard)
+       const wizardCenterX = heroRef.current.x + heroRef.current.width;
+       const wizardCenterY = heroRef.current.y + (heroRef.current.height / 2) - (projectileSize / 2);
+       
        projectilesRef.current.push({
-         x: 80,
-         y: wizardY + 10,
+         x: wizardCenterX,
+         y: wizardCenterY,
          width: projectileSize,
          height: projectileSize,
          speed: 6,
@@ -563,7 +561,8 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
     // Draw projectiles (fire emoji)
     projectilesRef.current.forEach(p => {
         ctx.font = `${p.width}px Arial`;
-        ctx.fillText(p.emoji, p.x, p.y + p.height);
+        // Position emoji properly - y coordinate should be at baseline
+        ctx.fillText(p.emoji, p.x, p.y + p.height * 0.8);
     });
   };
 
