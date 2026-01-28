@@ -111,7 +111,7 @@ const Games: React.FC<GamesProps> = ({ activeGameId, setActiveGameId }) => {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-12">
+    <div className="max-w-7xl mx-auto px-4 py-12 relative">
       <div className="text-center mb-16">
         <h1 className="text-4xl md:text-5xl font-extrabold text-deep-blue mb-4 tracking-tight">
           Aprende Jugando
@@ -154,20 +154,19 @@ const Games: React.FC<GamesProps> = ({ activeGameId, setActiveGameId }) => {
             </div>
           </div>
         ))}
-        
-        {/* Avatar decorativo - solo visible en desktop */}
-        <div className="hidden lg:flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl p-8 shadow-sm border border-gray-100 relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-spanish-red/5 to-deep-blue/5"></div>
-          <div className="relative flex flex-col items-center justify-center h-full">
-            <img 
-              src="/data/images/Avatar-pensando.png" 
-              alt="Avatar pensando" 
-              className="w-full h-auto max-w-[280px] object-contain drop-shadow-xl transform hover:scale-105 transition-transform duration-300"
-            />
-            <p className="mt-4 text-center text-gray-600 font-medium italic">
-              "¿Qué juego pruebo hoy?"
-            </p>
-          </div>
+      </div>
+
+      {/* Avatar del panda - posicionado en esquina inferior derecha (solo desktop) */}
+      <div className="hidden lg:block fixed bottom-8 right-8 z-10 pointer-events-none">
+        <div className="flex flex-col items-center animate-float">
+          <img 
+            src="/data/images/Avatar-pensando.png" 
+            alt="Avatar pensando" 
+            className="w-64 h-auto object-contain drop-shadow-2xl"
+          />
+          <p className="mt-2 text-center text-gray-700 font-semibold text-lg italic drop-shadow-md">
+            "¿Qué juego pruebo hoy?"
+          </p>
         </div>
       </div>
     </div>
