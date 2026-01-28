@@ -154,6 +154,21 @@ const Games: React.FC<GamesProps> = ({ activeGameId, setActiveGameId }) => {
             </div>
           </div>
         ))}
+        
+        {/* Avatar decorativo - solo visible en desktop */}
+        <div className="hidden lg:flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl p-8 shadow-sm border border-gray-100 relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-spanish-red/5 to-deep-blue/5"></div>
+          <div className="relative flex flex-col items-center justify-center h-full">
+            <img 
+              src="/data/images/Avatar-pensando.png" 
+              alt="Avatar pensando" 
+              className="w-full h-auto max-w-[280px] object-contain drop-shadow-xl transform hover:scale-105 transition-transform duration-300"
+            />
+            <p className="mt-4 text-center text-gray-600 font-medium italic">
+              "¿Qué juego pruebo hoy?"
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   );
