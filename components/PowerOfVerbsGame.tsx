@@ -101,6 +101,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
   const [verbsPool, setVerbsPool] = useState<PowerVerb[]>([]);
   const [choiceOptions, setChoiceOptions] = useState<string[]>([]);
   const [consecutiveFailures, setConsecutiveFailures] = useState(0);
+  const [showTooltip, setShowTooltip] = useState<string | null>(null);
   
   // Canvas Refs (Mutable game state to avoid re-renders)
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -376,7 +377,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
     if (now - lastShotRef.current > 1000) { 
        // Calculate wizard size and position (same as render logic)
        const canvasHeight = 600;
-       const groundHeight = 100;
+       const groundHeight = 40;
        const groundY = canvasHeight - groundHeight;
        const wizardSize = Math.floor((canvasHeight - groundHeight) * 0.15);
        const wizardY = groundY - wizardSize + 5;
@@ -687,7 +688,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
                         <button
                             key={t}
                             onClick={() => setSelectedTense(t)}
-                            className={`py-3 px-4 rounded-lg border font-bold capitalize text-base transition-all ${
+                            className={`py-3 px-4 rounded-lg border font-bold capitalize text-sm md:text-base transition-all ${
                                 selectedTense === t ? 'bg-deep-blue text-white border-deep-blue' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
                             }`}
                         >
@@ -724,19 +725,43 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
                <div className="grid grid-cols-2 gap-4">
                   <button 
                     onClick={() => setSelectedBattleMode('contrarreloj')}
-                    className={`p-6 rounded-xl border-2 text-center transition-all ${selectedBattleMode === 'contrarreloj' ? 'border-spanish-red bg-red-50 ring-2 ring-red-200' : 'border-gray-200 hover:bg-gray-50'}`}
+                    className={`p-6 rounded-xl border-2 text-center transition-all relative ${selectedBattleMode === 'contrarreloj' ? 'border-spanish-red bg-red-50 ring-2 ring-red-200' : 'border-gray-200 hover:bg-gray-50'}`}
                   >
+                      <button
+                        onMouseEnter={() => setShowTooltip('contrarreloj')}
+                        onMouseLeave={() => setShowTooltip(null)}
+                        onClick={(e) => { e.stopPropagation(); setShowTooltip(showTooltip === 'contrarreloj' ? null : 'contrarreloj'); }}
+                        className="absolute top-2 left-2 w-5 h-5 rounded-full bg-gray-200 hover:bg-gray-300 text-xs flex items-center justify-center transition-colors"
+                      >
+                        ?
+                      </button>
+                      {showTooltip === 'contrarreloj' && (
+                        <div className="absolute -top-12 left-0 right-0 bg-gray-800 text-white text-xs px-3 py-2 rounded-lg z-10">
+                          Alcanza la puntuación objetivo
+                        </div>
+                      )}
                       <div className="text-5xl mb-2">⏱️</div>
                       <span className="block font-bold text-base text-deep-blue">Contrarreloj</span>
-                      <span className="block text-sm text-gray-500 mt-1">Alcanza la puntuación objetivo</span>
                   </button>
                   <button 
                     onClick={() => setSelectedBattleMode('jefe')}
-                    className={`p-6 rounded-xl border-2 text-center transition-all ${selectedBattleMode === 'jefe' ? 'border-spanish-red bg-red-50 ring-2 ring-red-200' : 'border-gray-200 hover:bg-gray-50'}`}
+                    className={`p-6 rounded-xl border-2 text-center transition-all relative ${selectedBattleMode === 'jefe' ? 'border-spanish-red bg-red-50 ring-2 ring-red-200' : 'border-gray-200 hover:bg-gray-50'}`}
                   >
+                      <button
+                        onMouseEnter={() => setShowTooltip('jefe')}
+                        onMouseLeave={() => setShowTooltip(null)}
+                        onClick={(e) => { e.stopPropagation(); setShowTooltip(showTooltip === 'jefe' ? null : 'jefe'); }}
+                        className="absolute top-2 left-2 w-5 h-5 rounded-full bg-gray-200 hover:bg-gray-300 text-xs flex items-center justify-center transition-colors"
+                      >
+                        ?
+                      </button>
+                      {showTooltip === 'jefe' && (
+                        <div className="absolute -top-12 left-0 right-0 bg-gray-800 text-white text-xs px-3 py-2 rounded-lg z-10">
+                          Derrota al dragón
+                        </div>
+                      )}
                       <div className="text-5xl mb-2">🐉</div>
                       <span className="block font-bold text-base text-deep-blue">Modo Jefe</span>
-                      <span className="block text-sm text-gray-500 mt-1">Derrota al dragón</span>
                   </button>
                </div>
             </div>

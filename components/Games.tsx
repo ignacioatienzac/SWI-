@@ -4,7 +4,8 @@ import WordleGame from './WordleGame';
 import PowerOfVerbsGame from './PowerOfVerbsGame';
 import LetterWheelGame from './LetterWheelGame';
 import VerbMasterGame from './VerbMasterGame';
-import { Gamepad2, Layers, Zap, Grid3X3, Sword } from 'lucide-react';
+import PhraseBuilderGame from './PhraseBuilderGame';
+import { Gamepad2, Layers, Zap, Grid3X3, Sword, Hammer } from 'lucide-react';
 
 interface GamesProps {
   activeGameId: string | null;
@@ -45,10 +46,18 @@ const Games: React.FC<GamesProps> = ({ activeGameId, setActiveGameId }) => {
       id: 'phrase-builder',
       title: 'Constructor de Frases',
       description: 'Ordena las palabras para formar oraciones gramaticalmente correctas.',
-      iconName: 'Gamepad2',
+      iconName: 'Hammer',
       isAiPowered: false
     }
   ];
+
+  if (activeGameId === 'phrase-builder') {
+    return (
+      <div className="w-full bg-cream min-h-screen">
+        <PhraseBuilderGame onBack={() => setActiveGameId(null)} />
+      </div>
+    );
+  }
 
   if (activeGameId === 'verb-master') {
     return (
@@ -108,8 +117,7 @@ const Games: React.FC<GamesProps> = ({ activeGameId, setActiveGameId }) => {
           Aprende Jugando
         </h1>
         <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-          Mejora tu español con nuestros juegos interactivos. 
-          <span className="block mt-1 text-spanish-red font-medium">¡Nuevos juegos añadidos cada semana!</span>
+          Mejora tu español con nuestros juegos interactivos.
         </p>
       </div>
 
@@ -129,6 +137,7 @@ const Games: React.FC<GamesProps> = ({ activeGameId, setActiveGameId }) => {
               {game.iconName === 'Layers' && <Layers size={28} />}
               {game.iconName === 'Gamepad2' && <Gamepad2 size={28} />}
               {game.iconName === 'Grid3X3' && <Grid3X3 size={28} />}
+              {game.iconName === 'Hammer' && <Hammer size={28} />}
             </div>
 
             <h3 className="text-2xl font-bold text-gray-900 mb-3 group-hover:text-spanish-red transition-colors">

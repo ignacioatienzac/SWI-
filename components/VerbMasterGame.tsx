@@ -74,6 +74,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack }) => {
   const [selectedGameMode, setSelectedGameMode] = useState<GameMode | null>(null);
   const [selectedTense, setSelectedTense] = useState<string>('presente');
   const [selectedLevel] = useState<VerbLevel>('A1');
+  const [showTooltip, setShowTooltip] = useState<string | null>(null);
   
   // Update tense when verb mode changes
   const handleVerbModeChange = (mode: VerbMode) => {
@@ -1045,37 +1046,53 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack }) => {
               <div className="grid grid-cols-2 gap-3">
                 <button
                   onClick={() => setSelectedGameMode('conjugate')}
-                  className={`p-4 rounded-lg border-2 transition-all ${
+                  className={`p-4 rounded-lg border-2 transition-all relative ${
                     selectedGameMode === 'conjugate'
                       ? 'border-deep-blue bg-deep-blue'
                       : 'border-gray-200 hover:border-gray-300'
                   }`}
                 >
+                  <button
+                    onMouseEnter={() => setShowTooltip('conjugate')}
+                    onMouseLeave={() => setShowTooltip(null)}
+                    onClick={(e) => { e.stopPropagation(); setShowTooltip(showTooltip === 'conjugate' ? null : 'conjugate'); }}
+                    className="absolute top-1 left-1 w-5 h-5 rounded-full bg-white/20 hover:bg-white/40 text-xs flex items-center justify-center transition-colors"
+                  >
+                    ?
+                  </button>
+                  {showTooltip === 'conjugate' && (
+                    <div className="absolute -top-14 left-0 right-0 bg-gray-800 text-white text-xs px-2 py-2 rounded-lg z-10">
+                      Ver: "hablar, yo" → Escribir: "hablo"
+                    </div>
+                  )}
                   <div className={`font-bold mb-1 ${
                     selectedGameMode === 'conjugate' ? 'text-white' : 'text-gray-800'
                   }`}>Conjugar</div>
-                  <div className={`text-sm ${
-                    selectedGameMode === 'conjugate' ? 'text-blue-100' : 'text-gray-600'
-                  }`}>
-                    Ver: "hablar, yo" → Escribir: "hablo"
-                  </div>
                 </button>
                 <button
                   onClick={() => setSelectedGameMode('identify')}
-                  className={`p-4 rounded-lg border-2 transition-all ${
+                  className={`p-4 rounded-lg border-2 transition-all relative ${
                     selectedGameMode === 'identify'
                       ? 'border-deep-blue bg-deep-blue'
                       : 'border-gray-200 hover:border-gray-300'
                   }`}
                 >
+                  <button
+                    onMouseEnter={() => setShowTooltip('identify')}
+                    onMouseLeave={() => setShowTooltip(null)}
+                    onClick={(e) => { e.stopPropagation(); setShowTooltip(showTooltip === 'identify' ? null : 'identify'); }}
+                    className="absolute top-1 left-1 w-5 h-5 rounded-full bg-white/20 hover:bg-white/40 text-xs flex items-center justify-center transition-colors"
+                  >
+                    ?
+                  </button>
+                  {showTooltip === 'identify' && (
+                    <div className="absolute -top-14 left-0 right-0 bg-gray-800 text-white text-xs px-2 py-2 rounded-lg z-10">
+                      Ver: "hablo" → Escribir: "hablar, yo"
+                    </div>
+                  )}
                   <div className={`font-bold mb-1 ${
                     selectedGameMode === 'identify' ? 'text-white' : 'text-gray-800'
                   }`}>Identificar</div>
-                  <div className={`text-sm ${
-                    selectedGameMode === 'identify' ? 'text-blue-100' : 'text-gray-600'
-                  }`}>
-                    Ver: "hablo" → Escribir: "hablar, yo"
-                  </div>
                 </button>
               </div>
             </div>
@@ -1122,7 +1139,10 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack }) => {
               </div>
               <div>
                 <p className="text-xs text-gray-500 font-medium">VIDAS</p>
-                <p className="text-2xl font-black text-red-500">{'❤️'.repeat(lives)}</p>
+                <p className="text-2xl font-black text-red-500">
+                  <span className="hidden md:inline">{'❤️'.repeat(lives)}</span>
+                  <span className="md:hidden">❤️ x {lives}</span>
+                </p>
               </div>
             </div>
             <button
@@ -1173,6 +1193,73 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack }) => {
                 Enviar
               </button>
             </div>
+            
+            {/* Virtual Keyboard - Mobile only */}
+            <div className="md:hidden mt-4">
+              {/* Row 1 */}
+              <div className="flex gap-1 justify-center mb-2">
+                {['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'].map(key => (
+                  <button
+                    key={key}
+                    onClick={() => setUserInput(prev => prev + key.toLowerCase())}
+                    className="w-8 h-10 flex items-center justify-center rounded font-bold text-sm bg-gray-200 hover:bg-gray-300 transition"
+                  >
+                    {key}
+                  </button>
+                ))}
+              </div>
+              {/* Row 2 */}
+              <div className="flex gap-1 justify-center mb-2">
+                {['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'Ñ'].map(key => (
+                  <button
+                    key={key}
+                    onClick={() => setUserInput(prev => prev + key.toLowerCase())}
+                    className="w-8 h-10 flex items-center justify-center rounded font-bold text-sm bg-gray-200 hover:bg-gray-300 transition"
+                  >
+                    {key}
+                  </button>
+                ))}
+              </div>
+              {/* Row 3 */}
+              <div className="flex gap-1 justify-center mb-2">
+                {['Z', 'X', 'C', 'V', 'B', 'N', 'M'].map(key => (
+                  <button
+                    key={key}
+                    onClick={() => setUserInput(prev => prev + key.toLowerCase())}
+                    className="w-8 h-10 flex items-center justify-center rounded font-bold text-sm bg-gray-200 hover:bg-gray-300 transition"
+                  >
+                    {key}
+                  </button>
+                ))}
+                <button
+                  onClick={() => setUserInput(prev => prev.slice(0, -1))}
+                  className="w-12 h-10 flex items-center justify-center rounded font-bold text-sm bg-red-500 text-white hover:bg-red-600 transition"
+                  title="Borrar"
+                >
+                  ⌫
+                </button>
+              </div>
+              {/* Row 4 - Accented vowels */}
+              <div className="flex gap-1 justify-center">
+                {['á', 'é', 'í', 'ó', 'ú'].map(key => (
+                  <button
+                    key={key}
+                    onClick={() => setUserInput(prev => prev + key)}
+                    className="w-12 h-10 flex items-center justify-center rounded font-bold text-sm bg-blue-200 hover:bg-blue-300 transition"
+                  >
+                    {key}
+                  </button>
+                ))}
+                <button
+                  onClick={() => setUserInput(prev => prev + ' ')}
+                  className="flex-1 h-10 flex items-center justify-center rounded font-bold text-xs bg-gray-300 hover:bg-gray-400 transition"
+                  title="Espacio"
+                >
+                  ESPACIO
+                </button>
+              </div>
+            </div>
+            
             {feedback && (
               <p className={`mt-3 text-center font-bold ${
                 feedback.type === 'success' ? 'text-green-600' : 'text-red-600'

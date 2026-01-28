@@ -39,12 +39,12 @@ const AboutMe: React.FC = () => {
             </h3>
             
             <div className="space-y-6 text-gray-600 text-lg md:text-xl leading-relaxed font-light">
-              <p>
+              <p className="text-justify">
                 Bienvenidos a mi espacio personal de aprendizaje. Soy un profesor con 
                 <span className="font-bold text-deep-blue"> más de 10 años de experiencia </span> 
                 enseñando español a estudiantes apasionados de todo el mundo.
               </p>
-              <p>
+              <p className="text-justify">
                 No solo enseño el idioma, sino que soy un <span className="font-bold text-spanish-red">experto creador de recursos</span> educativos. 
                 Mi objetivo es diseñar herramientas que hagan tu aprendizaje divertido, efectivo y memorable, ayudándote a alcanzar la fluidez que siempre has deseado.
               </p>

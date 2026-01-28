@@ -1,0 +1,602 @@
+[
+  {
+    "id": 1,
+    "frase_objetivo": "¿Cómo se llama tu hermana menor?",
+    "trampas": ["llamas", "Qué", "pequeño"],
+    "variaciones_validas": ["¿Tu hermana menor cómo se llama?"],
+    "simplificadas": ["¿Cómo se llama tu hermana?"],
+    "pistas": {
+      "tema": "Presentación",
+      "descripcion_en": "Ask about the name of a younger family member.",
+      "traduccion_en": "What is your younger sister's name?"
+    }
+  },
+  {
+    "id": 2,
+    "frase_objetivo": "Normalmente desayuno café con leche y tostadas.",
+    "trampas": ["desayunar", "por", "la"],
+    "variaciones_validas": ["Normalmente desayuno tostadas y café con leche.", "Desayuno café con leche y tostadas normalmente.", "Desayuno normalmente café con leche y tostadas.", "Desayuno tostadas y café con leche normalmente."],
+    "simplificadas": ["Desayuno café con leche y tostadas.", "Normalmente desayuno café.", "Normalmente desayuno café con leche.", "Normalmente desayuno tostadas.", "Normalmente desayuno tostadas y café con leche.", "Normalmente desayuno leche."],
+    "pistas": {
+      "tema": "Rutina diaria",
+      "descripcion_en": "Describe a common breakfast habit.",
+      "traduccion_en": "Normally I have coffee with milk and toast for breakfast."
+    }
+  },
+  {
+    "id": 3,
+    "frase_objetivo": "Mi mejor amigo vive cerca de mi casa.",
+    "trampas": ["mayor", "viva", "del"],
+    "variaciones_validas": ["Cerca de mi casa vive mi mejor amigo."],
+    "simplificadas": ["Mi amigo vive cerca de mi casa.", "Mi mejor amigo vive cerca.", "Mi amigo vive cerca."],
+    "pistas": {
+      "tema": "Rutina diaria",
+      "descripcion_en": "State the location of a close friend's home.",
+      "traduccion_en": "My best friend lives near my house."
+    }
+  },
+  {
+    "id": 4,
+    "frase_objetivo": "¿A qué hora terminas de trabajar hoy?",
+    "trampas": ["la", "trabajo", "para"],
+    "variaciones_validas": ["¿Hoy a qué hora terminas de trabajar?", "¿A qué hora hoy terminas de trabajar?", "¿A qué hora terminas hoy de trabajar?"],
+    "simplificadas": ["¿A qué hora terminas de trabajar?", "¿A qué hora terminas hoy?"],
+    "pistas": {
+      "tema": "Rutina diaria",
+      "descripcion_en": "Ask about the end of the workday.",
+      "traduccion_en": "What time do you finish work today?"
+    }
+  },
+  {
+    "id": 5,
+    "frase_objetivo": "Los fines de semana siempre duermo mucho.",
+    "trampas": ["semanas", "dormen", "mañana"],
+    "variaciones_validas": ["Siempre duermo mucho los fines de semana.", "Los fines de semana duermo mucho siempre."],
+    "simplificadas": ["Siempre duermo mucho.", "Duermo mucho los fines de semana.", "Los fines de semana duermo mucho."],
+    "pistas": {
+      "tema": "Rutina diaria",
+      "descripcion_en": "Talk about a sleeping habit during the weekend.",
+      "traduccion_en": "On weekends I always sleep a lot."
+    }
+  },
+  {
+    "id": 6,
+    "frase_objetivo": "Me levanto a las siete de la mañana.",
+    "trampas": ["levantar", "la", "semana"],
+    "variaciones_validas": ["A las siete de la mañana me levanto."],
+    "simplificadas": ["Me levanto a las siete."],
+    "pistas": {
+      "tema": "Rutina diaria",
+      "descripcion_en": "Indicate the time you start your day.",
+      "traduccion_en": "I get up at seven in the morning."
+    }
+  },
+  {
+    "id": 7,
+    "frase_objetivo": "Estudio español porque quiero viajar a España.",
+    "trampas": ["querer", "por"],
+    "variaciones_validas": ["Porque quiero viajar a España estudio español."],
+    "simplificadas": ["Estudio español para viajar a España.", "Quiero viajar a España.", "Estudio español porque quiero viajar."],
+    "pistas": {
+      "tema": "Presentación / Intereses",
+      "descripcion_en": "Explain the reason why you are learning Spanish.",
+      "traduccion_en": "I study Spanish because I want to travel to Spain."
+    }
+  },
+  {
+    "id": 8,
+    "frase_objetivo": "Mis padres trabajan en una oficina muy moderna.",
+    "trampas": ["trabaja", "el", "mucho"],
+    "variaciones_validas": ["En una oficina muy moderna trabajan mis padres."],
+    "simplificadas": ["Mis padres trabajan en una oficina.", "Mis padres trabajan en una oficina moderna."],
+    "pistas": {
+      "tema": "Rutina diaria",
+      "descripcion_en": "Describe your parents' workplace.",
+      "traduccion_en": "My parents work in a very modern office."
+    }
+  },
+  {
+    "id": 9,
+    "frase_objetivo": "¿De dónde eres y dónde vives ahora?",
+    "trampas": ["soy", "qué"],
+    "variaciones_validas": ["¿Dónde vives ahora y de dónde eres?"],
+    "simplificadas": ["¿De dónde eres?", "¿Dónde vives ahora?", "¿De dónde eres y dónde vives?"],
+    "pistas": {
+      "tema": "Presentación",
+      "descripcion_en": "Double question about origin and current residence.",
+      "traduccion_en": "Where are you from and where do you live now?"
+    }
+  },
+  {
+    "id": 10,
+    "frase_objetivo": "Tengo veinticinco años y soy estudiante de medicina.",
+    "trampas": ["Soy", "hago"],
+    "variaciones_validas": ["Soy estudiante de medicina y tengo veinticinco años."],
+    "simplificadas": ["Tengo veinticinco años.", "Soy estudiante de medicina.", "Tengo veinticinco años y soy estudiante."],
+    "pistas": {
+      "tema": "Presentación",
+      "descripcion_en": "Personal info about age and studies.",
+      "traduccion_en": "I am twenty-five years old and I am a medical student."
+    }
+  },
+  {
+    "id": 11,
+    "frase_objetivo": "Me gusta mucho escuchar música en el coche.",
+    "trampas": ["gustan", "la"],
+    "variaciones_validas": ["En el coche me gusta mucho escuchar música.", "Escuchar música en el coche me gusta mucho."],
+    "simplificadas": ["Me gusta mucho escuchar música.", "Me gusta escuchar música en el coche.", "Me gusta escuchar música.", "Me gusta mucho el coche.", "Me gusta el coche."],
+    "pistas": {
+      "tema": "Ocio y tiempo libre",
+      "descripcion_en": "Express a preference while driving.",
+      "traduccion_en": "I really like listening to music in the car."
+    }
+  },
+  {
+    "id": 12,
+    "frase_objetivo": "¿Quieres ir al cine conmigo este viernes?",
+    "trampas": ["con mi", "el"],
+    "variaciones_validas": ["¿Este viernes quieres ir conmigo al cine?", "¿Quieres ir este viernes al cine conmigo?"],
+    "simplificadas": ["¿Quieres ir al cine este viernes?", "¿Quieres ir al cine conmigo?", "¿Quieres ir al cine?"],
+    "pistas": {
+      "tema": "Ocio y tiempo libre",
+      "descripcion_en": "Invite someone to see a movie.",
+      "traduccion_en": "Do you want to go to the cinema with me this Friday?"
+    }
+  },
+  {
+    "id": 13,
+    "frase_objetivo": "Los domingos por la tarde leo un libro.",
+    "trampas": ["las", "leer", "de"],
+    "variaciones_validas": ["Por la tarde los domingos leo un libro.", "Leo un libro los domingos por la tarde."],
+    "simplificadas": ["Leo un libro los domingos."],
+    "pistas": {
+      "tema": "Ocio y tiempo libre",
+      "descripcion_en": "Describe a quiet Sunday afternoon activity.",
+      "traduccion_en": "On Sunday afternoons I read a book."
+    }
+  },
+  {
+    "id": 14,
+    "frase_objetivo": "No me gusta nada el invierno porque hace frío.",
+    "trampas": ["gustan", "calor"],
+    "variaciones_validas": ["Porque hace frío no me gusta nada el invierno."],
+    "simplificadas": ["No me gusta el invierno.", "Hace frío en invierno."],
+    "pistas": {
+      "tema": "Gustos / Clima",
+      "descripcion_en": "Negative opinion about a season due to weather.",
+      "traduccion_en": "I don't like winter at all because it's cold."
+    }
+  },
+  {
+    "id": 15,
+    "frase_objetivo": "A veces juego al fútbol con mis compañeros.",
+    "trampas": ["juegos", "el"],
+    "variaciones_validas": ["Juego al fútbol con mis compañeros a veces.", "Con mis compañeros juego al fútbol a veces."],
+    "simplificadas": ["Juego al fútbol a veces."],
+    "pistas": {
+      "tema": "Ocio y tiempo libre",
+      "descripcion_en": "Occasional group sports activity.",
+      "traduccion_en": "Sometimes I play football with my colleagues."
+    }
+  },
+  {
+    "id": 16,
+    "frase_objetivo": "Mi comida favorita es la paella de marisco.",
+    "trampas": ["comer", "el", "preferido"],
+    "variaciones_validas": ["La paella de marisco es mi comida favorita."],
+    "simplificadas": ["Mi comida favorita es la paella."],
+    "pistas": {
+      "tema": "Gustos / Comida",
+      "descripcion_en": "Define your favorite dish.",
+      "traduccion_en": "My favorite food is seafood paella."
+    }
+  },
+  {
+    "id": 17,
+    "frase_objetivo": "Mañana voy a ver una película de terror.",
+    "trampas": ["ir", "las"],
+    "variaciones_validas": ["Voy a ver una película de terror mañana."],
+    "simplificadas": ["Mañana voy a ver una película."],
+    "pistas": {
+      "tema": "Ocio y tiempo libre",
+      "descripcion_en": "A near future plan related to cinema.",
+      "traduccion_en": "Tomorrow I am going to watch a horror movie."
+    }
+  },
+  {
+    "id": 18,
+    "frase_objetivo": "¿Prefieres el té caliente o frío?",
+    "trampas": ["te", "la"],
+    "variaciones_validas": ["¿Prefieres el té frío o caliente?"],
+    "simplificadas": ["¿Prefieres el té?"],
+    "pistas": {
+      "tema": "Gustos / Comida",
+      "descripcion_en": "Ask about a choice between hot or cold tea.",
+      "traduccion_en": "Do you prefer hot or cold tea?"
+    }
+  },
+  {
+    "id": 19,
+    "frase_objetivo": "Me encanta pasear por el parque cuando hace sol.",
+    "trampas": ["encantan", "la"],
+    "variaciones_validas": ["Cuando hace sol me encanta pasear por el parque."],
+    "simplificadas": ["Me encanta pasear por el parque.", "Me encanta pasear cuando hace sol."],
+    "pistas": {
+      "tema": "Ocio y tiempo libre",
+      "descripcion_en": "Express a strong positive feeling about an outdoor activity.",
+      "traduccion_en": "I love walking in the park when it is sunny."
+    }
+  },
+  {
+    "id": 20,
+    "frase_objetivo": "Odio limpiar la cocina después de cenar.",
+    "trampas": ["el", "limpio"],
+    "variaciones_validas": ["Después de cenar odio limpiar la cocina."],
+    "simplificadas": ["Odio limpiar la cocina."],
+    "pistas": {
+      "tema": "Rutina diaria",
+      "descripcion_en": "A household chore that you don't like.",
+      "traduccion_en": "I hate cleaning the kitchen after dinner."
+    }
+  },
+  {
+    "id": 21,
+    "frase_objetivo": "¿Dónde está la farmacia más cercana, por favor?",
+    "trampas": ["están", "el", "cerca"],
+    "variaciones_validas": ["Por favor, ¿dónde está la farmacia más cercana?"],
+    "simplificadas": ["¿Dónde está la farmacia?"],
+    "pistas": {
+      "tema": "Ciudad",
+      "descripcion_en": "You are looking for a place to buy medicine.",
+      "traduccion_en": "Where is the nearest pharmacy, please?"
+    }
+  },
+  {
+    "id": 22,
+    "frase_objetivo": "Quiero comprar una chaqueta azul para el invierno.",
+    "trampas": ["el", "amarillo"],
+    "variaciones_validas": ["Para el invierno quiero comprar una chaqueta azul."],
+    "simplificadas": ["Quiero comprar una chaqueta azul."],
+    "pistas": {
+      "tema": "Compras",
+      "descripcion_en": "Intention to buy a warm piece of clothing.",
+      "traduccion_en": "I want to buy a blue jacket for the winter."
+    }
+  },
+  {
+    "id": 23,
+    "frase_objetivo": "El supermercado cierra a las nueve de la noche.",
+    "trampas": ["abren", "la"],
+    "variaciones_validas": ["A las nueve de la noche cierra el supermercado."],
+    "simplificadas": ["El supermercado cierra a las nueve."],
+    "pistas": {
+      "tema": "Ciudad",
+      "descripcion_en": "Information about a store's closing time.",
+      "traduccion_en": "The supermarket closes at nine at night."
+    }
+  },
+  {
+    "id": 24,
+    "frase_objetivo": "¿Cuánto cuesta este reloj de oro tan bonito?",
+    "trampas": ["cuestan", "esa", "en"],
+    "variaciones_validas": ["Este reloj de oro tan bonito, ¿cuánto cuesta?"],
+    "simplificadas": ["¿Cuánto cuesta este reloj?"],
+    "pistas": {
+      "tema": "Compras",
+      "descripcion_en": "Asking for the price of an accessory.",
+      "traduccion_en": "How much does this beautiful gold watch cost?"
+    }
+  },
+  {
+    "id": 25,
+    "frase_objetivo": "Hay un restaurante italiano detrás del museo.",
+    "trampas": ["está", "el"],
+    "variaciones_validas": ["Detrás del museo hay un restaurante italiano."],
+    "simplificadas": ["Hay un restaurante italiano."],
+    "pistas": {
+      "tema": "Ciudad",
+      "descripcion_en": "Indicate the existence and location of a place to eat.",
+      "traduccion_en": "There is an Italian restaurant behind the museum."
+    }
+  },
+  {
+    "id": 26,
+    "frase_objetivo": "Busco una camiseta blanca de la talla mediana.",
+    "trampas": ["Buscar", "el", "negro"],
+    "variaciones_validas": ["De la talla mediana busco una camiseta blanca."],
+    "simplificadas": ["Busco una camiseta blanca."],
+    "pistas": {
+      "tema": "Compras",
+      "descripcion_en": "You are in a clothing store asking for a specific item and size.",
+      "traduccion_en": "I am looking for a white t-shirt in medium size."
+    }
+  },
+  {
+    "id": 27,
+    "frase_objetivo": "En esta calle hay muchas tiendas de ropa.",
+    "trampas": ["están", "el", "poco"],
+    "variaciones_validas": ["Hay muchas tiendas de ropa en esta calle."],
+    "simplificadas": ["Hay muchas tiendas de ropa."],
+    "pistas": {
+      "tema": "Ciudad",
+      "descripcion_en": "Describe what you can find on a specific street.",
+      "traduccion_en": "On this street, there are many clothing stores."
+    }
+  },
+  {
+    "id": 28,
+    "frase_objetivo": "¿Perdone, el banco está abierto por la tarde?",
+    "trampas": ["están", "cerrados", "las"],
+    "variaciones_validas": ["¿El banco está abierto por la tarde, perdone?"],
+    "simplificadas": ["¿El banco está abierto?"],
+    "pistas": {
+      "tema": "Ciudad",
+      "descripcion_en": "Formal inquiry about a bank's opening hours.",
+      "traduccion_en": "Excuse me, is the bank open in the afternoon?"
+    }
+  },
+  {
+    "id": 29,
+    "frase_objetivo": "Tengo que comprar pan y huevos para la cena.",
+    "trampas": ["de", "el", "las"],
+    "variaciones_validas": ["Para la cena tengo que comprar pan y huevos.", "Tengo que comprar huevos y pan para la cena."],
+    "simplificadas": ["Tengo que comprar pan y huevos."],
+    "pistas": {
+      "tema": "Compras / Comida",
+      "descripcion_en": "Express a need to buy basic food items for dinner.",
+      "traduccion_en": "I have to buy bread and eggs for dinner."
+    }
+  },
+  {
+    "id": 30,
+    "frase_objetivo": "La biblioteca municipal es un lugar muy silencioso.",
+    "trampas": ["el", "bibliotecas", "ruido"],
+    "variaciones_validas": ["Un lugar muy silencioso es la biblioteca municipal."],
+    "simplificadas": ["La biblioteca es un lugar silencioso."],
+    "pistas": {
+      "tema": "Ciudad",
+      "descripcion_en": "Define the characteristics of a public reading center.",
+      "traduccion_en": "The municipal library is a very quiet place."
+    }
+  },
+  {
+    "id": 31,
+    "frase_objetivo": "Este verano voy a viajar a México con mi familia.",
+    "trampas": ["de", "el", "mexicano"],
+    "variaciones_validas": ["Voy a viajar a México con mi familia este verano."],
+    "simplificadas": ["Voy a viajar a México."],
+    "pistas": {
+      "tema": "Viajes",
+      "descripcion_en": "Vacation plan for the hot season.",
+      "traduccion_en": "This summer I am going to travel to Mexico with my family."
+    }
+  },
+  {
+    "id": 32,
+    "frase_objetivo": "¿Qué tiempo hace hoy en tu ciudad?",
+    "trampas": ["está", "el"],
+    "variaciones_validas": ["¿Hoy en tu ciudad qué tiempo hace?"],
+    "simplificadas": ["¿Qué tiempo hace hoy?"],
+    "pistas": {
+      "tema": "Clima",
+      "descripcion_en": "Interest in the local weather.",
+      "traduccion_en": "What is the weather like today in your city?"
+    }
+  },
+  {
+    "id": 33,
+    "frase_objetivo": "El avión sale a las seis y media de la mañana.",
+    "trampas": ["salen", "los", "medio"],
+    "variaciones_validas": ["A las seis y media de la mañana sale el avión."],
+    "simplificadas": ["El avión sale a las seis y media."],
+    "pistas": {
+      "tema": "Viajes",
+      "descripcion_en": "Departure time of a flight.",
+      "traduccion_en": "The plane leaves at six-thirty in the morning."
+    }
+  },
+  {
+    "id": 34,
+    "frase_objetivo": "Necesito un mapa para visitar el centro histórico.",
+    "trampas": ["libro", "la"],
+    "variaciones_validas": ["Para visitar el centro histórico necesito un mapa."],
+    "simplificadas": ["Necesito un mapa.", "Quiero visitar el centro histórico."],
+    "pistas": {
+      "tema": "Viajes / Ciudad",
+      "descripcion_en": "Requirement to navigate an old area of a city.",
+      "traduccion_en": "I need a map to visit the historic center."
+    }
+  },
+  {
+    "id": 35,
+    "frase_objetivo": "Hoy está nublado y parece que va a llover.",
+    "trampas": ["sol", "el", "nieve"],
+    "variaciones_validas": ["Parece que va a llover y hoy está nublado."],
+    "simplificadas": ["Hoy está nublado.", "Parece que va a llover."],
+    "pistas": {
+      "tema": "Clima",
+      "descripcion_en": "Sky description and immediate prediction.",
+      "traduccion_en": "Today it is cloudy and it looks like it's going to rain."
+    }
+  },
+  {
+    "id": 36,
+    "frase_objetivo": "Mis vacaciones ideales son en una playa tranquila.",
+    "trampas": ["mi", "las"],
+    "variaciones_validas": ["En una playa tranquila son mis vacaciones ideales."],
+    "simplificadas": ["Mis vacaciones son en la playa."],
+    "pistas": {
+      "tema": "Viajes",
+      "descripcion_en": "Definition of the perfect rest.",
+      "traduccion_en": "My ideal vacation is on a quiet beach."
+    }
+  },
+  {
+    "id": 37,
+    "frase_objetivo": "¿Me puede dar un billete de ida y vuelta?",
+    "trampas": ["el", "solo", "ir"],
+    "variaciones_validas": ["Un billete de ida y vuelta, ¿me puede dar?"],
+    "simplificadas": ["¿Me da un billete de ida y vuelta?"],
+    "pistas": {
+      "tema": "Viajes",
+      "descripcion_en": "Request at a train or bus ticket office.",
+      "traduccion_en": "Can you give me a round-trip ticket?"
+    }
+  },
+  {
+    "id": 38,
+    "frase_objetivo": "El hotel está en el centro de la ciudad.",
+    "trampas": ["están", "la"],
+    "variaciones_validas": ["En el centro de la ciudad está el hotel."],
+    "simplificadas": ["El hotel está en el centro."],
+    "pistas": {
+      "tema": "Viajes / Ciudad",
+      "descripcion_en": "Location of a tourist accommodation.",
+      "traduccion_en": "The hotel is in the city center."
+    }
+  },
+  {
+    "id": 39,
+    "frase_objetivo": "Siempre llevo una maleta grande en mis viajes.",
+    "trampas": ["lleva", "el", "pequeño"],
+    "variaciones_validas": ["En mis viajes siempre llevo una maleta grande."],
+    "simplificadas": ["Llevo una maleta grande."],
+    "pistas": {
+      "tema": "Viajes",
+      "descripcion_en": "Habit regarding luggage.",
+      "traduccion_en": "I always carry a large suitcase on my trips."
+    }
+  },
+  {
+    "id": 40,
+    "frase_objetivo": "En invierno nieva mucho en las montañas.",
+    "trampas": ["llover", "la", "cielo"],
+    "variaciones_validas": ["En las montañas nieva mucho en invierno."],
+    "simplificadas": ["Nieva mucho en las montañas."],
+    "pistas": {
+      "tema": "Clima",
+      "descripcion_en": "Weather phenomenon typical of high areas in the cold.",
+      "traduccion_en": "In winter it snows a lot in the mountains."
+    }
+  },
+  {
+    "id": 41,
+    "frase_objetivo": "Mi hermana es alta, rubia y muy inteligente.",
+    "trampas": ["son", "bajo", "Tus"],
+    "variaciones_validas": ["Mi hermana es rubia, alta y muy inteligente."],
+    "simplificadas": ["Mi hermana es muy inteligente."],
+    "pistas": {
+      "tema": "Descripciones",
+      "descripcion_en": "Physical and psychological description of a family member.",
+      "traduccion_en": "My sister is tall, blonde, and very intelligent."
+    }
+  },
+  {
+    "id": 42,
+    "frase_objetivo": "Tengo un gato negro que duerme en mi cama.",
+    "trampas": ["el", "blanca"],
+    "variaciones_validas": ["Mi gato negro duerme en mi cama."],
+    "simplificadas": ["Tengo un gato negro."],
+    "pistas": {
+      "tema": "Relaciones / Mascotas",
+      "descripcion_en": "Talk about a pet and its behavior.",
+      "traduccion_en": "I have a black cat that sleeps in my bed."
+    }
+  },
+  {
+    "id": 43,
+    "frase_objetivo": "¿Cómo son tus nuevos compañeros de clase?",
+    "trampas": ["eres", "el", "trabajar"],
+    "variaciones_validas": ["Tus nuevos compañeros de clase, ¿cómo son?"],
+    "simplificadas": ["¿Cómo son tus compañeros?"],
+    "pistas": {
+      "tema": "Descripciones / Relaciones",
+      "descripcion_en": "Ask about the character or appearance of others.",
+      "traduccion_en": "What are your new classmates like?"
+    }
+  },
+  {
+    "id": 44,
+    "frase_objetivo": "Esta casa tiene tres dormitorios y un jardín.",
+    "trampas": ["están", "terraza"],
+    "variaciones_validas": ["Esta casa tiene un jardín y tres dormitorios."],
+    "simplificadas": ["Esta casa tiene tres dormitorios."],
+    "pistas": {
+      "tema": "Descripciones / Casa",
+      "descripcion_en": "Listing the parts of a house.",
+      "traduccion_en": "This house has three bedrooms and a garden."
+    }
+  },
+  {
+    "id": 45,
+    "frase_objetivo": "Mi padre es un hombre muy trabajador y amable.",
+    "trampas": ["soy", "mujer", "vaga"],
+    "variaciones_validas": ["Mi padre es un hombre muy amable y trabajador."],
+    "simplificadas": ["Mi padre es muy trabajador."],
+    "pistas": {
+      "tema": "Descripciones / Relaciones",
+      "descripcion_en": "Positive attributes about a parent.",
+      "traduccion_en": "My father is a very hard-working and kind man."
+    }
+  },
+  {
+    "id": 46,
+    "frase_objetivo": "¿Es tu coche ese vehículo rojo que está allí?",
+    "trampas": ["son", "la"],
+    "variaciones_validas": ["Ese vehículo rojo que está allí, ¿es tu coche?"],
+    "simplificadas": ["¿Es tu coche el vehículo rojo?"],
+    "pistas": {
+      "tema": "Descripciones / Propiedad",
+      "descripcion_en": "Confirming ownership of a distant vehicle.",
+      "traduccion_en": "Is your car that red vehicle over there?"
+    }
+  },
+  {
+    "id": 47,
+    "frase_objetivo": "Tengo mucha hambre, ¿vamos a comer algo ya?",
+    "trampas": ["como", "el"],
+    "variaciones_validas": ["¿Vamos a comer algo ya? Tengo mucha hambre."],
+    "simplificadas": ["¿Vamos a comer algo?"],
+    "pistas": {
+      "tema": "Comida",
+      "descripcion_en": "Express a physical sensation and propose an immediate action.",
+      "traduccion_en": "I am very hungry, shall we eat something now?"
+    }
+  },
+  {
+    "id": 48,
+    "frase_objetivo": "Mi abuelo tiene el pelo blanco y lleva gafas.",
+    "trampas": ["tienes", "las", "barbas"],
+    "variaciones_validas": ["Mi abuelo lleva gafas y tiene el pelo blanco."],
+    "simplificadas": ["Mi abuelo tiene el pelo blanco."],
+    "pistas": {
+      "tema": "Descripciones",
+      "descripcion_en": "Physical details of an older person.",
+      "traduccion_en": "My grandfather has white hair and wears glasses."
+    }
+  },
+  {
+    "id": 49,
+    "frase_objetivo": "La cocina de mi apartamento es grande pero funcional.",
+    "trampas": ["el", "pequeño", "cuarto"],
+    "variaciones_validas": ["La cocina de mi apartamento es funcional pero grande."],
+    "simplificadas": ["Mi cocina es funcional."],
+    "pistas": {
+      "tema": "Descripciones / Casa",
+      "descripcion_en": "Description of a specific space in the house.",
+      "traduccion_en": "My apartment's kitchen is large but functional."
+    }
+  },
+  {
+    "id": 50,
+    "frase_objetivo": "Somos una familia grande y divertida.",
+    "trampas": ["el", "hermana"],
+    "variaciones_validas": ["Somos una familia divertida y grande."],
+    "simplificadas": ["Somos una familia divertida."],
+    "pistas": {
+      "tema": "Descripciones / Relaciones",
+      "descripcion_en": "Description of your family's size and character.",
+      "traduccion_en": "We are a large and fun family."
+    }
+  }
+]
