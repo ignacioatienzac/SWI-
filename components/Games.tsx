@@ -157,23 +157,23 @@ const Games: React.FC<GamesProps> = ({ activeGameId, setActiveGameId }) => {
       </div>
 
       {/* Avatar del panda asomándose desde la esquina (solo desktop) */}
-      <div className="hidden lg:block fixed bottom-0 right-0 z-10 pointer-events-none">
+      <div className="hidden lg:block fixed bottom-0 right-0 z-50 pointer-events-none overflow-visible">
         <div className="relative animate-float">
           {/* Bocadillo de diálogo */}
-          <div className="absolute -top-16 right-12 bg-white/95 backdrop-blur-sm rounded-2xl px-4 py-2 shadow-lg border-2 border-gray-200">
+          <div className="absolute -top-20 -left-48 bg-white/95 backdrop-blur-sm rounded-2xl px-4 py-2 shadow-lg border-2 border-gray-200 pointer-events-auto">
             <p className="text-gray-700 font-semibold text-base whitespace-nowrap">
               ¿Qué juego pruebo hoy?
             </p>
             {/* Pico del bocadillo */}
-            <div className="absolute -bottom-2 right-8 w-4 h-4 bg-white border-r-2 border-b-2 border-gray-200 transform rotate-45"></div>
+            <div className="absolute bottom-2 -right-3 w-4 h-4 bg-white border-r-2 border-b-2 border-gray-200 transform rotate-[315deg]"></div>
           </div>
           
           {/* Imagen del panda con sombra sutil */}
-          <div className="relative">
+          <div className="relative -mb-16 -mr-8">
             <img 
               src="/data/images/Avatar-pensando.webp" 
               alt="Avatar pensando" 
-              className="w-52 h-auto object-contain"
+              className="w-56 h-auto object-contain"
               style={{
                 filter: 'drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15)) drop-shadow(0 0 20px rgba(0, 0, 0, 0.08))'
               }}
