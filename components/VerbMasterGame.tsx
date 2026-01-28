@@ -23,16 +23,16 @@ type GameState = 'LEVEL_SELECT' | 'PLAYING' | 'PAUSED' | 'GAMEOVER' | 'LEVEL_TRA
 
 // Level progression configuration (10 levels)
 const LEVEL_SETTINGS = [
-  { level: 1, fallDuration: 30.0, pointsRequired: 0 },      // Starting level - Very slow
-  { level: 2, fallDuration: 27.6, pointsRequired: 100 },   // +100 = 100 total
-  { level: 3, fallDuration: 25.1, pointsRequired: 300 },   // +200 = 300 total
-  { level: 4, fallDuration: 22.7, pointsRequired: 600 },   // +300 = 600 total
-  { level: 5, fallDuration: 20.2, pointsRequired: 1000 },  // +400 = 1000 total
-  { level: 6, fallDuration: 17.8, pointsRequired: 1500 },  // +500 = 1500 total
-  { level: 7, fallDuration: 15.3, pointsRequired: 2100 },  // +600 = 2100 total
-  { level: 8, fallDuration: 12.9, pointsRequired: 2800 },  // +700 = 2800 total
-  { level: 9, fallDuration: 10.4, pointsRequired: 3600 },  // +800 = 3600 total
-  { level: 10, fallDuration: 8.0, pointsRequired: 4500 }   // +900 = 4500 total (max level)
+  { level: 1, fallDuration: 40.0, pointsRequired: 0 },      // Starting level - Very slow
+  { level: 2, fallDuration: 37.0, pointsRequired: 100 },   // +100 = 100 total
+  { level: 3, fallDuration: 34.0, pointsRequired: 300 },   // +200 = 300 total
+  { level: 4, fallDuration: 31.0, pointsRequired: 600 },   // +300 = 600 total
+  { level: 5, fallDuration: 28.0, pointsRequired: 1000 },  // +400 = 1000 total
+  { level: 6, fallDuration: 25.0, pointsRequired: 1500 },  // +500 = 1500 total
+  { level: 7, fallDuration: 22.0, pointsRequired: 2100 },  // +600 = 2100 total
+  { level: 8, fallDuration: 19.0, pointsRequired: 2800 },  // +700 = 2800 total
+  { level: 9, fallDuration: 16.0, pointsRequired: 3600 },  // +800 = 3600 total
+  { level: 10, fallDuration: 13.0, pointsRequired: 4500 }   // +900 = 4500 total (max level)
 ];
 
 // Background colors for each level
@@ -277,7 +277,36 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack }) => {
       if (!challenge) return;
       
       const radius = 40 + Math.random() * 20;
-      const x = radius + Math.random() * (canvasWidth - radius * 2);
+      
+      // Try to find a position that doesn't overlap with existing bubbles
+      let x = 0;
+      let attempts = 0;
+      let validPosition = false;
+      const maxAttempts = 20;
+      const minDistance = radius * 2.5; // Minimum distance between bubble centers
+      
+      while (!validPosition && attempts < maxAttempts) {
+        x = radius + Math.random() * (canvasWidth - radius * 2);
+        validPosition = true;
+        
+        // Check distance from all existing bubbles
+        for (const bubble of bubblesRef.current) {
+          if (bubble.isShrinking || bubble.isPopping || bubble.isSplatting) continue;
+          
+          const dx = x - bubble.x;
+          
+          // If too close horizontally and existing bubble is near top, reject position
+          if (Math.abs(dx) < minDistance && bubble.y < 150) {
+            validPosition = false;
+            break;
+          }
+        }
+        
+        attempts++;
+      }
+      
+      // If no valid position found after max attempts, don't spawn
+      if (!validPosition) return;
       
       bubblesRef.current.push({
         id: challenge.id,
@@ -1124,22 +1153,22 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack }) => {
             >
               <ChevronLeft size={24} />
             </button>
-            <div className="flex gap-8 text-center">
+            <div className="flex gap-4 md:gap-8 text-center">
               <div>
-                <p className="text-xs text-gray-500 font-medium">PUNTUACIÓN</p>
-                <p className="text-2xl font-black text-deep-blue">{score}</p>
+                <p className="text-xs text-gray-500 font-medium">PUNTOS</p>
+                <p className="text-lg md:text-2xl font-black text-deep-blue">{score}</p>
               </div>
               <div>
                 <p className="text-xs text-gray-500 font-medium">NIVEL</p>
-                <p className="text-2xl font-black text-green-600">{gameLevel}</p>
+                <p className="text-lg md:text-2xl font-black text-green-600">{gameLevel}</p>
               </div>
               <div>
                 <p className="text-xs text-gray-500 font-medium">RACHA</p>
-                <p className="text-2xl font-black text-orange-500">{streak}</p>
+                <p className="text-lg md:text-2xl font-black text-orange-500">{streak}</p>
               </div>
               <div>
                 <p className="text-xs text-gray-500 font-medium">VIDAS</p>
-                <p className="text-2xl font-black text-red-500">
+                <p className="text-lg md:text-2xl font-black text-red-500">
                   <span className="hidden md:inline">{'❤️'.repeat(lives)}</span>
                   <span className="md:hidden">❤️ x {lives}</span>
                 </p>
@@ -1168,7 +1197,8 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack }) => {
 
           {/* Input */}
           <div className="bg-white rounded-2xl p-6 shadow-xl">
-            <div className="flex gap-3">
+            {/* Desktop input with button */}
+            <div className="hidden md:flex gap-3">
               <input
                 type="text"
                 value={userInput}
@@ -1192,6 +1222,17 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack }) => {
               >
                 Enviar
               </button>
+            </div>
+            
+            {/* Mobile input without native keyboard */}
+            <div className="md:hidden">
+              <input
+                type="text"
+                value={userInput}
+                readOnly
+                placeholder="Usa el teclado de abajo..."
+                className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-lg text-center"
+              />
             </div>
             
             {/* Virtual Keyboard - Mobile only */}
@@ -1240,7 +1281,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack }) => {
                 </button>
               </div>
               {/* Row 4 - Accented vowels */}
-              <div className="flex gap-1 justify-center">
+              <div className="flex gap-1 justify-center mb-2">
                 {['á', 'é', 'í', 'ó', 'ú'].map(key => (
                   <button
                     key={key}
@@ -1250,12 +1291,14 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack }) => {
                     {key}
                   </button>
                 ))}
+              </div>
+              {/* Submit button centered */}
+              <div className="flex justify-center">
                 <button
-                  onClick={() => setUserInput(prev => prev + ' ')}
-                  className="flex-1 h-10 flex items-center justify-center rounded font-bold text-xs bg-gray-300 hover:bg-gray-400 transition"
-                  title="Espacio"
+                  onClick={handleSubmit}
+                  className="px-12 py-2 bg-deep-blue hover:bg-blue-700 text-white font-bold rounded-lg transition-colors"
                 >
-                  ESPACIO
+                  Enviar
                 </button>
               </div>
             </div>
@@ -1267,7 +1310,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack }) => {
                 {feedback.text}
               </p>
             )}
-            <p className="mt-2 text-xs text-gray-500 text-center">
+            <p className="hidden md:block mt-2 text-xs text-gray-500 text-center">
               Usa las teclas 1-5 para vocales con tilde (á é í ó ú)
             </p>
           </div>
