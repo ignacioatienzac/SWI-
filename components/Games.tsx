@@ -160,7 +160,7 @@ const Games: React.FC<GamesProps> = ({ activeGameId, setActiveGameId }) => {
       <div className="hidden lg:block fixed bottom-0 right-0 z-50 pointer-events-none overflow-visible">
         <div className="relative animate-float">
           {/* Bocadillo de diálogo */}
-          <div className="absolute top-12 -left-48 bg-white/95 backdrop-blur-sm rounded-2xl px-4 py-2 shadow-lg border-2 border-gray-200 pointer-events-auto">
+          <div className="absolute top-16 -left-32 bg-white/95 backdrop-blur-sm rounded-2xl px-4 py-2 shadow-lg border-2 border-gray-200 pointer-events-auto">
             <p className="text-gray-700 font-semibold text-base text-center leading-snug">
               ¿Qué juego<br />pruebo hoy?
             </p>
