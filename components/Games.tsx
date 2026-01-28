@@ -156,17 +156,29 @@ const Games: React.FC<GamesProps> = ({ activeGameId, setActiveGameId }) => {
         ))}
       </div>
 
-      {/* Avatar del panda - posicionado en esquina inferior derecha (solo desktop) */}
-      <div className="hidden lg:block fixed bottom-8 right-8 z-10 pointer-events-none">
-        <div className="flex flex-col items-center animate-float">
-          <img 
-            src="/data/images/Avatar-pensando.png" 
-            alt="Avatar pensando" 
-            className="w-64 h-auto object-contain drop-shadow-2xl"
-          />
-          <p className="mt-2 text-center text-gray-700 font-semibold text-lg italic drop-shadow-md">
-            "¿Qué juego pruebo hoy?"
-          </p>
+      {/* Avatar del panda asomándose desde la esquina (solo desktop) */}
+      <div className="hidden lg:block fixed bottom-0 right-0 z-10 pointer-events-none">
+        <div className="relative animate-float">
+          {/* Bocadillo de diálogo */}
+          <div className="absolute -top-16 right-12 bg-white/95 backdrop-blur-sm rounded-2xl px-4 py-2 shadow-lg border-2 border-gray-200">
+            <p className="text-gray-700 font-semibold text-base whitespace-nowrap">
+              ¿Qué juego pruebo hoy?
+            </p>
+            {/* Pico del bocadillo */}
+            <div className="absolute -bottom-2 right-8 w-4 h-4 bg-white border-r-2 border-b-2 border-gray-200 transform rotate-45"></div>
+          </div>
+          
+          {/* Imagen del panda con sombra sutil */}
+          <div className="relative">
+            <img 
+              src="/data/images/Avatar-pensando.webp" 
+              alt="Avatar pensando" 
+              className="w-52 h-auto object-contain"
+              style={{
+                filter: 'drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15)) drop-shadow(0 0 20px rgba(0, 0, 0, 0.08))'
+              }}
+            />
+          </div>
         </div>
       </div>
     </div>
