@@ -1,8 +1,56 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { RotateCcw, Calendar, Lightbulb, ChevronLeft, ChevronRight, MessageCircle, X } from 'lucide-react';
+import { RotateCcw, Calendar, Lightbulb, ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { getWordOfDay } from '../services/vocabularyService';
 import { isValidWord, getHintsForAttempt } from '../services/wordleService';
 import { hablarConPanda } from '../services/geminiService';
+
+// Mensajes aleatorios para el bocadillo del Cobi detective
+const mensajesDetectiveCobi = [
+  "¡Empezamos! 📁 Escribe tu primera palabra para buscar pistas. 🐾",
+  "Vamos a concentrarnos... ¿cuál será la palabra oculta? 🔍",
+  "¡Patitas a la obra, detective! 🐾 Tenemos 6 intentos para encontrar la solución. 🕵️‍♂️"
+];
+
+// Mensajes para cuando ninguna letra coincide (todas grises)
+const mensajesSinCoincidencias = [
+  "¡Mmm, un callejón sin salida! 🤨 Esta palabra no tiene ninguna pista... 🐾",
+  "¡Pista falsa! 🚫 Intenta con otra palabra diferente. 🔍",
+  "¡Vaya! Ni una sola letra... 🐾 ¡No te rindas, sigue investigando! 🕵️‍♂️"
+];
+
+// Mensajes para cuando está cerca (algunas letras coinciden)
+const mensajesCerca = [
+  "¡Ajá! Veo algo... 🔍 ¡Tenemos pistas importantes! 🐾",
+  "¡Interesante! 🕵️‍♂️ Estamos más cerca de resolver el misterio... 🔍",
+  "¡Buenas noticias! 🐾 Algunas letras ya están en su sitio. ¡Sigue así! ✨"
+];
+
+// Mensajes para cuando gana
+const mensajesVictoria = [
+  "¡Elemental, querido alumno! 🕵️‍♂️ ¡Has resuelto el caso! 🐾✨",
+  "¡Eureka! 🔍 ¡La palabra era correcta! Eres un gran detective. 🐾",
+  "¡Caso cerrado! 📁 ¡Felicidades! Tu español es increíble. 🌟"
+];
+
+const seleccionarMensajeDetectiveRandom = (): string => {
+  const indice = Math.floor(Math.random() * mensajesDetectiveCobi.length);
+  return mensajesDetectiveCobi[indice];
+};
+
+const seleccionarMensajeSinCoincidencias = (): string => {
+  const indice = Math.floor(Math.random() * mensajesSinCoincidencias.length);
+  return mensajesSinCoincidencias[indice];
+};
+
+const seleccionarMensajeCerca = (): string => {
+  const indice = Math.floor(Math.random() * mensajesCerca.length);
+  return mensajesCerca[indice];
+};
+
+const seleccionarMensajeVictoria = (): string => {
+  const indice = Math.floor(Math.random() * mensajesVictoria.length);
+  return mensajesVictoria[indice];
+};
 
 type GameStatus = 'SELECT_LEVEL' | 'PLAYING' | 'WON' | 'LOST';
 
@@ -78,6 +126,8 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
   const [hints, setHints] = useState<string[]>([]);
   const [showPandaChat, setShowPandaChat] = useState(false);
   const [pandaMessage, setPandaMessage] = useState<string>('');
+  const [cobiDetectiveMessage, setCobiDetectiveMessage] = useState<string>(''); // Mensaje del detective
+  const [cobiDetectiveAvatar, setCobiDetectiveAvatar] = useState<string>('/data/images/cobi-detective.webp'); // Avatar del detective
   const [userQuestion, setUserQuestion] = useState<string>('');
   const [isLoadingPanda, setIsLoadingPanda] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
@@ -103,6 +153,10 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
     setCurrentGuess('');
     setMessage('');
     setShowHint(false);
+    // Seleccionar mensaje aleatorio del detective cuando comienza el juego
+    setCobiDetectiveMessage(seleccionarMensajeDetectiveRandom());
+    // Reiniciar avatar al estado base
+    setCobiDetectiveAvatar('/data/images/cobi-detective.webp');
 
     const word = await getWordOfDay(level, date);
     if (word && word.length > 0 && word.length >= 3 && word.length <= 6) {
@@ -113,6 +167,34 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
       setMessage('Error loading word');
     }
   }, []);
+
+  // Get letter status for a specific guess position with proper duplicate handling
+  const getLetterStatusInGuess = useCallback((guess: string, position: number) => {
+    const letter = guess[position];
+    
+    // First check: exact match
+    if (letter === secretWord[position]) return 'correct';
+    
+    // Count occurrences in secret word and guess
+    const letterCountInSecret = secretWord.split('').filter(l => l === letter).length;
+    const lettersBeforeCorrect = guess.slice(0, position)
+      .split('')
+      .filter((l, idx) => l === letter && l === secretWord[idx])
+      .length;
+    const lettersBeforePresent = guess.slice(0, position)
+      .split('')
+      .filter((l, idx) => l === letter && l !== secretWord[idx] && secretWord.includes(letter))
+      .length;
+    
+    const totalLettersBefore = lettersBeforeCorrect + lettersBeforePresent;
+    
+    // Check if this letter instance should be yellow
+    if (secretWord.includes(letter) && totalLettersBefore < letterCountInSecret) {
+      return 'present';
+    }
+    
+    return 'absent';
+  }, [secretWord]);
 
   // Handle keyboard input - only from physical keyboard, not from input
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
@@ -184,23 +266,50 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
         setHints(newHints);
       });
 
+      // Analizar el resultado del intento para cambiar avatar y mensaje
+      const analyzeGuessResult = () => {
+        let hasCorrect = false;
+        let hasPresent = false;
+        
+        for (let i = 0; i < lastGuess.length; i++) {
+          const status = getLetterStatusInGuess(lastGuess, i);
+          if (status === 'correct') hasCorrect = true;
+          if (status === 'present') hasPresent = true;
+        }
+        
+        // Todas grises (sin coincidencias)
+        if (!hasCorrect && !hasPresent) {
+          setCobiDetectiveAvatar('/data/images/cobi-detective-fallo.webp');
+          setCobiDetectiveMessage(seleccionarMensajeSinCoincidencias());
+        }
+        // Algunas letras coinciden (cerca)
+        else {
+          setCobiDetectiveAvatar('/data/images/cobi-detective.webp');
+          setCobiDetectiveMessage(seleccionarMensajeCerca());
+        }
+      };
+
       // Check win/loss conditions
       if (lastGuess === secretWord) {
         setStatus('WON');
         setMessage(`¡Ganaste! La palabra es ${secretWord}`);
         playSound('win');
         setIsAnimating(false);
+        // Victoria: cambiar a avatar de acierto
+        setCobiDetectiveAvatar('/data/images/cobi-detective-acierto.webp');
+        setCobiDetectiveMessage(seleccionarMensajeVictoria());
       } else if (newGuesses.length >= MAX_GUESSES) {
         setStatus('LOST');
         setMessage(`¡Game over! La palabra era ${secretWord}`);
         playSound('lose');
         setIsAnimating(false);
       } else {
+        analyzeGuessResult();
         playSound('absent');
         setIsAnimating(false);
       }
     }, totalDelay);
-  }, [currentGuess, secretWord, guesses, wordLength, MAX_GUESSES, difficulty, isAnimating]);
+  }, [currentGuess, secretWord, guesses, wordLength, MAX_GUESSES, difficulty, isAnimating, getLetterStatusInGuess]);
 
   // Ask Panda for help
   const askPanda = async () => {
@@ -235,34 +344,6 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
       setIsLoadingPanda(false);
     }
   };
-
-  // Get letter status for a specific guess position with proper duplicate handling
-  const getLetterStatusInGuess = useCallback((guess: string, position: number) => {
-    const letter = guess[position];
-    
-    // First check: exact match
-    if (letter === secretWord[position]) return 'correct';
-    
-    // Count occurrences in secret word and guess
-    const letterCountInSecret = secretWord.split('').filter(l => l === letter).length;
-    const lettersBeforeCorrect = guess.slice(0, position)
-      .split('')
-      .filter((l, idx) => l === letter && l === secretWord[idx])
-      .length;
-    const lettersBeforePresent = guess.slice(0, position)
-      .split('')
-      .filter((l, idx) => l === letter && l !== secretWord[idx] && secretWord.includes(letter))
-      .length;
-    
-    const totalLettersBefore = lettersBeforeCorrect + lettersBeforePresent;
-    
-    // Check if this letter instance should be yellow
-    if (secretWord.includes(letter) && totalLettersBefore < letterCountInSecret) {
-      return 'present';
-    }
-    
-    return 'absent';
-  }, [secretWord]);
 
   // Get letter status (Wordle logic) - kept for backward compatibility with getKeyColor
   const getLetterStatus = useCallback((letter: string, position: number) => {
@@ -381,15 +462,6 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
         </div>
 
         <div className="flex gap-2">
-          {/* Panda AI Button */}
-          <button
-            onClick={() => setShowPandaChat(!showPandaChat)}
-            className="p-2 bg-green-100 text-green-600 rounded-lg hover:bg-green-200 transition"
-            title="Pregunta al Panda 🐾"
-          >
-            <MessageCircle size={20} />
-          </button>
-
           {/* Hint Button */}
           <button
             onClick={() => setShowHint(!showHint)}
@@ -836,6 +908,34 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
           <RotateCcw size={20} />
           Jugar de Nuevo
         </button>
+      )}
+      
+      {/* Cobi Detective (durante el juego, victoria y derrota en desktop) */}
+      {(status === 'PLAYING' || status === 'WON' || status === 'LOST') && (
+        <div className="hidden lg:block fixed bottom-0 right-0 z-50 pointer-events-none overflow-visible">
+          <div className="relative animate-float">
+            {/* Bocadillo de diálogo con mensaje aleatorio */}
+            <div style={{ position: 'absolute', left: '-200px', bottom: '80px', zIndex: 5, maxWidth: '220px' }} className="bg-white/95 backdrop-blur-sm rounded-2xl px-4 py-2 shadow-lg border-2 border-gray-200 pointer-events-auto">
+              <p className="text-gray-700 font-semibold text-sm text-center leading-snug">
+                {cobiDetectiveMessage || "🔍 ¡Investiguemos juntos! 🐾"}
+              </p>
+              {/* Pico del bocadillo apuntando hacia Cobi */}
+              <div className="absolute top-1/2 -translate-y-1/2 -right-3 w-4 h-4 bg-white border-r-2 border-b-2 border-gray-200 transform rotate-[315deg]"></div>
+            </div>
+            
+            {/* Imagen de Cobi Detective - dinámica según resultado */}
+            <div className="relative -mb-16 -mr-8" style={{ zIndex: 10 }}>
+              <img 
+                src={cobiDetectiveAvatar}
+                alt="Cobi Detective" 
+                className="w-56 h-auto object-contain transition-opacity duration-300"
+                style={{
+                  filter: 'drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15)) drop-shadow(0 0 20px rgba(0, 0, 0, 0.08))'
+                }}
+              />
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
