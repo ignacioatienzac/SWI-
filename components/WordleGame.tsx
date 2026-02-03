@@ -202,6 +202,12 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
 
   // Handle keyboard input - only from physical keyboard, not from input
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
+    // Ignore keyboard input if user is typing in an input field or textarea
+    const target = e.target as HTMLElement;
+    if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') {
+      return;
+    }
+    
     if (status !== 'PLAYING' || isAnimating) return;
 
     const key = e.key.toUpperCase();

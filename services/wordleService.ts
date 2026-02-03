@@ -11,8 +11,7 @@ export const loadDictionary = async (wordLength: 3 | 4 | 5 | 6): Promise<string[
   }
 
   try {
-    const base = import.meta.env.BASE_URL || '/';
-    const response = await fetch(`${base}data/${wordLength.toString().padStart(2, '0')}.json`);
+    const response = await fetch(`./data/${wordLength.toString().padStart(2, '0')}.json`);
     if (!response.ok) throw new Error(`Failed to load dictionary for ${wordLength} letters`);
     
     const data = await response.json();
@@ -38,9 +37,11 @@ export const loadHints = async (difficulty: string): Promise<{ [word: string]: s
   }
 
   try {
-    const base = import.meta.env.BASE_URL || '/';
-    const response = await fetch(`${base}data/pistas-${difficulty}.json`);
-    if (!response.ok) throw new Error(`Failed to load hints for difficulty ${difficulty}`);
+    const response = await fetch(`./data/pistas-${difficulty}.json`);
+    if (!response.ok) {
+      console.warn(`No hints file found for difficulty ${difficulty}`);
+      return {};
+    }
     
     const data = await response.json();
     const hintArray = Array.isArray(data) ? data : [];
