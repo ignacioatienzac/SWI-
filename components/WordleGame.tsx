@@ -303,6 +303,9 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
         setMessage(`¡Game over! La palabra era ${secretWord}`);
         playSound('lose');
         setIsAnimating(false);
+        // Derrota: cambiar a avatar de fallo
+        setCobiDetectiveAvatar('/data/images/cobi-detective-fallo.webp');
+        setCobiDetectiveMessage(seleccionarMensajeSinCoincidencias());
       } else {
         analyzeGuessResult();
         playSound('absent');
