@@ -1,5 +1,22 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { ChevronLeft, Play, RotateCcw, Lightbulb, Check, X, Clock, Hammer } from 'lucide-react';
+import { ChevronLeft, Play, RotateCcw, Lightbulb, Check, X, Clock, Hammer, Send } from 'lucide-react';
+import { hablarConPanda } from '../services/geminiService';
+
+// Mensajes aleatorios para el bocadillo de Cobi en el menú
+const mensajesMenuCobi = [
+  "🏗️ ¡Listo para construir frases perfectas! 🐾",
+  "✨ Las palabras son como ladrillos, ¡colócalas bien! 🐾",
+  "🎯 ¿Práctica, contrarreloj o vidas? ¡Tú eliges! 🐾",
+  "🧱 Cada frase correcta suma puntos. ¡Vamos! 🐾",
+  "💪 ¡El orden de las palabras es importante! 🐾",
+  "📚 Empieza fácil y aumenta la dificultad. 🐾",
+  "🎨 ¡Construyamos juntos oraciones increíbles! 🐾"
+];
+
+const seleccionarMensajeMenuRandom = (): string => {
+  const indice = Math.floor(Math.random() * mensajesMenuCobi.length);
+  return mensajesMenuCobi[indice];
+};
 
 interface PhraseBuilderGameProps {
   onBack: () => void;
@@ -25,9 +42,9 @@ interface Phrase {
 
 const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack }) => {
   // Configuration
-  const [selectedLevel, setSelectedLevel] = useState<Level>('A1');
-  const [selectedDifficulty, setSelectedDifficulty] = useState<Difficulty>('easy');
-  const [selectedMode, setSelectedMode] = useState<GameMode>('practice');
+  const [selectedLevel, setSelectedLevel] = useState<Level | null>(null);
+  const [selectedDifficulty, setSelectedDifficulty] = useState<Difficulty | null>(null);
+  const [selectedMode, setSelectedMode] = useState<GameMode | null>(null);
   
   // Game state
   const [gameState, setGameState] = useState<GameState>('MENU');
@@ -47,6 +64,51 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack }) => {
   const [wordColors, setWordColors] = useState<string[]>([]);
   const [showInstructions, setShowInstructions] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
+  
+  // Cobi Avatar states
+  const [cobiImage, setCobiImage] = useState('/data/images/Avatar-construction.webp');
+  const [cobiMessage, setCobiMessage] = useState('');
+  const [cobiMenuMessage, setCobiMenuMessage] = useState(''); // Mensaje del menú
+  const [showChatWindow, setShowChatWindow] = useState(false);
+  const [chatInput, setChatInput] = useState('');
+  const [chatHistory, setChatHistory] = useState<Array<{role: 'user' | 'cobi', text: string}>>([]);
+  const [isLoadingResponse, setIsLoadingResponse] = useState(false);
+  const [showButtonPulse, setShowButtonPulse] = useState(false);
+  const cobiTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const aiPromptTimerRef = useRef<NodeJS.Timeout | null>(null);
+  
+  // Cobi avatar image URLs - centralized for easy scalability
+  const COBI_AVATARS = {
+    construction: {
+      base: '/data/images/Avatar-construction.webp',
+      success: '/data/images/Avatar-construction-correcto.webp',
+      error: '/data/images/Avatar-construction-fallo.webp'
+    },
+    // Future avatars can be added here:
+    // detective: { base: '...', success: '...', error: '...' },
+    // sensei: { base: '...', success: '...', error: '...' }
+  };
+  
+  // Preload utility function
+  const preloadCobiAvatars = (avatarUrls: string[]) => {
+    avatarUrls.forEach((url) => {
+      const img = new Image();
+      img.src = url;
+    });
+  };
+  
+  // Preload all Cobi avatars on mount
+  useEffect(() => {
+    const allAvatarUrls = Object.values(COBI_AVATARS).flatMap(avatar => 
+      Object.values(avatar)
+    );
+    preloadCobiAvatars(allAvatarUrls);
+  }, []);
+  
+  // Seleccionar mensaje aleatorio para el menú
+  useEffect(() => {
+    setCobiMenuMessage(seleccionarMensajeMenuRandom());
+  }, []);
   
   // Audio
   const audioCtxRef = useRef<AudioContext | null>(null);
@@ -79,9 +141,136 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack }) => {
   };
   const playPlace = () => playTone(440, 0.06, 'triangle');
 
+  // Cobi messages by type
+  const cobiMessages = {
+    start: [
+      "¡Patitas a la obra! 🐾",
+      "¡Los materiales están listos! 👷‍♂️",
+      "¡Hola, constructor! ¿Empezamos? 🏗️"
+    ],
+    success: [
+      "¡Ha encajado a la perfección! ¡Eres un crack! ✨",
+      "Esta frase es tan fuerte como una roca. 🐾",
+      "¡Impresionante! Tienes madera de gran arquitecto del español."
+    ],
+    error: [
+      "¡Mmmmpf! Creo que esa pieza no iba ahí... 👷‍♂️",
+      "¡Cuidado! Si ponemos las palabras así, la estructura se cae. 🐾",
+      "¡Ups! Se me ha resbalado el casco del susto. ¡Inténtalo otra vez! ✨"
+    ],
+    aiPrompt: [
+      "¿Te has quedado sin cemento? ¡Pregúntame y te doy una pista! 🐾",
+      "Si el plano está muy difícil, ¡haz clic en mi chat y lo resolvemos juntos! ✨",
+      "¡No te atasques! Yo tengo los planos secretos... ¡pídeme ayuda! 👷‍♂️"
+    ]
+  };
+
+  const getRandomMessage = (type: 'start' | 'success' | 'error' | 'aiPrompt') => {
+    const messages = cobiMessages[type];
+    return messages[Math.floor(Math.random() * messages.length)];
+  };
+
+  // Cobi Avatar reaction
+  const changeCobiState = (state: 'base' | 'success' | 'error' | 'start') => {
+    // Clear any existing timers
+    if (cobiTimerRef.current) {
+      clearTimeout(cobiTimerRef.current);
+    }
+    if (aiPromptTimerRef.current) {
+      clearTimeout(aiPromptTimerRef.current);
+    }
+
+    // Change image and message based on state (synchronized in same state update)
+    if (state === 'success') {
+      // Synchronize image and message update
+      const message = getRandomMessage('success');
+      setCobiImage(COBI_AVATARS.construction.success);
+      setCobiMessage(message);
+    } else if (state === 'error') {
+      // Synchronize image and message update
+      const message = getRandomMessage('error');
+      setCobiImage(COBI_AVATARS.construction.error);
+      setCobiMessage(message);
+    } else if (state === 'start') {
+      const message = getRandomMessage('start');
+      setCobiImage(COBI_AVATARS.construction.base);
+      setCobiMessage(message);
+      // Set timer for AI prompt after 15 seconds of inactivity
+      aiPromptTimerRef.current = setTimeout(() => {
+        setCobiMessage(getRandomMessage('aiPrompt'));
+      }, 15000);
+      return;
+    } else {
+      const message = getRandomMessage('start');
+      setCobiImage(COBI_AVATARS.construction.base);
+      setCobiMessage(message);
+      return;
+    }
+
+    // Return to start state after 3 seconds
+    cobiTimerRef.current = setTimeout(() => {
+      const message = getRandomMessage('start');
+      setCobiImage(COBI_AVATARS.construction.base);
+      setCobiMessage(message);
+      // Restart AI prompt timer
+      aiPromptTimerRef.current = setTimeout(() => {
+        setCobiMessage(getRandomMessage('aiPrompt'));
+      }, 15000);
+    }, 3000);
+  };
+
+  // Send message to Cobi
+  const sendMessageToCobi = async () => {
+    if (!chatInput.trim() || isLoadingResponse) return;
+
+    const userMessage = chatInput.trim();
+    setChatInput('');
+    
+    // Add user message to history
+    setChatHistory(prev => [...prev, { role: 'user', text: userMessage }]);
+    setIsLoadingResponse(true);
+
+    try {
+      // Prepare context
+      const currentPhrase = phrases[currentPhraseIndex];
+      const contextoJuego = {
+        juego: 'Constructor de Frases',
+        nivel: selectedLevel,
+        dificultad: selectedDifficulty,
+        modo: selectedMode,
+        frase_objetivo: currentPhrase.frase_objetivo,
+        palabras_disponibles: availableWords,
+        palabras_seleccionadas: selectedWords,
+        intentos_fallidos: selectedMode === 'lives' ? (3 - lives) : 0,
+        racha: streak,
+        pistas: currentPhrase.pistas
+      };
+
+      // Call Cobi AI
+      const response = await hablarConPanda(
+        userMessage,
+        'Constructor de Frases - Maestro Arquitecto',
+        contextoJuego
+      );
+
+      // Add Cobi response to history
+      setChatHistory(prev => [...prev, { role: 'cobi', text: response }]);
+    } catch (error) {
+      console.error('Error al comunicarse con Cobi:', error);
+      setChatHistory(prev => [
+        ...prev,
+        { role: 'cobi', text: '¡Ups! Parece que se me cayó el casco y perdí la conexión. ¿Puedes intentarlo otra vez? 🐾' }
+      ]);
+    } finally {
+      setIsLoadingResponse(false);
+    }
+  };
+
   // Load phrases
   useEffect(() => {
     const loadPhrases = async () => {
+      if (!selectedLevel) return; // No cargar si no hay nivel seleccionado
+      
       try {
         const response = await fetch(`/data/frases-${selectedLevel.toLowerCase()}.json`);
         if (response.ok) {
@@ -123,6 +312,19 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack }) => {
       return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
     }
   }, [gameState, selectedMode]);
+
+  // Cleanup Cobi timers on unmount
+  useEffect(() => {
+    return () => {
+      if (cobiTimerRef.current) {
+        clearTimeout(cobiTimerRef.current);
+      }
+      if (aiPromptTimerRef.current) {
+        clearTimeout(aiPromptTimerRef.current);
+      }
+    };
+  }, []);
+
   // Shuffle array helper
   const shuffleArray = <T,>(array: T[]): T[] => {
     const shuffled = [...array];
@@ -175,9 +377,9 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack }) => {
       else if (word === '?' || word === '!') {
         processedWords.push(word);
       }
-      // Skip commas at the end (treated like periods)
+      // Keep commas as separate blocks
       else if (word === ',') {
-        continue;
+        processedWords.push(word);
       }
       // Regular words
       else {
@@ -198,6 +400,7 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack }) => {
     setFeedback(null);
     setShowColorHints(false);
     setWordColors([]);
+    changeCobiState('start'); // Reset Cobi to start state for new phrase
   };
 
   // Select a word from available
@@ -277,8 +480,8 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack }) => {
     const currentPhrase = phrases[currentPhraseIndex];
     const normalize = (str: string) => str.toLowerCase().replace(/[.,]/g, '').replace(/\s+/g, ' ').trim();
     
-    // Get the correct answer (target phrase without punctuation)
-    const correctWords = currentPhrase.frase_objetivo.match(/[\w\u00C0-\u024F]+|[!?¡¿]/g) || [];
+    // Get the correct answer (including commas as separate blocks, excluding periods)
+    const correctWords = currentPhrase.frase_objetivo.match(/[\w\u00C0-\u024F]+|[,!?¡¿]/g)?.filter(w => w !== '.') || [];
     const normalizedCorrectWords = correctWords.map(w => normalize(w));
     
     const colors: string[] = [];
@@ -339,6 +542,7 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack }) => {
     
     if (isCorrect) {
       playSuccess();
+      changeCobiState('success'); // Cobi reacciona con alegría
       const points = selectedDifficulty === 'hard' ? 20 : 10;
       const streakBonus = Math.min(streak * 2, 20);
       setScore(prev => prev + points + streakBonus);
@@ -358,10 +562,15 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack }) => {
       }, 1500);
     } else {
       playError();
+      changeCobiState('error'); // Cobi reacciona con ánimo
       setStreak(0);
       setFeedback({ type: 'error', message: 'Inténtalo de nuevo' });
       setShowColorHints(false);
       setWordColors([]);
+      
+      // Activate chat button pulse animation
+      setShowButtonPulse(true);
+      setTimeout(() => setShowButtonPulse(false), 3000);
       
       if (selectedMode === 'lives') {
         setLives(prev => {
@@ -417,19 +626,26 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack }) => {
                 📚 Nivel de Español
               </label>
               <div className="grid grid-cols-4 gap-3">
-                {(['A1', 'A2', 'B1', 'B2'] as Level[]).map(level => (
-                  <button
-                    key={level}
-                    onClick={() => setSelectedLevel(level)}
-                    className={`py-3 rounded-xl border-2 font-bold transition-all ${
-                      selectedLevel === level
-                        ? 'border-amber-500 bg-amber-500 text-white shadow-md'
-                        : 'border-gray-200 text-gray-600 hover:border-amber-300 hover:bg-amber-50'
-                    }`}
-                  >
-                    {level}
-                  </button>
-                ))}
+                {(['A1', 'A2', 'B1', 'B2'] as Level[]).map(level => {
+                  const isDisabled = level !== 'A1';
+                  return (
+                    <button
+                      key={level}
+                      onClick={() => !isDisabled && setSelectedLevel(level)}
+                      disabled={isDisabled}
+                      className={`py-3 rounded-xl border-2 font-bold transition-all ${
+                        selectedLevel === level
+                          ? 'border-amber-500 bg-amber-500 text-white shadow-md'
+                          : isDisabled
+                          ? 'border-gray-200 bg-gray-100 text-gray-400 cursor-not-allowed opacity-50'
+                          : 'border-gray-200 text-gray-600 hover:border-amber-300 hover:bg-amber-50'
+                      }`}
+                    >
+                      {level}
+                      {isDisabled && <span className="text-xs block">Próximamente</span>}
+                    </button>
+                  );
+                })}
               </div>
             </div>
 
@@ -444,6 +660,8 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack }) => {
                   className={`py-4 rounded-xl border-2 font-bold transition-all relative ${
                     selectedDifficulty === 'easy'
                       ? 'border-green-500 bg-green-500 text-white shadow-md'
+                      : selectedDifficulty === null
+                      ? 'border-gray-300 text-gray-700 hover:border-green-300 hover:bg-green-50'
                       : 'border-gray-200 text-gray-600 hover:border-green-300 hover:bg-green-50'
                   }`}
                 >
@@ -467,6 +685,8 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack }) => {
                   className={`py-4 rounded-xl border-2 font-bold transition-all relative ${
                     selectedDifficulty === 'hard'
                       ? 'border-red-500 bg-red-500 text-white shadow-md'
+                      : selectedDifficulty === null
+                      ? 'border-gray-300 text-gray-700 hover:border-red-300 hover:bg-red-50'
                       : 'border-gray-200 text-gray-600 hover:border-red-300 hover:bg-red-50'
                   }`}
                 >
@@ -499,6 +719,8 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack }) => {
                   className={`py-4 rounded-xl border-2 font-bold transition-all ${
                     selectedMode === 'practice'
                       ? 'border-amber-500 bg-amber-500 text-white shadow-md'
+                      : selectedMode === null
+                      ? 'border-gray-300 text-gray-700 hover:border-amber-300 hover:bg-amber-50'
                       : 'border-gray-200 text-gray-600 hover:border-amber-300 hover:bg-amber-50'
                   }`}
                 >
@@ -510,6 +732,8 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack }) => {
                   className={`py-4 rounded-xl border-2 font-bold transition-all ${
                     selectedMode === 'timed'
                       ? 'border-amber-500 bg-amber-500 text-white shadow-md'
+                      : selectedMode === null
+                      ? 'border-gray-300 text-gray-700 hover:border-amber-300 hover:bg-amber-50'
                       : 'border-gray-200 text-gray-600 hover:border-amber-300 hover:bg-amber-50'
                   }`}
                 >
@@ -521,6 +745,8 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack }) => {
                   className={`py-4 rounded-xl border-2 font-bold transition-all ${
                     selectedMode === 'lives'
                       ? 'border-amber-500 bg-amber-500 text-white shadow-md'
+                      : selectedMode === null
+                      ? 'border-gray-300 text-gray-700 hover:border-amber-300 hover:bg-amber-50'
                       : 'border-gray-200 text-gray-600 hover:border-amber-300 hover:bg-amber-50'
                   }`}
                 >
@@ -533,12 +759,38 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack }) => {
             {/* Start Button */}
             <button
               onClick={startGame}
-              disabled={phrases.length === 0}
+              disabled={phrases.length === 0 || !selectedLevel || !selectedDifficulty || !selectedMode}
               className="w-full py-4 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-black text-xl rounded-xl shadow-lg transition-all transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
             >
               <Play size={24} />
-              ¡Empezar a Construir!
+              {!selectedLevel || !selectedDifficulty || !selectedMode ? 'Elige todas las opciones' : '¡Empezar a Construir!'}
             </button>
+          </div>
+        </div>
+        
+        {/* Cobi Constructor en el menú (solo desktop) */}
+        <div className="hidden lg:block fixed bottom-0 right-0 z-50 pointer-events-none overflow-visible">
+          <div className="relative animate-float">
+            {/* Bocadillo de diálogo con mensaje aleatorio */}
+            <div style={{ position: 'absolute', left: '-200px', bottom: '80px', zIndex: 5, maxWidth: '220px' }} className="bg-white/95 backdrop-blur-sm rounded-2xl px-4 py-2 shadow-lg border-2 border-gray-200 pointer-events-auto">
+              <p className="text-gray-700 font-semibold text-sm text-center leading-snug">
+                {cobiMenuMessage || "🏗️ ¡Construyamos frases juntos! 🐾"}
+              </p>
+              {/* Pico del bocadillo apuntando hacia Cobi */}
+              <div className="absolute top-1/2 -translate-y-1/2 -right-3 w-4 h-4 bg-white border-r-2 border-b-2 border-gray-200 transform rotate-[315deg]"></div>
+            </div>
+            
+            {/* Imagen de Cobi Constructor pensando */}
+            <div className="relative -mb-16 -mr-8" style={{ zIndex: 10 }}>
+              <img 
+                src="/data/images/cobi-constructor-pensando.webp"
+                alt="Cobi Constructor pensando" 
+                className="w-56 h-auto object-contain"
+                style={{
+                  filter: 'drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15)) drop-shadow(0 0 20px rgba(0, 0, 0, 0.08))'
+                }}
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -891,6 +1143,149 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack }) => {
           </button>
         </div>
       </div>
+
+      {/* Cobi Avatar - Asomándose desde la esquina inferior derecha */}
+      {gameState === 'PLAYING' && (
+        <>
+          <div className="hidden lg:block fixed bottom-0 right-0 z-40 pointer-events-none overflow-visible">
+            <div className="relative animate-float">
+              {/* Bocadillo de diálogo */}
+              {cobiMessage && !showChatWindow && (
+                <div className="absolute top-16 -left-48 bg-white/95 backdrop-blur-sm rounded-2xl px-4 py-3 shadow-lg border-2 border-gray-200 pointer-events-auto animate-fade-in">
+                  <p className="text-gray-700 font-semibold text-sm text-center leading-snug whitespace-pre-line max-w-[180px]">
+                    {cobiMessage}
+                  </p>
+                  {/* Pico del bocadillo */}
+                  <div className="absolute top-1/2 -translate-y-1/2 -right-3 w-4 h-4 bg-white border-r-2 border-b-2 border-gray-200 transform rotate-[315deg]"></div>
+                </div>
+              )}
+              
+              {/* Imagen del panda con sombra sutil */}
+              <div className="relative -mb-16 -mr-8">
+                {/* Hidden pre-rendered images for instant switching - no network delay */}
+                <div className="absolute inset-0" style={{ visibility: 'hidden', pointerEvents: 'none' }}>
+                  <img src={COBI_AVATARS.construction.base} alt="Preload base" />
+                  <img src={COBI_AVATARS.construction.success} alt="Preload success" />
+                  <img src={COBI_AVATARS.construction.error} alt="Preload error" />
+                </div>
+                
+                {/* Active avatar with smooth transition */}
+                <img
+                  src={cobiImage}
+                  alt="Cobi el Constructor"
+                  className="w-56 h-auto object-contain transition-opacity duration-300"
+                  style={{
+                    filter: 'drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15)) drop-shadow(0 0 20px rgba(0, 0, 0, 0.08))'
+                  }}
+                />
+              </div>
+
+              {/* Chat Button Wrapper - Moves with Cobi */}
+              <div className="chat-button-wrapper">
+                <div
+                  onClick={() => setShowChatWindow(!showChatWindow)}
+                  className={`cobi-chat-button ${
+                    showButtonPulse ? 'pulse-button' : ''
+                  }`}
+                >
+                  <svg viewBox="0 0 100 100" className="curved-text-svg">
+                    <path id="chatTextPath" d="M 20,50 A 30,30 0 1,1 80,50" fill="none" />
+                    <text>
+                      <textPath href="#chatTextPath" startOffset="50%" textAnchor="middle" className="curved-text-style">
+                        CHATEAR
+                      </textPath>
+                    </text>
+                  </svg>
+                  <div className="paws-icon">🐾</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Chat Window */}
+          {showChatWindow && (
+            <div className="fixed bottom-24 right-6 lg:bottom-48 lg:right-6 z-50 w-80 max-w-[calc(100vw-3rem)] bg-white rounded-3xl shadow-2xl border-2 border-gray-200 overflow-hidden animate-fade-in">
+              {/* Header */}
+              <div className="bg-gradient-to-r from-amber-400 to-orange-500 p-4 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="text-2xl">🐾</span>
+                  <div>
+                    <h3 className="text-white font-bold text-sm">Cobi el Constructor</h3>
+                    <p className="text-white/80 text-xs">Tu asistente arquitecto</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setShowChatWindow(false)}
+                  className="p-1 hover:bg-white/20 rounded-full transition"
+                >
+                  <X size={20} className="text-white" />
+                </button>
+              </div>
+
+              {/* Chat History */}
+              <div className="h-64 overflow-y-auto p-4 space-y-3 bg-gradient-to-b from-amber-50/30 to-white">
+                {chatHistory.length === 0 ? (
+                  <div className="text-center text-gray-500 text-sm mt-8">
+                    <p className="mb-2">👷‍♂️</p>
+                    <p>¡Hola! Soy Cobi, tu arquitecto personal.</p>
+                    <p className="text-xs mt-2">Pregúntame lo que necesites sobre esta frase.</p>
+                  </div>
+                ) : (
+                  chatHistory.map((msg, idx) => (
+                    <div
+                      key={idx}
+                      className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                    >
+                      <div
+                        className={`max-w-[80%] rounded-2xl px-4 py-2 ${
+                          msg.role === 'user'
+                            ? 'bg-gradient-to-br from-blue-500 to-blue-600 text-white'
+                            : 'bg-white border-2 border-amber-200 text-gray-700'
+                        }`}
+                      >
+                        <p className="text-sm whitespace-pre-wrap">{msg.text}</p>
+                      </div>
+                    </div>
+                  ))
+                )}
+                
+                {/* Loading state */}
+                {isLoadingResponse && (
+                  <div className="flex justify-start">
+                    <div className="bg-white border-2 border-amber-200 rounded-2xl px-4 py-3">
+                      <p className="text-sm text-gray-600">
+                        El Panda está revisando los planos... 🐾
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Input Area */}
+              <div className="p-3 bg-white border-t-2 border-gray-100">
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={chatInput}
+                    onChange={(e) => setChatInput(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && sendMessageToCobi()}
+                    placeholder="Escribe tu pregunta..."
+                    disabled={isLoadingResponse}
+                    className="flex-1 px-4 py-2 border-2 border-gray-200 rounded-full focus:outline-none focus:border-amber-400 transition text-sm disabled:bg-gray-100"
+                  />
+                  <button
+                    onClick={sendMessageToCobi}
+                    disabled={isLoadingResponse || !chatInput.trim()}
+                    className="w-10 h-10 bg-gradient-to-br from-amber-400 to-orange-500 rounded-full flex items-center justify-center hover:shadow-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <Send size={18} className="text-white" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+        </>
+      )}
     </div>
   );
 };

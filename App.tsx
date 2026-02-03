@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import Games from './components/Games';
@@ -8,15 +8,35 @@ import SocialMedia from './components/SocialMedia';
 import { View } from './types';
 
 const App: React.FC = () => {
-  const [currentView, setCurrentView] = useState<View>(View.HOME);
-  const [activeGameId, setActiveGameId] = useState<string | null>(null);
+  // Cargar estado desde localStorage al iniciar
+  const [currentView, setCurrentView] = useState<View>(() => {
+    const savedView = localStorage.getItem('currentView');
+    return (savedView as View) || View.HOME;
+  });
+  
+  const [activeGameId, setActiveGameId] = useState<string | null>(() => {
+    const savedGame = localStorage.getItem('activeGameId');
+    return savedGame || null;
+  });
+
+  // Guardar estado en localStorage cuando cambie
+  useEffect(() => {
+    localStorage.setItem('currentView', currentView);
+  }, [currentView]);
+
+  useEffect(() => {
+    if (activeGameId) {
+      localStorage.setItem('activeGameId', activeGameId);
+    } else {
+      localStorage.removeItem('activeGameId');
+    }
+  }, [activeGameId]);
 
   const handleViewChange = (view: View) => {
     setCurrentView(view);
-    // Reset active game when changing views (e.g. clicking Home in header)
-    if (view !== View.GAMES) {
-      setActiveGameId(null);
-    }
+    // Reset active game when changing views (e.g. clicking buttons in header)
+    // Esto limpia el estado del juego al hacer clic en los botones de la cabecera
+    setActiveGameId(null);
   };
 
   const renderContent = () => {

@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { RotateCcw, Calendar, Lightbulb, ChevronLeft, ChevronRight } from 'lucide-react';
+import { RotateCcw, Calendar, Lightbulb, ChevronLeft, ChevronRight, MessageCircle, X } from 'lucide-react';
 import { getWordOfDay } from '../services/vocabularyService';
 import { isValidWord, getHintsForAttempt } from '../services/wordleService';
+import { hablarConPanda } from '../services/geminiService';
 
 type GameStatus = 'SELECT_LEVEL' | 'PLAYING' | 'WON' | 'LOST';
 
@@ -75,7 +76,12 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
   const [showHint, setShowHint] = useState(false);
   const [displayMonth, setDisplayMonth] = useState<Date>(new Date());
   const [hints, setHints] = useState<string[]>([]);
-  const [activeFlipRow, setActiveFlipRow] = useState<number | null>(null);
+  const [showPandaChat, setShowPandaChat] = useState(false);
+  const [pandaMessage, setPandaMessage] = useState<string>('');
+  const [userQuestion, setUserQuestion] = useState<string>('');
+  const [isLoadingPanda, setIsLoadingPanda] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [revealingGuess, setRevealingGuess] = useState<string | null>(null);
 
   const DIFFICULTIES = [
     { value: 'a1', label: 'A1 - Principiante' },
@@ -110,7 +116,7 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
 
   // Handle keyboard input - only from physical keyboard, not from input
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
-    if (status !== 'PLAYING') return;
+    if (status !== 'PLAYING' || isAnimating) return;
 
     const key = e.key.toUpperCase();
     
@@ -127,7 +133,7 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
       e.preventDefault();
       submitGuess();
     }
-  }, [status, currentGuess, wordLength]);
+  }, [status, currentGuess, wordLength, isAnimating]);
 
   useEffect(() => {
     window.addEventListener('keydown', handleKeyDown);
@@ -142,6 +148,8 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
       return;
     }
 
+    if (isAnimating) return; // Prevent multiple submissions during animation
+
     // Validate if word exists in dictionary
     const isValid = await isValidWord(currentGuess, wordLength);
     if (!isValid) {
@@ -150,41 +158,83 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
       return;
     }
 
-    const newGuesses = [...guesses, currentGuess];
-    const lastGuess = currentGuess; // Store current guess before clearing
-    setGuesses(newGuesses);
-
-    // Update hints based on attempt number (using newGuesses.length so hints show for NEXT attempt)
-    const newHints = await getHintsForAttempt(secretWord, newGuesses.length, difficulty);
-    setHints(newHints);
-
-    // Trigger staggered flip animation for the newly submitted row
-    const rowIndex = newGuesses.length - 1;
-    setActiveFlipRow(rowIndex);
+    // Block input during animation
+    setIsAnimating(true);
+    
+    const lastGuess = currentGuess;
+    
+    // Set the revealing guess to show it in the grid without colors yet
+    setRevealingGuess(lastGuess);
     setCurrentGuess('');
+    setMessage(''); // Clear any previous messages
 
-    // Delay win/loss evaluation until animation finishes (stagger per letter)
-    const delayPerLetter = 150; // ms
-    const totalDelay = (wordLength * delayPerLetter) + 250;
+    // Calculate animation timing: 150ms delay per letter + 600ms animation duration
+    const delayPerLetter = 150;
+    const animationDuration = 600;
+    const totalDelay = (wordLength * delayPerLetter) + animationDuration;
 
+    // After animation completes, update the game state
     setTimeout(() => {
+      const newGuesses = [...guesses, lastGuess];
+      setGuesses(newGuesses);
+      setRevealingGuess(null);
+
+      // Update hints based on attempt number
+      getHintsForAttempt(secretWord, newGuesses.length, difficulty).then(newHints => {
+        setHints(newHints);
+      });
+
+      // Check win/loss conditions
       if (lastGuess === secretWord) {
         setStatus('WON');
         setMessage(`¡Ganaste! La palabra es ${secretWord}`);
         playSound('win');
+        setIsAnimating(false);
       } else if (newGuesses.length >= MAX_GUESSES) {
         setStatus('LOST');
         setMessage(`¡Game over! La palabra era ${secretWord}`);
         playSound('lose');
+        setIsAnimating(false);
       } else {
-        setMessage('');
         playSound('absent');
+        setIsAnimating(false);
       }
-
-      // Clear active flip row after animation
-      setActiveFlipRow(null);
     }, totalDelay);
-  }, [currentGuess, secretWord, guesses, wordLength, MAX_GUESSES, difficulty]);
+  }, [currentGuess, secretWord, guesses, wordLength, MAX_GUESSES, difficulty, isAnimating]);
+
+  // Ask Panda for help
+  const askPanda = async () => {
+    if (!userQuestion.trim()) {
+      setPandaMessage('🐾 ¡Hola! ¿En qué puedo ayudarte? Escribe tu pregunta arriba 🐾');
+      return;
+    }
+
+    setIsLoadingPanda(true);
+    try {
+      const contextInfo = {
+        nivel: difficulty.toUpperCase(),
+        palabra_secreta: secretWord,
+        letras: wordLength,
+        intentos_usados: guesses.length,
+        intentos_maximos: MAX_GUESSES,
+        intentos_previos: guesses
+      };
+
+      const response = await hablarConPanda(
+        userQuestion,
+        'Maestro del Wordle en Español',
+        contextInfo
+      );
+
+      setPandaMessage(response);
+      setUserQuestion('');
+    } catch (error) {
+      console.error('Error al consultar al Panda:', error);
+      setPandaMessage('🐾 ¡Ups! Parece que me quedé sin bambú... Intenta de nuevo en un momento 🐾');
+    } finally {
+      setIsLoadingPanda(false);
+    }
+  };
 
   // Get letter status for a specific guess position with proper duplicate handling
   const getLetterStatusInGuess = useCallback((guess: string, position: number) => {
@@ -331,6 +381,15 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
         </div>
 
         <div className="flex gap-2">
+          {/* Panda AI Button */}
+          <button
+            onClick={() => setShowPandaChat(!showPandaChat)}
+            className="p-2 bg-green-100 text-green-600 rounded-lg hover:bg-green-200 transition"
+            title="Pregunta al Panda 🐾"
+          >
+            <MessageCircle size={20} />
+          </button>
+
           {/* Hint Button */}
           <button
             onClick={() => setShowHint(!showHint)}
@@ -440,6 +499,59 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
         </div>
       )}
 
+      {/* Panda Chat Modal */}
+      {showPandaChat && (
+        <div className="mb-4 p-4 bg-gradient-to-br from-green-50 to-green-100 border-2 border-green-300 rounded-lg shadow-lg">
+          <div className="flex justify-between items-center mb-3">
+            <h3 className="text-lg font-bold text-green-800 flex items-center gap-2">
+              🐾 Pregunta al Panda
+            </h3>
+            <button
+              onClick={() => setShowPandaChat(false)}
+              className="p-1 hover:bg-green-200 rounded transition"
+            >
+              <X size={20} className="text-green-600" />
+            </button>
+          </div>
+
+          <div className="space-y-3">
+            <div className="p-3 bg-white rounded-lg border border-green-200">
+              <input
+                type="text"
+                value={userQuestion}
+                onChange={(e) => setUserQuestion(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && askPanda()}
+                placeholder="¿Necesitas ayuda? Pregúntame algo..."
+                className="w-full outline-none text-gray-700"
+                disabled={isLoadingPanda}
+              />
+            </div>
+
+            <button
+              onClick={askPanda}
+              disabled={isLoadingPanda}
+              className={`w-full py-2 rounded-lg font-semibold transition ${
+                isLoadingPanda
+                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                  : 'bg-green-600 text-white hover:bg-green-700'
+              }`}
+            >
+              {isLoadingPanda ? '🐾 Pensando...' : 'Enviar'}
+            </button>
+
+            {pandaMessage && (
+              <div className="p-4 bg-white rounded-lg border-2 border-green-300 text-gray-800 whitespace-pre-wrap">
+                {pandaMessage}
+              </div>
+            )}
+
+            <p className="text-xs text-green-700 italic">
+              💡 El Panda te dará pistas inteligentes, ¡nunca la respuesta directa!
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Word grid */}
       <style>{`
         @keyframes flipToCorrect {
@@ -515,28 +627,20 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
           gridTemplateColumns: `repeat(${wordLength}, 1fr)`,
           gap: '8px',
         }}>
+          {/* Render completed guesses */}
           {guesses.map((guess, guessIdx) => (
             guess.split('').map((letter, letterIdx) => {
               const status = getLetterStatusInGuess(guess, letterIdx);
-              const isFlipping = activeFlipRow === guessIdx;
-              const style: React.CSSProperties = isFlipping ? { animationDelay: `${letterIdx * 150}ms` } : {};
 
               return (
                 <div
                   key={`${guessIdx}-${letterIdx}`}
-                  style={style}
                   className={`w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center text-lg sm:text-xl font-bold rounded-lg ${
-                    isFlipping && status === 'correct'
-                      ? 'tile-flip-correct'
-                      : isFlipping && status === 'present'
-                      ? 'tile-flip-present'
-                      : isFlipping && status === 'absent'
-                      ? 'tile-flip-absent'
-                      : !isFlipping && status === 'correct'
+                    status === 'correct'
                       ? 'bg-green-500 text-white'
-                      : !isFlipping && status === 'present'
+                      : status === 'present'
                       ? 'bg-yellow-500 text-white'
-                      : !isFlipping && status === 'absent'
+                      : status === 'absent'
                       ? 'bg-gray-400 text-white'
                       : 'bg-white border-2 border-gray-300'
                   }`}
@@ -547,7 +651,32 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
             })
           ))}
 
-          {status === 'PLAYING' && currentGuess.split('').map((letter, idx) => (
+          {/* Render revealing guess (during animation) */}
+          {revealingGuess && revealingGuess.split('').map((letter, letterIdx) => {
+            const status = getLetterStatusInGuess(revealingGuess, letterIdx);
+            const style: React.CSSProperties = { animationDelay: `${letterIdx * 150}ms` };
+
+            return (
+              <div
+                key={`revealing-${letterIdx}`}
+                style={style}
+                className={`w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center text-lg sm:text-xl font-bold rounded-lg ${
+                  status === 'correct'
+                    ? 'tile-flip-correct'
+                    : status === 'present'
+                    ? 'tile-flip-present'
+                    : status === 'absent'
+                    ? 'tile-flip-absent'
+                    : 'bg-white border-2 border-gray-300'
+                }`}
+              >
+                {letter}
+              </div>
+            );
+          })}
+
+          {/* Render current guess (user typing) */}
+          {status === 'PLAYING' && !revealingGuess && currentGuess.split('').map((letter, idx) => (
             <div
               key={`current-${idx}`}
               className="w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center text-lg sm:text-xl font-bold rounded-lg bg-white border-2 border-gray-400 animate-pulse"
@@ -556,7 +685,8 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
             </div>
           ))}
 
-          {status === 'PLAYING' && Array.from({ length: wordLength - currentGuess.length }).map((_, idx) => (
+          {/* Render empty tiles */}
+          {status === 'PLAYING' && !revealingGuess && Array.from({ length: wordLength - currentGuess.length }).map((_, idx) => (
             <div
               key={`empty-${idx}`}
               className="w-12 h-12 sm:w-14 sm:h-14 rounded-lg bg-white border-2 border-gray-200"
@@ -611,7 +741,8 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
           </div>
           <button
             onClick={submitGuess}
-            className="px-6 py-2 bg-green-500 text-white font-bold rounded-lg hover:bg-green-600 transition whitespace-nowrap"
+            disabled={isAnimating}
+            className={`px-6 py-2 bg-green-500 text-white font-bold rounded-lg hover:bg-green-600 transition whitespace-nowrap ${isAnimating ? 'opacity-50 cursor-not-allowed' : ''}`}
           >
             Enviar
           </button>
@@ -626,13 +757,13 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
             <button
               key={key}
               onClick={() => {
-                if (currentGuess.length < wordLength) {
+                if (currentGuess.length < wordLength && !isAnimating) {
                   setCurrentGuess(prev => prev + key);
                   playSound('present');
                 }
               }}
               className={`w-8 h-12 sm:w-10 sm:h-12 flex items-center justify-center rounded font-bold text-base transition ${getKeyColor(key)}`}
-              disabled={status !== 'PLAYING'}
+              disabled={status !== 'PLAYING' || isAnimating}
             >
               {key}
             </button>
@@ -644,13 +775,13 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
             <button
               key={key}
               onClick={() => {
-                if (currentGuess.length < wordLength) {
+                if (currentGuess.length < wordLength && !isAnimating) {
                   setCurrentGuess(prev => prev + key);
                   playSound('present');
                 }
               }}
               className={`w-8 h-12 sm:w-10 sm:h-12 flex items-center justify-center rounded font-bold text-base transition ${getKeyColor(key)}`}
-              disabled={status !== 'PLAYING'}
+              disabled={status !== 'PLAYING' || isAnimating}
             >
               {key}
             </button>
@@ -660,12 +791,12 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
         <div className="flex gap-1 justify-center">
           <button
             onClick={() => {
-              if (currentGuess.length > 0 && currentGuess.length === wordLength) {
+              if (currentGuess.length > 0 && currentGuess.length === wordLength && !isAnimating) {
                 submitGuess();
               }
             }}
             className="w-12 h-12 sm:w-14 sm:h-12 flex items-center justify-center rounded font-bold text-base bg-blue-500 text-white hover:bg-blue-600 transition"
-            disabled={status !== 'PLAYING' || currentGuess.length !== wordLength}
+            disabled={status !== 'PLAYING' || currentGuess.length !== wordLength || isAnimating}
             title="Enviar"
           >
             ↑
@@ -674,21 +805,21 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
             <button
               key={key}
               onClick={() => {
-                if (currentGuess.length < wordLength) {
+                if (currentGuess.length < wordLength && !isAnimating) {
                   setCurrentGuess(prev => prev + key);
                   playSound('present');
                 }
               }}
               className={`w-8 h-12 sm:w-10 sm:h-12 flex items-center justify-center rounded font-bold text-base transition ${getKeyColor(key)}`}
-              disabled={status !== 'PLAYING'}
+              disabled={status !== 'PLAYING' || isAnimating}
             >
               {key}
             </button>
           ))}
           <button
-            onClick={() => setCurrentGuess(prev => prev.slice(0, -1))}
+            onClick={() => !isAnimating && setCurrentGuess(prev => prev.slice(0, -1))}
             className="w-12 h-12 sm:w-14 sm:h-12 flex items-center justify-center rounded font-bold text-base bg-red-500 text-white hover:bg-red-600 transition"
-            disabled={status !== 'PLAYING'}
+            disabled={status !== 'PLAYING' || isAnimating}
             title="Borrar"
           >
             ⌫

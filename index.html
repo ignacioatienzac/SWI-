@@ -4,6 +4,14 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Spanish with Ignacio</title>
+    
+    <!-- Preload critical Cobi avatars for instant display -->
+    <link rel="preload" href="/data/images/Avatar-construction.webp" as="image" type="image/webp">
+    <link rel="preload" href="/data/images/Avatar-construction-correcto.webp" as="image" type="image/webp">
+    <link rel="preload" href="/data/images/Avatar-construction-fallo.webp" as="image" type="image/webp">
+    <link rel="preload" href="/data/images/Avatar-pensando.webp" as="image" type="image/webp">
+    <link rel="preload" href="/data/images/cobi-constructor-pensando.webp" as="image" type="image/webp">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
     <script>
@@ -92,6 +100,129 @@
       
       .animate-float {
         animation: float 3s ease-in-out infinite;
+      }
+      
+      /* Chat Button Wrapper - Positioned relative to Cobi */
+      .chat-button-wrapper {
+        position: absolute;
+        top: -20px;
+        left: -10px;
+        z-index: 10;
+        pointer-events: auto;
+      }
+      
+      /* Circular Chat Button - Clean Design */
+      .cobi-chat-button {
+        width: 80px;
+        height: 80px;
+        background-color: #FF9F55;
+        border-radius: 50%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 0 0 3px rgba(255, 159, 85, 0.2);
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+      
+      .cobi-chat-button:hover {
+        transform: scale(1.1);
+        background-color: #E68A42;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15), 0 0 0 4px rgba(230, 138, 66, 0.3);
+      }
+      
+      .cobi-chat-button:active {
+        transform: scale(0.95);
+        background-color: #D67A32;
+      }
+      
+      /* SVG container for curved text */
+      .curved-text-svg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+      }
+      
+      /* Curved text style */
+      .curved-text-style {
+        font-family: 'Outfit', sans-serif;
+        font-size: 11px;
+        font-weight: 800;
+        fill: #FFF5E1;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+      }
+      
+      /* Paws emoji in center */
+      .paws-icon {
+        font-size: 28px;
+        margin-top: 12px;
+        line-height: 1;
+        pointer-events: none;
+      }
+      
+      /* Pulse animation when active */
+      .pulse-button {
+        animation: pulse-button 0.8s ease-in-out infinite !important;
+      }
+      
+      @keyframes pulse-button {
+        0%, 100% {
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 0 0 3px rgba(255, 159, 85, 0.2);
+        }
+        50% {
+          box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2), 0 0 0 6px rgba(255, 159, 85, 0.4);
+          transform: scale(1.08);
+        }
+      }
+      
+      /* Neutral Chat Button for Games Page - Top Right Position */
+      .chat-button-wrapper-games {
+        position: absolute;
+        top: -30px;
+        right: 20px;
+        z-index: 10;
+        pointer-events: auto;
+      }
+      
+      /* Neutral Circular Chat Button - Blue-Gray Design */
+      .cobi-chat-button-neutral {
+        width: 80px;
+        height: 80px;
+        background-color: #607D8B;
+        border-radius: 50%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 0 0 3px rgba(96, 125, 139, 0.2);
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+      
+      .cobi-chat-button-neutral:hover {
+        transform: scale(1.1);
+        background-color: #546E7A;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15), 0 0 0 4px rgba(84, 110, 122, 0.3);
+      }
+      
+      .cobi-chat-button-neutral:active {
+        transform: scale(0.95);
+        background-color: #455A64;
+      }
+      
+      /* Curved text style for neutral button */
+      .curved-text-style-neutral {
+        font-family: 'Outfit', sans-serif;
+        font-size: 11px;
+        font-weight: 800;
+        fill: #FFF5E1;
+        letter-spacing: 2px;
+        text-transform: uppercase;
       }
     </style>
 </head>

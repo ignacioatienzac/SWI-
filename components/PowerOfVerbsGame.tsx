@@ -171,44 +171,61 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
     setTimeout(() => playTone(220, 0.4, 'sawtooth'), 400);
   };
   
-  // Load images on mount
+  // State to track images loaded
+  const [imagesReady, setImagesReady] = useState(false);
+  
+  // Load images on mount - ensure they're fully loaded before game can start
   useEffect(() => {
     const baseUrl = import.meta.env.BASE_URL || '/';
     
-    // Load enemy images
-    for (let i = 1; i <= 6; i++) {
-      const img = new Image();
-      img.src = `${baseUrl}data/images/enemigo_${i}.png`;
-      enemyImagesRef.current.push(img);
-    }
+    // Clear any existing images
+    enemyImagesRef.current = [];
     
-    // Load boss image
-    const bossImg = new Image();
-    bossImg.src = `${baseUrl}data/images/Jefe.png`;
-    bossImageRef.current = bossImg;
+    // Create promises for loading images
+    const loadImage = (src: string): Promise<HTMLImageElement> => {
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.onerror = () => {
+          console.warn(`Failed to load image: ${src}`);
+          resolve(img); // Continue even if image fails
+        };
+        img.src = src;
+      });
+    };
     
-    // Load wizard image
-    const wizardImg = new Image();
-    wizardImg.src = `${baseUrl}data/images/Mago.png`;
-    wizardImageRef.current = wizardImg;
+    // Load all images
+    const loadAllImages = async () => {
+      // Load enemy images
+      const enemyPromises = [];
+      for (let i = 1; i <= 6; i++) {
+        enemyPromises.push(loadImage(`${baseUrl}data/images/enemigo_${i}.png`));
+      }
+      
+      // Load boss and wizard
+      const bossPromise = loadImage(`${baseUrl}data/images/Jefe.png`);
+      const wizardPromise = loadImage(`${baseUrl}data/images/Mago.png`);
+      
+      try {
+        const [enemyImages, bossImg, wizardImg] = await Promise.all([
+          Promise.all(enemyPromises),
+          bossPromise,
+          wizardPromise
+        ]);
+        
+        enemyImagesRef.current = enemyImages;
+        bossImageRef.current = bossImg;
+        wizardImageRef.current = wizardImg;
+        imagesLoadedRef.current = true;
+        setImagesReady(true);
+      } catch (error) {
+        console.error('Error loading images:', error);
+        imagesLoadedRef.current = true;
+        setImagesReady(true);
+      }
+    };
     
-    // Wait for all images to load
-    Promise.all([
-      ...enemyImagesRef.current.map(img => new Promise(resolve => {
-        img.onload = resolve;
-        img.onerror = resolve; // Continue even if image fails
-      })),
-      new Promise(resolve => {
-        bossImg.onload = resolve;
-        bossImg.onerror = resolve;
-      }),
-      new Promise(resolve => {
-        wizardImg.onload = resolve;
-        wizardImg.onerror = resolve;
-      })
-    ]).then(() => {
-      imagesLoadedRef.current = true;
-    });
+    loadAllImages();
   }, []);
   
   // --- DYNAMIC DATA HELPERS ---
@@ -231,6 +248,12 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
   const handleStartGame = async () => {
     if (!selectedTense || !selectedVerbType || !selectedMode || !selectedDifficulty || !selectedBattleMode) return;
     
+    // Wait for images to be loaded before starting
+    if (!imagesReady) {
+      setFeedbackMsg({ text: 'Cargando imágenes...', type: '' });
+      return;
+    }
+    
     const pool = await getFilteredVerbs(selectedGrammar, selectedTense, selectedVerbType);
     if (pool.length === 0) {
       setFeedbackMsg({ text: 'No hay verbos disponibles para esta configuración.', type: 'error' });
@@ -244,7 +267,21 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
     monstersRef.current = [];
     projectilesRef.current = [];
     bossRef.current = null;
+    
+    // Initialize hero position based on expected canvas size
+    // This ensures first projectile shoots from correct position
+    const expectedCanvasHeight = 300;
+    const groundY = expectedCanvasHeight - 40;
+    const wizardSize = Math.floor((expectedCanvasHeight - 40) * 0.15);
+    heroRef.current.y = groundY - wizardSize + 5;
+    heroRef.current.width = wizardSize;
+    heroRef.current.height = wizardSize;
+    
+    // Reset timing refs to prevent immediate spawn/shot
+    lastSpawnRef.current = performance.now();
+    lastShotRef.current = performance.now();
     gameStartTimeRef.current = performance.now();
+    
     setGameState('PLAYING');
     pickNewVerb(pool);
   };
