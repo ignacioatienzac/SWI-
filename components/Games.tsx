@@ -48,7 +48,7 @@ const Games: React.FC<GamesProps> = ({ activeGameId, setActiveGameId }) => {
   const [mensajeCobi, setMensajeCobi] = useState<string>('');
   
   // Avatar URL for Games page
-  const COBI_AVATAR_LOBBY = '/data/images/Avatar-pensando.webp';
+  const COBI_AVATAR_LOBBY = './data/images/Avatar-pensando.webp';
 
   // Preload lobby avatar on mount
   useEffect(() => {

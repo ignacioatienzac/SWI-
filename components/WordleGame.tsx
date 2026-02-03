@@ -127,7 +127,7 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
   const [showPandaChat, setShowPandaChat] = useState(false);
   const [pandaMessage, setPandaMessage] = useState<string>('');
   const [cobiDetectiveMessage, setCobiDetectiveMessage] = useState<string>(''); // Mensaje del detective
-  const [cobiDetectiveAvatar, setCobiDetectiveAvatar] = useState<string>('/data/images/cobi-detective.webp'); // Avatar del detective
+  const [cobiDetectiveAvatar, setCobiDetectiveAvatar] = useState<string>('./data/images/cobi-detective.webp'); // Avatar del detective
   const [showChatWindow, setShowChatWindow] = useState(false);
   const [chatInput, setChatInput] = useState('');
   const [chatHistory, setChatHistory] = useState<Array<{role: 'user' | 'cobi', text: string}>>([]);
@@ -160,7 +160,7 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
     // Seleccionar mensaje aleatorio del detective cuando comienza el juego
     setCobiDetectiveMessage(seleccionarMensajeDetectiveRandom());
     // Reiniciar avatar al estado base
-    setCobiDetectiveAvatar('/data/images/cobi-detective.webp');
+    setCobiDetectiveAvatar('./data/images/cobi-detective.webp');
 
     const word = await getWordOfDay(level, date);
     if (word && word.length > 0 && word.length >= 3 && word.length <= 6) {
@@ -283,12 +283,12 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
         
         // Todas grises (sin coincidencias)
         if (!hasCorrect && !hasPresent) {
-          setCobiDetectiveAvatar('/data/images/cobi-detective-fallo.webp');
+          setCobiDetectiveAvatar('./data/images/cobi-detective-fallo.webp');
           setCobiDetectiveMessage(seleccionarMensajeSinCoincidencias());
         }
         // Algunas letras coinciden (cerca)
         else {
-          setCobiDetectiveAvatar('/data/images/cobi-detective.webp');
+          setCobiDetectiveAvatar('./data/images/cobi-detective.webp');
           setCobiDetectiveMessage(seleccionarMensajeCerca());
         }
       };
@@ -300,7 +300,7 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
         playSound('win');
         setIsAnimating(false);
         // Victoria: cambiar a avatar de acierto
-        setCobiDetectiveAvatar('/data/images/cobi-detective-acierto.webp');
+        setCobiDetectiveAvatar('./data/images/cobi-detective-acierto.webp');
         setCobiDetectiveMessage(seleccionarMensajeVictoria());
       } else if (newGuesses.length >= MAX_GUESSES) {
         setStatus('LOST');
@@ -308,7 +308,7 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
         playSound('lose');
         setIsAnimating(false);
         // Derrota: cambiar a avatar de fallo
-        setCobiDetectiveAvatar('/data/images/cobi-detective-fallo.webp');
+        setCobiDetectiveAvatar('./data/images/cobi-detective-fallo.webp');
         setCobiDetectiveMessage(seleccionarMensajeSinCoincidencias());
       } else {
         analyzeGuessResult();

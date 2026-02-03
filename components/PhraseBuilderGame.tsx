@@ -66,7 +66,7 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack }) => {
   const [isPaused, setIsPaused] = useState(false);
   
   // Cobi Avatar states
-  const [cobiImage, setCobiImage] = useState('/data/images/Avatar-construction.webp');
+  const [cobiImage, setCobiImage] = useState('./data/images/Avatar-construction.webp');
   const [cobiMessage, setCobiMessage] = useState('');
   const [cobiMenuMessage, setCobiMenuMessage] = useState(''); // Mensaje del menú
   const [showChatWindow, setShowChatWindow] = useState(false);
@@ -80,9 +80,9 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack }) => {
   // Cobi avatar image URLs - centralized for easy scalability
   const COBI_AVATARS = {
     construction: {
-      base: '/data/images/Avatar-construction.webp',
-      success: '/data/images/Avatar-construction-correcto.webp',
-      error: '/data/images/Avatar-construction-fallo.webp'
+      base: './data/images/Avatar-construction.webp',
+      success: './data/images/Avatar-construction-correcto.webp',
+      error: './data/images/Avatar-construction-fallo.webp'
     },
     // Future avatars can be added here:
     // detective: { base: '...', success: '...', error: '...' },
@@ -783,7 +783,7 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack }) => {
             {/* Imagen de Cobi Constructor pensando */}
             <div className="relative -mb-16 -mr-8" style={{ zIndex: 10 }}>
               <img 
-                src="/data/images/cobi-constructor-pensando.webp"
+                src="./data/images/cobi-constructor-pensando.webp"
                 alt="Cobi Constructor pensando" 
                 className="w-56 h-auto object-contain"
                 style={{
