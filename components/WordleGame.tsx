@@ -864,22 +864,6 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
         />
       )}
 
-      {/* Visual input display */}
-      {status === 'PLAYING' && (
-        <div className="flex gap-2 justify-center mb-8 flex-wrap">
-          <div className="px-4 py-2 border-2 border-gray-300 rounded-lg text-center font-semibold text-lg bg-white">
-            {currentGuess || <span className="text-gray-400">Escribe {wordLength} letras...</span>}
-          </div>
-          <button
-            onClick={submitGuess}
-            disabled={isAnimating}
-            className={`px-6 py-2 bg-green-500 text-white font-bold rounded-lg hover:bg-green-600 transition whitespace-nowrap ${isAnimating ? 'opacity-50 cursor-not-allowed' : ''}`}
-          >
-            Enviar
-          </button>
-        </div>
-      )}
-
       {/* Keyboard */}
       <div className="mb-6 max-w-xl mx-auto">
         {/* Row 1 */}

@@ -2,6 +2,14 @@
 const dictionaryCache: { [key: string]: string[] } = {};
 const hintsCache: { [key: string]: { [word: string]: string[] } } = {};
 
+// Normalize accents for comparison (á→a, é→e, í→i, ó→o, ú→u, ñ stays)
+const normalizeAccents = (text: string): string => {
+  return text
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toUpperCase();
+};
+
 // Load dictionary for a specific word length
 export const loadDictionary = async (wordLength: 3 | 4 | 5 | 6): Promise<string[]> => {
   const cacheKey = `dict_${wordLength}`;
@@ -17,8 +25,8 @@ export const loadDictionary = async (wordLength: 3 | 4 | 5 | 6): Promise<string[
     const data = await response.json();
     const words = Array.isArray(data) ? data : data.palabras || data.words || [];
     
-    // Normalize to uppercase
-    const normalized = words.map((w: string) => w.toUpperCase());
+    // Normalize to uppercase and also store without accents for comparison
+    const normalized = words.map((w: string) => normalizeAccents(w));
     dictionaryCache[cacheKey] = normalized;
     
     return normalized;
@@ -86,7 +94,7 @@ export const loadHints = async (difficulty: string): Promise<{ [word: string]: s
 // Validate if a word exists in the dictionary
 export const isValidWord = async (word: string, wordLength: 3 | 4 | 5 | 6): Promise<boolean> => {
   const dictionary = await loadDictionary(wordLength);
-  return dictionary.includes(word.toUpperCase());
+  return dictionary.includes(normalizeAccents(word));
 };
 
 // Get hints progressively based on attempt number
