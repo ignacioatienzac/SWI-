@@ -208,6 +208,11 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
       return;
     }
     
+    // Ignore events with modifier keys (Ctrl, Cmd, Alt, Shift) to allow browser shortcuts
+    if (e.ctrlKey || e.metaKey || e.altKey || e.shiftKey) {
+      return;
+    }
+    
     if (status !== 'PLAYING' || isAnimating) return;
 
     const key = e.key.toUpperCase();

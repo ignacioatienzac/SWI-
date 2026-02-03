@@ -44,18 +44,34 @@ export const loadHints = async (difficulty: string): Promise<{ [word: string]: s
     }
     
     const data = await response.json();
-    const hintArray = Array.isArray(data) ? data : [];
     
-    // Convert array of objects to word→pistas mapping
+    // Convert to word→pistas mapping
     const normalized: { [word: string]: string[] } = {};
-    for (const entry of hintArray) {
-      if (entry.palabra) {
-        const palabra = entry.palabra.toUpperCase();
+    
+    if (Array.isArray(data)) {
+      // Format A1/A2: Array of objects with 'palabra' field
+      for (const entry of data) {
+        if (entry.palabra) {
+          const palabra = entry.palabra.toUpperCase();
+          const pistas = [];
+          if (entry.pista1) pistas.push(entry.pista1);
+          if (entry.pista2) pistas.push(entry.pista2);
+          if (entry.pista3) pistas.push(entry.pista3);
+          normalized[palabra] = pistas;
+        }
+      }
+    } else if (typeof data === 'object') {
+      // Format B1/B2: Object with word keys
+      for (const [palabra, hints] of Object.entries(data)) {
+        const palabraUpper = palabra.toUpperCase();
         const pistas = [];
-        if (entry.pista1) pistas.push(entry.pista1);
-        if (entry.pista2) pistas.push(entry.pista2);
-        if (entry.pista3) pistas.push(entry.pista3);
-        normalized[palabra] = pistas;
+        if (typeof hints === 'object' && hints !== null) {
+          const h = hints as { pista1?: string; pista2?: string; pista3?: string };
+          if (h.pista1) pistas.push(h.pista1);
+          if (h.pista2) pistas.push(h.pista2);
+          if (h.pista3) pistas.push(h.pista3);
+          normalized[palabraUpper] = pistas;
+        }
       }
     }
     
