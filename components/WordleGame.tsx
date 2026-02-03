@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { RotateCcw, Calendar, Lightbulb, ChevronLeft, ChevronRight, X } from 'lucide-react';
+import { RotateCcw, Calendar, Lightbulb, ChevronLeft, ChevronRight, X, Send } from 'lucide-react';
 import { getWordOfDay } from '../services/vocabularyService';
 import { isValidWord, getHintsForAttempt } from '../services/wordleService';
 import { hablarConPanda } from '../services/geminiService';
@@ -128,6 +128,10 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
   const [pandaMessage, setPandaMessage] = useState<string>('');
   const [cobiDetectiveMessage, setCobiDetectiveMessage] = useState<string>(''); // Mensaje del detective
   const [cobiDetectiveAvatar, setCobiDetectiveAvatar] = useState<string>('/data/images/cobi-detective.webp'); // Avatar del detective
+  const [showChatWindow, setShowChatWindow] = useState(false);
+  const [chatInput, setChatInput] = useState('');
+  const [chatHistory, setChatHistory] = useState<Array<{role: 'user' | 'cobi', text: string}>>([]);
+  const [isLoadingResponse, setIsLoadingResponse] = useState(false);
   const [userQuestion, setUserQuestion] = useState<string>('');
   const [isLoadingPanda, setIsLoadingPanda] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
@@ -345,6 +349,47 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
       setPandaMessage('🐾 ¡Ups! Parece que me quedé sin bambú... Intenta de nuevo en un momento 🐾');
     } finally {
       setIsLoadingPanda(false);
+    }
+  };
+  
+  // Enviar mensaje a Cobi Detective
+  const sendMessageToCobi = async () => {
+    if (!chatInput.trim() || isLoadingResponse) return;
+
+    const userMsg = chatInput.trim();
+    
+    // Añadir mensaje del usuario
+    setChatHistory(prev => [...prev, { role: 'user', text: userMsg }]);
+    setChatInput('');
+    setIsLoadingResponse(true);
+
+    try {
+      const contextInfo = {
+        nivel: difficulty.toUpperCase(),
+        palabra_secreta: secretWord,
+        letras: wordLength,
+        intentos_usados: guesses.length,
+        intentos_maximos: MAX_GUESSES,
+        intentos_previos: guesses
+      };
+
+      const respuesta = await hablarConPanda(
+        userMsg,
+        'Detective del Wordle',
+        contextInfo,
+        'juego'
+      );
+
+      // Añadir respuesta de Cobi
+      setChatHistory(prev => [...prev, { role: 'cobi', text: respuesta }]);
+    } catch (error) {
+      console.error('Error al hablar con Cobi:', error);
+      setChatHistory(prev => [...prev, { 
+        role: 'cobi', 
+        text: '🐾 ¡Ups! Algo salió mal. Intenta de nuevo. 🐾' 
+      }]);
+    } finally {
+      setIsLoadingResponse(false);
     }
   };
 
@@ -915,30 +960,139 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
       
       {/* Cobi Detective (durante el juego, victoria y derrota en desktop) */}
       {(status === 'PLAYING' || status === 'WON' || status === 'LOST') && (
-        <div className="hidden lg:block fixed bottom-0 right-0 z-50 pointer-events-none overflow-visible">
-          <div className="relative animate-float">
-            {/* Bocadillo de diálogo con mensaje aleatorio */}
-            <div style={{ position: 'absolute', left: '-200px', bottom: '80px', zIndex: 5, maxWidth: '220px' }} className="bg-white/95 backdrop-blur-sm rounded-2xl px-4 py-2 shadow-lg border-2 border-gray-200 pointer-events-auto">
-              <p className="text-gray-700 font-semibold text-sm text-center leading-snug">
-                {cobiDetectiveMessage || "🔍 ¡Investiguemos juntos! 🐾"}
-              </p>
-              {/* Pico del bocadillo apuntando hacia Cobi */}
-              <div className="absolute top-1/2 -translate-y-1/2 -right-3 w-4 h-4 bg-white border-r-2 border-b-2 border-gray-200 transform rotate-[315deg]"></div>
-            </div>
-            
-            {/* Imagen de Cobi Detective - dinámica según resultado */}
-            <div className="relative -mb-16 -mr-8" style={{ zIndex: 10 }}>
-              <img 
-                src={cobiDetectiveAvatar}
-                alt="Cobi Detective" 
-                className="w-56 h-auto object-contain transition-opacity duration-300"
-                style={{
-                  filter: 'drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15)) drop-shadow(0 0 20px rgba(0, 0, 0, 0.08))'
-                }}
-              />
+        <>
+          <div className="hidden lg:block fixed bottom-0 right-0 z-50 pointer-events-none overflow-visible">
+            <div className="relative animate-float">
+              {/* Bocadillo de diálogo con mensaje aleatorio */}
+              {cobiDetectiveMessage && !showChatWindow && (
+                <div style={{ position: 'absolute', left: '-200px', bottom: '80px', zIndex: 5, maxWidth: '220px' }} className="bg-white/95 backdrop-blur-sm rounded-2xl px-4 py-2 shadow-lg border-2 border-gray-200 pointer-events-auto">
+                  <p className="text-gray-700 font-semibold text-sm text-center leading-snug">
+                    {cobiDetectiveMessage || "🔍 ¡Investiguemos juntos! 🐾"}
+                  </p>
+                  {/* Pico del bocadillo apuntando hacia Cobi */}
+                  <div className="absolute top-1/2 -translate-y-1/2 -right-3 w-4 h-4 bg-white border-r-2 border-b-2 border-gray-200 transform rotate-[315deg]"></div>
+                </div>
+              )}
+              
+              {/* Imagen de Cobi Detective - dinámica según resultado */}
+              <div className="relative -mb-16 -mr-8" style={{ zIndex: 10 }}>
+                <img 
+                  src={cobiDetectiveAvatar}
+                  alt="Cobi Detective" 
+                  className="w-56 h-auto object-contain transition-opacity duration-300"
+                  style={{
+                    filter: 'drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15)) drop-shadow(0 0 20px rgba(0, 0, 0, 0.08))'
+                  }}
+                />
+              </div>
+
+              {/* Chat Button Wrapper - Moves with Cobi */}
+              <div className="chat-button-wrapper">
+                <div
+                  onClick={() => setShowChatWindow(!showChatWindow)}
+                  className="cobi-chat-button-detective"
+                >
+                  <svg viewBox="0 0 100 100" className="curved-text-svg">
+                    <path id="chatTextPathDetective" d="M 20,50 A 30,30 0 1,1 80,50" fill="none" />
+                    <text>
+                      <textPath href="#chatTextPathDetective" startOffset="50%" textAnchor="middle" className="curved-text-style-detective">
+                        CHATEAR
+                      </textPath>
+                    </text>
+                  </svg>
+                  <div className="paws-icon">🐾</div>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
+
+          {/* Chat Window */}
+          {showChatWindow && (
+            <div className="fixed bottom-24 right-6 lg:bottom-48 lg:right-6 z-50 w-80 max-w-[calc(100vw-3rem)] bg-white rounded-3xl shadow-2xl border-2 border-gray-200 overflow-hidden animate-fade-in">
+              {/* Header */}
+              <div className="p-4 flex items-center justify-between" style={{ background: 'linear-gradient(to right, #2D5A27, #234A1F)' }}>
+                <div className="flex items-center gap-2">
+                  <span className="text-2xl">🐾</span>
+                  <div>
+                    <h3 className="text-white font-bold text-sm">Cobi el Detective</h3>
+                    <p className="text-xs" style={{ color: '#FFF5E1' }}>Tu asistente investigador</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setShowChatWindow(false)}
+                  className="p-1 hover:bg-white/20 rounded-full transition"
+                >
+                  <X size={20} className="text-white" />
+                </button>
+              </div>
+
+              {/* Chat History */}
+              <div className="h-80 overflow-y-auto p-4 space-y-3 bg-gray-50">
+                {chatHistory.length === 0 ? (
+                  <div className="text-center text-gray-500 mt-8">
+                    <p className="text-3xl mb-2">🔍</p>
+                    <p className="text-sm">¡Hola detective! Soy Cobi.</p>
+                    <p className="text-xs mt-1">Pregúntame lo que necesites 🐾</p>
+                  </div>
+                ) : (
+                  chatHistory.map((msg, index) => (
+                    <div
+                      key={index}
+                      className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                    >
+                      <div
+                        className={`max-w-[80%] rounded-2xl px-4 py-2 ${
+                          msg.role === 'user'
+                            ? 'text-white'
+                            : 'bg-white text-gray-800 border-2'
+                        }`}
+                        style={msg.role === 'user' ? { background: 'linear-gradient(to right, #2D5A27, #234A1F)' } : { borderColor: '#2D5A27' }}
+                      >
+                        <p className="text-sm leading-relaxed whitespace-pre-line">{msg.text}</p>
+                      </div>
+                    </div>
+                  ))
+                )}
+                {isLoadingResponse && (
+                  <div className="flex justify-start">
+                    <div className="bg-white text-gray-800 border-2 rounded-2xl px-4 py-2" style={{ borderColor: '#2D5A27' }}>
+                      <p className="text-sm">Cobi está pensando... 🐾</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Input */}
+              <div className="p-4 border-t-2 border-gray-200 bg-white">
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={chatInput}
+                    onChange={(e) => setChatInput(e.target.value)}
+                    onKeyPress={(e) => {
+                      if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        sendMessageToCobi();
+                      }
+                    }}
+                    placeholder="Escribe tu pregunta..."
+                    disabled={isLoadingResponse}
+                    className="flex-1 px-4 py-2 border-2 rounded-xl focus:outline-none focus:ring-2 transition"
+                    style={{ borderColor: '#2D5A27', '--tw-ring-color': '#2D5A27' } as any}
+                  />
+                  <button
+                    onClick={sendMessageToCobi}
+                    disabled={!chatInput.trim() || isLoadingResponse}
+                    className="px-4 py-2 text-white font-bold rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    style={{ backgroundColor: '#2D5A27' }}
+                  >
+                    <Send size={20} />
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+        </>
       )}
     </div>
   );
