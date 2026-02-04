@@ -329,6 +329,37 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
     }, totalDelay);
   }, [currentGuess, secretWord, guesses, wordLength, MAX_GUESSES, difficulty, isAnimating, getLetterStatusInGuess]);
 
+  // Genera información de letras correctas SIN revelar la palabra completa
+  const getCorrectLettersInfo = useCallback(() => {
+    if (guesses.length === 0) return 'Ningún intento aún';
+    
+    // Analizar el último intento para dar pistas
+    const lastGuess = guesses[guesses.length - 1];
+    const correctPositions: string[] = [];
+    const presentLetters: string[] = [];
+    
+    for (let i = 0; i < lastGuess.length; i++) {
+      const status = getLetterStatusInGuess(lastGuess, i);
+      if (status === 'correct') {
+        correctPositions.push(`Posición ${i + 1}: ${lastGuess[i]}`);
+      } else if (status === 'present') {
+        presentLetters.push(lastGuess[i]);
+      }
+    }
+    
+    let info = '';
+    if (correctPositions.length > 0) {
+      info += `Letras en posición correcta: ${correctPositions.join(', ')}. `;
+    }
+    if (presentLetters.length > 0) {
+      info += `Letras presentes pero en otra posición: ${presentLetters.join(', ')}.`;
+    }
+    if (!info) {
+      info = 'Ninguna letra del último intento está en la palabra.';
+    }
+    return info;
+  }, [guesses, getLetterStatusInGuess]);
+
   // Ask Panda for help
   const askPanda = async () => {
     if (!userQuestion.trim()) {
@@ -338,13 +369,16 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
 
     setIsLoadingPanda(true);
     try {
+      // NO enviar la palabra secreta al modelo - solo información de pistas
       const contextInfo = {
         nivel: difficulty.toUpperCase(),
-        palabra_secreta: secretWord,
         letras: wordLength,
+        primera_letra: secretWord[0], // Solo primera letra como pista
         intentos_usados: guesses.length,
         intentos_maximos: MAX_GUESSES,
-        intentos_previos: guesses
+        intentos_previos: guesses,
+        // Pistas sobre la palabra sin revelarla
+        letras_correctas: guesses.length > 0 ? getCorrectLettersInfo() : 'Ningún intento aún'
       };
 
       const response = await hablarConPanda(
@@ -375,13 +409,16 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
     setIsLoadingResponse(true);
 
     try {
+      // NO enviar la palabra secreta al modelo - solo información de pistas
       const contextInfo = {
         nivel: difficulty.toUpperCase(),
-        palabra_secreta: secretWord,
         letras: wordLength,
+        primera_letra: secretWord[0], // Solo primera letra como pista
         intentos_usados: guesses.length,
         intentos_maximos: MAX_GUESSES,
-        intentos_previos: guesses
+        intentos_previos: guesses,
+        // Pistas sobre la palabra sin revelarla
+        letras_correctas: guesses.length > 0 ? getCorrectLettersInfo() : 'Ningún intento aún'
       };
 
       const respuesta = await hablarConPanda(
