@@ -462,7 +462,8 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
       if (!hit) {
         for (let j = monstersRef.current.length - 1; j >= 0; j--) {
           const m = monstersRef.current[j];
-          if (
+          // Only check collision if monster is visible on screen (not off-screen to the right)
+          if (m.x < canvasRef.current!.width && 
             p.x < m.x + m.width && p.x + p.width > m.x &&
             p.y < m.y + m.height && p.y + p.height > m.y
           ) {
