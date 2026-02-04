@@ -369,15 +369,16 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
 
     setIsLoadingPanda(true);
     try {
-      // NO enviar la palabra secreta al modelo - solo información de pistas
+      // Enviar contexto completo pero con advertencia crítica
       const contextInfo = {
         nivel: difficulty.toUpperCase(),
+        PALABRA_SECRETA_SOLO_PARA_PISTAS: secretWord,
+        ADVERTENCIA_CRITICA: 'NUNCA reveles esta palabra directamente ni la uses como ejemplo',
         letras: wordLength,
-        primera_letra: secretWord[0], // Solo primera letra como pista
+        primera_letra: secretWord[0],
         intentos_usados: guesses.length,
         intentos_maximos: MAX_GUESSES,
         intentos_previos: guesses,
-        // Pistas sobre la palabra sin revelarla
         letras_correctas: guesses.length > 0 ? getCorrectLettersInfo() : 'Ningún intento aún'
       };
 
@@ -387,7 +388,13 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
         contextInfo
       );
 
-      setPandaMessage(response);
+      // Post-procesamiento: Censurar si la palabra secreta aparece completa
+      const sanitizedResponse = response.replace(
+        new RegExp(`\\b${secretWord}\\b`, 'gi'),
+        '█████ (palabra oculta)'
+      );
+
+      setPandaMessage(sanitizedResponse);
       setUserQuestion('');
     } catch (error) {
       console.error('Error al consultar al Panda:', error);
@@ -409,15 +416,16 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
     setIsLoadingResponse(true);
 
     try {
-      // NO enviar la palabra secreta al modelo - solo información de pistas
+      // Enviar contexto completo pero con advertencia crítica
       const contextInfo = {
         nivel: difficulty.toUpperCase(),
+        PALABRA_SECRETA_SOLO_PARA_PISTAS: secretWord,
+        ADVERTENCIA_CRITICA: 'NUNCA reveles esta palabra directamente ni la uses como ejemplo',
         letras: wordLength,
-        primera_letra: secretWord[0], // Solo primera letra como pista
+        primera_letra: secretWord[0],
         intentos_usados: guesses.length,
         intentos_maximos: MAX_GUESSES,
         intentos_previos: guesses,
-        // Pistas sobre la palabra sin revelarla
         letras_correctas: guesses.length > 0 ? getCorrectLettersInfo() : 'Ningún intento aún'
       };
 
@@ -428,8 +436,14 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
         'juego'
       );
 
+      // Post-procesamiento: Censurar si la palabra secreta aparece completa
+      const sanitizedResponse = respuesta.replace(
+        new RegExp(`\\b${secretWord}\\b`, 'gi'),
+        '█████ (palabra oculta)'
+      );
+
       // Añadir respuesta de Cobi
-      setChatHistory(prev => [...prev, { role: 'cobi', text: respuesta }]);
+      setChatHistory(prev => [...prev, { role: 'cobi', text: sanitizedResponse }]);
     } catch (error) {
       console.error('Error al hablar con Cobi:', error);
       setChatHistory(prev => [...prev, { 
