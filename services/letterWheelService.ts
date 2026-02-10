@@ -135,6 +135,6 @@ export function normalizeWord(word: string): string {
   // Restore ñ
   normalized = normalized.replace(/§§§/g, 'ñ');
   
-  // Convert to uppercase
-  return normalized.toUpperCase();
+  // Convert to lowercase for consistency
+  return normalized.toLowerCase();
 }
