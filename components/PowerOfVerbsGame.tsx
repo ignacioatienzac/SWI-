@@ -25,39 +25,6 @@ const formatTenseName = (tense: string): string => {
   return tenseMap[tense.toLowerCase()] || tense.charAt(0).toUpperCase() + tense.slice(1);
 };
 
-// Mensajes aleatorios para Cobi Sensei en el menú
-const mensajesSenseiMenu = [
-  "🥋 ¡Bienvenido, aprendiz! Configura tu entrenamiento con sabiduría. 🐾",
-  "⚔️ Elige tu batalla con cuidado. Cada verbo es una lección. 🐾",
-  "📚 El camino del guerrero verbal comienza con la elección correcta. 🐾",
-  "🎯 Modo, tiempo, dificultad... La preparación es clave para la victoria. 🐾",
-  "✨ ¿Regular o irregular? ¿Contrarreloj o Jefe? ¡Tú decides tu destino! 🐾",
-  "🛡️ Un sensei sabio dice: empieza con fácil y sube la dificultad. 🐾",
-  "🌟 La maestría requiere práctica. ¡Configura y comienza tu viaje! 🐾"
-];
-
-// Mensajes aleatorios para Cobi Sensei durante el juego
-const mensajesSenseiJuego = [
-  "⚔️ ¡Concentración, aprendiz! Los verbos son tu mejor arma. 🐾",
-  "🥋 La conjugación perfecta es como un golpe certero. ¡Adelante! 🐾",
-  "📚 Cada respuesta correcta te acerca a la maestría del español. 🐾",
-  "🎯 Respira, piensa y conjuga. ¡El castillo cuenta contigo! 🐾",
-  "⚡ ¡Fuerza y precisión! Los verbos son tu poder interior. 🐾",
-  "🛡️ Protege el castillo con tu conocimiento. ¡Sigue luchando! 🐾"
-];
-
-const mensajesSenseiVictoria = [
-  "🏆 ¡Maestría alcanzada! Tu dominio de los verbos es impresionante. 🐾✨",
-  "⭐ ¡Victoria honorable! Has demostrado ser un verdadero guerrero del español. 🐾",
-  "🎉 ¡Excelente, aprendiz! El camino del sensei se abre ante ti. 🐾🌟"
-];
-
-const mensajesSenseiFallo = [
-  "💪 No te rindas, aprendiz. Incluso los maestros fallaron muchas veces. 🐾",
-  "🔄 La derrota es parte del aprendizaje. ¡Levántate y sigue practicando! 🐾",
-  "📖 Cada error es una lección. ¡Vuelve más fuerte, guerrero! 🐾"
-];
-
 // Mensajes aleatorios para Cobi Mago durante el juego
 const mensajesMagoJuego = [
   "¡Prepara tu varita! ✨",
