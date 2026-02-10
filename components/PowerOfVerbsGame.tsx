@@ -317,7 +317,6 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
   const [showTooltip, setShowTooltip] = useState<string | null>(null);
   
   // Contrarreloj-specific state (damage system & progression)
-  const [playerDamage, setPlayerDamage] = useState(10);
   const [damageStreak, setDamageStreak] = useState(0);
   const [killCount, setKillCount] = useState(0);
   
@@ -589,7 +588,6 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
     
     // Initialize damage system for Contrarreloj
     if (selectedBattleMode === 'contrarreloj') {
-      setPlayerDamage(10);
       setDamageStreak(0);
       setKillCount(0);
     }
@@ -1031,7 +1029,6 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
         const newStreak = damageStreak + 1;
         const newDamage = 10 + newStreak * 2;
         setDamageStreak(newStreak);
-        setPlayerDamage(newDamage);
         // attackPower goes up +1 per correct (visual + aura), capped at 10
         setAttackPower(prev => Math.min(prev + 1, 10));
         setCobiMagoMessage(seleccionarMensajeMagoRandom('acierto'));
@@ -1043,7 +1040,6 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
         setConsecutiveFailures(newFailureCount);
         // Reset streak but keep base damage at 10
         setDamageStreak(0);
-        setPlayerDamage(10);
         // Only penalize attackPower in dificil mode
         if (selectedDifficulty === 'dificil') {
           setAttackPower(prev => Math.max(1, prev - 1));
