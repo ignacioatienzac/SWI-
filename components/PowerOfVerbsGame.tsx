@@ -317,6 +317,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
   const [showTooltip, setShowTooltip] = useState<string | null>(null);
   
   // Contrarreloj-specific state (damage system & progression)
+  const [playerDamage, setPlayerDamage] = useState(10);
   const [damageStreak, setDamageStreak] = useState(0);
   const [killCount, setKillCount] = useState(0);
   
