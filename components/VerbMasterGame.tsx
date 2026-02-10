@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ChevronLeft, Play, Pause } from 'lucide-react';
+import { Send } from 'lucide-react';
+import { hablarConPanda } from '../services/geminiService';
 import {
   loadVerbData,
   getFilteredVerbs,
@@ -18,6 +20,78 @@ import {
 interface VerbMasterGameProps {
   onBack: () => void;
 }
+
+// Mensajes aleatorios para Cobi Sensei en el menú
+const mensajesSenseiMenu = [
+  "� ¡Bienvenido al Maestro de Verbos! Elige sabiamente tu desafío. 🐾",
+  "🎯 Regular o irregular... Conjugar o identificar... ¡Tú decides! 🐾",
+  "📚 Cada burbuja es una oportunidad de aprendizaje. ¿Listo? 🐾",
+  "🥋 La práctica hace al maestro. ¡Configura tu entrenamiento! 🐾",
+  "✨ Las burbujas caen, pero tu conocimiento permanece. ¡Adelante! 🐾",
+  "🌟 Empieza con lo que sabes y conquista nuevos niveles. 🐾",
+  "🎓 El camino hacia la maestría comienza con una elección. 🐾"
+];
+
+const seleccionarMensajeSenseiMenuRandom = (): string => {
+  const indice = Math.floor(Math.random() * mensajesSenseiMenu.length);
+  return mensajesSenseiMenu[indice];
+};
+
+// Mensajes aleatorios para Cobi Sensei durante el juego
+const mensajesSenseiJuego = [
+  "🫧 ¡Explota las burbujas con precisión! Cada conjugación cuenta. 🐾",
+  "⚡ ¡Rápido pero certero! Las burbujas no esperan. 🐾",
+  "🎯 ¡Excelente racha! Mantén el ritmo, aprendiz. 🐾",
+  "📖 Respira, piensa y conjuga. ¡No dejes que caigan! 🐾",
+  "🌊 Las burbujas fluyen como el tiempo verbal. ¡Domínalas! 🐾",
+  "💫 Cada burbuja reventada es un paso hacia la maestría. 🐾"
+];
+
+const mensajesSenseiVictoria = [
+  "🏆 ¡Increíble! Has reventado todas las burbujas con maestría. 🐾✨",
+  "⭐ ¡Nivel superado! Tu dominio verbal es excepcional. 🐾",
+  "🎉 ¡Magnífico, aprendiz! Las burbujas no tienen nada que hacer contigo. 🐾🌟"
+];
+
+const mensajesSenseiAcierto = [
+  "🎊 ¡Nivel superado! Tu técnica mejora con cada burbuja. 🐾",
+  "⭐ ¡Excelente! Avanzas hacia la maestría verbal. 🐾",
+  "🥋 ¡Bien hecho, aprendiz! El siguiente nivel te espera. 🐾"
+];
+
+const mensajesSenseiFallo = [
+  "💪 Las burbujas ganaron esta vez, pero aprenderás de esto. 🐾",
+  "🔄 Incluso los maestros dejan caer burbujas. ¡Inténtalo de nuevo! 🐾",
+  "🎈 Cada burbuja que cae enseña una lección. ¡No te rindas! 🐾"
+];
+
+const mensajesSenseiPausa = [
+  "Inhala... exhala... 🎋 El descanso es parte del entrenamiento, pequeño saltamontes.",
+  "Un buen guerrero sabe cuándo parar para recuperar su energía. 🥋",
+  "Meditando... 🧘‍♂️ Estoy preparando mi mente para la próxima ola de verbos."
+];
+
+const seleccionarMensajeSenseiRandom = (tipo: 'juego' | 'victoria' | 'fallo' | 'pausa' | 'acierto'): string => {
+  let mensajes;
+  switch(tipo) {
+    case 'victoria':
+      mensajes = mensajesSenseiVictoria;
+      break;
+    case 'acierto':
+      mensajes = mensajesSenseiAcierto;
+      break;
+    case 'fallo':
+      mensajes = mensajesSenseiFallo;
+      break;
+    case 'pausa':
+      mensajes = mensajesSenseiPausa;
+      break;
+    default:
+      mensajes = mensajesSenseiJuego;
+  }
+  const indice = Math.floor(Math.random() * mensajes.length);
+  return mensajes[indice];
+};
 
 type GameState = 'LEVEL_SELECT' | 'PLAYING' | 'PAUSED' | 'GAMEOVER' | 'LEVEL_TRANSITION';
 
@@ -75,6 +149,81 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack }) => {
   const [selectedTense, setSelectedTense] = useState<string>('presente');
   const [selectedLevel] = useState<VerbLevel>('A1');
   const [showTooltip, setShowTooltip] = useState<string | null>(null);
+  
+  // Cobi Sensei State
+  const [cobiSenseiMenuMessage] = useState<string>(seleccionarMensajeSenseiMenuRandom());
+  const [cobiSenseiMessage, setCobiSenseiMessage] = useState<string>(seleccionarMensajeSenseiRandom('juego'));
+  const [cobiSenseiPausaMessage] = useState<string>(seleccionarMensajeSenseiRandom('pausa'));
+  const [cobiSenseiAvatar, setCobiSenseiAvatar] = useState<string>('./data/images/cobi-sensei.webp');
+  
+  // Chat State
+  const [showChatWindow, setShowChatWindow] = useState(false);
+  const [chatInput, setChatInput] = useState('');
+  const [chatHistory, setChatHistory] = useState<Array<{role: 'user' | 'cobi', text: string}>>([]);
+  const [isLoadingResponse, setIsLoadingResponse] = useState(false);
+  
+  // Send message to Cobi Sensei
+  const sendMessageToCobi = async () => {
+    if (!chatInput.trim() || isLoadingResponse) return;
+
+    const userMessage = chatInput.trim();
+    setChatInput('');
+    
+    // Add user message to history
+    setChatHistory(prev => [...prev, { role: 'user', text: userMessage }]);
+    setIsLoadingResponse(true);
+
+    try {
+      let contextoJuego;
+      let tipo: 'lobby' | 'juego';
+
+      // Si estamos en LEVEL_SELECT, contexto de lobby
+      if (gameState === 'LEVEL_SELECT') {
+        contextoJuego = {
+          juego: 'Maestro de Verbos',
+          estado: 'menu',
+          modo_verbal_seleccionado: selectedVerbMode || 'ninguno',
+          tiempo_seleccionado: selectedTense || 'ninguno',
+          tipo_verbos: selectedVerbType || 'ninguno',
+          modo_juego: selectedGameMode || 'ninguno'
+        };
+        tipo = 'lobby';
+      } else {
+        // Si estamos jugando, contexto de juego
+        contextoJuego = {
+          juego: 'Maestro de Verbos',
+          nivel: gameLevel,
+          modo_verbal: selectedVerbMode,
+          tiempo_verbal: selectedTense,
+          tipo_verbos: selectedVerbType,
+          modo_juego: selectedGameMode,
+          puntuacion: score,
+          racha: streak,
+          vidas: lives
+        };
+        tipo = 'juego';
+      }
+
+      // Call Cobi AI with appropriate context
+      const response = await hablarConPanda(
+        userMessage,
+        'Maestro de Verbos - Instructor Zen de Artes Marciales',
+        contextoJuego,
+        tipo
+      );
+
+      // Add Cobi response to history
+      setChatHistory(prev => [...prev, { role: 'cobi', text: response }]);
+    } catch (error) {
+      console.error('Error al comunicarse con Cobi Sensei:', error);
+      setChatHistory(prev => [
+        ...prev,
+        { role: 'cobi', text: '🥋 ¡Ups! Mi mente se distrajo un momento. ¿Puedes repetir eso, joven aprendiz? 🐾' }
+      ]);
+    } finally {
+      setIsLoadingResponse(false);
+    }
+  };
   
   // Update tense when verb mode changes
   const handleVerbModeChange = (mode: VerbMode) => {
@@ -213,6 +362,11 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack }) => {
     setLives(5);
     setBackgroundColor(LEVEL_COLORS[0]);
     bubblesRef.current = [];
+    
+    // Resetear avatar al estado normal del juego
+    setCobiSenseiAvatar('./data/images/cobi-sensei.webp');
+    setCobiSenseiMessage(seleccionarMensajeSenseiRandom('juego'));
+    
     setGameState('PLAYING');
   };
 
@@ -231,6 +385,10 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack }) => {
     // 2. Update game level and background color immediately
     setGameLevel(newLevel);
     setBackgroundColor(LEVEL_COLORS[newLevel - 1]);
+    
+    // Cambiar a Cobi Sensei de acierto (celebración)
+    setCobiSenseiAvatar('./data/images/cobi-sensei-acierto.webp');
+    setCobiSenseiMessage(seleccionarMensajeSenseiRandom('acierto'));
     
     // 3. Show level title after 500ms (shrink duration)
     setTimeout(() => {
@@ -252,6 +410,9 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack }) => {
           } else {
             clearInterval(countdownInterval);
             setCountdown(0);
+            // Volver a Cobi Sensei normal cuando comienza el siguiente nivel
+            setCobiSenseiAvatar('./data/images/cobi-sensei.webp');
+            setCobiSenseiMessage(seleccionarMensajeSenseiRandom('juego'));
           }
         }, 1000);
       }, 2000);
@@ -977,11 +1138,13 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack }) => {
                 <div className="grid grid-cols-2 gap-3">
                   {[
                     { value: 'presente', label: 'Presente' },
-                    { value: 'imperfecto', label: 'Imperfecto' },
+                    { value: 'pretérito perfecto', label: 'Pretérito Perfecto' },
                     { value: 'indefinido', label: 'Pretérito Indefinido' },
+                    { value: 'imperfecto', label: 'Pretérito Imperfecto' },
+                    { value: 'presente continuo', label: 'Presente Continuo' },
                     { value: 'futuro simple', label: 'Futuro Simple' },
                     { value: 'condicional simple', label: 'Condicional Simple' },
-                    { value: 'pretérito perfecto', label: 'Pretérito Perfecto' }
+                    { value: 'pretérito pluscuamperfecto', label: 'Pretérito Pluscuamperfecto' }
                   ].map(option => (
                     <button
                       key={option.value}
@@ -1021,7 +1184,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack }) => {
                 <div className="grid grid-cols-2 gap-3">
                   {[
                     { value: 'presente', label: 'Presente' },
-                    { value: 'imperfecto', label: 'Imperfecto' },
+                    { value: 'imperfecto', label: 'Pretérito Imperfecto' },
                     { value: 'pretérito perfecto', label: 'Pretérito Perfecto' },
                     { value: 'pretérito pluscuamperfecto', label: 'Pretérito Pluscuamperfecto' }
                   ].map(option => (
@@ -1135,7 +1298,136 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack }) => {
               Comenzar Juego
             </button>
           </div>
+
+          {/* Cobi Sensei Pensando en el menú (solo desktop) */}
+          <div className="hidden lg:block fixed bottom-0 right-0 z-50 pointer-events-none overflow-visible">
+            <div className="relative animate-float">
+              {/* Bocadillo de diálogo con mensaje aleatorio */}
+              {cobiSenseiMenuMessage && (
+                <div style={{ position: 'absolute', left: '-200px', bottom: '80px', zIndex: 5, maxWidth: '220px' }} className="bg-white/95 backdrop-blur-sm rounded-2xl px-4 py-2 shadow-lg border-2 border-gray-200 pointer-events-auto">
+                  <p className="text-gray-700 font-semibold text-sm text-center leading-snug">
+                    {cobiSenseiMenuMessage}
+                  </p>
+                  {/* Pico del bocadillo apuntando hacia Cobi */}
+                  <div className="absolute top-1/2 -translate-y-1/2 -right-3 w-4 h-4 bg-white border-r-2 border-b-2 border-gray-200 transform rotate-[315deg]"></div>
+                </div>
+              )}
+              
+              {/* Imagen de Cobi Sensei Pensando */}
+              <div className="relative -mb-16 -mr-8" style={{ zIndex: 10 }}>
+                <img 
+                  src="./data/images/cobi-sensei-pensando.webp"
+                  alt="Cobi Sensei pensando" 
+                  className="w-56 h-auto object-contain"
+                  style={{
+                    filter: 'drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15)) drop-shadow(0 0 20px rgba(0, 0, 0, 0.08))'
+                  }}
+                />
+              </div>
+              
+              {/* Botón CHARLAR dentro del animate-float */}
+              <div className="chat-button-wrapper">
+                <div
+                  onClick={() => setShowChatWindow(!showChatWindow)}
+                  className="cobi-chat-button-zen pointer-events-auto"
+                >
+                  <svg viewBox="0 0 100 100" className="curved-text-svg">
+                    <path id="chatTextPathMenu" d="M 20,50 A 30,30 0 1,1 80,50" fill="none" />
+                    <text>
+                      <textPath href="#chatTextPathMenu" startOffset="50%" textAnchor="middle" className="curved-text-style-zen">
+                        CHARLAR
+                      </textPath>
+                    </text>
+                  </svg>
+                  <div className="paws-icon">🥋</div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
+
+        {/* Chat Window del Menú */}
+        {showChatWindow && gameState === 'LEVEL_SELECT' && (
+          <div className="fixed bottom-24 right-6 lg:bottom-48 lg:right-6 z-50 w-80 max-w-[calc(100vw-3rem)] bg-white rounded-3xl shadow-2xl border-2 border-gray-200 overflow-hidden animate-fade-in">
+            {/* Header */}
+            <div className="bg-gradient-to-r from-red-800 to-red-600 p-4 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="text-2xl">🥋</span>
+                <div>
+                  <h3 className="text-white font-bold text-sm">Cobi Sensei</h3>
+                  <p className="text-xs text-red-50">Instructor Zen de Artes Marciales</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowChatWindow(false)}
+                className="p-1 hover:bg-white/20 rounded-full transition"
+              >
+                <ChevronLeft size={20} className="text-white" />
+              </button>
+            </div>
+
+            {/* Chat History */}
+            <div className="h-64 overflow-y-auto p-4 space-y-3 bg-gradient-to-b from-red-50/30 to-white">
+              {chatHistory.length === 0 ? (
+                <div className="text-center text-gray-500 text-sm mt-8">
+                  <p className="mb-2">🥋</p>
+                  <p>¡Bienvenido al dojo! Soy tu Maestro Cobi.</p>
+                  <p className="text-xs mt-2">Pregúntame sobre los niveles o sobre conjugaciones.</p>
+                </div>
+              ) : (
+                chatHistory.map((msg, idx) => (
+                  <div
+                    key={idx}
+                    className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                  >
+                    <div
+                      className={`max-w-[80%] rounded-2xl px-4 py-2 ${
+                        msg.role === 'user'
+                          ? 'bg-gradient-to-br from-blue-500 to-blue-600 text-white'
+                          : 'bg-white border-2 border-red-200 text-gray-700'
+                      }`}
+                    >
+                      <p className="text-sm whitespace-pre-wrap">{msg.text}</p>
+                    </div>
+                  </div>
+                ))
+              )}
+              
+              {/* Loading state */}
+              {isLoadingResponse && (
+                <div className="flex justify-start">
+                  <div className="bg-white border-2 border-red-200 rounded-2xl px-4 py-3">
+                    <p className="text-sm text-gray-600">
+                      El Sensei medita tu pregunta... 🎋
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Input Area */}
+            <div className="p-3 bg-white border-t-2 border-gray-100">
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={chatInput}
+                  onChange={(e) => setChatInput(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && sendMessageToCobi()}
+                  placeholder="Escribe tu pregunta..."
+                  disabled={isLoadingResponse}
+                  className="flex-1 px-4 py-2 border-2 border-gray-200 rounded-full focus:outline-none focus:border-red-400 transition text-sm disabled:bg-gray-100"
+                />
+                <button
+                  onClick={sendMessageToCobi}
+                  disabled={isLoadingResponse || !chatInput.trim()}
+                  className="w-10 h-10 bg-gradient-to-br from-red-800 to-red-600 rounded-full flex items-center justify-center hover:shadow-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <Send size={18} className="text-white" />
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     );
   }
@@ -1383,6 +1675,135 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack }) => {
             }
           }
         `}} />
+
+        {/* Cobi Sensei (solo desktop) */}
+        <div className="hidden lg:block fixed bottom-0 right-0 z-50 pointer-events-none overflow-visible">
+          <div className="relative animate-float">
+            {/* Bocadillo de diálogo con mensaje aleatorio */}
+            {cobiSenseiMessage && (
+              <div style={{ position: 'absolute', left: '-200px', bottom: '80px', zIndex: 5, maxWidth: '220px' }} className="bg-white/95 backdrop-blur-sm rounded-2xl px-4 py-2 shadow-lg border-2 border-gray-200 pointer-events-auto">
+                <p className="text-gray-700 font-semibold text-sm text-center leading-snug">
+                  {cobiSenseiMessage}
+                </p>
+                {/* Pico del bocadillo apuntando hacia Cobi */}
+                <div className="absolute top-1/2 -translate-y-1/2 -right-3 w-4 h-4 bg-white border-r-2 border-b-2 border-gray-200 transform rotate-[315deg]"></div>
+              </div>
+            )}
+            
+            {/* Imagen de Cobi Sensei */}
+            <div className="relative -mb-16 -mr-8" style={{ zIndex: 10 }}>
+              <img 
+                src={cobiSenseiAvatar}
+                alt="Cobi Sensei" 
+                className="w-56 h-auto object-contain transition-opacity duration-300"
+                style={{
+                  filter: 'drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15)) drop-shadow(0 0 20px rgba(0, 0, 0, 0.08))'
+                }}
+              />
+            </div>
+            
+            {/* Botón CHARLAR durante el juego */}
+            <div className="chat-button-wrapper">
+              <div
+                onClick={() => setShowChatWindow(!showChatWindow)}
+                className="cobi-chat-button-zen pointer-events-auto"
+              >
+                <svg viewBox="0 0 100 100" className="curved-text-svg">
+                  <path id="chatTextPathPlaying" d="M 20,50 A 30,30 0 1,1 80,50" fill="none" />
+                  <text>
+                    <textPath href="#chatTextPathPlaying" startOffset="50%" textAnchor="middle" className="curved-text-style-zen">
+                      CHARLAR
+                    </textPath>
+                  </text>
+                </svg>
+                <div className="paws-icon">🥋</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Chat Window durante el juego */}
+        {showChatWindow && gameState === 'PLAYING' && (
+          <div className="fixed bottom-24 right-6 lg:bottom-48 lg:right-6 z-50 w-80 max-w-[calc(100vw-3rem)] bg-white rounded-3xl shadow-2xl border-2 border-gray-200 overflow-hidden animate-fade-in">
+            {/* Header */}
+            <div className="bg-gradient-to-r from-red-800 to-red-600 p-4 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="text-2xl">🥋</span>
+                <div>
+                  <h3 className="text-white font-bold text-sm">Cobi Sensei</h3>
+                  <p className="text-xs text-red-50">Instructor Zen de Artes Marciales</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowChatWindow(false)}
+                className="p-1 hover:bg-white/20 rounded-full transition"
+              >
+                <ChevronLeft size={20} className="text-white" />
+              </button>
+            </div>
+
+            {/* Chat History */}
+            <div className="h-64 overflow-y-auto p-4 space-y-3 bg-gradient-to-b from-red-50/30 to-white">
+              {chatHistory.length === 0 ? (
+                <div className="text-center text-gray-500 text-sm mt-8">
+                  <p className="mb-2">🥋</p>
+                  <p>¡Concentración! Estoy aquí si necesitas ayuda.</p>
+                  <p className="text-xs mt-2">Pregúntame sobre conjugaciones mientras juegas.</p>
+                </div>
+              ) : (
+                chatHistory.map((msg, idx) => (
+                  <div
+                    key={idx}
+                    className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                  >
+                    <div
+                      className={`max-w-[80%] rounded-2xl px-4 py-2 ${
+                        msg.role === 'user'
+                          ? 'bg-gradient-to-br from-blue-500 to-blue-600 text-white'
+                          : 'bg-white border-2 border-red-200 text-gray-700'
+                      }`}
+                    >
+                      <p className="text-sm whitespace-pre-wrap">{msg.text}</p>
+                    </div>
+                  </div>
+                ))
+              )}
+              
+              {/* Loading state */}
+              {isLoadingResponse && (
+                <div className="flex justify-start">
+                  <div className="bg-white border-2 border-red-200 rounded-2xl px-4 py-3">
+                    <p className="text-sm text-gray-600">
+                      El Sensei medita tu pregunta... 🎋
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Input Area */}
+            <div className="p-3 bg-white border-t-2 border-gray-100">
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={chatInput}
+                  onChange={(e) => setChatInput(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && sendMessageToCobi()}
+                  placeholder="Escribe tu pregunta..."
+                  disabled={isLoadingResponse}
+                  className="flex-1 px-4 py-2 border-2 border-gray-200 rounded-full focus:outline-none focus:border-red-400 transition text-sm disabled:bg-gray-100"
+                />
+                <button
+                  onClick={sendMessageToCobi}
+                  disabled={isLoadingResponse || !chatInput.trim()}
+                  className="w-10 h-10 bg-gradient-to-br from-red-800 to-red-600 rounded-full flex items-center justify-center hover:shadow-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <Send size={18} className="text-white" />
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     );
   }
@@ -1411,11 +1832,144 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack }) => {
             </button>
           </div>
         </div>
+
+        {/* Cobi Sensei Pausa (solo desktop) */}
+        <div className="hidden lg:block fixed bottom-0 right-0 z-50 pointer-events-none overflow-visible">
+          <div className="relative animate-float">
+            {/* Bocadillo de diálogo */}
+            <div style={{ position: 'absolute', left: '-200px', bottom: '80px', zIndex: 5, maxWidth: '220px' }} className="bg-white/95 backdrop-blur-sm rounded-2xl px-4 py-2 shadow-lg border-2 border-gray-200 pointer-events-auto">
+              <p className="text-gray-700 font-semibold text-sm text-center leading-snug">
+                {cobiSenseiPausaMessage}
+              </p>
+              {/* Pico del bocadillo apuntando hacia Cobi */}
+              <div className="absolute top-1/2 -translate-y-1/2 -right-3 w-4 h-4 bg-white border-r-2 border-b-2 border-gray-200 transform rotate-[315deg]"></div>
+            </div>
+            
+            {/* Imagen de Cobi Sensei Pausa */}
+            <div className="relative -mb-16 -mr-8" style={{ zIndex: 10 }}>
+              <img 
+                src="./data/images/cobi-sensei-pausa.webp"
+                alt="Cobi Sensei estirando" 
+                className="w-56 h-auto object-contain transition-opacity duration-300"
+                style={{
+                  filter: 'drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15)) drop-shadow(0 0 20px rgba(0, 0, 0, 0.08))'
+                }}
+              />
+            </div>
+            
+            {/* Botón CHARLAR en pausa */}
+            <div className="chat-button-wrapper">
+              <div
+                onClick={() => setShowChatWindow(!showChatWindow)}
+                className="cobi-chat-button-zen pointer-events-auto"
+              >
+                <svg viewBox="0 0 100 100" className="curved-text-svg">
+                  <path id="chatTextPathPaused" d="M 20,50 A 30,30 0 1,1 80,50" fill="none" />
+                  <text>
+                    <textPath href="#chatTextPathPaused" startOffset="50%" textAnchor="middle" className="curved-text-style-zen">
+                      CHARLAR
+                    </textPath>
+                  </text>
+                </svg>
+                <div className="paws-icon">🥋</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Chat Window en pausa */}
+        {showChatWindow && gameState === 'PAUSED' && (
+          <div className="fixed bottom-24 right-6 lg:bottom-48 lg:right-6 z-50 w-80 max-w-[calc(100vw-3rem)] bg-white rounded-3xl shadow-2xl border-2 border-gray-200 overflow-hidden animate-fade-in">
+            {/* Header */}
+            <div className="bg-gradient-to-r from-red-800 to-red-600 p-4 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="text-2xl">🥋</span>
+                <div>
+                  <h3 className="text-white font-bold text-sm">Cobi Sensei</h3>
+                  <p className="text-xs text-red-50">Instructor Zen de Artes Marciales</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowChatWindow(false)}
+                className="p-1 hover:bg-white/20 rounded-full transition"
+              >
+                <ChevronLeft size={20} className="text-white" />
+              </button>
+            </div>
+
+            {/* Chat History */}
+            <div className="h-64 overflow-y-auto p-4 space-y-3 bg-gradient-to-b from-red-50/30 to-white">
+              {chatHistory.length === 0 ? (
+                <div className="text-center text-gray-500 text-sm mt-8">
+                  <p className="mb-2">🥋</p>
+                  <p>¡Un momento de meditación! Estoy aquí si necesitas algo.</p>
+                  <p className="text-xs mt-2">Pregúntame lo que necesites.</p>
+                </div>
+              ) : (
+                chatHistory.map((msg, idx) => (
+                  <div
+                    key={idx}
+                    className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                  >
+                    <div
+                      className={`max-w-[80%] rounded-2xl px-4 py-2 ${
+                        msg.role === 'user'
+                          ? 'bg-gradient-to-br from-blue-500 to-blue-600 text-white'
+                          : 'bg-white border-2 border-red-200 text-gray-700'
+                      }`}
+                    >
+                      <p className="text-sm whitespace-pre-wrap">{msg.text}</p>
+                    </div>
+                  </div>
+                ))
+              )}
+              
+              {/* Loading state */}
+              {isLoadingResponse && (
+                <div className="flex justify-start">
+                  <div className="bg-white border-2 border-red-200 rounded-2xl px-4 py-3">
+                    <p className="text-sm text-gray-600">
+                      El Sensei medita tu pregunta... 🎋
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Input Area */}
+            <div className="p-3 bg-white border-t-2 border-gray-100">
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={chatInput}
+                  onChange={(e) => setChatInput(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && sendMessageToCobi()}
+                  placeholder="Escribe tu pregunta..."
+                  disabled={isLoadingResponse}
+                  className="flex-1 px-4 py-2 border-2 border-gray-200 rounded-full focus:outline-none focus:border-red-400 transition text-sm disabled:bg-gray-100"
+                />
+                <button
+                  onClick={sendMessageToCobi}
+                  disabled={isLoadingResponse || !chatInput.trim()}
+                  className="w-10 h-10 bg-gradient-to-br from-red-800 to-red-600 rounded-full flex items-center justify-center hover:shadow-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <Send size={18} className="text-white" />
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     );
   }
 
   // --- GAMEOVER STATE ---
+  // Cambiar avatar y mensaje al estado de fallo
+  if (cobiSenseiAvatar !== './data/images/cobi-sensei-fallo.webp') {
+    setCobiSenseiAvatar('./data/images/cobi-sensei-fallo.webp');
+    setCobiSenseiMessage(seleccionarMensajeSenseiRandom('fallo'));
+  }
+  
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-50 p-4 flex items-center justify-center">
       <div className="bg-white rounded-3xl p-8 max-w-md text-center shadow-2xl">
@@ -1432,13 +1986,146 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack }) => {
             Jugar de Nuevo
           </button>
           <button
-            onClick={() => setGameState('LEVEL_SELECT')}
+            onClick={() => {
+              setGameState('LEVEL_SELECT');
+              // Resetear avatar al estado normal
+              setCobiSenseiAvatar('./data/images/cobi-sensei.webp');
+              setCobiSenseiMessage(seleccionarMensajeSenseiRandom('juego'));
+            }}
             className="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-3 rounded-lg"
           >
             Cambiar Configuración
           </button>
         </div>
       </div>
+
+      {/* Cobi Sensei Fallo (solo desktop) */}
+      <div className="hidden lg:block fixed bottom-0 right-0 z-50 pointer-events-none overflow-visible">
+        <div className="relative animate-float">
+          {/* Bocadillo de diálogo */}
+          {cobiSenseiMessage && (
+            <div style={{ position: 'absolute', left: '-200px', bottom: '80px', zIndex: 5, maxWidth: '220px' }} className="bg-white/95 backdrop-blur-sm rounded-2xl px-4 py-2 shadow-lg border-2 border-gray-200 pointer-events-auto">
+              <p className="text-gray-700 font-semibold text-sm text-center leading-snug">
+                {cobiSenseiMessage}
+              </p>
+              <div className="absolute top-1/2 -translate-y-1/2 -right-3 w-4 h-4 bg-white border-r-2 border-b-2 border-gray-200 transform rotate-[315deg]"></div>
+            </div>
+          )}
+          
+          {/* Imagen de Cobi Sensei Fallo */}
+          <div className="relative -mb-16 -mr-8" style={{ zIndex: 10 }}>
+            <img 
+              src="./data/images/cobi-sensei-fallo.webp"
+              alt="Cobi Sensei" 
+              className="w-56 h-auto object-contain transition-opacity duration-300"
+              style={{
+                filter: 'drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15)) drop-shadow(0 0 20px rgba(0, 0, 0, 0.08))'
+              }}
+            />
+          </div>
+          
+          {/* Botón CHARLAR dentro del animate-float */}
+          <div className="chat-button-wrapper">
+            <div
+              onClick={() => setShowChatWindow(!showChatWindow)}
+              className="cobi-chat-button-zen pointer-events-auto"
+            >
+              <svg viewBox="0 0 100 100" className="curved-text-svg">
+                <path id="chatTextPathGameover" d="M 20,50 A 30,30 0 1,1 80,50" fill="none" />
+                <text>
+                  <textPath href="#chatTextPathGameover" startOffset="50%" textAnchor="middle" className="curved-text-style-zen">
+                    CHARLAR
+                  </textPath>
+                </text>
+              </svg>
+              <div className="paws-icon">🥋</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Chat Window de GAMEOVER */}
+      {showChatWindow && gameState === 'GAMEOVER' && (
+        <div className="fixed bottom-24 right-6 lg:bottom-48 lg:right-6 z-50 w-80 max-w-[calc(100vw-3rem)] bg-white rounded-3xl shadow-2xl border-2 border-gray-200 overflow-hidden animate-fade-in">
+          {/* Header */}
+          <div className="bg-gradient-to-r from-red-800 to-red-600 p-4 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="text-2xl">🥋</span>
+              <div>
+                <h3 className="text-white font-bold text-sm">Cobi Sensei</h3>
+                <p className="text-xs text-red-50">Instructor Zen de Artes Marciales</p>
+              </div>
+            </div>
+            <button
+              onClick={() => setShowChatWindow(false)}
+              className="p-1 hover:bg-white/20 rounded-full transition"
+            >
+              <ChevronLeft size={20} className="text-white" />
+            </button>
+          </div>
+
+          {/* Chat History */}
+          <div className="h-64 overflow-y-auto p-4 space-y-3 bg-gradient-to-b from-red-50/30 to-white">
+            {chatHistory.length === 0 ? (
+              <div className="text-center text-gray-500 text-sm mt-8">
+                <p className="mb-2">🥋</p>
+                <p>¡Ánimo! Todo maestro comenzó como aprendiz.</p>
+                <p className="text-xs mt-2">Pregúntame lo que necesites para mejorar.</p>
+              </div>
+            ) : (
+              chatHistory.map((msg, idx) => (
+                <div
+                  key={idx}
+                  className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                >
+                  <div
+                    className={`max-w-[80%] rounded-2xl px-4 py-2 ${
+                      msg.role === 'user'
+                        ? 'bg-gradient-to-br from-blue-500 to-blue-600 text-white'
+                        : 'bg-white border-2 border-red-200 text-gray-700'
+                    }`}
+                  >
+                    <p className="text-sm whitespace-pre-wrap">{msg.text}</p>
+                  </div>
+                </div>
+              ))
+            )}
+            
+            {/* Loading state */}
+            {isLoadingResponse && (
+              <div className="flex justify-start">
+                <div className="bg-white border-2 border-red-200 rounded-2xl px-4 py-3">
+                  <p className="text-sm text-gray-600">
+                    El Sensei medita tu pregunta... 🎋
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Input Area */}
+          <div className="p-3 bg-white border-t-2 border-gray-100">
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={chatInput}
+                onChange={(e) => setChatInput(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && sendMessageToCobi()}
+                placeholder="Escribe tu pregunta..."
+                disabled={isLoadingResponse}
+                className="flex-1 px-4 py-2 border-2 border-gray-200 rounded-full focus:outline-none focus:border-red-400 transition text-sm disabled:bg-gray-100"
+              />
+              <button
+                onClick={sendMessageToCobi}
+                disabled={isLoadingResponse || !chatInput.trim()}
+                className="w-10 h-10 bg-gradient-to-br from-red-800 to-red-600 rounded-full flex items-center justify-center hover:shadow-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <Send size={18} className="text-white" />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

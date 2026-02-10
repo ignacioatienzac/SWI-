@@ -62,7 +62,34 @@ export async function getAvailableTenses(grammarMode: string): Promise<string[]>
     }
   });
   
-  return Array.from(tenses).sort((a, b) => a.localeCompare(b));
+  // Orden personalizado de tiempos verbales
+  const tenseOrder = [
+    'presente',
+    'pretérito perfecto',
+    'pretérito indefinido',
+    'imperfecto',
+    'presente continuo',
+    'futuro simple',
+    'condicional simple',
+    'pretérito pluscuamperfecto'
+  ];
+  
+  return Array.from(tenses).sort((a, b) => {
+    const indexA = tenseOrder.indexOf(a.toLowerCase());
+    const indexB = tenseOrder.indexOf(b.toLowerCase());
+    
+    // Si ambos están en el orden personalizado, usar ese orden
+    if (indexA !== -1 && indexB !== -1) {
+      return indexA - indexB;
+    }
+    
+    // Si solo uno está en el orden, ponerlo primero
+    if (indexA !== -1) return -1;
+    if (indexB !== -1) return 1;
+    
+    // Si ninguno está en el orden, usar orden alfabético
+    return a.localeCompare(b);
+  });
 }
 
 /**

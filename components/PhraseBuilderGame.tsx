@@ -231,26 +231,48 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack }) => {
     setIsLoadingResponse(true);
 
     try {
-      // Prepare context
-      const currentPhrase = phrases[currentPhraseIndex];
-      const contextoJuego = {
-        juego: 'Constructor de Frases',
-        nivel: selectedLevel,
-        dificultad: selectedDifficulty,
-        modo: selectedMode,
-        frase_objetivo: currentPhrase.frase_objetivo,
-        palabras_disponibles: availableWords,
-        palabras_seleccionadas: selectedWords,
-        intentos_fallidos: selectedMode === 'lives' ? (3 - lives) : 0,
-        racha: streak,
-        pistas: currentPhrase.pistas
-      };
+      let contextoJuego;
+      let tipo: 'lobby' | 'juego';
 
-      // Call Cobi AI
+      // Si estamos en el menú, contexto de lobby
+      if (gameState === 'MENU') {
+        contextoJuego = {
+          juego: 'Constructor de Frases',
+          estado: 'menu',
+          nivel_seleccionado: selectedLevel || 'ninguno',
+          dificultad_seleccionada: selectedDifficulty || 'ninguna',
+          modo_seleccionado: selectedMode || 'ninguno',
+          modos_disponibles: {
+            'Orden Maestro': 'Ordena las palabras exactamente como aparecen en español',
+            'Arquitecto Libre': 'Construye la frase con las palabras en cualquier orden',
+            'Desafío Bilingüe': 'Traduce del inglés al español usando las palabras disponibles'
+          }
+        };
+        tipo = 'lobby';
+      } else {
+        // Si estamos jugando, contexto de juego
+        const currentPhrase = phrases[currentPhraseIndex];
+        contextoJuego = {
+          juego: 'Constructor de Frases',
+          nivel: selectedLevel,
+          dificultad: selectedDifficulty,
+          modo: selectedMode,
+          frase_objetivo: currentPhrase.frase_objetivo,
+          palabras_disponibles: availableWords,
+          palabras_seleccionadas: selectedWords,
+          intentos_fallidos: selectedMode === 'lives' ? (3 - lives) : 0,
+          racha: streak,
+          pistas: currentPhrase.pistas
+        };
+        tipo = 'juego';
+      }
+
+      // Call Cobi AI with appropriate context
       const response = await hablarConPanda(
         userMessage,
         'Constructor de Frases - Maestro Arquitecto',
-        contextoJuego
+        contextoJuego,
+        tipo
       );
 
       // Add Cobi response to history
@@ -771,14 +793,16 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack }) => {
         {/* Cobi Constructor en el menú (solo desktop) */}
         <div className="hidden lg:block fixed bottom-0 right-0 z-50 pointer-events-none overflow-visible">
           <div className="relative animate-float">
-            {/* Bocadillo de diálogo con mensaje aleatorio */}
-            <div style={{ position: 'absolute', left: '-200px', bottom: '80px', zIndex: 5, maxWidth: '220px' }} className="bg-white/95 backdrop-blur-sm rounded-2xl px-4 py-2 shadow-lg border-2 border-gray-200 pointer-events-auto">
-              <p className="text-gray-700 font-semibold text-sm text-center leading-snug">
-                {cobiMenuMessage || "🏗️ ¡Construyamos frases juntos! 🐾"}
-              </p>
-              {/* Pico del bocadillo apuntando hacia Cobi */}
-              <div className="absolute top-1/2 -translate-y-1/2 -right-3 w-4 h-4 bg-white border-r-2 border-b-2 border-gray-200 transform rotate-[315deg]"></div>
-            </div>
+            {/* Bocadillo de diálogo con mensaje aleatorio - solo si NO hay chat abierto */}
+            {!showChatWindow && (
+              <div style={{ position: 'absolute', left: '-200px', bottom: '80px', zIndex: 5, maxWidth: '220px' }} className="bg-white/95 backdrop-blur-sm rounded-2xl px-4 py-2 shadow-lg border-2 border-gray-200 pointer-events-auto">
+                <p className="text-gray-700 font-semibold text-sm text-center leading-snug">
+                  {cobiMenuMessage || "🏗️ ¡Construyamos frases juntos! 🐾"}
+                </p>
+                {/* Pico del bocadillo apuntando hacia Cobi */}
+                <div className="absolute top-1/2 -translate-y-1/2 -right-3 w-4 h-4 bg-white border-r-2 border-b-2 border-gray-200 transform rotate-[315deg]"></div>
+              </div>
+            )}
             
             {/* Imagen de Cobi Constructor pensando */}
             <div className="relative -mb-16 -mr-8" style={{ zIndex: 10 }}>
@@ -791,8 +815,109 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack }) => {
                 }}
               />
             </div>
+
+            {/* Chat Button Wrapper - Mismo que dentro del juego */}
+            <div className="chat-button-wrapper">
+              <div
+                onClick={() => setShowChatWindow(!showChatWindow)}
+                className="cobi-chat-button pointer-events-auto"
+              >
+                <svg viewBox="0 0 100 100" className="curved-text-svg">
+                  <path id="chatTextPathMenu" d="M 20,50 A 30,30 0 1,1 80,50" fill="none" />
+                  <text>
+                    <textPath href="#chatTextPathMenu" startOffset="50%" textAnchor="middle" className="curved-text-style">
+                      CHATEAR
+                    </textPath>
+                  </text>
+                </svg>
+                <div className="paws-icon">🐾</div>
+              </div>
+            </div>
           </div>
         </div>
+
+        {/* Chat Window del Menú */}
+        {showChatWindow && gameState === 'MENU' && (
+          <div className="fixed bottom-24 right-6 lg:bottom-48 lg:right-6 z-50 w-80 max-w-[calc(100vw-3rem)] bg-white rounded-3xl shadow-2xl border-2 border-gray-200 overflow-hidden animate-fade-in">
+            {/* Header */}
+            <div className="bg-gradient-to-r from-amber-400 to-orange-500 p-4 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="text-2xl">🐾</span>
+                <div>
+                  <h3 className="text-white font-bold text-sm">Cobi el Constructor</h3>
+                  <p className="text-xs text-amber-50">Tu arquitecto de frases</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowChatWindow(false)}
+                className="p-1 hover:bg-white/20 rounded-full transition"
+              >
+                <X size={20} className="text-white" />
+              </button>
+            </div>
+
+            {/* Chat History */}
+            <div className="h-64 overflow-y-auto p-4 space-y-3 bg-gradient-to-b from-amber-50/30 to-white">
+              {chatHistory.length === 0 ? (
+                <div className="text-center text-gray-500 text-sm mt-8">
+                  <p className="mb-2">👷‍♂️</p>
+                  <p>¡Hola! Soy Cobi, tu arquitecto personal.</p>
+                  <p className="text-xs mt-2">Pregúntame sobre los modos de juego o sobre español.</p>
+                </div>
+              ) : (
+                chatHistory.map((msg, idx) => (
+                  <div
+                    key={idx}
+                    className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                  >
+                    <div
+                      className={`max-w-[80%] rounded-2xl px-4 py-2 ${
+                        msg.role === 'user'
+                          ? 'bg-gradient-to-br from-blue-500 to-blue-600 text-white'
+                          : 'bg-white border-2 border-amber-200 text-gray-700'
+                      }`}
+                    >
+                      <p className="text-sm whitespace-pre-wrap">{msg.text}</p>
+                    </div>
+                  </div>
+                ))
+              )}
+              
+              {/* Loading state */}
+              {isLoadingResponse && (
+                <div className="flex justify-start">
+                  <div className="bg-white border-2 border-amber-200 rounded-2xl px-4 py-3">
+                    <p className="text-sm text-gray-600">
+                      El Panda está revisando los planos... 🐾
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Input Area */}
+            <div className="p-3 bg-white border-t-2 border-gray-100">
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={chatInput}
+                  onChange={(e) => setChatInput(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && sendMessageToCobi()}
+                  placeholder="Escribe tu pregunta..."
+                  disabled={isLoadingResponse}
+                  className="flex-1 px-4 py-2 border-2 border-gray-200 rounded-full focus:outline-none focus:border-amber-400 transition text-sm disabled:bg-gray-100"
+                />
+                <button
+                  onClick={sendMessageToCobi}
+                  disabled={isLoadingResponse || !chatInput.trim()}
+                  className="w-10 h-10 bg-gradient-to-br from-amber-400 to-orange-500 rounded-full flex items-center justify-center hover:shadow-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <Send size={18} className="text-white" />
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     );
   }

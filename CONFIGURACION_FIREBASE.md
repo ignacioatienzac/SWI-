@@ -125,11 +125,11 @@ Copia y pega esto en tu Terminal:
 
 ```bash
 cd "/Users/ignacio/Documents/Spanish with Ignacio/SWI-" && npx firebase deploy --only functions
-```
+```text
 
 Espera unos 2-3 minutos. Al terminar verás algo como:
 
-```
+```text
 ✔  Deploy complete!
 
 Function URL (hablarConPandaSeguro):

@@ -1,11 +1,166 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { ChevronLeft, Info, X, Pause, Play } from 'lucide-react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import { ChevronLeft, Info, X, Pause, Play, Send } from 'lucide-react';
 import { getFilteredVerbs, getAvailableTenses } from '../services/powerVerbsService';
 import { PowerVerb, GameDifficulty, GameMode, BattleMode } from '../types';
+import { hablarConPanda } from '../services/geminiService';
 
 interface PowerOfVerbsGameProps {
   onBack: () => void;
 }
+
+// Función para formatear nombres de tiempos verbales
+const formatTenseName = (tense: string): string => {
+  const tenseMap: Record<string, string> = {
+    'imperfecto': 'Pretérito Imperfecto',
+    'indefinido': 'Pretérito Indefinido',
+    'presente': 'Presente',
+    'pretérito perfecto': 'Pretérito Perfecto',
+    'pretérito indefinido': 'Pretérito Indefinido',
+    'presente continuo': 'Presente Continuo',
+    'futuro simple': 'Futuro Simple',
+    'condicional simple': 'Condicional Simple',
+    'pretérito pluscuamperfecto': 'Pretérito Pluscuamperfecto'
+  };
+  
+  return tenseMap[tense.toLowerCase()] || tense.charAt(0).toUpperCase() + tense.slice(1);
+};
+
+// Mensajes aleatorios para Cobi Sensei en el menú
+const mensajesSenseiMenu = [
+  "🥋 ¡Bienvenido, aprendiz! Configura tu entrenamiento con sabiduría. 🐾",
+  "⚔️ Elige tu batalla con cuidado. Cada verbo es una lección. 🐾",
+  "📚 El camino del guerrero verbal comienza con la elección correcta. 🐾",
+  "🎯 Modo, tiempo, dificultad... La preparación es clave para la victoria. 🐾",
+  "✨ ¿Regular o irregular? ¿Contrarreloj o Jefe? ¡Tú decides tu destino! 🐾",
+  "🛡️ Un sensei sabio dice: empieza con fácil y sube la dificultad. 🐾",
+  "🌟 La maestría requiere práctica. ¡Configura y comienza tu viaje! 🐾"
+];
+
+const seleccionarMensajeSenseiMenuRandom = (): string => {
+  const indice = Math.floor(Math.random() * mensajesSenseiMenu.length);
+  return mensajesSenseiMenu[indice];
+};
+
+// Mensajes aleatorios para Cobi Sensei durante el juego
+const mensajesSenseiJuego = [
+  "⚔️ ¡Concentración, aprendiz! Los verbos son tu mejor arma. 🐾",
+  "🥋 La conjugación perfecta es como un golpe certero. ¡Adelante! 🐾",
+  "📚 Cada respuesta correcta te acerca a la maestría del español. 🐾",
+  "🎯 Respira, piensa y conjuga. ¡El castillo cuenta contigo! 🐾",
+  "⚡ ¡Fuerza y precisión! Los verbos son tu poder interior. 🐾",
+  "🛡️ Protege el castillo con tu conocimiento. ¡Sigue luchando! 🐾"
+];
+
+const mensajesSenseiVictoria = [
+  "🏆 ¡Maestría alcanzada! Tu dominio de los verbos es impresionante. 🐾✨",
+  "⭐ ¡Victoria honorable! Has demostrado ser un verdadero guerrero del español. 🐾",
+  "🎉 ¡Excelente, aprendiz! El camino del sensei se abre ante ti. 🐾🌟"
+];
+
+const mensajesSenseiFallo = [
+  "💪 No te rindas, aprendiz. Incluso los maestros fallaron muchas veces. 🐾",
+  "🔄 La derrota es parte del aprendizaje. ¡Levántate y sigue practicando! 🐾",
+  "📖 Cada error es una lección. ¡Vuelve más fuerte, guerrero! 🐾"
+];
+
+const seleccionarMensajeSenseiRandom = (tipo: 'juego' | 'victoria' | 'fallo'): string => {
+  let mensajes;
+  switch(tipo) {
+    case 'victoria':
+      mensajes = mensajesSenseiVictoria;
+      break;
+    case 'fallo':
+      mensajes = mensajesSenseiFallo;
+      break;
+    default:
+      mensajes = mensajesSenseiJuego;
+  }
+  const indice = Math.floor(Math.random() * mensajes.length);
+  return mensajes[indice];
+};
+
+// Mensajes aleatorios para Cobi Mago durante el juego
+const mensajesMagoJuego = [
+  "¡Prepara tu varita! ✨",
+  "¡Que empiece la magia! 🔮",
+  "¡Abre el grimorio! 📖",
+  "¡Hora de conjurar! ⚡"
+];
+
+const mensajesMagoMenu = [
+  "¡Bienvenido, mago! ¿Listo para conjugar? ✨",
+  "Mi libro de hechizos está preparado. ¡Vamos! 📖",
+  "¿Qué varita usamos hoy? 🪄",
+  "¡Vamos a defender el castillo! 🏰"
+];
+
+const mensajesMagoAcierto = [
+  "¡Pretéritum Totalus! ⚡",
+  "¡Futurum Primus! ✨",
+  "¡Imperativus Maxima! 💥",
+  "¡Conjugatio Explosiva! 🔥",
+  "¡Verbum Rayo! ⚡",
+  "¡Participium Perfectum! 🌟",
+  "¡Avada Kedavra, monstruo! 🔥"
+];
+
+const mensajesMagoFallo = [
+  "¡Irregularis Chaos! 🌀",
+  "¡Conjugatio Incompleta! 💨",
+  "¡Tildus Absentia! 📉",
+  "¡Syntaxis Confusum! 🌫️",
+  "¡Verbum Fallidus! 🧨",
+  "¡Modus Incorrektus! 🌫️",
+  "¡Subjuntivum Dubia... 🌫️",
+  "¡Infinitivus Errorus! 💨",
+  "¡Gerundium Lento... 🐢"
+];
+
+const mensajesMagoPausa = [
+  "Recargando maná... 🧘‍♂️",
+  "Revisando hechizos 🪄",
+  "Meditando el próximo ataque. 🎋"
+];
+
+const mensajesMagoVictoria = [
+  "¡Conjugatum Victorium! 🏆",
+  "¡Lo logramos, mago supremo! 🌟",
+  "¡Así se hace, leyenda de la magia! 👑"
+];
+
+const mensajesMagoDerrota = [
+  "Se nos acabó la magia... ¿volvemos a intentarlo?🪄",
+  "¡Necesitamos más MP! 🧪",
+  "Quizás necesitamos estudiar más hechizos 📚"
+];
+
+const seleccionarMensajeMagoRandom = (tipo: 'juego' | 'acierto' | 'fallo' | 'pausa' | 'victoria' | 'derrota' | 'menu'): string => {
+  let mensajes;
+  switch(tipo) {
+    case 'acierto':
+      mensajes = mensajesMagoAcierto;
+      break;
+    case 'fallo':
+      mensajes = mensajesMagoFallo;
+      break;
+    case 'pausa':
+      mensajes = mensajesMagoPausa;
+      break;
+    case 'victoria':
+      mensajes = mensajesMagoVictoria;
+      break;
+    case 'derrota':
+      mensajes = mensajesMagoDerrota;
+      break;
+    case 'menu':
+      mensajes = mensajesMagoMenu;
+      break;
+    default:
+      mensajes = mensajesMagoJuego;
+  }
+  const indice = Math.floor(Math.random() * mensajes.length);
+  return mensajes[indice];
+};
 
 // --- GAME CONSTANTS & CONFIGURATION ---
 const DIFFICULTY_SETTINGS = {
@@ -42,6 +197,80 @@ const DIFFICULTY_SETTINGS = {
     bossAppearTime: 35000,
     bossSpeed: 0.17, // Más rápido
   },
+};
+
+// --- CONTRARRELOJ ENEMY STATS ---
+interface ContrarrelojEnemy {
+  id: number; // 1-6
+  image: string;
+  hp: number;
+  baseTime: number; // seconds
+  name: string;
+}
+
+const CONTRARRELOJ_ENEMIES: ContrarrelojEnemy[] = [
+  { id: 1, image: '/data/images/enemigo_1.png', hp: 10,  baseTime: 12, name: 'Duende' },
+  { id: 2, image: '/data/images/enemigo_2.png', hp: 30,  baseTime: 10, name: 'Trasgo' },
+  { id: 3, image: '/data/images/enemigo_3.png', hp: 60,  baseTime: 8,  name: 'Ogro' },
+  { id: 4, image: '/data/images/enemigo_4.png', hp: 100, baseTime: 7,  name: 'Troll' },
+  { id: 5, image: '/data/images/enemigo_5.png', hp: 160, baseTime: 6,  name: 'Dragón' },
+  { id: 6, image: '/data/images/enemigo_6.png', hp: 250, baseTime: 5,  name: 'Lich' },
+];
+
+interface ContrarrelojDifficultyConfig {
+  timeMultiplier: number;
+  enemyPool: number[]; // enemy ids
+  castleLives: number;
+  getEnemyWeights: (kills: number) => { id: number; weight: number }[];
+}
+
+const CONTRARRELOJ_DIFFICULTY: Record<GameDifficulty, ContrarrelojDifficultyConfig> = {
+  facil: {
+    timeMultiplier: 1.5,
+    enemyPool: [1, 2, 3, 4],
+    castleLives: 10,
+    getEnemyWeights: (kills: number) => {
+      if (kills <= 5) return [{ id: 1, weight: 100 }];
+      if (kills <= 15) return [{ id: 1, weight: 50 }, { id: 2, weight: 50 }];
+      if (kills <= 25) return [{ id: 1, weight: 20 }, { id: 2, weight: 35 }, { id: 3, weight: 30 }, { id: 4, weight: 15 }];
+      return [{ id: 1, weight: 10 }, { id: 2, weight: 25 }, { id: 3, weight: 35 }, { id: 4, weight: 30 }];
+    },
+  },
+  intermedio: {
+    timeMultiplier: 1.0,
+    enemyPool: [1, 2, 3, 4, 5],
+    castleLives: 5,
+    getEnemyWeights: (kills: number) => {
+      if (kills <= 5) return [{ id: 1, weight: 50 }, { id: 2, weight: 50 }];
+      if (kills <= 15) return [{ id: 1, weight: 15 }, { id: 2, weight: 30 }, { id: 3, weight: 35 }, { id: 4, weight: 20 }];
+      if (kills <= 25) return [{ id: 2, weight: 15 }, { id: 3, weight: 25 }, { id: 4, weight: 35 }, { id: 5, weight: 25 }];
+      return [{ id: 3, weight: 20 }, { id: 4, weight: 35 }, { id: 5, weight: 45 }];
+    },
+  },
+  dificil: {
+    timeMultiplier: 0.8,
+    enemyPool: [2, 3, 4, 5, 6],
+    castleLives: 3,
+    getEnemyWeights: (kills: number) => {
+      if (kills <= 5) return [{ id: 2, weight: 50 }, { id: 3, weight: 50 }];
+      if (kills <= 15) return [{ id: 2, weight: 15 }, { id: 3, weight: 30 }, { id: 4, weight: 35 }, { id: 5, weight: 20 }];
+      if (kills <= 25) return [{ id: 3, weight: 10 }, { id: 4, weight: 25 }, { id: 5, weight: 35 }, { id: 6, weight: 30 }];
+      return [{ id: 4, weight: 15 }, { id: 5, weight: 35 }, { id: 6, weight: 50 }];
+    },
+  },
+};
+
+// Pick enemy from weighted pool
+const pickWeightedEnemy = (weights: { id: number; weight: number }[]): ContrarrelojEnemy => {
+  const totalWeight = weights.reduce((sum, w) => sum + w.weight, 0);
+  let random = Math.random() * totalWeight;
+  for (const w of weights) {
+    random -= w.weight;
+    if (random <= 0) {
+      return CONTRARRELOJ_ENEMIES[w.id - 1];
+    }
+  }
+  return CONTRARRELOJ_ENEMIES[weights[weights.length - 1].id - 1];
 };
 
 type GameState = 'SELECTION' | 'PLAYING' | 'PAUSED' | 'GAMEOVER' | 'VICTORY';
@@ -103,6 +332,29 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
   const [consecutiveFailures, setConsecutiveFailures] = useState(0);
   const [showTooltip, setShowTooltip] = useState<string | null>(null);
   
+  // Contrarreloj-specific state (damage system & progression)
+  const [playerDamage, setPlayerDamage] = useState(10);
+  const [damageStreak, setDamageStreak] = useState(0);
+  const [killCount, setKillCount] = useState(0);
+  
+  // Keep refs in sync with state for gameLoop access
+  useEffect(() => { killCountRef.current = killCount; }, [killCount]);
+  useEffect(() => { attackPowerRef.current = attackPower; }, [attackPower]);
+  
+  // Cobi Mago State
+  const [cobiMagoMessage, setCobiMagoMessage] = useState<string>(seleccionarMensajeMagoRandom('juego'));
+  const [cobiMagoAvatar, setCobiMagoAvatar] = useState<string>('./data/images/cobi-mago.webp');
+  const [cobiMagoMenuMessage] = useState<string>(seleccionarMensajeMagoRandom('menu'));
+  const [cobiMagoPausaMessage] = useState<string>(seleccionarMensajeMagoRandom('pausa'));
+  const [cobiMagoDerrotaMessage] = useState<string>(seleccionarMensajeMagoRandom('derrota'));
+  const [cobiMagoVictoriaMessage] = useState<string>(seleccionarMensajeMagoRandom('victoria'));
+  
+  // Chat State
+  const [showChatWindow, setShowChatWindow] = useState(false);
+  const [chatInput, setChatInput] = useState('');
+  const [chatHistory, setChatHistory] = useState<Array<{role: 'user' | 'cobi', text: string}>>([]);
+  const [isLoadingResponse, setIsLoadingResponse] = useState(false);
+  
   // Canvas Refs (Mutable game state to avoid re-renders)
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const requestRef = useRef<number | undefined>(undefined);
@@ -116,12 +368,77 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
   const projectilesRef = useRef<Projectile[]>([]);
   const bossRef = useRef<Boss | null>(null);
   const gameStartTimeRef = useRef<number>(0);
+  const killCountRef = useRef<number>(0);
+  const attackPowerRef = useRef<number>(1);
+  const nextSpawnTimeRef = useRef<number>(0);
   
   // Image refs for rendering
   const enemyImagesRef = useRef<HTMLImageElement[]>([]);
   const bossImageRef = useRef<HTMLImageElement | null>(null);
   const wizardImageRef = useRef<HTMLImageElement | null>(null);
   const imagesLoadedRef = useRef<boolean>(false);
+
+  // Send message to Cobi Mago
+  const sendMessageToCobi = async () => {
+    if (!chatInput.trim() || isLoadingResponse) return;
+
+    const userMessage = chatInput.trim();
+    setChatInput('');
+    
+    // Add user message to history
+    setChatHistory(prev => [...prev, { role: 'user', text: userMessage }]);
+    setIsLoadingResponse(true);
+
+    try {
+      let contextoJuego;
+      let tipo: 'lobby' | 'juego';
+
+      // Si estamos en SELECTION, contexto de lobby
+      if (gameState === 'SELECTION') {
+        contextoJuego = {
+          juego: 'El Poder de los Verbos',
+          estado: 'menu',
+          dificultad_seleccionada: selectedDifficulty || 'ninguna',
+          tiempo_seleccionado: selectedTense || 'ninguno',
+          modo_juego: selectedMode || 'ninguno',
+          modo_batalla: selectedBattleMode || 'ninguno'
+        };
+        tipo = 'lobby';
+      } else {
+        // Si estamos jugando, contexto de juego
+        contextoJuego = {
+          juego: 'El Poder de los Verbos',
+          dificultad: selectedDifficulty,
+          tiempo_verbal: selectedTense,
+          modo_juego: selectedMode,
+          modo_batalla: selectedBattleMode,
+          puntuacion: score,
+          poder_ataque: attackPower,
+          vidas: lives
+        };
+        tipo = 'juego';
+      }
+
+      // Call Cobi AI with appropriate context
+      const response = await hablarConPanda(
+        userMessage,
+        'El Poder de los Verbos - Mago Experto en Gramática Española 🪄',
+        contextoJuego,
+        tipo
+      );
+
+      // Add Cobi response to history
+      setChatHistory(prev => [...prev, { role: 'cobi', text: response }]);
+    } catch (error) {
+      console.error('Error al comunicarse con Cobi Mago:', error);
+      setChatHistory(prev => [
+        ...prev,
+        { role: 'cobi', text: '¡Ups! Mi varita mágica tuvo un problema. 🪄✨ Inténtalo de nuevo.' }
+      ]);
+    } finally {
+      setIsLoadingResponse(false);
+    }
+  };
 
   // --- AUDIO HELPERS ---
   const playTone = (frequency: number, duration: number, type: OscillatorType = 'sine') => {
@@ -170,7 +487,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
     setTimeout(() => playTone(330, 0.2, 'sawtooth'), 200);
     setTimeout(() => playTone(220, 0.4, 'sawtooth'), 400);
   };
-  
+
   // State to track images loaded
   const [imagesReady, setImagesReady] = useState(false);
   
@@ -263,13 +580,15 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
     setVerbsPool(pool);
     setScore(0);
     setAttackPower(1);
+    setConsecutiveFailures(0);
+    
+    // Unified initialization for both modes
     setLives(DIFFICULTY_SETTINGS[selectedDifficulty].castleLives);
     monstersRef.current = [];
     projectilesRef.current = [];
     bossRef.current = null;
     
     // Initialize hero position based on expected canvas size
-    // This ensures first projectile shoots from correct position
     const expectedCanvasHeight = 300;
     const groundY = expectedCanvasHeight - 40;
     const wizardSize = Math.floor((expectedCanvasHeight - 40) * 0.15);
@@ -281,6 +600,19 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
     lastSpawnRef.current = performance.now();
     lastShotRef.current = performance.now();
     gameStartTimeRef.current = performance.now();
+    nextSpawnTimeRef.current = performance.now() + 1000; // First spawn after 1s
+    killCountRef.current = 0;
+    attackPowerRef.current = 1;
+    
+    // Initialize damage system for Contrarreloj
+    if (selectedBattleMode === 'contrarreloj') {
+      setPlayerDamage(10);
+      setDamageStreak(0);
+      setKillCount(0);
+    }
+    
+    // Establecer mensaje inicial de Cobi Mago
+    setCobiMagoMessage(seleccionarMensajeMagoRandom('juego'));
     
     setGameState('PLAYING');
     pickNewVerb(pool);
@@ -338,13 +670,48 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
       };
     }
     
-    const currentSpawnRate = Math.max(settings.minSpawnRate, settings.spawnRate - (score * 2));
+    // Use nextSpawnTimeRef for randomized spawn intervals
+    if (time < nextSpawnTimeRef.current) return;
+    
+    // Calculate next spawn time with randomness (±30% variation)
+    const baseSpawnRate = Math.max(settings.minSpawnRate, settings.spawnRate - (score * 2));
+    const spawnVariation = baseSpawnRate * 0.3;
+    nextSpawnTimeRef.current = time + baseSpawnRate + (Math.random() * spawnVariation * 2 - spawnVariation);
 
-    if (time - lastSpawnRef.current > currentSpawnRate) {
+    {
       const groundLevel = canvasHeight - 40;
       
-      // Define 6 enemy types with progressive difficulty
-      // enemigo_1 (weakest) to enemigo_6 (strongest)
+      // Contrarreloj mode uses custom progression system
+      if (selectedBattleMode === 'contrarreloj' && selectedDifficulty) {
+        const crConfig = CONTRARRELOJ_DIFFICULTY[selectedDifficulty];
+        const weights = crConfig.getEnemyWeights(killCountRef.current);
+        const enemy = pickWeightedEnemy(weights);
+        
+        // Use Contrarreloj HP values (10, 30, 60, 100, 160, 250)
+        const monsterSize = Math.floor((canvasHeight - 40) * 0.15);
+        
+        // Apply timeMultiplier to speed (higher baseTime = slower, so inverse relationship)
+        // Base speed 0.5, adjusted by baseTime ratio and difficulty multiplier
+        const baseSpeed = 0.5 * (12 / enemy.baseTime) * crConfig.timeMultiplier;
+        
+        monstersRef.current.push({
+          id: Date.now(),
+          x: canvasWidth + 50,
+          y: groundLevel - monsterSize,
+          width: monsterSize,
+          height: monsterSize,
+          hp: enemy.hp,
+          maxHp: enemy.hp,
+          speed: baseSpeed * settings.enemySpeedMultiplier,
+          emoji: '👾',
+          imageIndex: enemy.id - 1,
+          color: '#8b5cf6',
+          points: Math.ceil(enemy.hp / 10) * 10
+        });
+        return;
+      }
+      
+      // Jefe mode uses original progression system
       const enemyTypes = [
         { imageIndex: 0, hp: 2, speed: 0.9, emoji: '👾', points: 10, color: '#8b5cf6', minScore: 0 },      // Enemigo 1 - muy débil
         { imageIndex: 1, hp: 4, speed: 0.75, emoji: '👹', points: 15, color: '#ec4899', minScore: 0 },    // Enemigo 2 - débil
@@ -392,7 +759,6 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
         color: type.color,
         points: type.points
       });
-      lastSpawnRef.current = time;
     }
   };
 
@@ -425,7 +791,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
          width: projectileSize,
          height: projectileSize,
          speed: 6,
-         power: Math.max(1, attackPower),
+         power: Math.max(1, attackPowerRef.current),
          emoji: '🔥'
        });
        playShoot(); // Play shoot sound
@@ -473,6 +839,10 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
             if (m.hp <= 0) {
               setScore(prev => prev + m.points);
               monstersRef.current.splice(j, 1);
+              // Track kills in Contrarreloj mode
+              if (selectedBattleMode === 'contrarreloj') {
+                setKillCount(prev => prev + 1);
+              }
             }
             break;
           }
@@ -497,11 +867,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
         }
     }
 
-    // In contrarreloj mode, check target score
-    if (selectedBattleMode === 'contrarreloj' && selectedDifficulty && score >= DIFFICULTY_SETTINGS[selectedDifficulty].targetScore) {
-        playVictory(); // Play victory sound
-        setGameState('VICTORY');
-    }
+    // Contrarreloj victory is handled in handleAnswer, not in canvas loop
   };
 
   const draw = (ctx: CanvasRenderingContext2D, canvasWidth: number, canvasHeight: number) => {
@@ -663,23 +1029,62 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
 
     const isCorrect = validAnswers.some(a => a.toLowerCase() === answer.toLowerCase().trim());
     
-    if (isCorrect) {
+    // Contrarreloj uses damage streak system
+    if (selectedBattleMode === 'contrarreloj') {
+      if (isCorrect) {
         playSuccess();
+        const newStreak = damageStreak + 1;
+        const newDamage = 10 + newStreak * 2;
+        setDamageStreak(newStreak);
+        setPlayerDamage(newDamage);
+        // attackPower goes up +1 per correct (visual + aura), capped at 10
         setAttackPower(prev => Math.min(prev + 1, 10));
-        setFeedbackMsg({ text: '¡Correcto! +Poder', type: 'success' });
+        setCobiMagoMessage(seleccionarMensajeMagoRandom('acierto'));
+        setFeedbackMsg({ text: `¡Correcto! Daño: ${newDamage} (Racha: ${newStreak})`, type: 'success' });
         setTimeout(() => pickNewVerb(verbsPool), 600);
-    } else {
+      } else {
         playError();
         const newFailureCount = consecutiveFailures + 1;
         setConsecutiveFailures(newFailureCount);
-        setAttackPower(prev => Math.max(1, prev - 1));
+        // Reset streak but keep base damage at 10
+        setDamageStreak(0);
+        setPlayerDamage(10);
+        // Only penalize attackPower in dificil mode
+        if (selectedDifficulty === 'dificil') {
+          setAttackPower(prev => Math.max(1, prev - 1));
+        }
+        setCobiMagoMessage(seleccionarMensajeMagoRandom('fallo'));
         
-        // Only show answer after 3 consecutive failures
         if (newFailureCount >= 3) {
           setFeedbackMsg({ text: `Incorrecto. La respuesta es: ${validAnswers[0]}`, type: 'error' });
         } else {
           setFeedbackMsg({ text: `Incorrecto. Intenta de nuevo (${newFailureCount}/3)`, type: 'error' });
         }
+      }
+    } else {
+      // Jefe mode uses original power system
+      if (isCorrect) {
+        playSuccess();
+        setAttackPower(prev => Math.min(prev + 1, 10));
+        setCobiMagoMessage(seleccionarMensajeMagoRandom('acierto'));
+        setFeedbackMsg({ text: '¡Correcto! +Poder', type: 'success' });
+        setTimeout(() => pickNewVerb(verbsPool), 600);
+      } else {
+        playError();
+        const newFailureCount = consecutiveFailures + 1;
+        setConsecutiveFailures(newFailureCount);
+        // Only penalize attackPower in dificil mode
+        if (selectedDifficulty === 'dificil') {
+          setAttackPower(prev => Math.max(1, prev - 1));
+        }
+        setCobiMagoMessage(seleccionarMensajeMagoRandom('fallo'));
+        
+        if (newFailureCount >= 3) {
+          setFeedbackMsg({ text: `Incorrecto. La respuesta es: ${validAnswers[0]}`, type: 'error' });
+        } else {
+          setFeedbackMsg({ text: `Incorrecto. Intenta de nuevo (${newFailureCount}/3)`, type: 'error' });
+        }
+      }
     }
   };
 
@@ -725,11 +1130,11 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
                         <button
                             key={t}
                             onClick={() => setSelectedTense(t)}
-                            className={`py-3 px-4 rounded-lg border font-bold capitalize text-sm md:text-base transition-all ${
+                            className={`py-3 px-4 rounded-lg border font-bold text-sm md:text-base transition-all ${
                                 selectedTense === t ? 'bg-deep-blue text-white border-deep-blue' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
                             }`}
                         >
-                            {t}
+                            {formatTenseName(t)}
                         </button>
                      ))}
                    </div>
@@ -774,7 +1179,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
                       </button>
                       {showTooltip === 'contrarreloj' && (
                         <div className="absolute -top-12 left-0 right-0 bg-gray-800 text-white text-xs px-3 py-2 rounded-lg z-10">
-                          Alcanza la puntuación objetivo
+                          Derrota 30 enemigos antes de que se acabe el tiempo
                         </div>
                       )}
                       <div className="text-5xl mb-2">⏱️</div>
@@ -850,14 +1255,142 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
             </button>
           </div>
         </div>
+
+        {/* Cobi Mago Menú (solo desktop) */}
+        <div className="hidden lg:block fixed bottom-0 right-0 z-50 pointer-events-none overflow-visible" key="cobi-mago-menu">
+          <div className="relative animate-float">
+            {/* Bocadillo de diálogo con mensaje */}
+            <div style={{ position: 'absolute', left: '-200px', bottom: '80px', zIndex: 5, maxWidth: '220px' }} className="bg-white/95 backdrop-blur-sm rounded-2xl px-4 py-2 shadow-lg border-2 border-gray-200 pointer-events-auto">
+              <p className="text-gray-700 font-semibold text-sm text-center leading-snug">
+                {cobiMagoMenuMessage}
+              </p>
+              {/* Pico del bocadillo apuntando hacia Cobi */}
+              <div className="absolute top-1/2 -translate-y-1/2 -right-3 w-4 h-4 bg-white border-r-2 border-b-2 border-gray-200 transform rotate-[315deg]" style={{ zIndex: -1 }}></div>
+            </div>
+            
+            {/* Imagen de Cobi Mago Menú */}
+            <div className="relative -mb-16 -mr-8" style={{ zIndex: 10 }}>
+              <img 
+                src="./data/images/cobi-mago-menu.webp"
+                alt="Cobi Mago pensando" 
+                className="w-56 h-auto object-contain transition-opacity duration-300"
+                style={{
+                  filter: 'drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15)) drop-shadow(0 0 20px rgba(0, 0, 0, 0.08))'
+                }}
+              />
+            </div>
+            
+            {/* Botón CHATEAR dentro del animate-float */}
+            <div className="chat-button-wrapper">
+              <div
+                onClick={() => setShowChatWindow(!showChatWindow)}
+                className="cobi-chat-button-mago pointer-events-auto"
+              >
+                <svg viewBox="0 0 100 100" className="curved-text-svg">
+                  <path id="chatTextPathMagoMenu" d="M 20,50 A 30,30 0 1,1 80,50" fill="none" />
+                  <text>
+                    <textPath href="#chatTextPathMagoMenu" startOffset="50%" textAnchor="middle" className="curved-text-style-mago">
+                      CHATEAR
+                    </textPath>
+                  </text>
+                </svg>
+                <div className="paws-icon">🔮</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Chat Window del Menú */}
+        {showChatWindow && gameState === 'SELECTION' && (
+          <div className="fixed bottom-24 right-6 lg:bottom-48 lg:right-6 z-50 w-80 max-w-[calc(100vw-3rem)] bg-white rounded-3xl shadow-2xl border-2 border-gray-200 overflow-hidden animate-fade-in">
+            {/* Header */}
+            <div className="bg-gradient-to-r from-purple-600 to-indigo-600 p-4 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="text-2xl">🪄</span>
+                <div>
+                  <h3 className="text-white font-bold text-sm">Cobi Mago</h3>
+                  <p className="text-xs text-purple-50">Experto en Gramática Española</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowChatWindow(false)}
+                className="p-1 hover:bg-white/20 rounded-full transition"
+              >
+                <ChevronLeft size={20} className="text-white" />
+              </button>
+            </div>
+
+            {/* Chat History */}
+            <div className="h-64 overflow-y-auto p-4 space-y-3 bg-gradient-to-b from-purple-50/30 to-white">
+              {chatHistory.length === 0 ? (
+                <div className="text-center text-gray-500 text-sm mt-8">
+                  <p className="mb-2">🪄</p>
+                  <p>¡Bienvenido a mi estudio mágico! Soy Cobi Mago.</p>
+                  <p className="text-xs mt-2">Pregúntame sobre gramática o el juego. ✨</p>
+                </div>
+              ) : (
+                chatHistory.map((msg, idx) => (
+                  <div
+                    key={idx}
+                    className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                  >
+                    <div
+                      className={`max-w-[80%] rounded-2xl px-4 py-2 ${
+                        msg.role === 'user'
+                          ? 'bg-gradient-to-br from-blue-500 to-blue-600 text-white'
+                          : 'bg-white border-2 border-purple-200 text-gray-700'
+                      }`}
+                    >
+                      <p className="text-sm whitespace-pre-wrap">{msg.text}</p>
+                    </div>
+                  </div>
+                ))
+              )}
+              
+              {/* Loading state */}
+              {isLoadingResponse && (
+                <div className="flex justify-start">
+                  <div className="bg-white border-2 border-purple-200 rounded-2xl px-4 py-3">
+                    <p className="text-sm text-gray-600">
+                      El Mago consulta su grimorio... 📖✨
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Input Area */}
+            <div className="p-3 bg-white border-t-2 border-gray-100">
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={chatInput}
+                  onChange={(e) => setChatInput(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && sendMessageToCobi()}
+                  placeholder="Escribe tu pregunta..."
+                  disabled={isLoadingResponse}
+                  className="flex-1 px-4 py-2 border-2 border-gray-200 rounded-full focus:outline-none focus:border-purple-400 transition text-sm disabled:bg-gray-100"
+                />
+                <button
+                  onClick={sendMessageToCobi}
+                  disabled={isLoadingResponse || !chatInput.trim()}
+                  className="p-2 bg-gradient-to-br from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 disabled:from-gray-300 disabled:to-gray-300 text-white rounded-full transition-all"
+                >
+                  <Send size={20} />
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     );
   }
 
   // --- PLAYING STATE ---
   if (gameState === 'PLAYING') {
+    // Both modes use the same canvas-based UI
     return (
-      <div className="min-h-screen bg-deep-blue p-4 flex flex-col items-center justify-center">
+      <div className="min-h-screen bg-deep-blue p-4 flex flex-col items-center justify-start pt-8">
         <div className="w-full max-w-4xl">
           {/* Header */}
           <div className="flex justify-between items-center mb-4 text-white">
@@ -988,11 +1521,13 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
                   </div>
                 )}
 
-                {feedbackMsg.text && (
-                  <p className={`mt-4 text-lg font-bold ${feedbackMsg.type === 'success' ? 'text-green-600' : 'text-red-600'}`}>
-                    {feedbackMsg.text}
-                  </p>
-                )}
+                <div className="mt-4 h-8 flex items-center justify-center">
+                  {feedbackMsg.text && (
+                    <p className={`text-lg font-bold ${feedbackMsg.type === 'success' ? 'text-green-600' : 'text-red-600'}`}>
+                      {feedbackMsg.text}
+                    </p>
+                  )}
+                </div>
               </div>
             ) : (
               <p className="text-center text-gray-500">Cargando...</p>
@@ -1015,7 +1550,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
                 <p>👾 <strong>Monstruos atacan:</strong> Usa tu poder para defenderlos</p>
                 <p>🏰 <strong>Protege el castillo:</strong> Si pierdes vidas, pierdes el juego</p>
                 <p>⚡ <strong>Ataca automáticamente:</strong> Cada segundo dispara proyectiles</p>
-                <p>🎯 <strong>Modo Contrarreloj:</strong> Alcanza la puntuación objetivo para ganar</p>
+                <p>🎯 <strong>Modo Contrarreloj:</strong> Derrota 30 enemigos conjugando verbos. Cada acierto hace ⚔️ daño al enemigo. ¡Las rachas aumentan tu poder!</p>
                 <p>📝 <strong>Modo Escritura:</strong> Usa las teclas 1-5 para vocales con tilde (1=á, 2=é, 3=í, 4=ó, 5=ú)</p>
                 <p>🐉 <strong>Modo Jefe:</strong> Derrota al dragón gigante que aparece después de un tiempo</p>
               </div>
@@ -1025,6 +1560,133 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
               >
                 Entendido
               </button>
+            </div>
+          </div>
+        )}
+
+        {/* Cobi Mago (solo desktop) */}
+        <div className="hidden lg:block fixed bottom-0 right-0 z-50 pointer-events-none overflow-visible" key="cobi-mago-container">
+          <div className="relative animate-float">
+            {/* Bocadillo de diálogo con mensaje */}
+            <div style={{ position: 'absolute', left: '-200px', bottom: '80px', zIndex: 5, maxWidth: '220px' }} className="bg-white/95 backdrop-blur-sm rounded-2xl px-4 py-2 shadow-lg border-2 border-gray-200 pointer-events-auto">
+              <p className="text-gray-700 font-semibold text-sm text-center leading-snug">
+                {cobiMagoMessage}
+              </p>
+              {/* Pico del bocadillo apuntando hacia Cobi */}
+              <div className="absolute top-1/2 -translate-y-1/2 -right-3 w-4 h-4 bg-white border-r-2 border-b-2 border-gray-200 transform rotate-[315deg]" style={{ zIndex: -1 }}></div>
+            </div>
+            
+            {/* Imagen de Cobi Mago */}
+            <div className="relative -mb-16 -mr-8" style={{ zIndex: 10 }}>
+              <img 
+                src="./data/images/cobi-mago.webp"
+                alt="Cobi Mago" 
+                className="w-56 h-auto object-contain transition-opacity duration-300"
+                style={{
+                  filter: 'drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15)) drop-shadow(0 0 20px rgba(0, 0, 0, 0.08))'
+                }}
+              />
+            </div>
+            
+            {/* Botón CHARLAR dentro del animate-float */}
+            <div className="chat-button-wrapper">
+              <div
+                onClick={() => setShowChatWindow(!showChatWindow)}
+                className="cobi-chat-button-mago pointer-events-auto"
+              >
+                <svg viewBox="0 0 100 100" className="curved-text-svg">
+                  <path id="chatTextPathMago" d="M 20,50 A 30,30 0 1,1 80,50" fill="none" />
+                  <text>
+                    <textPath href="#chatTextPathMago" startOffset="50%" textAnchor="middle" className="curved-text-style-mago">
+                      CHATEAR
+                    </textPath>
+                  </text>
+                </svg>
+                <div className="paws-icon">🔮</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Chat Window del Juego */}
+        {showChatWindow && gameState === 'PLAYING' && (
+          <div className="fixed bottom-24 right-6 lg:bottom-48 lg:right-6 z-50 w-80 max-w-[calc(100vw-3rem)] bg-white rounded-3xl shadow-2xl border-2 border-gray-200 overflow-hidden animate-fade-in">
+            {/* Header */}
+            <div className="bg-gradient-to-r from-purple-600 to-indigo-600 p-4 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="text-2xl">🪄</span>
+                <div>
+                  <h3 className="text-white font-bold text-sm">Cobi Mago</h3>
+                  <p className="text-xs text-purple-50">Experto en Gramática Española</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowChatWindow(false)}
+                className="p-1 hover:bg-white/20 rounded-full transition"
+              >
+                <ChevronLeft size={20} className="text-white" />
+              </button>
+            </div>
+
+            {/* Chat History */}
+            <div className="h-64 overflow-y-auto p-4 space-y-3 bg-gradient-to-b from-purple-50/30 to-white">
+              {chatHistory.length === 0 ? (
+                <div className="text-center text-gray-500 text-sm mt-8">
+                  <p className="mb-2">🪄</p>
+                  <p>¡Bienvenido a mi estudio mágico! Soy Cobi Mago.</p>
+                  <p className="text-xs mt-2">Pregúntame sobre gramática o el juego. ✨</p>
+                </div>
+              ) : (
+                chatHistory.map((msg, idx) => (
+                  <div
+                    key={idx}
+                    className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                  >
+                    <div
+                      className={`max-w-[80%] rounded-2xl px-4 py-2 ${
+                        msg.role === 'user'
+                          ? 'bg-gradient-to-br from-blue-500 to-blue-600 text-white'
+                          : 'bg-white border-2 border-purple-200 text-gray-700'
+                      }`}
+                    >
+                      <p className="text-sm whitespace-pre-wrap">{msg.text}</p>
+                    </div>
+                  </div>
+                ))
+              )}
+              
+              {/* Loading state */}
+              {isLoadingResponse && (
+                <div className="flex justify-start">
+                  <div className="bg-white border-2 border-purple-200 rounded-2xl px-4 py-3">
+                    <p className="text-sm text-gray-600">
+                      El Mago consulta su grimorio... 📖✨
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Input Area */}
+            <div className="p-3 bg-white border-t-2 border-gray-100">
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={chatInput}
+                  onChange={(e) => setChatInput(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && sendMessageToCobi()}
+                  placeholder="Escribe tu pregunta..."
+                  disabled={isLoadingResponse}
+                  className="flex-1 px-4 py-2 border-2 border-gray-200 rounded-full focus:outline-none focus:border-purple-400 transition text-sm disabled:bg-gray-100"
+                />
+                <button
+                  onClick={sendMessageToCobi}
+                  disabled={isLoadingResponse || !chatInput.trim()}
+                  className="w-10 h-10 bg-gradient-to-br from-purple-600 to-indigo-600 rounded-full flex items-center justify-center hover:shadow-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <Send size={18} className="text-white" />
+                </button>
+              </div>
             </div>
           </div>
         )}
@@ -1061,6 +1723,133 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
             </button>
           </div>
         </div>
+
+        {/* Cobi Mago Pausa (solo desktop) */}
+        <div className="hidden lg:block fixed bottom-0 right-0 z-50 pointer-events-none overflow-visible" key="cobi-mago-pausa">
+          <div className="relative animate-float">
+            {/* Bocadillo de diálogo con mensaje */}
+            <div style={{ position: 'absolute', left: '-200px', bottom: '80px', zIndex: 5, maxWidth: '220px' }} className="bg-white/95 backdrop-blur-sm rounded-2xl px-4 py-2 shadow-lg border-2 border-gray-200 pointer-events-auto">
+              <p className="text-gray-700 font-semibold text-sm text-center leading-snug">
+                {cobiMagoPausaMessage}
+              </p>
+              {/* Pico del bocadillo apuntando hacia Cobi */}
+              <div className="absolute top-1/2 -translate-y-1/2 -right-3 w-4 h-4 bg-white border-r-2 border-b-2 border-gray-200 transform rotate-[315deg]" style={{ zIndex: -1 }}></div>
+            </div>
+            
+            {/* Imagen de Cobi Mago Pausa */}
+            <div className="relative -mb-16 -mr-8" style={{ zIndex: 10 }}>
+              <img 
+                src="./data/images/cobi-mago-pausa.webp"
+                alt="Cobi Mago meditando" 
+                className="w-56 h-auto object-contain transition-opacity duration-300"
+                style={{
+                  filter: 'drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15)) drop-shadow(0 0 20px rgba(0, 0, 0, 0.08))'
+                }}
+              />
+            </div>
+            
+            {/* Botón CHATEAR dentro del animate-float */}
+            <div className="chat-button-wrapper">
+              <div
+                onClick={() => setShowChatWindow(!showChatWindow)}
+                className="cobi-chat-button-mago pointer-events-auto"
+              >
+                <svg viewBox="0 0 100 100" className="curved-text-svg">
+                  <path id="chatTextPathMagoPausa" d="M 20,50 A 30,30 0 1,1 80,50" fill="none" />
+                  <text>
+                    <textPath href="#chatTextPathMagoPausa" startOffset="50%" textAnchor="middle" className="curved-text-style-mago">
+                      CHATEAR
+                    </textPath>
+                  </text>
+                </svg>
+                <div className="paws-icon">🔮</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Chat Window de Pausa */}
+        {showChatWindow && gameState === 'PAUSED' && (
+          <div className="fixed bottom-24 right-6 lg:bottom-48 lg:right-6 z-50 w-80 max-w-[calc(100vw-3rem)] bg-white rounded-3xl shadow-2xl border-2 border-gray-200 overflow-hidden animate-fade-in">
+            {/* Header */}
+            <div className="bg-gradient-to-r from-purple-600 to-indigo-600 p-4 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="text-2xl">🪄</span>
+                <div>
+                  <h3 className="text-white font-bold text-sm">Cobi Mago</h3>
+                  <p className="text-xs text-purple-50">Experto en Gramática Española</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowChatWindow(false)}
+                className="p-1 hover:bg-white/20 rounded-full transition"
+              >
+                <ChevronLeft size={20} className="text-white" />
+              </button>
+            </div>
+
+            {/* Chat History */}
+            <div className="h-64 overflow-y-auto p-4 space-y-3 bg-gradient-to-b from-purple-50/30 to-white">
+              {chatHistory.length === 0 ? (
+                <div className="text-center text-gray-500 text-sm mt-8">
+                  <p className="mb-2">🪄</p>
+                  <p>¡Bienvenido a mi estudio mágico! Soy Cobi Mago.</p>
+                  <p className="text-xs mt-2">Pregúntame sobre gramática o el juego. ✨</p>
+                </div>
+              ) : (
+                chatHistory.map((msg, idx) => (
+                  <div
+                    key={idx}
+                    className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                  >
+                    <div
+                      className={`max-w-[80%] rounded-2xl px-4 py-2 ${
+                        msg.role === 'user'
+                          ? 'bg-gradient-to-br from-blue-500 to-blue-600 text-white'
+                          : 'bg-white border-2 border-purple-200 text-gray-700'
+                      }`}
+                    >
+                      <p className="text-sm whitespace-pre-wrap">{msg.text}</p>
+                    </div>
+                  </div>
+                ))
+              )}
+              
+              {/* Loading state */}
+              {isLoadingResponse && (
+                <div className="flex justify-start">
+                  <div className="bg-white border-2 border-purple-200 rounded-2xl px-4 py-3">
+                    <p className="text-sm text-gray-600">
+                      El Mago consulta su grimorio... 📖✨
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Input Area */}
+            <div className="p-3 bg-white border-t-2 border-gray-100">
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={chatInput}
+                  onChange={(e) => setChatInput(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && sendMessageToCobi()}
+                  placeholder="Escribe tu pregunta..."
+                  disabled={isLoadingResponse}
+                  className="flex-1 px-4 py-2 border-2 border-gray-200 rounded-full focus:outline-none focus:border-purple-400 transition text-sm disabled:bg-gray-100"
+                />
+                <button
+                  onClick={sendMessageToCobi}
+                  disabled={isLoadingResponse || !chatInput.trim()}
+                  className="p-2 bg-gradient-to-br from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 disabled:from-gray-300 disabled:to-gray-300 text-white rounded-full transition-all"
+                >
+                  <Send size={20} />
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     );
   }
@@ -1085,6 +1874,133 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
             Intentar de Nuevo
           </button>
         </div>
+
+        {/* Cobi Mago Derrota (solo desktop) */}
+        <div className="hidden lg:block fixed bottom-0 right-0 z-50 pointer-events-none overflow-visible" key="cobi-mago-derrota">
+          <div className="relative animate-float">
+            {/* Bocadillo de diálogo con mensaje */}
+            <div style={{ position: 'absolute', left: '-200px', bottom: '80px', zIndex: 5, maxWidth: '220px' }} className="bg-white/95 backdrop-blur-sm rounded-2xl px-4 py-2 shadow-lg border-2 border-gray-200 pointer-events-auto">
+              <p className="text-gray-700 font-semibold text-sm text-center leading-snug">
+                {cobiMagoDerrotaMessage}
+              </p>
+              {/* Pico del bocadillo apuntando hacia Cobi */}
+              <div className="absolute top-1/2 -translate-y-1/2 -right-3 w-4 h-4 bg-white border-r-2 border-b-2 border-gray-200 transform rotate-[315deg]" style={{ zIndex: -1 }}></div>
+            </div>
+            
+            {/* Imagen de Cobi Mago Derrota */}
+            <div className="relative -mb-16 -mr-8" style={{ zIndex: 10 }}>
+              <img 
+                src="./data/images/cobi-mago-derrota.webp"
+                alt="Cobi Mago agotado" 
+                className="w-56 h-auto object-contain transition-opacity duration-300"
+                style={{
+                  filter: 'drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15)) drop-shadow(0 0 20px rgba(0, 0, 0, 0.08))'
+                }}
+              />
+            </div>
+            
+            {/* Botón CHATEAR dentro del animate-float */}
+            <div className="chat-button-wrapper">
+              <div
+                onClick={() => setShowChatWindow(!showChatWindow)}
+                className="cobi-chat-button-mago pointer-events-auto"
+              >
+                <svg viewBox="0 0 100 100" className="curved-text-svg">
+                  <path id="chatTextPathMagoDerrota" d="M 20,50 A 30,30 0 1,1 80,50" fill="none" />
+                  <text>
+                    <textPath href="#chatTextPathMagoDerrota" startOffset="50%" textAnchor="middle" className="curved-text-style-mago">
+                      CHATEAR
+                    </textPath>
+                  </text>
+                </svg>
+                <div className="paws-icon">🔮</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Chat Window de Derrota */}
+        {showChatWindow && gameState === 'GAMEOVER' && (
+          <div className="fixed bottom-24 right-6 lg:bottom-48 lg:right-6 z-50 w-80 max-w-[calc(100vw-3rem)] bg-white rounded-3xl shadow-2xl border-2 border-gray-200 overflow-hidden animate-fade-in">
+            {/* Header */}
+            <div className="bg-gradient-to-r from-purple-600 to-indigo-600 p-4 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="text-2xl">🪄</span>
+                <div>
+                  <h3 className="text-white font-bold text-sm">Cobi Mago</h3>
+                  <p className="text-xs text-purple-50">Experto en Gramática Española</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowChatWindow(false)}
+                className="p-1 hover:bg-white/20 rounded-full transition"
+              >
+                <ChevronLeft size={20} className="text-white" />
+              </button>
+            </div>
+
+            {/* Chat History */}
+            <div className="h-64 overflow-y-auto p-4 space-y-3 bg-gradient-to-b from-purple-50/30 to-white">
+              {chatHistory.length === 0 ? (
+                <div className="text-center text-gray-500 text-sm mt-8">
+                  <p className="mb-2">🪄</p>
+                  <p>¡Bienvenido a mi estudio mágico! Soy Cobi Mago.</p>
+                  <p className="text-xs mt-2">Pregúntame sobre gramática o el juego. ✨</p>
+                </div>
+              ) : (
+                chatHistory.map((msg, idx) => (
+                  <div
+                    key={idx}
+                    className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                  >
+                    <div
+                      className={`max-w-[80%] rounded-2xl px-4 py-2 ${
+                        msg.role === 'user'
+                          ? 'bg-gradient-to-br from-blue-500 to-blue-600 text-white'
+                          : 'bg-white border-2 border-purple-200 text-gray-700'
+                      }`}
+                    >
+                      <p className="text-sm whitespace-pre-wrap">{msg.text}</p>
+                    </div>
+                  </div>
+                ))
+              )}
+              
+              {/* Loading state */}
+              {isLoadingResponse && (
+                <div className="flex justify-start">
+                  <div className="bg-white border-2 border-purple-200 rounded-2xl px-4 py-3">
+                    <p className="text-sm text-gray-600">
+                      El Mago consulta su grimorio... 📖✨
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Input Area */}
+            <div className="p-3 bg-white border-t-2 border-gray-100">
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={chatInput}
+                  onChange={(e) => setChatInput(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && sendMessageToCobi()}
+                  placeholder="Escribe tu pregunta..."
+                  disabled={isLoadingResponse}
+                  className="flex-1 px-4 py-2 border-2 border-gray-200 rounded-full focus:outline-none focus:border-purple-400 transition text-sm disabled:bg-gray-100"
+                />
+                <button
+                  onClick={sendMessageToCobi}
+                  disabled={isLoadingResponse || !chatInput.trim()}
+                  className="p-2 bg-gradient-to-br from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 disabled:from-gray-300 disabled:to-gray-300 text-white rounded-full transition-all"
+                >
+                  <Send size={20} />
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     );
   }
@@ -1109,6 +2025,133 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
             Jugar de Nuevo
           </button>
         </div>
+
+        {/* Cobi Mago Victoria (solo desktop) */}
+        <div className="hidden lg:block fixed bottom-0 right-0 z-50 pointer-events-none overflow-visible" key="cobi-mago-victoria">
+          <div className="relative animate-float">
+            {/* Bocadillo de diálogo con mensaje */}
+            <div style={{ position: 'absolute', left: '-200px', bottom: '80px', zIndex: 5, maxWidth: '220px' }} className="bg-white/95 backdrop-blur-sm rounded-2xl px-4 py-2 shadow-lg border-2 border-gray-200 pointer-events-auto">
+              <p className="text-gray-700 font-semibold text-sm text-center leading-snug">
+                {cobiMagoVictoriaMessage}
+              </p>
+              {/* Pico del bocadillo apuntando hacia Cobi */}
+              <div className="absolute top-1/2 -translate-y-1/2 -right-3 w-4 h-4 bg-white border-r-2 border-b-2 border-gray-200 transform rotate-[315deg]" style={{ zIndex: -1 }}></div>
+            </div>
+            
+            {/* Imagen de Cobi Mago Victoria */}
+            <div className="relative -mb-16 -mr-8" style={{ zIndex: 10 }}>
+              <img 
+                src="./data/images/cobi-mago-victoria.webp"
+                alt="Cobi Mago celebrando" 
+                className="w-56 h-auto object-contain transition-opacity duration-300"
+                style={{
+                  filter: 'drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15)) drop-shadow(0 0 20px rgba(0, 0, 0, 0.08))'
+                }}
+              />
+            </div>
+            
+            {/* Botón CHATEAR dentro del animate-float */}
+            <div className="chat-button-wrapper">
+              <div
+                onClick={() => setShowChatWindow(!showChatWindow)}
+                className="cobi-chat-button-mago pointer-events-auto"
+              >
+                <svg viewBox="0 0 100 100" className="curved-text-svg">
+                  <path id="chatTextPathMagoVictoria" d="M 20,50 A 30,30 0 1,1 80,50" fill="none" />
+                  <text>
+                    <textPath href="#chatTextPathMagoVictoria" startOffset="50%" textAnchor="middle" className="curved-text-style-mago">
+                      CHATEAR
+                    </textPath>
+                  </text>
+                </svg>
+                <div className="paws-icon">🔮</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Chat Window de Victoria */}
+        {showChatWindow && gameState === 'VICTORY' && (
+          <div className="fixed bottom-24 right-6 lg:bottom-48 lg:right-6 z-50 w-80 max-w-[calc(100vw-3rem)] bg-white rounded-3xl shadow-2xl border-2 border-gray-200 overflow-hidden animate-fade-in">
+            {/* Header */}
+            <div className="bg-gradient-to-r from-purple-600 to-indigo-600 p-4 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="text-2xl">🪄</span>
+                <div>
+                  <h3 className="text-white font-bold text-sm">Cobi Mago</h3>
+                  <p className="text-xs text-purple-50">Experto en Gramática Española</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowChatWindow(false)}
+                className="p-1 hover:bg-white/20 rounded-full transition"
+              >
+                <ChevronLeft size={20} className="text-white" />
+              </button>
+            </div>
+
+            {/* Chat History */}
+            <div className="h-64 overflow-y-auto p-4 space-y-3 bg-gradient-to-b from-purple-50/30 to-white">
+              {chatHistory.length === 0 ? (
+                <div className="text-center text-gray-500 text-sm mt-8">
+                  <p className="mb-2">🪄</p>
+                  <p>¡Bienvenido a mi estudio mágico! Soy Cobi Mago.</p>
+                  <p className="text-xs mt-2">Pregúntame sobre gramática o el juego. ✨</p>
+                </div>
+              ) : (
+                chatHistory.map((msg, idx) => (
+                  <div
+                    key={idx}
+                    className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                  >
+                    <div
+                      className={`max-w-[80%] rounded-2xl px-4 py-2 ${
+                        msg.role === 'user'
+                          ? 'bg-gradient-to-br from-blue-500 to-blue-600 text-white'
+                          : 'bg-white border-2 border-purple-200 text-gray-700'
+                      }`}
+                    >
+                      <p className="text-sm whitespace-pre-wrap">{msg.text}</p>
+                    </div>
+                  </div>
+                ))
+              )}
+              
+              {/* Loading state */}
+              {isLoadingResponse && (
+                <div className="flex justify-start">
+                  <div className="bg-white border-2 border-purple-200 rounded-2xl px-4 py-3">
+                    <p className="text-sm text-gray-600">
+                      El Mago consulta su grimorio... 📖✨
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Input Area */}
+            <div className="p-3 bg-white border-t-2 border-gray-100">
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={chatInput}
+                  onChange={(e) => setChatInput(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && sendMessageToCobi()}
+                  placeholder="Escribe tu pregunta..."
+                  disabled={isLoadingResponse}
+                  className="flex-1 px-4 py-2 border-2 border-gray-200 rounded-full focus:outline-none focus:border-purple-400 transition text-sm disabled:bg-gray-100"
+                />
+                <button
+                  onClick={sendMessageToCobi}
+                  disabled={isLoadingResponse || !chatInput.trim()}
+                  className="p-2 bg-gradient-to-br from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 disabled:from-gray-300 disabled:to-gray-300 text-white rounded-full transition-all"
+                >
+                  <Send size={20} />
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     );
   }

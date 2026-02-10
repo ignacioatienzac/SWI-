@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { ChevronLeft, Info, X, Lightbulb, Calendar, ChevronRight } from 'lucide-react';
+import { ChevronLeft, Info, X, Lightbulb, Calendar, ChevronRight, Send } from 'lucide-react';
 import { loadLetterWheelVocabulary, getRandomWordForDate, getRelatedWords } from '../services/letterWheelService';
+import { hablarConPanda } from '../services/geminiService';
 
 interface LetterWheelGameProps {
   onBack: () => void;
@@ -39,6 +40,70 @@ interface CrosswordCell {
 
 type GameStatus = 'MENU' | 'LOADING' | 'PLAYING' | 'VICTORY';
 
+// Mensajes de Cobi Explorador
+const mensajesExploradorEntrada = [
+  "¡Bienvenido a la expedición! ✨",
+  "¡Tenemos una misión! ¿Buscamos las palabras? 🗺️",
+  "¡Prepárate! La aventura empieza aquí. 🎒",
+  "¡Busquemos el tesoro de las letras! 💎",
+  "¡Abre el mapa, es hora de explorar! 📜"
+];
+
+const mensajesExploradorAcierto = [
+  "¡Tesoro encontrado! 💎",
+  "¡Una palabra nueva para el mapa! 🗺️",
+  "¡Increíble! Eres un gran explorador. ✨",
+  "¡Zas! ¡Esa palabra encaja perfecta! 🧩",
+  "¡Esa es la ruta correcta! 🛤️",
+  "¡Buen hallazgo, aventurero! 🏺"
+];
+
+const mensajesExploradorFallo = [
+  "¡Cuidado con la trampa! 🕸️",
+  "¡Ese camino no lleva a ninguna parte! 🗺️",
+  "¡Uy, una letra se ha escapado! 🔎",
+  "¡Ruta equivocada! Probemos otra. 🧭",
+  "¡Esa palabra no está en el mapa antiguo! 📜",
+  "¡Casi caemos en el pozo! ¡Inténtalo otra vez! 🕳️"
+];
+
+const mensajesExploradorVictoria = [
+  "¡Misión cumplida! 🏆 ¡Hemos descifrado el código antiguo!",
+  "¡El tesoro de las letras es nuestro! 💎",
+  "¡Increíble! Has encontrado todas las palabras ocultas. ✨",
+  "¡Expedición finalizada con éxito! El mapa está completo. 🗺️",
+  "¡Elemental, querido alumno! 🥇",
+  "¡Eres el mejor explorador de palabras del mundo! 🐾"
+];
+
+const mensajesExploradorMenu = [
+  "¡No hay mapa difícil si trabajamos juntos! 🐾",
+  "¡Explorar palabras es la mejor forma de aprender! ¿Vamos? 🚀",
+  "Aventurero, ¿qué nivel elegimos hoy? 🔎"
+];
+
+const seleccionarMensajeExploradorRandom = (tipo: 'entrada' | 'acierto' | 'fallo' | 'victoria' | 'menu'): string => {
+  let mensajes: string[];
+  switch (tipo) {
+    case 'entrada':
+      mensajes = mensajesExploradorEntrada;
+      break;
+    case 'acierto':
+      mensajes = mensajesExploradorAcierto;
+      break;
+    case 'fallo':
+      mensajes = mensajesExploradorFallo;
+      break;
+    case 'victoria':
+      mensajes = mensajesExploradorVictoria;
+      break;
+    case 'menu':
+      mensajes = mensajesExploradorMenu;
+      break;
+  }
+  return mensajes[Math.floor(Math.random() * mensajes.length)];
+};
+
 const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack }) => {
   const [gameStatus, setGameStatus] = useState<GameStatus>('MENU');
   const [gameState, setGameState] = useState<GameState | null>(null);
@@ -56,9 +121,76 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack }) => {
   const [showCalendar, setShowCalendar] = useState(false);
   const [displayMonth, setDisplayMonth] = useState<Date>(new Date());
   const [, forceUpdate] = useState({});
+  const [cobiExploradorMessage, setCobiExploradorMessage] = useState<string>(seleccionarMensajeExploradorRandom('entrada'));
+  const [cobiExploradorAvatar, setCobiExploradorAvatar] = useState<string>('/data/images/cobi-explorador.webp');
+  const [cobiExploradorMenuMessage] = useState<string>(seleccionarMensajeExploradorRandom('menu'));
+  
+  // Chat State
+  const [showChatWindow, setShowChatWindow] = useState(false);
+  const [chatInput, setChatInput] = useState('');
+  const [chatHistory, setChatHistory] = useState<Array<{role: 'user' | 'cobi', text: string}>>([]);
+  const [isLoadingResponse, setIsLoadingResponse] = useState(false);
 
   const audioCtxRef = useRef<AudioContext | null>(null);
   const lastAddedIndexRef = useRef<number | null>(null);
+
+  // Send message to Cobi Explorador
+  const sendMessageToCobi = async () => {
+    if (!chatInput.trim() || isLoadingResponse) return;
+
+    const userMessage = chatInput.trim();
+    setChatInput('');
+    
+    // Add user message to history
+    setChatHistory(prev => [...prev, { role: 'user', text: userMessage }]);
+    setIsLoadingResponse(true);
+
+    try {
+      let contextoJuego;
+      let tipo: 'lobby' | 'juego';
+
+      // Si estamos en MENU, contexto de lobby
+      if (gameStatus === 'MENU') {
+        contextoJuego = {
+          juego: 'La Rueda de Letras',
+          estado: 'menu',
+          dificultad_seleccionada: difficulty || 'ninguna',
+          fecha_seleccionada: selectedDate
+        };
+        tipo = 'lobby';
+      } else {
+        // Si estamos jugando, contexto de juego
+        contextoJuego = {
+          juego: 'La Rueda de Letras',
+          dificultad: difficulty,
+          palabra_base: gameState?.baseWord.palabra || 'ninguna',
+          palabras_encontradas: Array.from(foundWords).length,
+          palabras_totales: gameState?.targetWords.length || 0,
+          fecha: selectedDate
+        };
+        tipo = 'juego';
+      }
+
+      // Call Cobi AI with appropriate context
+      const response = await hablarConPanda(
+        userMessage,
+        'La Rueda de Letras - Cobi Explorador 🧭',
+        contextoJuego,
+        tipo
+      );
+
+      // Add Cobi response to history
+      setChatHistory(prev => [...prev, { role: 'cobi', text: response }]);
+    } catch (error) {
+      console.error('Error al comunicarse con Cobi Explorador:', error);
+      setChatHistory(prev => [
+        ...prev,
+        { role: 'cobi', text: '¡Ups! Mi brújula tuvo un problema. 🧭 Inténtalo de nuevo.' }
+      ]);
+    } finally {
+      setIsLoadingResponse(false);
+    }
+  };
 
   // Force re-render on window resize for responsive positioning
   useEffect(() => {
@@ -431,6 +563,9 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack }) => {
     if (match && !foundWords.has(currentWord)) {
       playSuccess();
       setFeedback({ text: isBaseWord ? '¡Excelente! ¡Encontraste la palabra base!' : '¡Correcto!', type: 'success' });
+      setCobiExploradorMessage(seleccionarMensajeExploradorRandom('acierto'));
+      setCobiExploradorAvatar('/data/images/cobi-explorador-victoria.webp');
+      setTimeout(() => setCobiExploradorAvatar('/data/images/cobi-explorador.webp'), 2000);
       setFoundWords(new Set([...foundWords, currentWord]));
       
       // Trigger cell reveal animation
@@ -458,6 +593,8 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack }) => {
       if (foundWords.size + 1 >= totalWords) {
         setTimeout(() => {
           playVictory();
+          setCobiExploradorMessage(seleccionarMensajeExploradorRandom('victoria'));
+          setCobiExploradorAvatar('/data/images/cobi-explorador-victoria.webp');
           setGameStatus('VICTORY');
         }, 500);
       }
@@ -465,6 +602,9 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack }) => {
       setFeedback({ text: 'Ya encontraste esta palabra', type: 'error' });
     } else {
       playError();
+      setCobiExploradorMessage(seleccionarMensajeExploradorRandom('fallo'));
+      setCobiExploradorAvatar('/data/images/cobi-explorador-derrota.webp');
+      setTimeout(() => setCobiExploradorAvatar('/data/images/cobi-explorador.webp'), 2000);
       setFeedback({ text: 'Palabra incorrecta', type: 'error' });
     }
     
@@ -602,6 +742,133 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack }) => {
             </div>
           </div>
         </div>
+
+        {/* Cobi Explorador Menu */}
+        <div className="hidden lg:block fixed bottom-0 right-0 z-50 pointer-events-none overflow-visible" key="cobi-explorador-menu">
+          <div className="relative animate-float">
+            {/* Bocadillo de diálogo con mensaje */}
+            <div style={{ position: 'absolute', left: '-200px', bottom: '80px', zIndex: 5, maxWidth: '220px' }} className="bg-white/95 backdrop-blur-sm rounded-2xl px-4 py-2 shadow-lg border-2 border-gray-200 pointer-events-auto">
+              <p className="text-gray-700 font-semibold text-sm text-center leading-snug">
+                {cobiExploradorMenuMessage}
+              </p>
+              {/* Pico del bocadillo apuntando hacia Cobi */}
+              <div className="absolute top-1/2 -translate-y-1/2 -right-3 w-4 h-4 bg-white border-r-2 border-b-2 border-gray-200 transform rotate-[315deg]" style={{ zIndex: -1 }}></div>
+            </div>
+            
+            {/* Imagen de Cobi Explorador Menu */}
+            <div className="relative -mb-16 -mr-8" style={{ zIndex: 10 }}>
+              <img 
+                src="/data/images/cobi-explorador-menu.webp"
+                alt="Cobi Explorador" 
+                className="w-56 h-auto object-contain transition-opacity duration-300"
+                style={{
+                  filter: 'drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15)) drop-shadow(0 0 20px rgba(0, 0, 0, 0.08))'
+                }}
+              />
+            </div>
+            
+            {/* Botón CHATEAR dentro del animate-float */}
+            <div className="chat-button-wrapper">
+              <div
+                onClick={() => setShowChatWindow(!showChatWindow)}
+                className="cobi-chat-button-explorador pointer-events-auto"
+              >
+                <svg viewBox="0 0 100 100" className="curved-text-svg">
+                  <path id="chatTextPathExploradorMenu" d="M 20,50 A 30,30 0 1,1 80,50" fill="none" />
+                  <text>
+                    <textPath href="#chatTextPathExploradorMenu" startOffset="50%" textAnchor="middle" className="curved-text-style-explorador">
+                      CHATEAR
+                    </textPath>
+                  </text>
+                </svg>
+                <div className="paws-icon">🧭</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Chat Window del Menu */}
+        {showChatWindow && gameStatus === 'MENU' && (
+          <div className="fixed bottom-24 right-6 lg:bottom-48 lg:right-6 z-50 w-80 max-w-[calc(100vw-3rem)] bg-white rounded-3xl shadow-2xl border-2 border-gray-200 overflow-hidden animate-fade-in">
+            {/* Header */}
+            <div className="bg-gradient-to-r from-amber-600 to-orange-600 p-4 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="text-2xl">🧭</span>
+                <div>
+                  <h3 className="text-white font-bold text-sm">Cobi Explorador</h3>
+                  <p className="text-xs text-amber-50">Guía de Aventuras</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowChatWindow(false)}
+                className="p-1 hover:bg-white/20 rounded-full transition"
+              >
+                <ChevronLeft size={20} className="text-white" />
+              </button>
+            </div>
+
+            {/* Chat History */}
+            <div className="h-64 overflow-y-auto p-4 space-y-3 bg-gradient-to-b from-amber-50/30 to-white">
+              {chatHistory.length === 0 ? (
+                <div className="text-center text-gray-500 text-sm mt-8">
+                  <p className="mb-2">🧭</p>
+                  <p>¡Bienvenido! Soy Cobi Explorador.</p>
+                  <p className="text-xs mt-2">Pregúntame sobre el juego o palabras. 🗺️</p>
+                </div>
+              ) : (
+                chatHistory.map((msg, idx) => (
+                  <div
+                    key={idx}
+                    className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                  >
+                    <div
+                      className={`max-w-[80%] rounded-2xl px-4 py-2 ${
+                        msg.role === 'user'
+                          ? 'bg-gradient-to-br from-blue-500 to-blue-600 text-white'
+                          : 'bg-white border-2 border-amber-200 text-gray-700'
+                      }`}
+                    >
+                      <p className="text-sm whitespace-pre-wrap">{msg.text}</p>
+                    </div>
+                  </div>
+                ))
+              )}
+              
+              {/* Loading state */}
+              {isLoadingResponse && (
+                <div className="flex justify-start">
+                  <div className="bg-white border-2 border-amber-200 rounded-2xl px-4 py-3">
+                    <p className="text-sm text-gray-600">
+                      El Explorador consulta su mapa... 🗺️
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Input Area */}
+            <div className="p-3 bg-white border-t-2 border-gray-100">
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={chatInput}
+                  onChange={(e) => setChatInput(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && sendMessageToCobi()}
+                  placeholder="Escribe tu pregunta..."
+                  disabled={isLoadingResponse}
+                  className="flex-1 px-4 py-2 border-2 border-gray-200 rounded-full focus:outline-none focus:border-amber-400 transition text-sm disabled:bg-gray-100"
+                />
+                <button
+                  onClick={sendMessageToCobi}
+                  disabled={isLoadingResponse || !chatInput.trim()}
+                  className="p-2 bg-gradient-to-br from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 disabled:from-gray-300 disabled:to-gray-300 text-white rounded-full transition-all"
+                >
+                  <Send size={20} />
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     );
   }
@@ -621,7 +888,7 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack }) => {
   // VICTORY
   if (gameStatus === 'VICTORY') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-green-50 via-yellow-50 to-blue-50 p-4 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-green-50 via-yellow-50 to-blue-50 p-4 flex items-center justify-center relative">
         <div className="bg-white rounded-3xl p-8 max-w-md text-center shadow-2xl">
           <div className="text-8xl mb-6">🎉</div>
           <h1 className="text-5xl font-black text-green-600 mb-4">¡Felicidades!</h1>
@@ -641,6 +908,133 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack }) => {
             </button>
           </div>
         </div>
+
+        {/* Cobi Explorador Victoria */}
+        <div className="hidden lg:block fixed bottom-0 right-0 z-50 pointer-events-none overflow-visible" key="cobi-explorador-victoria">
+          <div className="relative animate-float">
+            {/* Bocadillo de diálogo con mensaje */}
+            <div style={{ position: 'absolute', left: '-200px', bottom: '80px', zIndex: 5, maxWidth: '220px' }} className="bg-white/95 backdrop-blur-sm rounded-2xl px-4 py-2 shadow-lg border-2 border-gray-200 pointer-events-auto">
+              <p className="text-gray-700 font-semibold text-sm text-center leading-snug">
+                {cobiExploradorMessage}
+              </p>
+              {/* Pico del bocadillo apuntando hacia Cobi */}
+              <div className="absolute top-1/2 -translate-y-1/2 -right-3 w-4 h-4 bg-white border-r-2 border-b-2 border-gray-200 transform rotate-[315deg]" style={{ zIndex: -1 }}></div>
+            </div>
+            
+            {/* Imagen de Cobi Explorador Victoria */}
+            <div className="relative -mb-16 -mr-8" style={{ zIndex: 10 }}>
+              <img 
+                src="/data/images/cobi-explorador-victoria.webp"
+                alt="Cobi Explorador Victoria" 
+                className="w-56 h-auto object-contain transition-opacity duration-300"
+                style={{
+                  filter: 'drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15)) drop-shadow(0 0 20px rgba(0, 0, 0, 0.08))'
+                }}
+              />
+            </div>
+            
+            {/* Botón CHATEAR dentro del animate-float */}
+            <div className="chat-button-wrapper">
+              <div
+                onClick={() => setShowChatWindow(!showChatWindow)}
+                className="cobi-chat-button-explorador pointer-events-auto"
+              >
+                <svg viewBox="0 0 100 100" className="curved-text-svg">
+                  <path id="chatTextPathExploradorVictoria" d="M 20,50 A 30,30 0 1,1 80,50" fill="none" />
+                  <text>
+                    <textPath href="#chatTextPathExploradorVictoria" startOffset="50%" textAnchor="middle" className="curved-text-style-explorador">
+                      CHATEAR
+                    </textPath>
+                  </text>
+                </svg>
+                <div className="paws-icon">🧭</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Chat Window de Victoria */}
+        {showChatWindow && gameStatus === 'VICTORY' && (
+          <div className="fixed bottom-24 right-6 lg:bottom-48 lg:right-6 z-50 w-80 max-w-[calc(100vw-3rem)] bg-white rounded-3xl shadow-2xl border-2 border-gray-200 overflow-hidden animate-fade-in">
+            {/* Header */}
+            <div className="bg-gradient-to-r from-amber-600 to-orange-600 p-4 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="text-2xl">🧭</span>
+                <div>
+                  <h3 className="text-white font-bold text-sm">Cobi Explorador</h3>
+                  <p className="text-xs text-amber-50">Guía de Aventuras</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowChatWindow(false)}
+                className="p-1 hover:bg-white/20 rounded-full transition"
+              >
+                <ChevronLeft size={20} className="text-white" />
+              </button>
+            </div>
+
+            {/* Chat History */}
+            <div className="h-64 overflow-y-auto p-4 space-y-3 bg-gradient-to-b from-amber-50/30 to-white">
+              {chatHistory.length === 0 ? (
+                <div className="text-center text-gray-500 text-sm mt-8">
+                  <p className="mb-2">🧭</p>
+                  <p>¡Bienvenido! Soy Cobi Explorador.</p>
+                  <p className="text-xs mt-2">Pregúntame sobre el juego o palabras. 🗺️</p>
+                </div>
+              ) : (
+                chatHistory.map((msg, idx) => (
+                  <div
+                    key={idx}
+                    className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                  >
+                    <div
+                      className={`max-w-[80%] rounded-2xl px-4 py-2 ${
+                        msg.role === 'user'
+                          ? 'bg-gradient-to-br from-blue-500 to-blue-600 text-white'
+                          : 'bg-white border-2 border-amber-200 text-gray-700'
+                      }`}
+                    >
+                      <p className="text-sm whitespace-pre-wrap">{msg.text}</p>
+                    </div>
+                  </div>
+                ))
+              )}
+              
+              {/* Loading state */}
+              {isLoadingResponse && (
+                <div className="flex justify-start">
+                  <div className="bg-white border-2 border-amber-200 rounded-2xl px-4 py-3">
+                    <p className="text-sm text-gray-600">
+                      El Explorador consulta su mapa... 🗺️
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Input Area */}
+            <div className="p-3 bg-white border-t-2 border-gray-100">
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={chatInput}
+                  onChange={(e) => setChatInput(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && sendMessageToCobi()}
+                  placeholder="Escribe tu pregunta..."
+                  disabled={isLoadingResponse}
+                  className="flex-1 px-4 py-2 border-2 border-gray-200 rounded-full focus:outline-none focus:border-amber-400 transition text-sm disabled:bg-gray-100"
+                />
+                <button
+                  onClick={sendMessageToCobi}
+                  disabled={isLoadingResponse || !chatInput.trim()}
+                  className="p-2 bg-gradient-to-br from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 disabled:from-gray-300 disabled:to-gray-300 text-white rounded-full transition-all"
+                >
+                  <Send size={20} />
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     );
   }
@@ -1158,6 +1552,136 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack }) => {
           </div>
         </div>
       </div>
+
+      {/* Cobi Explorador - Visible solo en PLAYING */}
+      {gameStatus === 'PLAYING' && (
+        <div className="hidden lg:block fixed bottom-0 right-0 z-50 pointer-events-none overflow-visible" key="cobi-explorador-container">
+          <div className="relative animate-float">
+            {/* Bocadillo de diálogo con mensaje */}
+            <div style={{ position: 'absolute', left: '-200px', bottom: '80px', zIndex: 5, maxWidth: '220px' }} className="bg-white/95 backdrop-blur-sm rounded-2xl px-4 py-2 shadow-lg border-2 border-gray-200 pointer-events-auto">
+              <p className="text-gray-700 font-semibold text-sm text-center leading-snug">
+                {cobiExploradorMessage}
+              </p>
+              {/* Pico del bocadillo apuntando hacia Cobi */}
+              <div className="absolute top-1/2 -translate-y-1/2 -right-3 w-4 h-4 bg-white border-r-2 border-b-2 border-gray-200 transform rotate-[315deg]" style={{ zIndex: -1 }}></div>
+            </div>
+            
+            {/* Imagen de Cobi Explorador */}
+            <div className="relative -mb-16 -mr-8" style={{ zIndex: 10 }}>
+              <img 
+                key={cobiExploradorAvatar}
+                src={cobiExploradorAvatar}
+                alt="Cobi Explorador" 
+                className="w-56 h-auto object-contain transition-opacity duration-300"
+                style={{
+                  filter: 'drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15)) drop-shadow(0 0 20px rgba(0, 0, 0, 0.08))'
+                }}
+              />
+            </div>
+            
+            {/* Botón CHATEAR dentro del animate-float */}
+            <div className="chat-button-wrapper">
+              <div
+                onClick={() => setShowChatWindow(!showChatWindow)}
+                className="cobi-chat-button-explorador pointer-events-auto"
+              >
+                <svg viewBox="0 0 100 100" className="curved-text-svg">
+                  <path id="chatTextPathExploradorPlaying" d="M 20,50 A 30,30 0 1,1 80,50" fill="none" />
+                  <text>
+                    <textPath href="#chatTextPathExploradorPlaying" startOffset="50%" textAnchor="middle" className="curved-text-style-explorador">
+                      CHATEAR
+                    </textPath>
+                  </text>
+                </svg>
+                <div className="paws-icon">🧭</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Chat Window del Juego */}
+      {showChatWindow && gameStatus === 'PLAYING' && (
+        <div className="fixed bottom-24 right-6 lg:bottom-48 lg:right-6 z-50 w-80 max-w-[calc(100vw-3rem)] bg-white rounded-3xl shadow-2xl border-2 border-gray-200 overflow-hidden animate-fade-in">
+          {/* Header */}
+          <div className="bg-gradient-to-r from-amber-600 to-orange-600 p-4 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="text-2xl">🧭</span>
+              <div>
+                <h3 className="text-white font-bold text-sm">Cobi Explorador</h3>
+                <p className="text-xs text-amber-50">Guía de Aventuras</p>
+              </div>
+            </div>
+            <button
+              onClick={() => setShowChatWindow(false)}
+              className="p-1 hover:bg-white/20 rounded-full transition"
+            >
+              <ChevronLeft size={20} className="text-white" />
+            </button>
+          </div>
+
+          {/* Chat History */}
+          <div className="h-64 overflow-y-auto p-4 space-y-3 bg-gradient-to-b from-amber-50/30 to-white">
+            {chatHistory.length === 0 ? (
+              <div className="text-center text-gray-500 text-sm mt-8">
+                <p className="mb-2">🧭</p>
+                <p>¡Bienvenido! Soy Cobi Explorador.</p>
+                <p className="text-xs mt-2">Pregúntame sobre el juego o palabras. 🗺️</p>
+              </div>
+            ) : (
+              chatHistory.map((msg, idx) => (
+                <div
+                  key={idx}
+                  className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                >
+                  <div
+                    className={`max-w-[80%] rounded-2xl px-4 py-2 ${
+                      msg.role === 'user'
+                        ? 'bg-gradient-to-br from-blue-500 to-blue-600 text-white'
+                        : 'bg-white border-2 border-amber-200 text-gray-700'
+                    }`}
+                  >
+                    <p className="text-sm whitespace-pre-wrap">{msg.text}</p>
+                  </div>
+                </div>
+              ))
+            )}
+            
+            {/* Loading state */}
+            {isLoadingResponse && (
+              <div className="flex justify-start">
+                <div className="bg-white border-2 border-amber-200 rounded-2xl px-4 py-3">
+                  <p className="text-sm text-gray-600">
+                    El Explorador consulta su mapa... 🗺️
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Input Area */}
+          <div className="p-3 bg-white border-t-2 border-gray-100">
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={chatInput}
+                onChange={(e) => setChatInput(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && sendMessageToCobi()}
+                placeholder="Escribe tu pregunta..."
+                disabled={isLoadingResponse}
+                className="flex-1 px-4 py-2 border-2 border-gray-200 rounded-full focus:outline-none focus:border-amber-400 transition text-sm disabled:bg-gray-100"
+              />
+              <button
+                onClick={sendMessageToCobi}
+                disabled={isLoadingResponse || !chatInput.trim()}
+                className="p-2 bg-gradient-to-br from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 disabled:from-gray-300 disabled:to-gray-300 text-white rounded-full transition-all"
+              >
+                <Send size={20} />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

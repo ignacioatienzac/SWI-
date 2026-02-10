@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Spanish with Ignacio</title>
     
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/data/images/favicon-cobi.png" />
+    
     <!-- Preload critical Cobi avatars for instant display -->
     <link rel="preload" href="./data/images/Avatar-construction.webp" as="image" type="image/webp">
     <link rel="preload" href="./data/images/Avatar-construction-correcto.webp" as="image" type="image/webp">
@@ -104,11 +107,51 @@
       .animate-float {
         animation: float 3s ease-in-out infinite;
       }
+
+      /* Contrarreloj Animations */
+      @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        10% { transform: translateX(-8px) rotate(-2deg); }
+        30% { transform: translateX(8px) rotate(2deg); }
+        50% { transform: translateX(-6px) rotate(-1deg); }
+        70% { transform: translateX(6px) rotate(1deg); }
+        90% { transform: translateX(-3px); }
+      }
+      .animate-shake {
+        animation: shake 0.4s ease-in-out;
+      }
+
+      @keyframes damageFloat {
+        0% { opacity: 1; transform: translateX(-50%) translateY(0); }
+        100% { opacity: 0; transform: translateX(-50%) translateY(-40px); }
+      }
+      .animate-damage-float {
+        animation: damageFloat 0.8s ease-out forwards;
+      }
+
+      @keyframes instantKill {
+        0% { transform: scale(1); filter: brightness(1); }
+        20% { transform: scale(1.15); filter: brightness(3) saturate(0); }
+        50% { transform: scale(1.1); filter: brightness(2) saturate(0); }
+        100% { transform: scale(0.9); filter: brightness(0.3) grayscale(1); opacity: 0.3; }
+      }
+      .animate-instant-kill {
+        animation: instantKill 0.6s ease-out forwards;
+      }
       
-      /* Chat Button Wrapper - Positioned relative to Cobi */
+      /* Chat Button Wrapper - Positioned relative to Cobi (for games) */
       .chat-button-wrapper {
         position: absolute;
         top: -20px;
+        left: -10px;
+        z-index: 10;
+        pointer-events: auto;
+      }
+      
+      /* Chat Button Wrapper for Home Page - Higher position */
+      .chat-button-wrapper-home {
+        position: absolute;
+        top: -60px;
         left: -10px;
         z-index: 10;
         pointer-events: auto;
@@ -260,6 +303,114 @@
         font-size: 11px;
         font-weight: 800;
         fill: #FFF5E1;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+      }
+
+      /* Red Zen Chat Button for Verb Master Game */
+      .cobi-chat-button-zen {
+        width: 80px;
+        height: 80px;
+        background-color: #B71C1C;
+        border-radius: 50%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 0 0 3px rgba(183, 28, 28, 0.2);
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+      
+      .cobi-chat-button-zen:hover {
+        transform: scale(1.1);
+        background-color: #A31818;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15), 0 0 0 4px rgba(163, 24, 24, 0.3);
+      }
+      
+      .cobi-chat-button-zen:active {
+        transform: scale(0.95);
+        background-color: #8F1414;
+      }
+      
+      /* Curved text style for zen button */
+      .curved-text-style-zen {
+        font-family: 'Outfit', sans-serif;
+        font-size: 11px;
+        font-weight: 800;
+        fill: #FFFFFF;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+      }
+      
+      /* White Magic Chat Button for Power of Verbs Game */
+      .cobi-chat-button-mago {
+        width: 80px;
+        height: 80px;
+        background-color: #FFFFFF;
+        border-radius: 50%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 0 0 3px rgba(255, 255, 255, 0.5);
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+      
+      .cobi-chat-button-mago:hover {
+        transform: scale(1.1);
+        background-color: #F5F5F5;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15), 0 0 0 4px rgba(255, 255, 255, 0.6);
+      }
+      
+      .cobi-chat-button-mago:active {
+        transform: scale(0.95);
+        background-color: #EEEEEE;
+      }
+      
+      /* Curved text style for mago button */
+      .curved-text-style-mago {
+        font-family: 'Outfit', sans-serif;
+        font-size: 11px;
+        font-weight: 800;
+        fill: #1B365D;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+      }
+
+      /* Explorer Chat Button for Letter Wheel Game */
+      .cobi-chat-button-explorador {
+        width: 80px;
+        height: 80px;
+        background-color: #CEAE85;
+        border-radius: 50%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 0 0 3px rgba(206, 174, 133, 0.5);
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+      
+      .cobi-chat-button-explorador:hover {
+        transform: scale(1.1);
+        background-color: #D4B896;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15), 0 0 0 4px rgba(206, 174, 133, 0.6);
+      }
+      
+      .cobi-chat-button-explorador:active {
+        transform: scale(0.95);
+        background-color: #C4A475;
+      }
+      
+      /* Curved text style for explorador button */
+      .curved-text-style-explorador {
+        font-family: 'Outfit', sans-serif;
+        font-size: 11px;
+        font-weight: 800;
+        fill: #4B261B;
         letter-spacing: 2px;
         text-transform: uppercase;
       }

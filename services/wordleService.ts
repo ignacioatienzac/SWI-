@@ -3,7 +3,7 @@ const dictionaryCache: { [key: string]: string[] } = {};
 const hintsCache: { [key: string]: { [word: string]: string[] } } = {};
 
 // Normalize accents for comparison (á→a, é→e, í→i, ó→o, ú→u, ñ stays)
-const normalizeAccents = (text: string): string => {
+export const normalizeAccents = (text: string): string => {
   return text
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')

@@ -1,10 +1,26 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { RotateCcw, Calendar, Lightbulb, ChevronLeft, ChevronRight, X, Send } from 'lucide-react';
 import { getWordOfDay } from '../services/vocabularyService';
-import { isValidWord, getHintsForAttempt } from '../services/wordleService';
+import { isValidWord, getHintsForAttempt, normalizeAccents } from '../services/wordleService';
 import { hablarConPanda } from '../services/geminiService';
 
-// Mensajes aleatorios para el bocadillo del Cobi detective
+// Mensajes aleatorios para el bocadillo del Cobi detective en el MENÚ
+const mensajesMenuDetective = [
+  "🔍 ¡Un nuevo misterio nos espera! Elige tu nivel de dificultad. 🐾",
+  "🕵️‍♂️ ¿Listo para descubrir palabras ocultas? ¡Selecciona un nivel! 🐾",
+  "📁 Cada día hay un caso nuevo... ¿Qué nivel te atreves a resolver? 🔍",
+  "🐾 ¡Detective! El vocabulario español tiene secretos... ¡vamos a descubrirlos!",
+  "🎯 A1 para empezar, B2 para expertos. ¿Cuál será tu desafío hoy? 🕵️‍♂️",
+  "✨ ¡Adivinar palabras es el mejor entrenamiento! Elige y empecemos. 🐾",
+  "🔎 Seis intentos, una palabra. ¿Aceptas el reto, detective? 🐾"
+];
+
+const seleccionarMensajeMenuDetectiveRandom = (): string => {
+  const indice = Math.floor(Math.random() * mensajesMenuDetective.length);
+  return mensajesMenuDetective[indice];
+};
+
+// Mensajes aleatorios para el bocadillo del Cobi detective durante el juego
 const mensajesDetectiveCobi = [
   "¡Empezamos! 📁 Escribe tu primera palabra para buscar pistas. 🐾",
   "Vamos a concentrarnos... ¿cuál será la palabra oculta? 🔍",
@@ -126,6 +142,7 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
   const [hints, setHints] = useState<string[]>([]);
   const [showPandaChat, setShowPandaChat] = useState(false);
   const [pandaMessage, setPandaMessage] = useState<string>('');
+  const [cobiMenuMessage] = useState<string>(seleccionarMensajeMenuDetectiveRandom()); // Mensaje del menú
   const [cobiDetectiveMessage, setCobiDetectiveMessage] = useState<string>(''); // Mensaje del detective
   const [cobiDetectiveAvatar, setCobiDetectiveAvatar] = useState<string>('./data/images/cobi-detective.webp'); // Avatar del detective
   const [showChatWindow, setShowChatWindow] = useState(false);
@@ -164,7 +181,8 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
 
     const word = await getWordOfDay(level, date);
     if (word && word.length > 0 && word.length >= 3 && word.length <= 6) {
-      setSecretWord(word);
+      // Normalizar la palabra sin tildes para que "epoca" coincida con "época"
+      setSecretWord(normalizeAccents(word));
       setStatus('PLAYING');
       playSound('correct');
     } else {
@@ -416,31 +434,55 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
     setIsLoadingResponse(true);
 
     try {
-      // Enviar contexto completo pero con advertencia crítica
-      const contextInfo = {
-        nivel: difficulty.toUpperCase(),
-        PALABRA_SECRETA_SOLO_PARA_PISTAS: secretWord,
-        ADVERTENCIA_CRITICA: 'NUNCA reveles esta palabra directamente ni la uses como ejemplo',
-        letras: wordLength,
-        primera_letra: secretWord[0],
-        intentos_usados: guesses.length,
-        intentos_maximos: MAX_GUESSES,
-        intentos_previos: guesses,
-        letras_correctas: guesses.length > 0 ? getCorrectLettersInfo() : 'Ningún intento aún'
-      };
+      let contextInfo;
+      let tipo: 'lobby' | 'juego';
+
+      // Si estamos en el menú, contexto de lobby
+      if (status === 'SELECT_LEVEL') {
+        contextInfo = {
+          juego: 'Adivina la Palabra (Wordle)',
+          estado: 'menu',
+          niveles_disponibles: DIFFICULTIES.map(d => d.label).join(', '),
+          descripcion_niveles: {
+            'A1': 'Principiante - Palabras básicas y cotidianas',
+            'A2': 'Elemental - Vocabulario más amplio',
+            'B1': 'Intermedio - Palabras más complejas',
+            'B2': 'Intermedio alto - Vocabulario avanzado'
+          },
+          reglas_del_juego: 'Tienes 6 intentos para adivinar una palabra. Las letras correctas se marcan en verde, las presentes en amarillo, y las ausentes en gris.'
+        };
+        tipo = 'lobby';
+      } else {
+        // Si estamos jugando, contexto de juego
+        contextInfo = {
+          nivel: difficulty.toUpperCase(),
+          PALABRA_SECRETA_SOLO_PARA_PISTAS: secretWord,
+          ADVERTENCIA_CRITICA: 'NUNCA reveles esta palabra directamente ni la uses como ejemplo',
+          letras: wordLength,
+          primera_letra: secretWord[0],
+          intentos_usados: guesses.length,
+          intentos_maximos: MAX_GUESSES,
+          intentos_previos: guesses,
+          letras_correctas: guesses.length > 0 ? getCorrectLettersInfo() : 'Ningún intento aún'
+        };
+        tipo = 'juego';
+      }
 
       const respuesta = await hablarConPanda(
         userMsg,
         'Detective del Wordle',
         contextInfo,
-        'juego'
+        tipo
       );
 
-      // Post-procesamiento: Censurar si la palabra secreta aparece completa
-      const sanitizedResponse = respuesta.replace(
-        new RegExp(`\\b${secretWord}\\b`, 'gi'),
-        '█████ (palabra oculta)'
-      );
+      // Post-procesamiento: Censurar si la palabra secreta aparece completa (solo si estamos en juego)
+      let sanitizedResponse = respuesta;
+      if (status !== 'SELECT_LEVEL' && secretWord) {
+        sanitizedResponse = respuesta.replace(
+          new RegExp(`\\b${secretWord}\\b`, 'gi'),
+          '█████ (palabra oculta)'
+        );
+      }
 
       // Añadir respuesta de Cobi
       setChatHistory(prev => [...prev, { role: 'cobi', text: sanitizedResponse }]);
@@ -545,6 +587,139 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
             </button>
           ))}
         </div>
+
+        {/* Cobi Detective pensando en el menú (solo desktop) */}
+        <div className="hidden lg:block fixed bottom-0 right-0 z-50 pointer-events-none overflow-visible">
+          <div className="relative animate-float">
+            {/* Bocadillo de diálogo con mensaje aleatorio - solo si NO hay chat abierto */}
+            {!showChatWindow && (
+              <div style={{ position: 'absolute', left: '-200px', bottom: '80px', zIndex: 5, maxWidth: '220px' }} className="bg-white/95 backdrop-blur-sm rounded-2xl px-4 py-2 shadow-lg border-2 border-gray-200 pointer-events-auto">
+                <p className="text-gray-700 font-semibold text-sm text-center leading-snug">
+                  {cobiMenuMessage || "🔍 ¡Investiguemos juntos! 🐾"}
+                </p>
+                {/* Pico del bocadillo apuntando hacia Cobi */}
+                <div className="absolute top-1/2 -translate-y-1/2 -right-3 w-4 h-4 bg-white border-r-2 border-b-2 border-gray-200 transform rotate-[315deg]"></div>
+              </div>
+            )}
+            
+            {/* Imagen de Cobi Detective pensando */}
+            <div className="relative -mb-16 -mr-8" style={{ zIndex: 10 }}>
+              <img 
+                src="./data/images/cobi-detective-pensando.webp"
+                alt="Cobi Detective pensando" 
+                className="w-56 h-auto object-contain"
+                style={{
+                  filter: 'drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15)) drop-shadow(0 0 20px rgba(0, 0, 0, 0.08))'
+                }}
+              />
+            </div>
+
+            {/* Chat Button Wrapper - Mismo diseño que dentro del juego */}
+            <div className="chat-button-wrapper">
+              <div
+                onClick={() => setShowChatWindow(!showChatWindow)}
+                className="cobi-chat-button-detective pointer-events-auto"
+              >
+                <svg viewBox="0 0 100 100" className="curved-text-svg">
+                  <path id="chatTextPathDetectiveMenu" d="M 20,50 A 30,30 0 1,1 80,50" fill="none" />
+                  <text>
+                    <textPath href="#chatTextPathDetectiveMenu" startOffset="50%" textAnchor="middle" className="curved-text-style-detective">
+                      CHATEAR
+                    </textPath>
+                  </text>
+                </svg>
+                <div className="paws-icon">🐾</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Chat Window del Menú */}
+        {showChatWindow && status === 'SELECT_LEVEL' && (
+          <div className="fixed bottom-24 right-6 lg:bottom-48 lg:right-6 z-50 w-80 max-w-[calc(100vw-3rem)] bg-white rounded-3xl shadow-2xl border-2 border-gray-200 overflow-hidden animate-fade-in">
+            {/* Header */}
+            <div className="p-4 flex items-center justify-between" style={{ background: 'linear-gradient(to right, #2D5A27, #234A1F)' }}>
+              <div className="flex items-center gap-2">
+                <span className="text-2xl">🐾</span>
+                <div>
+                  <h3 className="text-white font-bold text-sm">Cobi el Detective</h3>
+                  <p className="text-xs" style={{ color: '#FFF5E1' }}>Tu guía investigador</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowChatWindow(false)}
+                className="p-1 hover:bg-white/20 rounded-full transition"
+              >
+                <X size={20} className="text-white" />
+              </button>
+            </div>
+
+            {/* Chat History */}
+            <div className="h-64 overflow-y-auto p-4 space-y-3 bg-gradient-to-b from-green-50/30 to-white">
+              {chatHistory.length === 0 ? (
+                <div className="text-center text-gray-500 text-sm mt-8">
+                  <p className="mb-2">🔍</p>
+                  <p>¡Hola, detective! Soy Cobi.</p>
+                  <p className="text-xs mt-2">Pregúntame sobre los niveles o sobre español.</p>
+                </div>
+              ) : (
+                chatHistory.map((msg, idx) => (
+                  <div
+                    key={idx}
+                    className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                  >
+                    <div
+                      className={`max-w-[80%] rounded-2xl px-4 py-2 ${
+                        msg.role === 'user'
+                          ? 'text-white'
+                          : 'bg-white text-gray-700 border-2'
+                      }`}
+                      style={msg.role === 'user' 
+                        ? { background: 'linear-gradient(to right, #2D5A27, #234A1F)' } 
+                        : { borderColor: '#2D5A27' }}
+                    >
+                      <p className="text-sm whitespace-pre-wrap">{msg.text}</p>
+                    </div>
+                  </div>
+                ))
+              )}
+              
+              {/* Loading state */}
+              {isLoadingResponse && (
+                <div className="flex justify-start">
+                  <div className="bg-white border-2 rounded-2xl px-4 py-3" style={{ borderColor: '#2D5A27' }}>
+                    <p className="text-sm text-gray-600">
+                      El Detective está investigando... 🔍
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Input Area */}
+            <div className="p-3 bg-white border-t-2 border-gray-100">
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={chatInput}
+                  onChange={(e) => setChatInput(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && sendMessageToCobi()}
+                  placeholder="Escribe tu pregunta..."
+                  disabled={isLoadingResponse}
+                  className="flex-1 px-4 py-2 border-2 border-gray-200 rounded-full focus:outline-none focus:border-green-600 transition text-sm disabled:bg-gray-100"
+                />
+                <button
+                  onClick={sendMessageToCobi}
+                  disabled={isLoadingResponse || !chatInput.trim()}
+                  className="w-10 h-10 rounded-full flex items-center justify-center hover:shadow-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
+                  style={{ background: 'linear-gradient(to right, #2D5A27, #234A1F)' }}
+                >
+                  <Send size={18} className="text-white" />
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     );
   }

@@ -209,16 +209,42 @@ const Games: React.FC<GamesProps> = ({ activeGameId, setActiveGameId }) => {
             onClick={() => setActiveGameId(game.id)}
             className="group bg-white rounded-2xl p-8 shadow-sm hover:shadow-xl border border-gray-100 hover:border-spanish-red/20 transition-all duration-300 cursor-pointer transform hover:-translate-y-1 relative overflow-hidden"
           >
-            <div className={`w-14 h-14 rounded-xl flex items-center justify-center mb-6 text-white shadow-md transition-colors ${
-              game.id === 'power-verbs' ? 'bg-orange-500' :
-              game.id === 'verb-master' ? 'bg-spanish-red' : 'bg-deep-blue'
-            }`}>
-              {game.iconName === 'Zap' && <Zap size={28} />}
-              {game.iconName === 'Sword' && <Sword size={28} />}
-              {game.iconName === 'Layers' && <Layers size={28} />}
-              {game.iconName === 'Gamepad2' && <Gamepad2 size={28} />}
-              {game.iconName === 'Grid3X3' && <Grid3X3 size={28} />}
-              {game.iconName === 'Hammer' && <Hammer size={28} />}
+            <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-6 bg-cream shadow-md transition-all overflow-hidden">
+              {game.id === 'power-verbs' && (
+                <img 
+                  src="/data/images/sombrero.webp" 
+                  alt="Sombrero Mago"
+                  className="w-full h-full object-cover"
+                />
+              )}
+              {game.id === 'wordle-game' && (
+                <img 
+                  src="/data/images/lupa.webp" 
+                  alt="Lupa Detective"
+                  className="w-full h-full object-cover"
+                />
+              )}
+              {game.id === 'letter-wheel' && (
+                <img 
+                  src="/data/images/brujula.webp" 
+                  alt="Brújula"
+                  className="w-full h-full object-cover"
+                />
+              )}
+              {game.id === 'verb-master' && (
+                <img 
+                  src="/data/images/burbuja.webp" 
+                  alt="Burbuja"
+                  className="w-full h-full object-cover"
+                />
+              )}
+              {game.id === 'phrase-builder' && (
+                <img 
+                  src="/data/images/casco.webp" 
+                  alt="Casco Constructor"
+                  className="w-full h-full object-cover"
+                />
+              )}
             </div>
 
             <h3 className="text-2xl font-bold text-gray-900 mb-3 group-hover:text-spanish-red transition-colors">
