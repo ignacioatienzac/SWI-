@@ -37,7 +37,7 @@ const App: React.FC = () => {
   });
 
   // Estado para mensaje de Cobi
-  const [cobiMessage, setCobiMessage] = useState<string>(seleccionarMensajeCobiRandom());
+  const [cobiMessage] = useState<string>(seleccionarMensajeCobiRandom());
   
   // Estados de chat
   const [showChatWindow, setShowChatWindow] = useState(false);

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { ChevronLeft, Info, X, Pause, Play, Send } from 'lucide-react';
 import { getFilteredVerbs, getAvailableTenses } from '../services/powerVerbsService';
 import { PowerVerb, GameDifficulty, GameMode, BattleMode } from '../types';
@@ -36,11 +36,6 @@ const mensajesSenseiMenu = [
   "🌟 La maestría requiere práctica. ¡Configura y comienza tu viaje! 🐾"
 ];
 
-const seleccionarMensajeSenseiMenuRandom = (): string => {
-  const indice = Math.floor(Math.random() * mensajesSenseiMenu.length);
-  return mensajesSenseiMenu[indice];
-};
-
 // Mensajes aleatorios para Cobi Sensei durante el juego
 const mensajesSenseiJuego = [
   "⚔️ ¡Concentración, aprendiz! Los verbos son tu mejor arma. 🐾",
@@ -62,22 +57,6 @@ const mensajesSenseiFallo = [
   "🔄 La derrota es parte del aprendizaje. ¡Levántate y sigue practicando! 🐾",
   "📖 Cada error es una lección. ¡Vuelve más fuerte, guerrero! 🐾"
 ];
-
-const seleccionarMensajeSenseiRandom = (tipo: 'juego' | 'victoria' | 'fallo'): string => {
-  let mensajes;
-  switch(tipo) {
-    case 'victoria':
-      mensajes = mensajesSenseiVictoria;
-      break;
-    case 'fallo':
-      mensajes = mensajesSenseiFallo;
-      break;
-    default:
-      mensajes = mensajesSenseiJuego;
-  }
-  const indice = Math.floor(Math.random() * mensajes.length);
-  return mensajes[indice];
-};
 
 // Mensajes aleatorios para Cobi Mago durante el juego
 const mensajesMagoJuego = [
@@ -231,7 +210,7 @@ const CONTRARRELOJ_DIFFICULTY: Record<GameDifficulty, ContrarrelojDifficultyConf
     timeMultiplier: 1.5,
     enemyPool: [1, 2, 3, 4],
     castleLives: 10,
-    getEnemyWeights: (kills: number) => {
+    getEnemyWeights: () => {
       // Mayor probabilidad de Enemigo 1 al principio
       return [
         { id: 1, weight: 60 },
@@ -338,7 +317,6 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
   const [showTooltip, setShowTooltip] = useState<string | null>(null);
   
   // Contrarreloj-specific state (damage system & progression)
-  const [playerDamage, setPlayerDamage] = useState(10);
   const [damageStreak, setDamageStreak] = useState(0);
   const [killCount, setKillCount] = useState(0);
   
@@ -348,7 +326,6 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
   
   // Cobi Mago State
   const [cobiMagoMessage, setCobiMagoMessage] = useState<string>(seleccionarMensajeMagoRandom('juego'));
-  const [cobiMagoAvatar, setCobiMagoAvatar] = useState<string>('./data/images/cobi-mago.webp');
   const [cobiMagoMenuMessage] = useState<string>(seleccionarMensajeMagoRandom('menu'));
   const [cobiMagoPausaMessage] = useState<string>(seleccionarMensajeMagoRandom('pausa'));
   const [cobiMagoDerrotaMessage] = useState<string>(seleccionarMensajeMagoRandom('derrota'));

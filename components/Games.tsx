@@ -5,7 +5,7 @@ import PowerOfVerbsGame from './PowerOfVerbsGame';
 import LetterWheelGame from './LetterWheelGame';
 import VerbMasterGame from './VerbMasterGame';
 import PhraseBuilderGame from './PhraseBuilderGame';
-import { Gamepad2, Layers, Zap, Grid3X3, Sword, Hammer, Send, X } from 'lucide-react';
+import { Send, X } from 'lucide-react';
 import { hablarConPanda } from '../services/geminiService';
 
 // Banco de Mensajes de Cobi (incluye datos curiosos y recomendaciones de juegos)
