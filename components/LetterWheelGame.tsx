@@ -674,7 +674,7 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack }) => {
 
   // Keyboard
   useEffect(() => {
-    if (gameStatus !== 'PLAYING' || !gameState) return;
+    if (gameStatus !== 'PLAYING' || !gameState || showChatWindow) return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
       const key = e.key.toLowerCase();
@@ -701,7 +701,7 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack }) => {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [gameStatus, gameState, usedIndices, currentWord]);
+  }, [gameStatus, gameState, usedIndices, currentWord, showChatWindow]);
 
   // Calendar helper functions
   const getDaysInMonth = (date: Date) => {
@@ -962,7 +962,7 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack }) => {
             {/* Imagen de Cobi Explorador Victoria */}
             <div className="relative -mb-16 -mr-8" style={{ zIndex: 10 }}>
               <img 
-                src="/data/images/cobi-explorador-victoria.webp"
+                src="./data/images/cobi-explorador-victoria.webp"
                 alt="Cobi Explorador Victoria" 
                 className="w-56 h-auto object-contain transition-opacity duration-300"
                 style={{
