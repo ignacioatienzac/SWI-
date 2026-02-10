@@ -404,10 +404,10 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack }) => {
       return null;
     }
 
-    // Try to find a base word that has at least 4 valid related words
-    const minValidWords = 4;
+    // Adjust requirements based on level (B1/B2 have harder words)
+    const minValidWords = level === 'b1' || level === 'b2' ? 2 : 4;
     let attempts = 0;
-    const maxAttempts = 10;
+    const maxAttempts = level === 'b1' || level === 'b2' ? 30 : 10;
     
     while (attempts < maxAttempts) {
       // Use a different date string for each attempt
@@ -425,7 +425,9 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack }) => {
       const validWords = getRelatedWords(allWords, baseWordObj.palabra, 30);
 
       if (validWords.length >= minValidWords) {
-        const targetWords: GameWord[] = validWords.slice(0, 8).map((word, idx) => ({
+        // Adjust target count based on level (fewer for B1/B2)
+        const targetCount = level === 'b1' || level === 'b2' ? Math.min(6, validWords.length) : Math.min(8, validWords.length);
+        const targetWords: GameWord[] = validWords.slice(0, targetCount).map((word, idx) => ({
           word,
           normalized: normalize(word.palabra),
           number: idx + 1
