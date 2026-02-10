@@ -122,7 +122,7 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack }) => {
   const [displayMonth, setDisplayMonth] = useState<Date>(new Date());
   const [, forceUpdate] = useState({});
   const [cobiExploradorMessage, setCobiExploradorMessage] = useState<string>(seleccionarMensajeExploradorRandom('entrada'));
-  const [cobiExploradorAvatar, setCobiExploradorAvatar] = useState<string>('/data/images/cobi-explorador.webp');
+  const [cobiExploradorAvatar, setCobiExploradorAvatar] = useState<string>('./data/images/cobi-explorador.webp');
   const [cobiExploradorMenuMessage] = useState<string>(seleccionarMensajeExploradorRandom('menu'));
   
   // Chat State
@@ -564,8 +564,8 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack }) => {
       playSuccess();
       setFeedback({ text: isBaseWord ? '¡Excelente! ¡Encontraste la palabra base!' : '¡Correcto!', type: 'success' });
       setCobiExploradorMessage(seleccionarMensajeExploradorRandom('acierto'));
-      setCobiExploradorAvatar('/data/images/cobi-explorador-victoria.webp');
-      setTimeout(() => setCobiExploradorAvatar('/data/images/cobi-explorador.webp'), 2000);
+      setCobiExploradorAvatar('./data/images/cobi-explorador-victoria.webp');
+      setTimeout(() => setCobiExploradorAvatar('./data/images/cobi-explorador.webp'), 2000);
       setFoundWords(new Set([...foundWords, currentWord]));
       
       // Trigger cell reveal animation
@@ -594,7 +594,7 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack }) => {
         setTimeout(() => {
           playVictory();
           setCobiExploradorMessage(seleccionarMensajeExploradorRandom('victoria'));
-          setCobiExploradorAvatar('/data/images/cobi-explorador-victoria.webp');
+          setCobiExploradorAvatar('./data/images/cobi-explorador-victoria.webp');
           setGameStatus('VICTORY');
         }, 500);
       }
@@ -603,8 +603,8 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack }) => {
     } else {
       playError();
       setCobiExploradorMessage(seleccionarMensajeExploradorRandom('fallo'));
-      setCobiExploradorAvatar('/data/images/cobi-explorador-derrota.webp');
-      setTimeout(() => setCobiExploradorAvatar('/data/images/cobi-explorador.webp'), 2000);
+      setCobiExploradorAvatar('./data/images/cobi-explorador-derrota.webp');
+      setTimeout(() => setCobiExploradorAvatar('./data/images/cobi-explorador.webp'), 2000);
       setFeedback({ text: 'Palabra incorrecta', type: 'error' });
     }
     

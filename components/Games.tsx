@@ -212,35 +212,35 @@ const Games: React.FC<GamesProps> = ({ activeGameId, setActiveGameId }) => {
             <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-6 bg-cream shadow-md transition-all overflow-hidden">
               {game.id === 'power-verbs' && (
                 <img 
-                  src="/data/images/sombrero.webp" 
+                  src="./data/images/sombrero.webp" 
                   alt="Sombrero Mago"
                   className="w-full h-full object-cover"
                 />
               )}
               {game.id === 'wordle-game' && (
                 <img 
-                  src="/data/images/lupa.webp" 
+                  src="./data/images/lupa.webp" 
                   alt="Lupa Detective"
                   className="w-full h-full object-cover"
                 />
               )}
               {game.id === 'letter-wheel' && (
                 <img 
-                  src="/data/images/brujula.webp" 
+                  src="./data/images/brujula.webp" 
                   alt="Brújula"
                   className="w-full h-full object-cover"
                 />
               )}
               {game.id === 'verb-master' && (
                 <img 
-                  src="/data/images/burbuja.webp" 
+                  src="./data/images/burbuja.webp" 
                   alt="Burbuja"
                   className="w-full h-full object-cover"
                 />
               )}
               {game.id === 'phrase-builder' && (
                 <img 
-                  src="/data/images/casco.webp" 
+                  src="./data/images/casco.webp" 
                   alt="Casco Constructor"
                   className="w-full h-full object-cover"
                 />
