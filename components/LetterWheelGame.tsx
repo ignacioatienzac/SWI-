@@ -404,10 +404,23 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack }) => {
       return null;
     }
 
-    // Adjust requirements based on level (B1/B2 have harder words)
-    const minValidWords = level === 'b1' || level === 'b2' ? 2 : 4;
+    // Fallback levels for B1/B2: load lower-level vocabularies to fill gaps
+    const fallbackLevels: ('a1' | 'a2' | 'b1' | 'b2')[] =
+      level === 'b2' ? ['b1', 'a2'] :
+      level === 'b1' ? ['a2'] :
+      [];
+    
+    // Preload fallback vocabularies
+    const fallbackWords: VocabWord[][] = [];
+    for (const fl of fallbackLevels) {
+      const words = await loadLetterWheelVocabulary(fl);
+      if (words.length > 0) fallbackWords.push(words);
+    }
+
+    const minValidWords = 4;
+    const targetCount = 8;
     let attempts = 0;
-    const maxAttempts = level === 'b1' || level === 'b2' ? 30 : 10;
+    const maxAttempts = 10;
     
     while (attempts < maxAttempts) {
       // Use a different date string for each attempt
@@ -421,19 +434,42 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack }) => {
 
       const baseWordNormalized = normalize(baseWordObj.palabra);
       
-      // Get related words
+      // Get related words from current level
       const validWords = getRelatedWords(allWords, baseWordObj.palabra, 30);
 
       if (validWords.length >= minValidWords) {
-        // Adjust target count based on level (fewer for B1/B2)
-        const targetCount = level === 'b1' || level === 'b2' ? Math.min(6, validWords.length) : Math.min(8, validWords.length);
-        const targetWords: GameWord[] = validWords.slice(0, targetCount).map((word, idx) => ({
+        // Start with words from current level
+        let combinedWords = [...validWords];
+
+        // If not enough, fill from lower levels
+        if (combinedWords.length < targetCount && fallbackWords.length > 0) {
+          const usedNormalized = new Set([
+            baseWordNormalized,
+            ...combinedWords.map(w => normalize(w.palabra))
+          ]);
+
+          for (const lowerWords of fallbackWords) {
+            if (combinedWords.length >= targetCount) break;
+            const lowerRelated = getRelatedWords(lowerWords, baseWordObj.palabra, 30);
+            for (const w of lowerRelated) {
+              if (combinedWords.length >= targetCount) break;
+              const wNorm = normalize(w.palabra);
+              if (!usedNormalized.has(wNorm)) {
+                combinedWords.push(w);
+                usedNormalized.add(wNorm);
+              }
+            }
+          }
+        }
+
+        const finalWords = combinedWords.slice(0, targetCount);
+        const targetWords: GameWord[] = finalWords.map((word, idx) => ({
           word,
           normalized: normalize(word.palabra),
           number: idx + 1
         }));
 
-        console.log('[Game] Base word:', baseWordObj.palabra, '| Target words:', targetWords.map(t => t.word.palabra).join(', '));
+        console.log('[Game] Base word:', baseWordObj.palabra, '| Target words:', targetWords.map(t => t.word.palabra).join(', '), '| From level:', validWords.length, '| From fallback:', finalWords.length - Math.min(validWords.length, targetCount));
 
         return {
           baseWord: baseWordObj,
