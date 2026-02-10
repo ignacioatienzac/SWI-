@@ -758,7 +758,7 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack }) => {
             {/* Imagen de Cobi Explorador Menu */}
             <div className="relative -mb-16 -mr-8" style={{ zIndex: 10 }}>
               <img 
-                src="/data/images/cobi-explorador-menu.webp"
+                src="./data/images/cobi-explorador-menu.webp"
                 alt="Cobi Explorador" 
                 className="w-56 h-auto object-contain transition-opacity duration-300"
                 style={{
