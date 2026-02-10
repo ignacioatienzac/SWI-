@@ -204,17 +204,19 @@ interface ContrarrelojEnemy {
   id: number; // 1-6
   image: string;
   hp: number;
+  hpFacil?: number; // Override HP for facil difficulty
   baseTime: number; // seconds
   name: string;
+  reward: number; // Points awarded on kill
 }
 
 const CONTRARRELOJ_ENEMIES: ContrarrelojEnemy[] = [
-  { id: 1, image: '/data/images/enemigo_1.png', hp: 10,  baseTime: 12, name: 'Duende' },
-  { id: 2, image: '/data/images/enemigo_2.png', hp: 30,  baseTime: 10, name: 'Trasgo' },
-  { id: 3, image: '/data/images/enemigo_3.png', hp: 60,  baseTime: 8,  name: 'Ogro' },
-  { id: 4, image: '/data/images/enemigo_4.png', hp: 100, baseTime: 7,  name: 'Troll' },
-  { id: 5, image: '/data/images/enemigo_5.png', hp: 160, baseTime: 6,  name: 'Dragón' },
-  { id: 6, image: '/data/images/enemigo_6.png', hp: 250, baseTime: 5,  name: 'Lich' },
+  { id: 1, image: '/data/images/enemigo_1.png', hp: 10,  baseTime: 12, name: 'Duende', reward: 60 },
+  { id: 2, image: '/data/images/enemigo_2.png', hp: 30,  hpFacil: 20, baseTime: 10, name: 'Trasgo', reward: 100 },
+  { id: 3, image: '/data/images/enemigo_3.png', hp: 60,  baseTime: 8,  name: 'Ogro', reward: 150 },
+  { id: 4, image: '/data/images/enemigo_4.png', hp: 100, baseTime: 7,  name: 'Troll', reward: 250 },
+  { id: 5, image: '/data/images/enemigo_5.png', hp: 160, baseTime: 6,  name: 'Dragón', reward: 400 },
+  { id: 6, image: '/data/images/enemigo_6.png', hp: 250, baseTime: 5,  name: 'Lich', reward: 800 },
 ];
 
 interface ContrarrelojDifficultyConfig {
@@ -230,10 +232,13 @@ const CONTRARRELOJ_DIFFICULTY: Record<GameDifficulty, ContrarrelojDifficultyConf
     enemyPool: [1, 2, 3, 4],
     castleLives: 10,
     getEnemyWeights: (kills: number) => {
-      if (kills <= 5) return [{ id: 1, weight: 100 }];
-      if (kills <= 15) return [{ id: 1, weight: 50 }, { id: 2, weight: 50 }];
-      if (kills <= 25) return [{ id: 1, weight: 20 }, { id: 2, weight: 35 }, { id: 3, weight: 30 }, { id: 4, weight: 15 }];
-      return [{ id: 1, weight: 10 }, { id: 2, weight: 25 }, { id: 3, weight: 35 }, { id: 4, weight: 30 }];
+      // Mayor probabilidad de Enemigo 1 al principio
+      return [
+        { id: 1, weight: 60 },
+        { id: 1, weight: 20 },
+        { id: 2, weight: 15 },
+        { id: 2, weight: 5 }
+      ];
     },
   },
   intermedio: {
@@ -687,7 +692,8 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
         const weights = crConfig.getEnemyWeights(killCountRef.current);
         const enemy = pickWeightedEnemy(weights);
         
-        // Use Contrarreloj HP values (10, 30, 60, 100, 160, 250)
+        // Use difficulty-specific HP (facil uses hpFacil if available)
+        const enemyHp = (selectedDifficulty === 'facil' && enemy.hpFacil) ? enemy.hpFacil : enemy.hp;
         const monsterSize = Math.floor((canvasHeight - 40) * 0.15);
         
         // Apply timeMultiplier to speed (higher baseTime = slower, so inverse relationship)
@@ -700,13 +706,13 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
           y: groundLevel - monsterSize,
           width: monsterSize,
           height: monsterSize,
-          hp: enemy.hp,
-          maxHp: enemy.hp,
+          hp: enemyHp,
+          maxHp: enemyHp,
           speed: baseSpeed * settings.enemySpeedMultiplier,
           emoji: '👾',
           imageIndex: enemy.id - 1,
           color: '#8b5cf6',
-          points: Math.ceil(enemy.hp / 10) * 10
+          points: enemy.reward
         });
         return;
       }
@@ -837,7 +843,18 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
             hit = true;
             playHit(); // Play hit sound
             if (m.hp <= 0) {
-              setScore(prev => prev + m.points);
+              setScore(prev => {
+                const newScore = prev + m.points;
+                // Check victory in Contrarreloj mode by targetScore
+                if (selectedBattleMode === 'contrarreloj' && selectedDifficulty) {
+                  const targetScore = DIFFICULTY_SETTINGS[selectedDifficulty].targetScore;
+                  if (newScore >= targetScore) {
+                    playVictory();
+                    setTimeout(() => setGameState('VICTORY'), 300);
+                  }
+                }
+                return newScore;
+              });
               monstersRef.current.splice(j, 1);
               // Track kills in Contrarreloj mode
               if (selectedBattleMode === 'contrarreloj') {
