@@ -631,8 +631,8 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
     // For contrarreloj mode, use faster spawn rate
     let baseSpawnRate: number;
     if (selectedBattleMode === 'contrarreloj') {
-      // Faster spawn for contrarreloj (especially facil)
-      baseSpawnRate = selectedDifficulty === 'facil' ? 1200 : 1500;
+      // Spawn rate adjusted for contrarreloj
+      baseSpawnRate = selectedDifficulty === 'facil' ? 2200 : 1700;
     } else {
       baseSpawnRate = Math.max(settings.minSpawnRate, settings.spawnRate - (score * 2));
     }
