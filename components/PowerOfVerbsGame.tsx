@@ -177,8 +177,10 @@ const CONTRARRELOJ_DIFFICULTY: Record<GameDifficulty, ContrarrelojDifficultyConf
     timeMultiplier: 1.5,
     enemyPool: [1, 2, 3, 4],
     castleLives: 10,
-    getEnemyWeights: () => {
-      // Mayor probabilidad de Enemigo 1 al principio
+    getEnemyWeights: (kills: number) => {
+      // Progresión basada en kills por tipo de enemigo
+      // El usuario pasa killsByType como parámetro kills, pero necesitamos acceso al objeto
+      // Por ahora usamos kills total, pero modificaremos el llamado después
       return [
         { id: 1, weight: 60 },
         { id: 1, weight: 20 },
@@ -287,10 +289,12 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
   const [damageStreak, setDamageStreak] = useState(0);
   const [killCount, setKillCount] = useState(0);
   const [pointsStreak, setPointsStreak] = useState(0); // Racha para bonificación de puntos
+  const [killsByType, setKillsByType] = useState<{ [key: number]: number }>({}); // Kills por tipo de enemigo
   
   // Keep refs in sync with state for gameLoop access
   useEffect(() => { killCountRef.current = killCount; }, [killCount]);
   useEffect(() => { attackPowerRef.current = attackPower; }, [attackPower]);
+  useEffect(() => { killsByTypeRef.current = killsByType; }, [killsByType]);
   
   // Cobi Mago State
   const [cobiMagoMessage, setCobiMagoMessage] = useState<string>(seleccionarMensajeMagoRandom('juego'));
@@ -320,6 +324,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
   const gameStartTimeRef = useRef<number>(0);
   const killCountRef = useRef<number>(0);
   const attackPowerRef = useRef<number>(1);
+  const killsByTypeRef = useRef<{ [key: number]: number }>({});
   const nextSpawnTimeRef = useRef<number>(0);
   
   // Image refs for rendering
@@ -623,7 +628,14 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
     if (time < nextSpawnTimeRef.current) return;
     
     // Calculate next spawn time with randomness (±30% variation)
-    const baseSpawnRate = Math.max(settings.minSpawnRate, settings.spawnRate - (score * 2));
+    // For contrarreloj mode, use faster spawn rate
+    let baseSpawnRate: number;
+    if (selectedBattleMode === 'contrarreloj') {
+      // Faster spawn for contrarreloj (especially facil)
+      baseSpawnRate = selectedDifficulty === 'facil' ? 1200 : 1500;
+    } else {
+      baseSpawnRate = Math.max(settings.minSpawnRate, settings.spawnRate - (score * 2));
+    }
     const spawnVariation = baseSpawnRate * 0.3;
     nextSpawnTimeRef.current = time + baseSpawnRate + (Math.random() * spawnVariation * 2 - spawnVariation);
 
@@ -633,7 +645,71 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
       // Contrarreloj mode uses custom progression system
       if (selectedBattleMode === 'contrarreloj' && selectedDifficulty) {
         const crConfig = CONTRARRELOJ_DIFFICULTY[selectedDifficulty];
-        const weights = crConfig.getEnemyWeights(killCountRef.current);
+        
+        // Special progression logic for facil mode
+        let weights: { id: number; weight: number }[];
+        if (selectedDifficulty === 'facil') {
+          const kills = killsByTypeRef.current;
+          const k1 = kills[1] || 0;
+          const k2 = kills[2] || 0;
+          const k3 = kills[3] || 0;
+          
+          // Start with only enemy 1
+          if (k1 < 3) {
+            weights = [{ id: 1, weight: 100 }];
+          }
+          // After 3-5 kills of E1, introduce E2
+          else if (k1 < 5 || k2 === 0) {
+            weights = [
+              { id: 1, weight: 40 },
+              { id: 2, weight: 60 }
+            ];
+          }
+          // After E2 appears, continue with E1 and E2 until 3-5 kills of E2
+          else if (k2 < 3) {
+            weights = [
+              { id: 1, weight: 50 },
+              { id: 2, weight: 50 }
+            ];
+          }
+          // After 3-5 kills of E2, introduce E3
+          else if (k2 < 5 || k3 === 0) {
+            weights = [
+              { id: 1, weight: 20 },
+              { id: 2, weight: 50 },
+              { id: 3, weight: 30 }
+            ];
+          }
+          // After E3 appears, continue until 3-5 kills of E3
+          else if (k3 < 3) {
+            weights = [
+              { id: 1, weight: 15 },
+              { id: 2, weight: 45 },
+              { id: 3, weight: 40 }
+            ];
+          }
+          // After 3-5 kills of E3, introduce E4
+          else if (k3 < 5 || (kills[4] || 0) === 0) {
+            weights = [
+              { id: 1, weight: 10 },
+              { id: 2, weight: 30 },
+              { id: 3, weight: 40 },
+              { id: 4, weight: 20 }
+            ];
+          }
+          // Final mix with all 4 enemies
+          else {
+            weights = [
+              { id: 1, weight: 10 },
+              { id: 2, weight: 25 },
+              { id: 3, weight: 35 },
+              { id: 4, weight: 30 }
+            ];
+          }
+        } else {
+          weights = crConfig.getEnemyWeights(killCountRef.current);
+        }
+        
         const enemy = pickWeightedEnemy(weights);
         
         // Use difficulty-specific HP (facil uses hpFacil if available)
@@ -815,10 +891,12 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
                 }
                 return newScore;
               });
+              const killedEnemyType = m.imageIndex + 1; // imageIndex is 0-based, enemy id is 1-based
               monstersRef.current.splice(j, 1);
               // Track kills in Contrarreloj mode
               if (selectedBattleMode === 'contrarreloj') {
                 setKillCount(prev => prev + 1);
+                setKillsByType(prev => ({ ...prev, [killedEnemyType]: (prev[killedEnemyType] || 0) + 1 }));
               }
             }
             break;
