@@ -113,7 +113,7 @@ const DIFFICULTY_SETTINGS = {
   facil: {
     label: 'Fácil',
     castleLives: 10,
-    targetScore: 500,
+    targetScore: 1000,
     spawnRate: 4000,
     minSpawnRate: 1500,
     enemySpeedMultiplier: 0.35,
@@ -124,7 +124,7 @@ const DIFFICULTY_SETTINGS = {
   intermedio: {
     label: 'Intermedio',
     castleLives: 5,
-    targetScore: 1000,
+    targetScore: 3000,
     spawnRate: 3500,
     minSpawnRate: 1000,
     enemySpeedMultiplier: 0.45,
@@ -135,7 +135,7 @@ const DIFFICULTY_SETTINGS = {
   dificil: {
     label: 'Difícil',
     castleLives: 3,
-    targetScore: 2000,
+    targetScore: 5000,
     spawnRate: 3000,
     minSpawnRate: 600,
     enemySpeedMultiplier: 0.6,
@@ -151,18 +151,19 @@ interface ContrarrelojEnemy {
   image: string;
   hp: number;
   hpFacil?: number; // Override HP for facil difficulty
+  hpDificil?: number; // Override HP for dificil difficulty
   baseTime: number; // seconds
   name: string;
   reward: number; // Points awarded on kill
 }
 
 const CONTRARRELOJ_ENEMIES: ContrarrelojEnemy[] = [
-  { id: 1, image: '/data/images/enemigo_1.png', hp: 10,  baseTime: 15, name: 'Duende', reward: 60 },
-  { id: 2, image: '/data/images/enemigo_2.png', hp: 30,  hpFacil: 20, baseTime: 13, name: 'Trasgo', reward: 100 },
-  { id: 3, image: '/data/images/enemigo_3.png', hp: 60,  baseTime: 11,  name: 'Ogro', reward: 150 },
-  { id: 4, image: '/data/images/enemigo_4.png', hp: 100, baseTime: 7,  name: 'Troll', reward: 250 },
-  { id: 5, image: '/data/images/enemigo_5.png', hp: 160, baseTime: 6,  name: 'Dragón', reward: 400 },
-  { id: 6, image: '/data/images/enemigo_6.png', hp: 250, baseTime: 5,  name: 'Lich', reward: 800 },
+  { id: 1, image: '/data/images/enemigo_1.png', hp: 15,  baseTime: 15, name: 'Duende', reward: 60 },
+  { id: 2, image: '/data/images/enemigo_2.png', hp: 40,  hpFacil: 25, hpDificil: 20, baseTime: 13, name: 'Trasgo', reward: 100 },
+  { id: 3, image: '/data/images/enemigo_3.png', hp: 50,  hpDificil: 35, baseTime: 11,  name: 'Ogro', reward: 150 },
+  { id: 4, image: '/data/images/enemigo_4.png', hp: 100, hpDificil: 50, baseTime: 7,  name: 'Troll', reward: 250 },
+  { id: 5, image: '/data/images/enemigo_5.png', hp: 120, hpDificil: 70, baseTime: 6,  name: 'Dragón', reward: 400 },
+  { id: 6, image: '/data/images/enemigo_6.png', hp: 180, hpDificil: 100, baseTime: 5,  name: 'Lich', reward: 800 },
 ];
 
 interface ContrarrelojDifficultyConfig {
@@ -190,7 +191,7 @@ const CONTRARRELOJ_DIFFICULTY: Record<GameDifficulty, ContrarrelojDifficultyConf
     },
   },
   intermedio: {
-    timeMultiplier: 1.0,
+    timeMultiplier: 1.3,
     enemyPool: [1, 2, 3, 4, 5],
     castleLives: 5,
     getEnemyWeights: (kills: number) => {
@@ -201,11 +202,12 @@ const CONTRARRELOJ_DIFFICULTY: Record<GameDifficulty, ContrarrelojDifficultyConf
     },
   },
   dificil: {
-    timeMultiplier: 0.8,
+    timeMultiplier: 1.25,
     enemyPool: [2, 3, 4, 5, 6],
     castleLives: 3,
     getEnemyWeights: (kills: number) => {
-      if (kills <= 5) return [{ id: 2, weight: 50 }, { id: 3, weight: 50 }];
+      if (kills <= 3) return [{ id: 2, weight: 100 }];  // Solo E2 al inicio
+      if (kills <= 8) return [{ id: 2, weight: 60 }, { id: 3, weight: 40 }];  // Introduce E3 gradualmente
       if (kills <= 15) return [{ id: 2, weight: 15 }, { id: 3, weight: 30 }, { id: 4, weight: 35 }, { id: 5, weight: 20 }];
       if (kills <= 25) return [{ id: 3, weight: 10 }, { id: 4, weight: 25 }, { id: 5, weight: 35 }, { id: 6, weight: 30 }];
       return [{ id: 4, weight: 15 }, { id: 5, weight: 35 }, { id: 6, weight: 50 }];
@@ -326,6 +328,9 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
   const attackPowerRef = useRef<number>(1);
   const killsByTypeRef = useRef<{ [key: number]: number }>({});
   const nextSpawnTimeRef = useRef<number>(0);
+  
+  // History ref to avoid repeating same verb+pronoun combinations
+  const verbHistoryRef = useRef<string[]>([]);
   
   // Image refs for rendering
   const enemyImagesRef = useRef<HTMLImageElement[]>([]);
@@ -574,7 +579,31 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
 
   const pickNewVerb = (pool: PowerVerb[]) => {
     if (pool.length === 0) return;
-    const randomVerb = pool[Math.floor(Math.random() * pool.length)];
+    
+    // Get history of recent verb+pronoun combinations
+    const recentHistory = verbHistoryRef.current.slice(-3); // Last 3 conjugations
+    
+    // Filter out verbs that match recent history (same verb AND pronoun)
+    let availableVerbs = pool.filter(v => {
+      const verbKey = `${v.verb}_${v.pronoun}`;
+      return !recentHistory.includes(verbKey);
+    });
+    
+    // If all verbs are in history (unlikely but possible with small pools), use full pool
+    if (availableVerbs.length === 0) {
+      availableVerbs = pool;
+    }
+    
+    const randomVerb = availableVerbs[Math.floor(Math.random() * availableVerbs.length)];
+    
+    // Add to history
+    const verbKey = `${randomVerb.verb}_${randomVerb.pronoun}`;
+    verbHistoryRef.current.push(verbKey);
+    // Keep only last 10 items in history to prevent memory growth
+    if (verbHistoryRef.current.length > 10) {
+      verbHistoryRef.current = verbHistoryRef.current.slice(-10);
+    }
+    
     setCurrentVerb(randomVerb);
     setUserInput('');
     setFeedbackMsg({ text: '', type: '' });
@@ -631,8 +660,30 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
     // For contrarreloj mode, use faster spawn rate
     let baseSpawnRate: number;
     if (selectedBattleMode === 'contrarreloj') {
-      // Spawn rate adjusted for contrarreloj
-      baseSpawnRate = selectedDifficulty === 'facil' ? 2500 : 1700;
+      // Spawn rate adjusted for contrarreloj with progressive system
+      if (selectedDifficulty === 'facil') {
+        baseSpawnRate = 2500;
+      } else if (selectedDifficulty === 'intermedio') {
+        // Progressive spawn rate based on total kills
+        const totalKills = killCount;
+        if (totalKills <= 10) {
+          baseSpawnRate = 3500; // Inicio tranquilo
+        } else if (totalKills <= 25) {
+          baseSpawnRate = 2800; // Ritmo medio
+        } else {
+          baseSpawnRate = 2300; // Final intenso
+        }
+      } else {
+        // Difícil: Progressive spawn rate
+        const totalKills = killCount;
+        if (totalKills <= 10) {
+          baseSpawnRate = 3300; // Inicio controlado
+        } else if (totalKills <= 25) {
+          baseSpawnRate = 2700; // Ritmo desafiante
+        } else {
+          baseSpawnRate = 2200; // Caos final
+        }
+      }
     } else {
       baseSpawnRate = Math.max(settings.minSpawnRate, settings.spawnRate - (score * 2));
     }
@@ -706,22 +757,102 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
               { id: 4, weight: 30 }
             ];
           }
+        } else if (selectedDifficulty === 'dificil') {
+          // Progressive logic for dificil to avoid skipping enemy types
+          const kills = killsByTypeRef.current;
+          const k2 = kills[2] || 0;
+          const k3 = kills[3] || 0;
+          const k4 = kills[4] || 0;
+          const k5 = kills[5] || 0;
+          
+          // Start with only E2
+          if (k2 < 3) {
+            weights = [{ id: 2, weight: 100 }];
+          }
+          // After 3-5 kills of E2, introduce E3
+          else if (k2 < 5 || k3 === 0) {
+            weights = [
+              { id: 2, weight: 40 },
+              { id: 3, weight: 60 }
+            ];
+          }
+          // After E3 appears, continue with E2 and E3 until 3-5 kills of E3
+          else if (k3 < 3) {
+            weights = [
+              { id: 2, weight: 30 },
+              { id: 3, weight: 70 }
+            ];
+          }
+          // After 3-5 kills of E3, introduce E4
+          else if (k3 < 5 || k4 === 0) {
+            weights = [
+              { id: 2, weight: 15 },
+              { id: 3, weight: 35 },
+              { id: 4, weight: 50 }
+            ];
+          }
+          // After E4 appears, continue until 3-5 kills of E4
+          else if (k4 < 3) {
+            weights = [
+              { id: 2, weight: 10 },
+              { id: 3, weight: 30 },
+              { id: 4, weight: 60 }
+            ];
+          }
+          // After 3-5 kills of E4, introduce E5
+          else if (k4 < 5 || k5 === 0) {
+            weights = [
+              { id: 3, weight: 15 },
+              { id: 4, weight: 40 },
+              { id: 5, weight: 45 }
+            ];
+          }
+          // After E5 appears, continue until 3-5 kills of E5
+          else if (k5 < 3) {
+            weights = [
+              { id: 3, weight: 10 },
+              { id: 4, weight: 30 },
+              { id: 5, weight: 60 }
+            ];
+          }
+          // After 3-5 kills of E5, introduce E6
+          else if (k5 < 5 || (kills[6] || 0) === 0) {
+            weights = [
+              { id: 4, weight: 15 },
+              { id: 5, weight: 45 },
+              { id: 6, weight: 40 }
+            ];
+          }
+          // Final mix with all enemies
+          else {
+            weights = [
+              { id: 4, weight: 15 },
+              { id: 5, weight: 35 },
+              { id: 6, weight: 50 }
+            ];
+          }
         } else {
           weights = crConfig.getEnemyWeights(killCountRef.current);
         }
         
         const enemy = pickWeightedEnemy(weights);
         
-        // Use difficulty-specific HP (facil uses hpFacil if available)
-        const enemyHp = (selectedDifficulty === 'facil' && enemy.hpFacil) ? enemy.hpFacil : enemy.hp;
+        // Use difficulty-specific HP
+        let enemyHp = enemy.hp;
+        if (selectedDifficulty === 'facil' && enemy.hpFacil) {
+          enemyHp = enemy.hpFacil;
+        } else if (selectedDifficulty === 'dificil' && enemy.hpDificil) {
+          enemyHp = enemy.hpDificil;
+        }
         const monsterSize = Math.floor((canvasHeight - 40) * 0.15);
         
         // Apply timeMultiplier to speed (higher baseTime = slower, so inverse relationship)
         // Base speed 0.5, adjusted by baseTime ratio and difficulty multiplier
         const baseSpeed = 0.5 * (12 / enemy.baseTime) * crConfig.timeMultiplier;
         
-        // Calculate points with streak bonus (only for facil mode)
+        // Calculate points with streak bonus (all difficulties)
         let enemyPoints = enemy.reward;
+        
         if (selectedDifficulty === 'facil') {
           // Base points by enemy type
           const basePointsByEnemy: { [key: number]: number } = {
@@ -733,6 +864,32 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
           const basePoints = basePointsByEnemy[enemy.id] || enemy.reward;
           // Apply streak bonus: +10 per streak level, max at 3
           const streakBonus = Math.min(pointsStreak, 3) * 10;
+          enemyPoints = basePoints + streakBonus;
+        } else if (selectedDifficulty === 'intermedio') {
+          // Base points by enemy type
+          const basePointsByEnemy: { [key: number]: number } = {
+            1: 30,   // Enemigo 1
+            2: 50,   // Enemigo 2
+            3: 70,   // Enemigo 3
+            4: 120,  // Enemigo 4
+            5: 170   // Enemigo 5
+          };
+          const basePoints = basePointsByEnemy[enemy.id] || enemy.reward;
+          // Apply streak bonus: +15 per streak level, max at 4
+          const streakBonus = Math.min(pointsStreak, 4) * 15;
+          enemyPoints = basePoints + streakBonus;
+        } else if (selectedDifficulty === 'dificil') {
+          // Base points by enemy type
+          const basePointsByEnemy: { [key: number]: number } = {
+            2: 50,   // Enemigo 2
+            3: 80,   // Enemigo 3
+            4: 130,  // Enemigo 4
+            5: 200,  // Enemigo 5
+            6: 280   // Enemigo 6
+          };
+          const basePoints = basePointsByEnemy[enemy.id] || enemy.reward;
+          // Apply streak bonus: +20 per streak level, max at 5
+          const streakBonus = Math.min(pointsStreak, 5) * 20;
           enemyPoints = basePoints + streakBonus;
         }
         
@@ -1092,8 +1249,8 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
         const newDamage = 10 + newStreak * 2;
         setDamageStreak(newStreak);
         setPointsStreak(prev => prev + 1); // Incrementar racha de puntos
-        // attackPower goes up +1 per correct (visual + aura), capped at 10
-        setAttackPower(prev => Math.min(prev + 1, 10));
+        // attackPower goes up +1 per correct (visual + aura), no limit
+        setAttackPower(prev => prev + 1);
         setCobiMagoMessage(seleccionarMensajeMagoRandom('acierto'));
         setFeedbackMsg({ text: `¡Correcto! Daño: ${newDamage} (Racha: ${newStreak})`, type: 'success' });
         setTimeout(() => pickNewVerb(verbsPool), 600);
@@ -1120,7 +1277,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
       // Jefe mode uses original power system
       if (isCorrect) {
         playSuccess();
-        setAttackPower(prev => Math.min(prev + 1, 10));
+        setAttackPower(prev => prev + 1); // No limit
         setCobiMagoMessage(seleccionarMensajeMagoRandom('acierto'));
         setFeedbackMsg({ text: '¡Correcto! +Poder', type: 'success' });
         setTimeout(() => pickNewVerb(verbsPool), 600);

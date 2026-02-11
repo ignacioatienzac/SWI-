@@ -214,6 +214,8 @@ const Games: React.FC<GamesProps> = ({ activeGameId, setActiveGameId }) => {
                 <img 
                   src="./data/images/sombrero.webp" 
                   alt="Sombrero Mago"
+                  width="56"
+                  height="56"
                   className="w-full h-full object-cover"
                 />
               )}
@@ -221,6 +223,8 @@ const Games: React.FC<GamesProps> = ({ activeGameId, setActiveGameId }) => {
                 <img 
                   src="./data/images/lupa.webp" 
                   alt="Lupa Detective"
+                  width="56"
+                  height="56"
                   className="w-full h-full object-cover"
                 />
               )}
@@ -228,6 +232,8 @@ const Games: React.FC<GamesProps> = ({ activeGameId, setActiveGameId }) => {
                 <img 
                   src="./data/images/brujula.webp" 
                   alt="Brújula"
+                  width="56"
+                  height="56"
                   className="w-full h-full object-cover"
                 />
               )}
@@ -235,6 +241,8 @@ const Games: React.FC<GamesProps> = ({ activeGameId, setActiveGameId }) => {
                 <img 
                   src="./data/images/burbuja.webp" 
                   alt="Burbuja"
+                  width="56"
+                  height="56"
                   className="w-full h-full object-cover"
                 />
               )}
@@ -242,6 +250,8 @@ const Games: React.FC<GamesProps> = ({ activeGameId, setActiveGameId }) => {
                 <img 
                   src="./data/images/casco.webp" 
                   alt="Casco Constructor"
+                  width="56"
+                  height="56"
                   className="w-full h-full object-cover"
                 />
               )}
