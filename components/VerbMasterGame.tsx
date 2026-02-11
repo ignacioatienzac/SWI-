@@ -97,16 +97,16 @@ type GameState = 'LEVEL_SELECT' | 'PLAYING' | 'PAUSED' | 'GAMEOVER' | 'LEVEL_TRA
 
 // Level progression configuration (10 levels)
 const LEVEL_SETTINGS = [
-  { level: 1, fallDuration: 40.0, pointsRequired: 0 },      // Starting level - Very slow
-  { level: 2, fallDuration: 37.0, pointsRequired: 100 },   // +100 = 100 total
-  { level: 3, fallDuration: 34.0, pointsRequired: 300 },   // +200 = 300 total
-  { level: 4, fallDuration: 31.0, pointsRequired: 600 },   // +300 = 600 total
-  { level: 5, fallDuration: 28.0, pointsRequired: 1000 },  // +400 = 1000 total
-  { level: 6, fallDuration: 25.0, pointsRequired: 1500 },  // +500 = 1500 total
-  { level: 7, fallDuration: 22.0, pointsRequired: 2100 },  // +600 = 2100 total
-  { level: 8, fallDuration: 19.0, pointsRequired: 2800 },  // +700 = 2800 total
-  { level: 9, fallDuration: 16.0, pointsRequired: 3600 },  // +800 = 3600 total
-  { level: 10, fallDuration: 13.0, pointsRequired: 4500 }   // +900 = 4500 total (max level)
+  { level: 1, fallDuration: 60.0, pointsRequired: 0 },      // Starting level - Very slow
+  { level: 2, fallDuration: 55.0, pointsRequired: 100 },   // +100 = 100 total
+  { level: 3, fallDuration: 50.0, pointsRequired: 300 },   // +200 = 300 total
+  { level: 4, fallDuration: 45.0, pointsRequired: 600 },   // +300 = 600 total
+  { level: 5, fallDuration: 40.0, pointsRequired: 1000 },  // +400 = 1000 total
+  { level: 6, fallDuration: 37.5, pointsRequired: 1500 },  // +500 = 1500 total
+  { level: 7, fallDuration: 35.0, pointsRequired: 2100 },  // +600 = 2100 total
+  { level: 8, fallDuration: 30.0, pointsRequired: 2800 },  // +700 = 2800 total
+  { level: 9, fallDuration: 25.0, pointsRequired: 3600 },  // +800 = 3600 total
+  { level: 10, fallDuration: 20.0, pointsRequired: 4500 }   // +900 = 4500 total (max level)
 ];
 
 // Background colors for each level

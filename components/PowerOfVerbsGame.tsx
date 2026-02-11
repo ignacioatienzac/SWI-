@@ -113,7 +113,7 @@ const DIFFICULTY_SETTINGS = {
   facil: {
     label: 'Fácil',
     castleLives: 10,
-    targetScore: 1000,
+    targetScore: 1500,
     spawnRate: 4000,
     minSpawnRate: 1500,
     enemySpeedMultiplier: 0.35,
@@ -124,7 +124,7 @@ const DIFFICULTY_SETTINGS = {
   intermedio: {
     label: 'Intermedio',
     castleLives: 5,
-    targetScore: 3000,
+    targetScore: 4000,
     spawnRate: 3500,
     minSpawnRate: 1000,
     enemySpeedMultiplier: 0.45,
@@ -135,7 +135,7 @@ const DIFFICULTY_SETTINGS = {
   dificil: {
     label: 'Difícil',
     castleLives: 3,
-    targetScore: 5000,
+    targetScore: 8000,
     spawnRate: 3000,
     minSpawnRate: 600,
     enemySpeedMultiplier: 0.6,
@@ -158,12 +158,12 @@ interface ContrarrelojEnemy {
 }
 
 const CONTRARRELOJ_ENEMIES: ContrarrelojEnemy[] = [
-  { id: 1, image: '/data/images/enemigo_1.png', hp: 15,  baseTime: 15, name: 'Duende', reward: 60 },
-  { id: 2, image: '/data/images/enemigo_2.png', hp: 40,  hpFacil: 25, hpDificil: 20, baseTime: 13, name: 'Trasgo', reward: 100 },
-  { id: 3, image: '/data/images/enemigo_3.png', hp: 50,  hpDificil: 35, baseTime: 11,  name: 'Ogro', reward: 150 },
-  { id: 4, image: '/data/images/enemigo_4.png', hp: 100, hpDificil: 50, baseTime: 7,  name: 'Troll', reward: 250 },
-  { id: 5, image: '/data/images/enemigo_5.png', hp: 120, hpDificil: 70, baseTime: 6,  name: 'Dragón', reward: 400 },
-  { id: 6, image: '/data/images/enemigo_6.png', hp: 180, hpDificil: 100, baseTime: 5,  name: 'Lich', reward: 800 },
+  { id: 1, image: '/data/images/enemigo_1.png', hp: 15,  baseTime: 15, name: 'Murciélago', reward: 60 },
+  { id: 2, image: '/data/images/enemigo_2.png', hp: 20,  hpFacil: 20, hpDificil: 20, baseTime: 13, name: 'Fantasma', reward: 100 },
+  { id: 3, image: '/data/images/enemigo_3.png', hp: 35,  hpDificil: 35, baseTime: 11,  name: 'Zombie', reward: 150 },
+  { id: 4, image: '/data/images/enemigo_4.png', hp: 50, hpDificil: 50, baseTime: 7,  name: 'Hombre lobo', reward: 250 },
+  { id: 5, image: '/data/images/enemigo_5.png', hp: 70, hpDificil: 70, baseTime: 6,  name: 'Ninja zombie', reward: 400 },
+  { id: 6, image: '/data/images/enemigo_6.png', hp: 100, hpDificil: 100, baseTime: 5,  name: 'Oso zombie', reward: 800 },
 ];
 
 interface ContrarrelojDifficultyConfig {
@@ -662,7 +662,15 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
     if (selectedBattleMode === 'contrarreloj') {
       // Spawn rate adjusted for contrarreloj with progressive system
       if (selectedDifficulty === 'facil') {
-        baseSpawnRate = 2500;
+        // Progressive spawn rate based on total kills
+        const totalKills = killCount;
+        if (totalKills <= 15) {
+          baseSpawnRate = 3000; // Inicio muy tranquilo
+        } else if (totalKills <= 35) {
+          baseSpawnRate = 2500; // Ritmo medio
+        } else {
+          baseSpawnRate = 2000; // Final más intenso
+        }
       } else if (selectedDifficulty === 'intermedio') {
         // Progressive spawn rate based on total kills
         const totalKills = killCount;
@@ -1119,12 +1127,66 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
       ctx.fillText('🧙‍♂️', heroRef.current.x, groundY - 5);
     }
     
-    // Power aura around wizard
+    // Power aura around wizard - Enhanced version
     if (attackPower > 1) {
-        ctx.beginPath();
-        ctx.arc(heroRef.current.x + wizardSize/2, heroRef.current.y + wizardSize/2, 25 + (attackPower * 2), 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(255, 215, 0, ${Math.min(0.5, attackPower * 0.1)})`;
-        ctx.fill();
+      const centerX = heroRef.current.x + wizardSize/2;
+      const centerY = heroRef.current.y + wizardSize/2;
+      const time = Date.now() / 1000;
+      
+      // Calculate power level for visual scaling
+      const powerLevel = Math.min(attackPower / 10, 3); // Scale 1-10 to 0-1, max 3x
+      const pulseEffect = Math.sin(time * 2) * 0.1 + 0.9; // Gentle pulsation
+      
+      // Outer glow (largest, most transparent)
+      const gradient1 = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, 35 + (attackPower * 3));
+      gradient1.addColorStop(0, `rgba(255, 215, 0, ${0.3 * pulseEffect})`);
+      gradient1.addColorStop(0.5, `rgba(255, 165, 0, ${0.2 * pulseEffect})`);
+      gradient1.addColorStop(1, 'rgba(255, 215, 0, 0)');
+      ctx.fillStyle = gradient1;
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, (35 + attackPower * 3) * pulseEffect, 0, Math.PI * 2);
+      ctx.fill();
+      
+      // Middle layer (stronger)
+      const gradient2 = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, 20 + (attackPower * 2));
+      gradient2.addColorStop(0, `rgba(255, 223, 0, ${0.5 * pulseEffect})`);
+      gradient2.addColorStop(0.6, `rgba(255, 140, 0, ${0.3 * pulseEffect})`);
+      gradient2.addColorStop(1, 'rgba(255, 215, 0, 0)');
+      ctx.fillStyle = gradient2;
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, (20 + attackPower * 2) * pulseEffect, 0, Math.PI * 2);
+      ctx.fill();
+      
+      // Inner core (brightest)
+      const gradient3 = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, 10 + attackPower);
+      gradient3.addColorStop(0, `rgba(255, 255, 200, ${0.8 * pulseEffect})`);
+      gradient3.addColorStop(0.7, `rgba(255, 200, 0, ${0.5 * pulseEffect})`);
+      gradient3.addColorStop(1, 'rgba(255, 180, 0, 0)');
+      ctx.fillStyle = gradient3;
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, (10 + attackPower) * pulseEffect, 0, Math.PI * 2);
+      ctx.fill();
+      
+      // Rotating particles for high power levels
+      if (attackPower >= 5) {
+        const particleCount = Math.min(Math.floor(attackPower / 2), 8);
+        const rotationSpeed = time * 1.5;
+        
+        for (let i = 0; i < particleCount; i++) {
+          const angle = (i / particleCount) * Math.PI * 2 + rotationSpeed;
+          const distance = 30 + attackPower * 1.5;
+          const px = centerX + Math.cos(angle) * distance;
+          const py = centerY + Math.sin(angle) * distance;
+          
+          const particleGradient = ctx.createRadialGradient(px, py, 0, px, py, 8);
+          particleGradient.addColorStop(0, 'rgba(255, 255, 150, 0.8)');
+          particleGradient.addColorStop(1, 'rgba(255, 200, 0, 0)');
+          ctx.fillStyle = particleGradient;
+          ctx.beginPath();
+          ctx.arc(px, py, 8, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
     }
 
     // Draw monsters using images
