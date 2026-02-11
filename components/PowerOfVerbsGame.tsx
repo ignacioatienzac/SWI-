@@ -157,9 +157,9 @@ interface ContrarrelojEnemy {
 }
 
 const CONTRARRELOJ_ENEMIES: ContrarrelojEnemy[] = [
-  { id: 1, image: '/data/images/enemigo_1.png', hp: 10,  baseTime: 12, name: 'Duende', reward: 60 },
-  { id: 2, image: '/data/images/enemigo_2.png', hp: 30,  hpFacil: 20, baseTime: 10, name: 'Trasgo', reward: 100 },
-  { id: 3, image: '/data/images/enemigo_3.png', hp: 60,  baseTime: 8,  name: 'Ogro', reward: 150 },
+  { id: 1, image: '/data/images/enemigo_1.png', hp: 10,  baseTime: 15, name: 'Duende', reward: 60 },
+  { id: 2, image: '/data/images/enemigo_2.png', hp: 30,  hpFacil: 20, baseTime: 13, name: 'Trasgo', reward: 100 },
+  { id: 3, image: '/data/images/enemigo_3.png', hp: 60,  baseTime: 11,  name: 'Ogro', reward: 150 },
   { id: 4, image: '/data/images/enemigo_4.png', hp: 100, baseTime: 7,  name: 'Troll', reward: 250 },
   { id: 5, image: '/data/images/enemigo_5.png', hp: 160, baseTime: 6,  name: 'Dragón', reward: 400 },
   { id: 6, image: '/data/images/enemigo_6.png', hp: 250, baseTime: 5,  name: 'Lich', reward: 800 },
@@ -632,7 +632,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
     let baseSpawnRate: number;
     if (selectedBattleMode === 'contrarreloj') {
       // Spawn rate adjusted for contrarreloj
-      baseSpawnRate = selectedDifficulty === 'facil' ? 2200 : 1700;
+      baseSpawnRate = selectedDifficulty === 'facil' ? 2500 : 1700;
     } else {
       baseSpawnRate = Math.max(settings.minSpawnRate, settings.spawnRate - (score * 2));
     }
