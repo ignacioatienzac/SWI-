@@ -286,6 +286,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
   // Contrarreloj-specific state (damage system & progression)
   const [damageStreak, setDamageStreak] = useState(0);
   const [killCount, setKillCount] = useState(0);
+  const [pointsStreak, setPointsStreak] = useState(0); // Racha para bonificación de puntos
   
   // Keep refs in sync with state for gameLoop access
   useEffect(() => { killCountRef.current = killCount; }, [killCount]);
@@ -643,6 +644,22 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
         // Base speed 0.5, adjusted by baseTime ratio and difficulty multiplier
         const baseSpeed = 0.5 * (12 / enemy.baseTime) * crConfig.timeMultiplier;
         
+        // Calculate points with streak bonus (only for facil mode)
+        let enemyPoints = enemy.reward;
+        if (selectedDifficulty === 'facil') {
+          // Base points by enemy type
+          const basePointsByEnemy: { [key: number]: number } = {
+            1: 20,  // Enemigo 1
+            2: 40,  // Enemigo 2
+            3: 60,  // Enemigo 3
+            4: 90   // Enemigo 4
+          };
+          const basePoints = basePointsByEnemy[enemy.id] || enemy.reward;
+          // Apply streak bonus: +10 per streak level, max at 3
+          const streakBonus = Math.min(pointsStreak, 3) * 10;
+          enemyPoints = basePoints + streakBonus;
+        }
+        
         monstersRef.current.push({
           id: Date.now(),
           x: canvasWidth + 50,
@@ -655,7 +672,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
           emoji: '👾',
           imageIndex: enemy.id - 1,
           color: '#8b5cf6',
-          points: enemy.reward
+          points: enemyPoints
         });
         return;
       }
@@ -996,6 +1013,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
         const newStreak = damageStreak + 1;
         const newDamage = 10 + newStreak * 2;
         setDamageStreak(newStreak);
+        setPointsStreak(prev => prev + 1); // Incrementar racha de puntos
         // attackPower goes up +1 per correct (visual + aura), capped at 10
         setAttackPower(prev => Math.min(prev + 1, 10));
         setCobiMagoMessage(seleccionarMensajeMagoRandom('acierto'));
@@ -1007,6 +1025,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
         setConsecutiveFailures(newFailureCount);
         // Reset streak but keep base damage at 10
         setDamageStreak(0);
+        setPointsStreak(0); // Resetear racha de puntos
         // Only penalize attackPower in dificil mode
         if (selectedDifficulty === 'dificil') {
           setAttackPower(prev => Math.max(1, prev - 1));
