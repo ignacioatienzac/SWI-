@@ -121,8 +121,17 @@ export function getRelatedWords(allWords: VocabWord[], baseWord: string, count: 
     return lenB - lenA;
   });
 
+  // Deduplicate by normalized word to prevent the same word appearing twice
+  const seen = new Set<string>();
+  const deduped = candidates.filter(w => {
+    const key = normalizeWord(w.palabra).toLowerCase();
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+
   // Take top N words
-  return candidates.slice(0, count);
+  return deduped.slice(0, count);
 }
 
 export function normalizeWord(word: string): string {

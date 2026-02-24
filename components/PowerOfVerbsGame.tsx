@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { ChevronLeft, Info, X, Pause, Play, Send } from 'lucide-react';
-import { getFilteredVerbs, getAvailableTenses } from '../services/powerVerbsService';
+import { getAvailableTenses, getFilteredVerbsSRS, recordVerbCorrect, recordVerbIncorrect } from '../services/powerVerbsService';
 import { PowerVerb, GameDifficulty, GameMode, BattleMode } from '../types';
 import { hablarConPanda } from '../services/geminiService';
+import { normalizePronoun } from '../services/srsService';
 
 interface PowerOfVerbsGameProps {
   onBack: () => void;
@@ -117,9 +118,12 @@ const DIFFICULTY_SETTINGS = {
     spawnRate: 4000,
     minSpawnRate: 1500,
     enemySpeedMultiplier: 0.35,
-    bossHp: 80,
-    bossAppearTime: 45000, // 45 segundos
-    bossSpeed: 0.07, // Muy lento
+    bossHp: 400,
+    bossAppearTime: 45000, // 45 segundos (solo usado en modo antiguo)
+    bossSpeed: 0.12, // Velocidad media
+    // Modo jefe con sistema de oleadas
+    waveScoreThreshold: 1000, // Puntos para completar ola
+    bossPreparationTime: 20000, // 20 segundos de preparación
   },
   intermedio: {
     label: 'Intermedio',
@@ -128,9 +132,14 @@ const DIFFICULTY_SETTINGS = {
     spawnRate: 3500,
     minSpawnRate: 1000,
     enemySpeedMultiplier: 0.45,
-    bossHp: 150,
+    bossHp: 1000,
     bossAppearTime: 40000,
     bossSpeed: 0.12, // Medio
+    // Modo jefe con sistema de oleadas múltiples
+    waves: [
+      { threshold: 1500, enemyPool: [1, 2, 3], preparationTime: 10000 }, // Ola 1: E1, E2, E3
+      { threshold: 3000, enemyPool: [2, 3, 4], preparationTime: 20000 }, // Ola 2: E2, E3, E4
+    ],
   },
   dificil: {
     label: 'Difícil',
@@ -139,9 +148,15 @@ const DIFFICULTY_SETTINGS = {
     spawnRate: 3000,
     minSpawnRate: 600,
     enemySpeedMultiplier: 0.6,
-    bossHp: 250,
+    bossHp: 1500,
     bossAppearTime: 35000,
     bossSpeed: 0.17, // Más rápido
+    // Modo jefe con sistema de oleadas múltiples (3 oleadas)
+    waves: [
+      { threshold: 2000, enemyPool: [2, 3], preparationTime: 10000 }, // Ola 1: E2, E3 (0→2000 pts)
+      { threshold: 6000, enemyPool: [3, 4, 5], preparationTime: 10000 }, // Ola 2: E3, E4, E5 (2000→6000 pts, +4000)
+      { threshold: 13000, enemyPool: [5, 6], preparationTime: 20000 }, // Ola 3: E5, E6 (6000→13000 pts, +7000)
+    ],
   },
 };
 
@@ -179,15 +194,11 @@ const CONTRARRELOJ_DIFFICULTY: Record<GameDifficulty, ContrarrelojDifficultyConf
     enemyPool: [1, 2, 3, 4],
     castleLives: 10,
     getEnemyWeights: (kills: number) => {
-      // Progresión basada en kills por tipo de enemigo
-      // El usuario pasa killsByType como parámetro kills, pero necesitamos acceso al objeto
-      // Por ahora usamos kills total, pero modificaremos el llamado después
-      return [
-        { id: 1, weight: 60 },
-        { id: 1, weight: 20 },
-        { id: 2, weight: 15 },
-        { id: 2, weight: 5 }
-      ];
+      if (kills <= 4) return [{ id: 1, weight: 100 }];
+      if (kills <= 9) return [{ id: 1, weight: 60 }, { id: 2, weight: 40 }];
+      if (kills <= 20) return [{ id: 1, weight: 35 }, { id: 2, weight: 40 }, { id: 3, weight: 25 }];
+      if (kills <= 30) return [{ id: 1, weight: 25 }, { id: 2, weight: 35 }, { id: 3, weight: 40 }];
+      return [{ id: 2, weight: 20 }, { id: 3, weight: 35 }, { id: 4, weight: 45 }];
     },
   },
   intermedio: {
@@ -195,9 +206,10 @@ const CONTRARRELOJ_DIFFICULTY: Record<GameDifficulty, ContrarrelojDifficultyConf
     enemyPool: [1, 2, 3, 4, 5],
     castleLives: 5,
     getEnemyWeights: (kills: number) => {
-      if (kills <= 5) return [{ id: 1, weight: 50 }, { id: 2, weight: 50 }];
-      if (kills <= 15) return [{ id: 1, weight: 15 }, { id: 2, weight: 30 }, { id: 3, weight: 35 }, { id: 4, weight: 20 }];
-      if (kills <= 25) return [{ id: 2, weight: 15 }, { id: 3, weight: 25 }, { id: 4, weight: 35 }, { id: 5, weight: 25 }];
+      if (kills <= 2) return [{ id: 1, weight: 100 }];
+      if (kills <= 5) return [{ id: 1, weight: 60 }, { id: 2, weight: 40 }];
+      if (kills <= 15) return [{ id: 1, weight: 25 }, { id: 2, weight: 40 }, { id: 3, weight: 35 }];
+      if (kills <= 25) return [{ id: 2, weight: 25 }, { id: 3, weight: 35 }, { id: 4, weight: 40 }];
       return [{ id: 3, weight: 20 }, { id: 4, weight: 35 }, { id: 5, weight: 45 }];
     },
   },
@@ -206,10 +218,11 @@ const CONTRARRELOJ_DIFFICULTY: Record<GameDifficulty, ContrarrelojDifficultyConf
     enemyPool: [2, 3, 4, 5, 6],
     castleLives: 3,
     getEnemyWeights: (kills: number) => {
-      if (kills <= 3) return [{ id: 2, weight: 100 }];  // Solo E2 al inicio
-      if (kills <= 8) return [{ id: 2, weight: 60 }, { id: 3, weight: 40 }];  // Introduce E3 gradualmente
-      if (kills <= 15) return [{ id: 2, weight: 15 }, { id: 3, weight: 30 }, { id: 4, weight: 35 }, { id: 5, weight: 20 }];
-      if (kills <= 25) return [{ id: 3, weight: 10 }, { id: 4, weight: 25 }, { id: 5, weight: 35 }, { id: 6, weight: 30 }];
+      if (kills <= 5) return [{ id: 2, weight: 100 }];  // Solo E2 al inicio
+      if (kills <= 10) return [{ id: 2, weight: 60 }, { id: 3, weight: 40 }];
+      if (kills <= 25) return [{ id: 2, weight: 15 }, { id: 3, weight: 40 }, { id: 4, weight: 45 }];
+      if (kills <= 35) return [{ id: 2, weight: 15 }, { id: 3, weight: 30 }, { id: 4, weight: 35 }, { id: 5, weight: 20 }];
+      if (kills <= 45) return [{ id: 3, weight: 10 }, { id: 4, weight: 25 }, { id: 5, weight: 35 }, { id: 6, weight: 30 }];
       return [{ id: 4, weight: 15 }, { id: 5, weight: 35 }, { id: 6, weight: 50 }];
     },
   },
@@ -279,6 +292,8 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
   // Game Logic State
   const [currentVerb, setCurrentVerb] = useState<PowerVerb | null>(null);
   const [userInput, setUserInput] = useState('');
+  // SRS: Track response time for spaced repetition
+  const responseStartTimeRef = useRef<number>(0);
   const [score, setScore] = useState(0);
   const [lives, setLives] = useState(0);
   const [attackPower, setAttackPower] = useState(1);
@@ -293,10 +308,183 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
   const [pointsStreak, setPointsStreak] = useState(0); // Racha para bonificación de puntos
   const [killsByType, setKillsByType] = useState<{ [key: number]: number }>({}); // Kills por tipo de enemigo
   
+  // Boss mode wave system state
+  const [bossCurrentWave, setBossCurrentWave] = useState(0); // 0=not started, 1=wave 1 in progress, 2=wave 2 in progress, etc.
+  const [bossWaveCompleted, setBossWaveCompleted] = useState(false); // Track if current wave is completed
+  const [bossPreparationActive, setBossPreparationActive] = useState(false);
+  const [bossPreparationStartTime, setBossPreparationStartTime] = useState<number | null>(null);
+  const [waveCompletionMessageShown, setWaveCompletionMessageShown] = useState(false);
+  const [bossPreparationTimeRemaining, setBossPreparationTimeRemaining] = useState<number>(0);
+  const [bossPreparationProgress, setBossPreparationProgress] = useState<number>(100); // Progress percentage (100 to 0)
+  const [bossWaveNearCompletion, setBossWaveNearCompletion] = useState(false); // Stop spawning near threshold
+  const [bossWaitingForCleanScreen, setBossWaitingForCleanScreen] = useState(false); // Waiting for monsters to clear
+  const [lastSpawnTime, setLastSpawnTime] = useState<number>(0); // Track when last enemy spawned
+  const [screenShake, setScreenShake] = useState(false); // Screen shake effect on boss spawn
+  
+  // Animated clouds state
+  const [clouds, _setClouds] = useState([
+    { x: 100, y: 40, size: 40, speed: 0.1 },
+    { x: 400, y: 80, size: 50, speed: 0.15 },
+    { x: 650, y: 50, size: 35, speed: 0.12 },
+    { x: 850, y: 70, size: 45, speed: 0.08 }
+  ]);
+  
+  // Wizard aura overlay ref
+  const wizardAuraOverlayRef = useRef<HTMLDivElement>(null);
+  
   // Keep refs in sync with state for gameLoop access
   useEffect(() => { killCountRef.current = killCount; }, [killCount]);
   useEffect(() => { attackPowerRef.current = attackPower; }, [attackPower]);
   useEffect(() => { killsByTypeRef.current = killsByType; }, [killsByType]);
+  
+  // Function to calculate aura drop-shadows based on power level
+  const getAuraDropShadows = (power: number): string => {
+    if (power <= 0) return 'none';
+    
+    // Base intensity increases with power
+    const intensity = Math.min(power / 10, 1);
+    
+    // At power 10+, blur should be massive (half screen ~ 200-250px)
+    const maxBlur = power >= 10 ? 250 : 150;
+    const blur1 = Math.floor(8 * intensity);
+    const blur2 = Math.floor(20 * intensity);
+    const blur3 = Math.floor(50 * intensity * (maxBlur / 150));
+    const blur4 = Math.floor(100 * intensity * (maxBlur / 150));
+    const blur5 = Math.floor(maxBlur * intensity);
+    
+    // Color progression: blue (low) → cyan (mid) → white+cyan (high)
+    if (power >= 8) {
+      // Maximum power: white core + cyan glow
+      return `
+        drop-shadow(0 0 ${blur1}px rgba(255, 255, 255, 1))
+        drop-shadow(0 0 ${blur2}px rgba(200, 255, 255, 1))
+        drop-shadow(0 0 ${blur3}px rgba(34, 211, 238, 1))
+        drop-shadow(0 0 ${blur4}px rgba(59, 130, 246, 0.9))
+        drop-shadow(0 0 ${blur5}px rgba(37, 99, 235, 0.7))
+      `;
+    } else if (power >= 4) {
+      // Medium power: cyan glow
+      return `
+        drop-shadow(0 0 ${blur1}px rgba(34, 211, 238, 1))
+        drop-shadow(0 0 ${blur2}px rgba(59, 130, 246, 0.9))
+        drop-shadow(0 0 ${blur3}px rgba(37, 99, 235, 0.7))
+      `;
+    } else {
+      // Low power: soft blue
+      return `
+        drop-shadow(0 0 ${blur1}px rgba(59, 130, 246, 0.8))
+        drop-shadow(0 0 ${blur2}px rgba(96, 165, 250, 0.6))
+      `;
+    }
+  };
+  
+  // Update wizard aura overlay position
+  useEffect(() => {
+    if (!wizardAuraOverlayRef.current || gameState !== 'PLAYING' || !canvasRef.current) return;
+    
+    const updatePosition = () => {
+      if (wizardAuraOverlayRef.current && canvasRef.current) {
+        const canvas = canvasRef.current;
+        const rect = canvas.getBoundingClientRect();
+        const scaleX = rect.width / canvas.width;
+        const scaleY = rect.height / canvas.height;
+        
+        const wizardX = heroRef.current.x;
+        const wizardY = heroRef.current.y;
+        
+        // Position overlay at wizard's top-left corner (same as canvas)
+        wizardAuraOverlayRef.current.style.left = `${wizardX * scaleX}px`;
+        wizardAuraOverlayRef.current.style.top = `${wizardY * scaleY}px`;
+        
+        // Store scale for image sizing
+        wizardAuraOverlayRef.current.style.setProperty('--wizard-scale', String(scaleX));
+      }
+    };
+    
+    const interval = setInterval(updatePosition, 16); // 60fps
+    return () => clearInterval(interval);
+  }, [gameState]);
+  
+  // Boss preparation timer - handle wave transitions or boss spawn
+  useEffect(() => {
+    if (!bossPreparationActive || !bossPreparationStartTime || !selectedDifficulty) return;
+    
+    const settings = DIFFICULTY_SETTINGS[selectedDifficulty];
+    const difficultySettings = settings as any;
+    
+    // Get preparation time for current wave
+    let preparationTime = 20000; // Default
+    if (difficultySettings.waves) {
+      // Multi-wave system
+      const waveIndex = bossCurrentWave;
+      if (waveIndex < difficultySettings.waves.length) {
+        preparationTime = difficultySettings.waves[waveIndex].preparationTime;
+      }
+    } else if (difficultySettings.bossPreparationTime) {
+      // Single-wave system
+      preparationTime = difficultySettings.bossPreparationTime;
+    }
+    
+    const checkTimer = setInterval(() => {
+      const elapsed = performance.now() - bossPreparationStartTime;
+      const remaining = Math.max(0, Math.ceil((preparationTime - elapsed) / 1000));
+      const progress = Math.max(0, ((preparationTime - elapsed) / preparationTime) * 100);
+      
+      // Update timer display and dragon position in real-time (~60fps)
+      setBossPreparationTimeRemaining(remaining);
+      setBossPreparationProgress(progress);
+      
+      if (elapsed >= preparationTime) {
+        // Check if there are more waves or if we should spawn the boss
+        const hasMoreWaves = difficultySettings.waves && bossCurrentWave < difficultySettings.waves.length - 1;
+        
+        if (hasMoreWaves) {
+          // Advance to next wave
+          setBossCurrentWave(prev => prev + 1);
+          setBossWaveCompleted(false);
+          setBossWaveNearCompletion(false);
+          setBossPreparationActive(false);
+          setKillCount(0); // Reset kill counter for new wave
+          nextSpawnTimeRef.current = performance.now() + 1000; // Reset spawn timing for new wave
+          clearInterval(checkTimer);
+          
+          setFeedbackMsg({ text: `¡Oleada ${bossCurrentWave + 2} iniciada! 💪`, type: 'success' });
+          setTimeout(() => setFeedbackMsg({ text: '', type: '' }), 3000);
+        } else {
+          // No more waves, spawn the boss
+          setScreenShake(true);
+          setTimeout(() => setScreenShake(false), 500);
+          
+          if (!bossRef.current && canvasRef.current) {
+            const canvasHeight = canvasRef.current.height;
+            const canvasWidth = canvasRef.current.width;
+            const groundLevel = canvasHeight - 40;
+            const bossSize = Math.floor((canvasHeight - 40) * 0.6);
+            
+            bossRef.current = {
+              x: canvasWidth - bossSize - 20,
+              y: groundLevel - bossSize,
+              width: bossSize,
+              height: bossSize,
+              hp: settings.bossHp,
+              maxHp: settings.bossHp,
+              emoji: '🐉',
+              defeated: false,
+              speed: settings.bossSpeed
+            };
+            
+            setFeedbackMsg({ text: '¡El dragón ha aparecido! 🐉', type: 'error' });
+            setTimeout(() => setFeedbackMsg({ text: '', type: '' }), 3000);
+          }
+          
+          setBossPreparationActive(false);
+          clearInterval(checkTimer);
+        }
+      }
+    }, 16); // Update ~60fps for smooth animation
+    
+    return () => clearInterval(checkTimer);
+  }, [bossPreparationActive, bossPreparationStartTime, selectedDifficulty, bossCurrentWave]);
   
   // Cobi Mago State
   const [cobiMagoMessage, setCobiMagoMessage] = useState<string>(seleccionarMensajeMagoRandom('juego'));
@@ -531,7 +719,8 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
       return;
     }
     
-    const pool = await getFilteredVerbs(selectedGrammar, selectedTense, selectedVerbType);
+    // Use SRS-based pool for intelligent conjugation selection
+    const pool = await getFilteredVerbsSRS(selectedGrammar, selectedTense, selectedVerbType);
     if (pool.length === 0) {
       setFeedbackMsg({ text: 'No hay verbos disponibles para esta configuración.', type: 'error' });
       return;
@@ -568,6 +757,23 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
     if (selectedBattleMode === 'contrarreloj') {
       setDamageStreak(0);
       setKillCount(0);
+      setKillsByType({});
+      setPointsStreak(0);
+    }
+    
+    // Initialize wave system for Boss mode
+    if (selectedBattleMode === 'jefe') {
+      setBossCurrentWave(0);
+      setBossWaveCompleted(false);
+      setBossPreparationActive(false);
+      setBossPreparationStartTime(null);
+      setWaveCompletionMessageShown(false);
+      setKillCount(0); // Reset kill count for jefe mode
+      setBossWaveNearCompletion(false);
+      setBossWaitingForCleanScreen(false);
+      setLastSpawnTime(0);
+      setBossPreparationProgress(100);
+      setScreenShake(false);
     }
     
     // Establecer mensaje inicial de Cobi Mago
@@ -581,7 +787,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
     if (pool.length === 0) return;
     
     // Get history of recent verb+pronoun combinations
-    const recentHistory = verbHistoryRef.current.slice(-3); // Last 3 conjugations
+    const recentHistory = verbHistoryRef.current.slice(-5); // Last 5 conjugations
     
     // Filter out verbs that match recent history (same verb AND pronoun)
     let availableVerbs = pool.filter(v => {
@@ -592,8 +798,11 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
     // If all verbs are in history (unlikely but possible with small pools), use full pool
     if (availableVerbs.length === 0) {
       availableVerbs = pool;
+      // Clear history to start fresh
+      verbHistoryRef.current = [];
     }
     
+    // Select from available verbs (already shuffled by getFilteredVerbs)
     const randomVerb = availableVerbs[Math.floor(Math.random() * availableVerbs.length)];
     
     // Add to history
@@ -608,24 +817,92 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
     setUserInput('');
     setFeedbackMsg({ text: '', type: '' });
     setConsecutiveFailures(0); // Reset consecutive failures on new verb
+    
+    // SRS: Start tracking response time
+    responseStartTimeRef.current = Date.now();
 
     if (selectedMode === 'choice') {
       // Get correct answer (if array, pick first)
       const correct = Array.isArray(randomVerb.answer) ? randomVerb.answer[0] : randomVerb.answer;
       
-      // Get distractors
-      const distractors = pool
-        .filter(v => v !== randomVerb)
-        .sort(() => 0.5 - Math.random())
-        .slice(0, 3)
+      // Determine how many distractors should be from the same verb based on difficulty
+      let sameVerbCount = 0; // Number of distractors from same verb (excluding correct answer)
+      
+      if (selectedDifficulty === 'facil') {
+        sameVerbCount = 1; // At least 2 total (correct + 1 same verb)
+      } else if (selectedDifficulty === 'intermedio') {
+        sameVerbCount = 2; // At least 3 total (correct + 2 same verb)
+      } else if (selectedDifficulty === 'dificil') {
+        sameVerbCount = 3; // All 4 (correct + 3 same verb)
+      }
+      
+      const distractors: string[] = [];
+      
+      // Normalize the current pronoun to treat él/ella/usted and ellos/ellas/ustedes as equivalent
+      const normalizedCurrentPronoun = normalizePronoun(randomVerb.pronoun);
+      
+      // Get distractors from the SAME VERB (different conjugations)
+      // Filter out conjugations with the same normalized pronoun to avoid duplicates like "están" appearing twice
+      const sameVerbConjugations = pool
+        .filter(v => {
+          if (v.verb !== randomVerb.verb || v === randomVerb) return false;
+          const normalizedPronoun = normalizePronoun(v.pronoun);
+          return normalizedPronoun !== normalizedCurrentPronoun;
+        })
         .map(v => Array.isArray(v.answer) ? v.answer[0] : v.answer);
       
-      // Fallback distractors
+      // Deduplicate answers (in case different pronouns have the same conjugation)
+      const uniqueSameVerbConjugations = Array.from(new Set(sameVerbConjugations));
+      
+      // Shuffle same verb conjugations
+      for (let i = uniqueSameVerbConjugations.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [uniqueSameVerbConjugations[i], uniqueSameVerbConjugations[j]] = [uniqueSameVerbConjugations[j], uniqueSameVerbConjugations[i]];
+      }
+      
+      // Add required number of same-verb distractors
+      for (let i = 0; i < sameVerbCount && i < uniqueSameVerbConjugations.length; i++) {
+        distractors.push(uniqueSameVerbConjugations[i]);
+      }
+      
+      // Fill remaining distractors with OTHER VERBS
+      const remainingNeeded = 3 - distractors.length;
+      
+      if (remainingNeeded > 0) {
+        const otherVerbConjugations = pool
+          .filter(v => v.verb !== randomVerb.verb)
+          .map(v => Array.isArray(v.answer) ? v.answer[0] : v.answer);
+        
+        // Shuffle other verb conjugations
+        for (let i = otherVerbConjugations.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [otherVerbConjugations[i], otherVerbConjugations[j]] = [otherVerbConjugations[j], otherVerbConjugations[i]];
+        }
+        
+        // Add remaining distractors from other verbs
+        for (let i = 0; i < remainingNeeded && i < otherVerbConjugations.length; i++) {
+          distractors.push(otherVerbConjugations[i]);
+        }
+      }
+      
+      // Fallback distractors if not enough options available
       while (distractors.length < 3) {
-         distractors.push(correct.split('').reverse().join('')); 
+        // Generate fake distractor by reversing or modifying the correct answer
+        const fakeDistractor = correct.split('').reverse().join('');
+        if (!distractors.includes(fakeDistractor) && fakeDistractor !== correct) {
+          distractors.push(fakeDistractor);
+        } else {
+          distractors.push(correct + 'x'); // Last resort
+        }
       }
 
-      setChoiceOptions([correct, ...distractors].sort(() => 0.5 - Math.random()));
+      // Shuffle choices using Fisher-Yates
+      const choices = [correct, ...distractors];
+      for (let i = choices.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [choices[i], choices[j]] = [choices[j], choices[i]];
+      }
+      setChoiceOptions(choices);
     }
   };
 
@@ -635,22 +912,61 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
     if (!selectedDifficulty) return;
     const settings = DIFFICULTY_SETTINGS[selectedDifficulty];
     
-    // Check if boss should appear (only in boss mode)
-    if (selectedBattleMode === 'jefe' && !bossRef.current && (time - gameStartTimeRef.current) >= settings.bossAppearTime) {
-      const groundLevel = canvasHeight - 40;
-      // Boss should occupy 60% of game area height
-      const bossSize = Math.floor((canvasHeight - 40) * 0.6);
-      bossRef.current = {
-        x: canvasWidth - bossSize - 20,
-        y: groundLevel - bossSize,
-        width: bossSize,
-        height: bossSize,
-        hp: settings.bossHp,
-        maxHp: settings.bossHp,
-        emoji: '🐉',
-        defeated: false,
-        speed: settings.bossSpeed
-      };
+    // In boss mode with wave system, don't spawn monsters during preparation or after wave is completed
+    if (selectedBattleMode === 'jefe') {
+      // Don't spawn if we're in preparation, wave is completed, or near completion
+      if (bossWaveCompleted || bossPreparationActive || bossWaveNearCompletion) {
+        return;
+      }
+      
+      // Smart spawn control: calculate reachable points
+      if (selectedDifficulty === 'facil' || selectedDifficulty === 'intermedio' || selectedDifficulty === 'dificil') {
+        // Calculate points from monsters currently on screen
+        const monstersOnScreenPoints = monstersRef.current.reduce((sum, m) => sum + m.points, 0);
+        const reachablePoints = score + monstersOnScreenPoints;
+        
+        // Get current wave threshold
+        const difficultySettings = DIFFICULTY_SETTINGS[selectedDifficulty] as any;
+        let currentThreshold = 1000; // Default for facil
+        
+        if (difficultySettings.waves) {
+          // For multi-wave systems (intermedio)
+          const waveIndex = bossCurrentWave; // 0-based: 0=wave 1, 1=wave 2
+          if (waveIndex < difficultySettings.waves.length) {
+            currentThreshold = difficultySettings.waves[waveIndex].threshold;
+          }
+        } else if (difficultySettings.waveScoreThreshold) {
+          // For single-wave systems (facil)
+          currentThreshold = difficultySettings.waveScoreThreshold;
+        }
+        
+        // Stop spawning when reachable points >= threshold + 50 (safety margin)
+        if (reachablePoints >= currentThreshold + 50) {
+          setBossWaveNearCompletion(true);
+          return;
+        }
+      }
+      
+      // For facil, intermedio, and dificil, use wave system
+      // For other difficulties (none currently), keep old time-based system
+      if (selectedDifficulty !== 'facil' && selectedDifficulty !== 'intermedio' && selectedDifficulty !== 'dificil') {
+        // Old boss spawn logic (time-based)
+        if (!bossRef.current && (time - gameStartTimeRef.current) >= settings.bossAppearTime) {
+          const groundLevel = canvasHeight - 40;
+          const bossSize = Math.floor((canvasHeight - 40) * 0.6);
+          bossRef.current = {
+            x: canvasWidth - bossSize - 20,
+            y: groundLevel - bossSize,
+            width: bossSize,
+            height: bossSize,
+            hp: settings.bossHp,
+            maxHp: settings.bossHp,
+            emoji: '🐉',
+            defeated: false,
+            speed: settings.bossSpeed
+          };
+        }
+      }
     }
     
     // Use nextSpawnTimeRef for randomized spawn intervals
@@ -664,12 +980,12 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
       if (selectedDifficulty === 'facil') {
         // Progressive spawn rate based on total kills
         const totalKills = killCount;
-        if (totalKills <= 15) {
-          baseSpawnRate = 3000; // Inicio muy tranquilo
-        } else if (totalKills <= 35) {
-          baseSpawnRate = 2500; // Ritmo medio
+        if (totalKills <= 10) {
+          baseSpawnRate = 3800; // Inicio muy tranquilo
+        } else if (totalKills <= 25) {
+          baseSpawnRate = 3000; // Ritmo medio-bajo
         } else {
-          baseSpawnRate = 2000; // Final más intenso
+          baseSpawnRate = 2500; // Final moderado
         }
       } else if (selectedDifficulty === 'intermedio') {
         // Progressive spawn rate based on total kills
@@ -692,6 +1008,72 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
           baseSpawnRate = 2200; // Caos final
         }
       }
+    } else if (selectedBattleMode === 'jefe' && (selectedDifficulty === 'facil' || selectedDifficulty === 'intermedio' || selectedDifficulty === 'dificil')) {
+      // Boss mode with wave system: use kill-based spawn rate (same as contrarreloj)
+      if (selectedDifficulty === 'facil') {
+        const totalKills = killCount;
+        if (totalKills <= 10) {
+          baseSpawnRate = 3800; // Inicio muy tranquilo
+        } else if (totalKills <= 25) {
+          baseSpawnRate = 3000; // Ritmo medio-bajo
+        } else {
+          baseSpawnRate = 2500; // Final moderado
+        }
+      } else if (selectedDifficulty === 'intermedio') {
+        const totalKills = killCount;
+        // Wave-specific spawn rates for intermedio
+        if (bossCurrentWave === 0) {
+          // Ola 1: Ritmo normal
+          if (totalKills <= 10) {
+            baseSpawnRate = 3500; // Inicio tranquilo
+          } else if (totalKills <= 25) {
+            baseSpawnRate = 2800; // Ritmo medio
+          } else {
+            baseSpawnRate = 2300; // Final intenso
+          }
+        } else {
+          // Ola 2: Ritmo más rápido (igual que ola 2 de difícil)
+          if (totalKills <= 10) {
+            baseSpawnRate = 2200; // Inicio rápido
+          } else if (totalKills <= 25) {
+            baseSpawnRate = 1700; // Ritmo muy intenso
+          } else {
+            baseSpawnRate = 1200; // Caos muy extremo
+          }
+        }
+      } else {
+        // Difícil: Progressive spawn rate based on kills within current wave
+        const totalKills = killCount;
+        // Wave-specific spawn rates for dificil
+        if (bossCurrentWave === 0) {
+          // Ola 1: Same as before
+          if (totalKills <= 10) {
+            baseSpawnRate = 3300; // Inicio controlado
+          } else if (totalKills <= 25) {
+            baseSpawnRate = 2700; // Ritmo desafiante
+          } else {
+            baseSpawnRate = 2200; // Caos final
+          }
+        } else if (bossCurrentWave === 1) {
+          // Ola 2: Faster spawn rates
+          if (totalKills <= 10) {
+            baseSpawnRate = 2200; // Inicio rápido
+          } else if (totalKills <= 25) {
+            baseSpawnRate = 1700; // Ritmo muy intenso
+          } else {
+            baseSpawnRate = 1200; // Caos muy extremo
+          }
+        } else {
+          // Ola 3: Even faster spawn rates
+          if (totalKills <= 10) {
+            baseSpawnRate = 1900; // Inicio muy rápido
+          } else if (totalKills <= 25) {
+            baseSpawnRate = 1400; // Ritmo brutal
+          } else {
+            baseSpawnRate = 1000; // Caos máximo
+          }
+        }
+      }
     } else {
       baseSpawnRate = Math.max(settings.minSpawnRate, settings.spawnRate - (score * 2));
     }
@@ -705,144 +1087,8 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
       if (selectedBattleMode === 'contrarreloj' && selectedDifficulty) {
         const crConfig = CONTRARRELOJ_DIFFICULTY[selectedDifficulty];
         
-        // Special progression logic for facil mode
-        let weights: { id: number; weight: number }[];
-        if (selectedDifficulty === 'facil') {
-          const kills = killsByTypeRef.current;
-          const k1 = kills[1] || 0;
-          const k2 = kills[2] || 0;
-          const k3 = kills[3] || 0;
-          
-          // Start with only enemy 1
-          if (k1 < 3) {
-            weights = [{ id: 1, weight: 100 }];
-          }
-          // After 3-5 kills of E1, introduce E2
-          else if (k1 < 5 || k2 === 0) {
-            weights = [
-              { id: 1, weight: 40 },
-              { id: 2, weight: 60 }
-            ];
-          }
-          // After E2 appears, continue with E1 and E2 until 3-5 kills of E2
-          else if (k2 < 3) {
-            weights = [
-              { id: 1, weight: 50 },
-              { id: 2, weight: 50 }
-            ];
-          }
-          // After 3-5 kills of E2, introduce E3
-          else if (k2 < 5 || k3 === 0) {
-            weights = [
-              { id: 1, weight: 20 },
-              { id: 2, weight: 50 },
-              { id: 3, weight: 30 }
-            ];
-          }
-          // After E3 appears, continue until 3-5 kills of E3
-          else if (k3 < 3) {
-            weights = [
-              { id: 1, weight: 15 },
-              { id: 2, weight: 45 },
-              { id: 3, weight: 40 }
-            ];
-          }
-          // After 3-5 kills of E3, introduce E4
-          else if (k3 < 5 || (kills[4] || 0) === 0) {
-            weights = [
-              { id: 1, weight: 10 },
-              { id: 2, weight: 30 },
-              { id: 3, weight: 40 },
-              { id: 4, weight: 20 }
-            ];
-          }
-          // Final mix with all 4 enemies
-          else {
-            weights = [
-              { id: 1, weight: 10 },
-              { id: 2, weight: 25 },
-              { id: 3, weight: 35 },
-              { id: 4, weight: 30 }
-            ];
-          }
-        } else if (selectedDifficulty === 'dificil') {
-          // Progressive logic for dificil to avoid skipping enemy types
-          const kills = killsByTypeRef.current;
-          const k2 = kills[2] || 0;
-          const k3 = kills[3] || 0;
-          const k4 = kills[4] || 0;
-          const k5 = kills[5] || 0;
-          
-          // Start with only E2
-          if (k2 < 3) {
-            weights = [{ id: 2, weight: 100 }];
-          }
-          // After 3-5 kills of E2, introduce E3
-          else if (k2 < 5 || k3 === 0) {
-            weights = [
-              { id: 2, weight: 40 },
-              { id: 3, weight: 60 }
-            ];
-          }
-          // After E3 appears, continue with E2 and E3 until 3-5 kills of E3
-          else if (k3 < 3) {
-            weights = [
-              { id: 2, weight: 30 },
-              { id: 3, weight: 70 }
-            ];
-          }
-          // After 3-5 kills of E3, introduce E4
-          else if (k3 < 5 || k4 === 0) {
-            weights = [
-              { id: 2, weight: 15 },
-              { id: 3, weight: 35 },
-              { id: 4, weight: 50 }
-            ];
-          }
-          // After E4 appears, continue until 3-5 kills of E4
-          else if (k4 < 3) {
-            weights = [
-              { id: 2, weight: 10 },
-              { id: 3, weight: 30 },
-              { id: 4, weight: 60 }
-            ];
-          }
-          // After 3-5 kills of E4, introduce E5
-          else if (k4 < 5 || k5 === 0) {
-            weights = [
-              { id: 3, weight: 15 },
-              { id: 4, weight: 40 },
-              { id: 5, weight: 45 }
-            ];
-          }
-          // After E5 appears, continue until 3-5 kills of E5
-          else if (k5 < 3) {
-            weights = [
-              { id: 3, weight: 10 },
-              { id: 4, weight: 30 },
-              { id: 5, weight: 60 }
-            ];
-          }
-          // After 3-5 kills of E5, introduce E6
-          else if (k5 < 5 || (kills[6] || 0) === 0) {
-            weights = [
-              { id: 4, weight: 15 },
-              { id: 5, weight: 45 },
-              { id: 6, weight: 40 }
-            ];
-          }
-          // Final mix with all enemies
-          else {
-            weights = [
-              { id: 4, weight: 15 },
-              { id: 5, weight: 35 },
-              { id: 6, weight: 50 }
-            ];
-          }
-        } else {
-          weights = crConfig.getEnemyWeights(killCountRef.current);
-        }
-        
+        // All difficulties use the kill-based progression system
+        const weights = crConfig.getEnemyWeights(killCountRef.current);
         const enemy = pickWeightedEnemy(weights);
         
         // Use difficulty-specific HP
@@ -918,15 +1164,111 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
         return;
       }
       
-      // Jefe mode uses original progression system
-      const enemyTypes = [
-        { imageIndex: 0, hp: 2, speed: 0.9, emoji: '👾', points: 10, color: '#8b5cf6', minScore: 0 },      // Enemigo 1 - muy débil
-        { imageIndex: 1, hp: 4, speed: 0.75, emoji: '👹', points: 15, color: '#ec4899', minScore: 0 },    // Enemigo 2 - débil
-        { imageIndex: 2, hp: 6, speed: 0.65, emoji: '👻', points: 25, color: '#3b82f6', minScore: 100 },  // Enemigo 3 - medio
-        { imageIndex: 3, hp: 9, speed: 0.55, emoji: '👺', points: 35, color: '#ef4444', minScore: 250 },  // Enemigo 4 - medio-fuerte
-        { imageIndex: 4, hp: 12, speed: 0.5, emoji: '💀', points: 50, color: '#f59e0b', minScore: 400 }, // Enemigo 5 - fuerte
-        { imageIndex: 5, hp: 16, speed: 0.45, emoji: '☠️', points: 75, color: '#dc2626', minScore: 600 }   // Enemigo 6 - muy fuerte
-      ];
+      // Jefe mode: For facil, intermedio, and dificil, use kill-based progression with wave system
+      if (selectedBattleMode === 'jefe' && (selectedDifficulty === 'facil' || selectedDifficulty === 'intermedio' || selectedDifficulty === 'dificil')) {
+        // Determine enemy pool based on difficulty and current wave
+        let getEnemyWeights: (kills: number) => { id: number; weight: number }[];
+        
+        if (selectedDifficulty === 'facil') {
+          const crConfig = CONTRARRELOJ_DIFFICULTY['facil'];
+          getEnemyWeights = crConfig.getEnemyWeights;
+        } else if (selectedDifficulty === 'intermedio') {
+          const waveIndex = bossCurrentWave; // 0 = wave 1, 1 = wave 2
+          
+          // Custom progression for intermedio waves
+          getEnemyWeights = (kills: number) => {
+            if (waveIndex === 0) {
+              // Wave 1: E1, E2, E3
+              if (kills <= 3) return [{ id: 1, weight: 100 }];
+              if (kills <= 9) return [{ id: 1, weight: 50 }, { id: 2, weight: 40 }, { id: 3, weight: 10 }];
+              return [{ id: 1, weight: 25 }, { id: 2, weight: 45 }, { id: 3, weight: 30 }];
+            } else if (waveIndex === 1) {
+              // Wave 2: E2, E3, E4
+              if (kills <= 3) return [{ id: 2, weight: 60 }, { id: 3, weight: 40 }];
+              if (kills <= 7) return [{ id: 2, weight: 35 }, { id: 3, weight: 40 }, { id: 4, weight: 25 }];
+              return [{ id: 2, weight: 20 }, { id: 3, weight: 35 }, { id: 4, weight: 45 }];
+            }
+            // Fallback
+            return [{ id: 2, weight: 50 }, { id: 3, weight: 50 }];
+          };
+        } else if (selectedDifficulty === 'dificil') {
+          const waveIndex = bossCurrentWave; // 0 = wave 1, 1 = wave 2, 2 = wave 3
+          
+          // Custom progression for dificil waves (3 oleadas)
+          getEnemyWeights = (kills: number) => {
+            if (waveIndex === 0) {
+              // Wave 1: E2, E3
+              if (kills <= 3) return [{ id: 2, weight: 100 }];
+              if (kills <= 9) return [{ id: 2, weight: 50 }, { id: 3, weight: 50 }];
+              return [{ id: 2, weight: 35 }, { id: 3, weight: 65 }];
+            } else if (waveIndex === 1) {
+              // Wave 2: E3, E4, E5
+              if (kills <= 3) return [{ id: 3, weight: 30 }, { id: 4, weight: 70 }];
+              if (kills <= 7) return [{ id: 3, weight: 10 }, { id: 4, weight: 50 }, { id: 5, weight: 40 }];
+              return [{ id: 4, weight: 30 }, { id: 5, weight: 70 }];
+            } else if (waveIndex === 2) {
+              // Wave 3: E5, E6
+              if (kills <= 5) return [{ id: 5, weight: 70 }, { id: 6, weight: 30 }];
+              return [{ id: 5, weight: 30 }, { id: 6, weight: 70 }];
+            }
+            // Fallback
+            return [{ id: 3, weight: 50 }, { id: 4, weight: 50 }];
+          };
+        } else {
+          // Fallback (should not reach here)
+          const crConfig = CONTRARRELOJ_DIFFICULTY['facil'];
+          getEnemyWeights = crConfig.getEnemyWeights;
+        }
+        
+        const weights = getEnemyWeights(killCountRef.current);
+        const enemy = pickWeightedEnemy(weights);
+        
+        // Use difficulty-specific HP (NO multiplier, same as contrarreloj)
+        let enemyHp = enemy.hp;
+        if (selectedDifficulty === 'facil' && enemy.hpFacil) {
+          enemyHp = enemy.hpFacil;
+        } else if (selectedDifficulty === 'dificil' && enemy.hpDificil) {
+          enemyHp = enemy.hpDificil;
+        }
+        
+        const monsterSize = Math.floor((canvasHeight - 40) * 0.15);
+        
+        // Calculate speed using same formula as contrarreloj for consistency
+        const crConfig = CONTRARRELOJ_DIFFICULTY[selectedDifficulty];
+        const baseSpeed = 0.5 * (12 / enemy.baseTime) * crConfig.timeMultiplier;
+        
+        monstersRef.current.push({
+          id: Date.now(),
+          x: canvasWidth + 50,
+          y: groundLevel - monsterSize,
+          width: monsterSize,
+          height: monsterSize,
+          hp: enemyHp,
+          maxHp: enemyHp,
+          speed: baseSpeed * settings.enemySpeedMultiplier,
+          emoji: ['👾', '👹', '👻', '👺', '💀', '☠️'][enemy.id - 1],
+          imageIndex: enemy.id - 1,
+          color: ['#8b5cf6', '#ec4899', '#3b82f6', '#ef4444', '#f59e0b', '#dc2626'][enemy.id - 1],
+          points: enemy.reward
+        });
+        
+        // Track spawn time for fallback logic
+        setLastSpawnTime(time);
+        return;
+      }
+      
+      // Jefe mode (intermedio/dificil) uses CONTRARRELOJ enemy stats with score progression
+      const enemyTypes = CONTRARRELOJ_ENEMIES.map((enemy, index) => ({
+        imageIndex: index,
+        hp: enemy.hp,
+        hpFacil: enemy.hpFacil,
+        hpDificil: enemy.hpDificil,
+        speed: 0.9 - (index * 0.08), // Progressive speed: starts at 0.9, decreases by 0.08 each level
+        emoji: ['👾', '👹', '👻', '👺', '💀', '☠️'][index],
+        points: enemy.reward,
+        color: ['#8b5cf6', '#ec4899', '#3b82f6', '#ef4444', '#f59e0b', '#dc2626'][index],
+        minScore: [0, 0, 100, 250, 400, 600][index]
+      }));
       
       // Filter enemies based on difficulty and score progression
       let availableEnemies = enemyTypes.filter(enemy => {
@@ -940,11 +1282,19 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
       
       // Ensure at least one enemy is available
       if (availableEnemies.length === 0) {
-        availableEnemies = [enemyTypes[0]];
+        availableEnemies = [enemyTypes[selectedDifficulty === 'dificil' ? 1 : 0]]; // Start with E2 in difficult, E1 otherwise
       }
       
       // Select random enemy from available ones
       const type = availableEnemies[Math.floor(Math.random() * availableEnemies.length)];
+      
+      // Select appropriate HP based on difficulty
+      let enemyHp = type.hp;
+      if (selectedDifficulty === 'facil' && type.hpFacil) {
+        enemyHp = type.hpFacil;
+      } else if (selectedDifficulty === 'dificil' && type.hpDificil) {
+        enemyHp = type.hpDificil;
+      }
       
       // In boss mode, adjust enemy HP based on difficulty
       const hpMultiplier = selectedBattleMode === 'jefe' ? 1.5 : 1;
@@ -958,8 +1308,8 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
         y: groundLevel - monsterSize,
         width: monsterSize,
         height: monsterSize,
-        hp: Math.ceil(type.hp * hpMultiplier),
-        maxHp: Math.ceil(type.hp * hpMultiplier),
+        hp: Math.ceil(enemyHp * hpMultiplier),
+        maxHp: Math.ceil(enemyHp * hpMultiplier),
         speed: type.speed * settings.enemySpeedMultiplier,
         emoji: type.emoji,
         imageIndex: type.imageIndex,
@@ -984,7 +1334,8 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
     }
 
     const now = performance.now();
-    if (now - lastShotRef.current > 1000) { 
+    // Don't shoot during boss preparation phase
+    if (now - lastShotRef.current > 1000 && !bossPreparationActive) { 
        // Increase projectile size to match larger elements
        const projectileSize = 35;
        
@@ -1054,14 +1405,43 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
                     setTimeout(() => setGameState('VICTORY'), 300);
                   }
                 }
+                
+                // Check wave completion in Boss mode (facil, intermedio, and dificil with wave system)
+                if (selectedBattleMode === 'jefe' && (selectedDifficulty === 'facil' || selectedDifficulty === 'intermedio' || selectedDifficulty === 'dificil') && !bossWaveCompleted) {
+                  const difficultySettings = DIFFICULTY_SETTINGS[selectedDifficulty] as any;
+                  let waveThreshold = 0;
+                  
+                  // Get current wave threshold
+                  if (difficultySettings.waves) {
+                    // Multi-wave system (intermedio)
+                    const waveIndex = bossCurrentWave;
+                    if (waveIndex < difficultySettings.waves.length) {
+                      waveThreshold = difficultySettings.waves[waveIndex].threshold;
+                    }
+                  } else if (difficultySettings.waveScoreThreshold) {
+                    // Single-wave system (facil)
+                    waveThreshold = difficultySettings.waveScoreThreshold;
+                  }
+                  
+                  if (waveThreshold > 0) {
+                    // Condition A: Reached wave threshold
+                    if (newScore >= waveThreshold) {
+                      setBossWaveCompleted(true);
+                      setBossWaitingForCleanScreen(true);
+                    }
+                  }
+                }
+                
                 return newScore;
               });
               const killedEnemyType = m.imageIndex + 1; // imageIndex is 0-based, enemy id is 1-based
               monstersRef.current.splice(j, 1);
-              // Track kills in Contrarreloj mode
+              // Track kills in both Contrarreloj and Jefe modes
               if (selectedBattleMode === 'contrarreloj') {
                 setKillCount(prev => prev + 1);
                 setKillsByType(prev => ({ ...prev, [killedEnemyType]: (prev[killedEnemyType] || 0) + 1 }));
+              } else if (selectedBattleMode === 'jefe') {
+                setKillCount(prev => prev + 1);
               }
             }
             break;
@@ -1093,118 +1473,169 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
   const draw = (ctx: CanvasRenderingContext2D, canvasWidth: number, canvasHeight: number) => {
     ctx.clearRect(0, 0, canvasWidth, canvasHeight);
 
-    const gradient = ctx.createLinearGradient(0, 0, 0, canvasHeight);
-    gradient.addColorStop(0, '#87CEEB');
-    gradient.addColorStop(1, '#E0F7FA');
-    ctx.fillStyle = gradient;
+    // Sky background with enhanced gradient
+    const skyGradient = ctx.createLinearGradient(0, 0, 0, canvasHeight);
+    skyGradient.addColorStop(0, '#4A90E2');
+    skyGradient.addColorStop(0.5, '#87CEEB');
+    skyGradient.addColorStop(1, '#B0D4F1');
+    ctx.fillStyle = skyGradient;
     ctx.fillRect(0, 0, canvasWidth, canvasHeight);
-
+    
+    // Distant mountains - simple silhouette
     const groundHeight = 40;
     const groundY = canvasHeight - groundHeight;
-    ctx.fillStyle = '#556B2F';
+    const mountainHeight = 120;
+    const mountainY = groundY - mountainHeight;
+    
+    ctx.fillStyle = '#5A7BA6';
+    ctx.beginPath();
+    // Mountain peaks using bezier curves
+    ctx.moveTo(0, groundY);
+    ctx.lineTo(0, mountainY + 60);
+    ctx.quadraticCurveTo(100, mountainY, 200, mountainY + 40);
+    ctx.quadraticCurveTo(300, mountainY + 80, 400, mountainY + 20);
+    ctx.quadraticCurveTo(500, mountainY - 10, 600, mountainY + 50);
+    ctx.quadraticCurveTo(700, mountainY + 90, 800, mountainY + 30);
+    ctx.quadraticCurveTo(900, mountainY, canvasWidth, mountainY + 70);
+    ctx.lineTo(canvasWidth, groundY);
+    ctx.closePath();
+    ctx.fill();
+    
+    // Animated clouds - simple circles
+    clouds.forEach(cloud => {
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+      // Main cloud body (3 overlapping circles)
+      ctx.beginPath();
+      ctx.arc(cloud.x, cloud.y, cloud.size * 0.5, 0, Math.PI * 2);
+      ctx.arc(cloud.x + cloud.size * 0.5, cloud.y, cloud.size * 0.4, 0, Math.PI * 2);
+      ctx.arc(cloud.x + cloud.size, cloud.y, cloud.size * 0.5, 0, Math.PI * 2);
+      ctx.fill();
+      
+      // Update cloud position
+      cloud.x -= cloud.speed;
+      // Reset cloud when it goes off screen
+      if (cloud.x < -cloud.size * 2) {
+        cloud.x = canvasWidth + cloud.size;
+      }
+    });
+
+    // Ground with gradient (grass effect)
+    const groundGradient = ctx.createLinearGradient(0, groundY, 0, canvasHeight);
+    groundGradient.addColorStop(0, '#6B8E23');
+    groundGradient.addColorStop(0.5, '#556B2F');
+    groundGradient.addColorStop(1, '#3D5218');
+    ctx.fillStyle = groundGradient;
     ctx.fillRect(0, groundY, canvasWidth, groundHeight);
 
     // Castle/wizard sizes for visibility
     const castleFontSize = Math.floor((canvasHeight - groundHeight) * 0.35);
     const wizardSize = Math.floor((canvasHeight - groundHeight) * 0.15);
     
+    // Draw castle shadow (elliptical, before castle)
+    const castleX = 10;
+    const castleYOffset = 13; // 🎯 AJUSTA ESTE VALOR para controlar la altura del castillo
+    const castleBaseY = groundY;
+    const castleShadowWidth = 50;
+    const castleShadowHeight = 12;
+    
+    ctx.save();
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.25)';
+    ctx.filter = 'blur(8px)';
+    ctx.beginPath();
+    ctx.ellipse(
+      castleX + 30, 
+      castleBaseY - 1, 
+      castleShadowWidth, 
+      castleShadowHeight, 
+      0, 
+      0, 
+      Math.PI * 2
+    );
+    ctx.fill();
+    ctx.restore();
+    
     // Draw castle (still using emoji)
     ctx.font = `${castleFontSize}px Arial`;
-    ctx.fillText('🏰', 10, groundY - 5);
+    ctx.fillText('🏰', castleX, groundY - castleYOffset);
     
-    // Draw wizard using image - positioned so feet are at ground level (same as castle base)
+    // Calculate wizard position
     const castleWidth = 60; // Approximate castle emoji width
     heroRef.current.x = 10 + castleWidth + 10; // 10px padding from castle
-    heroRef.current.y = groundY - wizardSize + 5; // Adjust so feet touch ground
+    heroRef.current.y = groundY - wizardSize + 4; // Adjust for optimal ground contact
     heroRef.current.width = wizardSize;
     heroRef.current.height = wizardSize;
+    
+    // Draw wizard shadow (elliptical, before wizard)
+    const wizardShadowWidth = wizardSize * 0.6;
+    const wizardShadowHeight = wizardSize * 0.15;
+    
+    ctx.save();
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+    ctx.filter = 'blur(6px)';
+    ctx.beginPath();
+    ctx.ellipse(
+      heroRef.current.x + wizardSize / 2, 
+      groundY - 1, 
+      wizardShadowWidth, 
+      wizardShadowHeight, 
+      0, 
+      0, 
+      Math.PI * 2
+    );
+    ctx.fill();
+    ctx.restore();
+    
+    // Draw wizard using image - positioned so feet are at ground level (same as castle base)
     
     if (imagesLoadedRef.current && wizardImageRef.current && wizardImageRef.current.complete) {
       ctx.drawImage(wizardImageRef.current, heroRef.current.x, heroRef.current.y, wizardSize, wizardSize);
     } else {
       // Fallback to emoji if image not loaded
       ctx.font = `${wizardSize}px Arial`;
-      ctx.fillText('🧙‍♂️', heroRef.current.x, groundY - 5);
-    }
-    
-    // Power aura around wizard - Enhanced version
-    if (attackPower > 1) {
-      const centerX = heroRef.current.x + wizardSize/2;
-      const centerY = heroRef.current.y + wizardSize/2;
-      const time = Date.now() / 1000;
-      
-      // Calculate power level for visual scaling
-      const powerLevel = Math.min(attackPower / 10, 3); // Scale 1-10 to 0-1, max 3x
-      const pulseEffect = Math.sin(time * 2) * 0.1 + 0.9; // Gentle pulsation
-      
-      // Outer glow (largest, most transparent)
-      const gradient1 = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, 35 + (attackPower * 3));
-      gradient1.addColorStop(0, `rgba(255, 215, 0, ${0.3 * pulseEffect})`);
-      gradient1.addColorStop(0.5, `rgba(255, 165, 0, ${0.2 * pulseEffect})`);
-      gradient1.addColorStop(1, 'rgba(255, 215, 0, 0)');
-      ctx.fillStyle = gradient1;
-      ctx.beginPath();
-      ctx.arc(centerX, centerY, (35 + attackPower * 3) * pulseEffect, 0, Math.PI * 2);
-      ctx.fill();
-      
-      // Middle layer (stronger)
-      const gradient2 = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, 20 + (attackPower * 2));
-      gradient2.addColorStop(0, `rgba(255, 223, 0, ${0.5 * pulseEffect})`);
-      gradient2.addColorStop(0.6, `rgba(255, 140, 0, ${0.3 * pulseEffect})`);
-      gradient2.addColorStop(1, 'rgba(255, 215, 0, 0)');
-      ctx.fillStyle = gradient2;
-      ctx.beginPath();
-      ctx.arc(centerX, centerY, (20 + attackPower * 2) * pulseEffect, 0, Math.PI * 2);
-      ctx.fill();
-      
-      // Inner core (brightest)
-      const gradient3 = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, 10 + attackPower);
-      gradient3.addColorStop(0, `rgba(255, 255, 200, ${0.8 * pulseEffect})`);
-      gradient3.addColorStop(0.7, `rgba(255, 200, 0, ${0.5 * pulseEffect})`);
-      gradient3.addColorStop(1, 'rgba(255, 180, 0, 0)');
-      ctx.fillStyle = gradient3;
-      ctx.beginPath();
-      ctx.arc(centerX, centerY, (10 + attackPower) * pulseEffect, 0, Math.PI * 2);
-      ctx.fill();
-      
-      // Rotating particles for high power levels
-      if (attackPower >= 5) {
-        const particleCount = Math.min(Math.floor(attackPower / 2), 8);
-        const rotationSpeed = time * 1.5;
-        
-        for (let i = 0; i < particleCount; i++) {
-          const angle = (i / particleCount) * Math.PI * 2 + rotationSpeed;
-          const distance = 30 + attackPower * 1.5;
-          const px = centerX + Math.cos(angle) * distance;
-          const py = centerY + Math.sin(angle) * distance;
-          
-          const particleGradient = ctx.createRadialGradient(px, py, 0, px, py, 8);
-          particleGradient.addColorStop(0, 'rgba(255, 255, 150, 0.8)');
-          particleGradient.addColorStop(1, 'rgba(255, 200, 0, 0)');
-          ctx.fillStyle = particleGradient;
-          ctx.beginPath();
-          ctx.arc(px, py, 8, 0, Math.PI * 2);
-          ctx.fill();
-        }
-      }
+      ctx.fillText('🧙‍♂️', heroRef.current.x, groundY - 2);
     }
 
     // Draw monsters using images
+    const currentTime = performance.now();
     monstersRef.current.forEach(m => {
+        // Floating animation for E1 (id 0) and E2 (id 1) only
+        const floatOffset = (m.imageIndex === 0 || m.imageIndex === 1) 
+          ? Math.sin(currentTime / 500) * 2.5 // 5px total range (-2.5 to +2.5)
+          : 0;
+        
+        const drawY = m.y + floatOffset;
+        
         if (imagesLoadedRef.current && enemyImagesRef.current[m.imageIndex] && enemyImagesRef.current[m.imageIndex].complete) {
-          ctx.drawImage(enemyImagesRef.current[m.imageIndex], m.x, m.y, m.width, m.height);
+          ctx.drawImage(enemyImagesRef.current[m.imageIndex], m.x, drawY, m.width, m.height);
         } else {
           // Fallback to emoji if image not loaded
           const monsterFontSize = Math.floor(m.height * 0.85);
           ctx.font = `${monsterFontSize}px Arial`;
-          ctx.fillText(m.emoji, m.x, m.y + m.height * 0.85);
+          ctx.fillText(m.emoji, m.x, drawY + m.height * 0.85);
         }
         
-        // Health bar
+        // Health bar with styled border and background
+        const barX = m.x;
+        const barY = drawY - 10;
+        const barWidth = m.width;
+        const barHeight = 5;
+        
+        // Dark background
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+        ctx.fillRect(barX, barY, barWidth, barHeight);
+        
+        // Red background (damage portion)
         ctx.fillStyle = 'red';
-        ctx.fillRect(m.x, m.y - 10, m.width, 5);
+        ctx.fillRect(barX, barY, barWidth, barHeight);
+        
+        // Green foreground (current HP)
         ctx.fillStyle = '#00ff00';
-        ctx.fillRect(m.x, m.y - 10, m.width * (m.hp / m.maxHp), 5);
+        ctx.fillRect(barX, barY, barWidth * (m.hp / m.maxHp), barHeight);
+        
+        // Black border (1px)
+        ctx.strokeStyle = 'black';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(barX, barY, barWidth, barHeight);
     });
     
     // Draw boss using image
@@ -1256,12 +1687,54 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
             spawnMonster(canvas.width, canvas.height, time);
             updateEntities();
             checkCollisions();
+            
+            // Check if waiting for clean screen in boss mode
+            if (bossWaitingForCleanScreen && monstersRef.current.length === 0 && !bossPreparationActive) {
+              // Screen is clear! Start preparation immediately
+              setBossWaitingForCleanScreen(false);
+              setWaveCompletionMessageShown(true);
+              
+              // Start preparation timer (overlay will show message and progress bar)
+              setBossPreparationActive(true);
+              setBossPreparationStartTime(performance.now());
+            }
+            
+            // Fallback conditions for wave completion (facil, intermedio, and dificil)
+            if (selectedBattleMode === 'jefe' && (selectedDifficulty === 'facil' || selectedDifficulty === 'intermedio' || selectedDifficulty === 'dificil') && !bossWaveCompleted && !bossWaitingForCleanScreen && bossWaveNearCompletion) {
+              const currentTime = time;
+              const timeSinceLastSpawn = currentTime - lastSpawnTime;
+              
+              // Get current wave threshold
+              const difficultySettings = DIFFICULTY_SETTINGS[selectedDifficulty] as any;
+              let waveThreshold = 0;
+              
+              if (difficultySettings.waves) {
+                const waveIndex = bossCurrentWave;
+                if (waveIndex < difficultySettings.waves.length) {
+                  waveThreshold = difficultySettings.waves[waveIndex].threshold;
+                }
+              } else if (difficultySettings.waveScoreThreshold) {
+                waveThreshold = difficultySettings.waveScoreThreshold;
+              }
+              
+              // Condition B: threshold-100+ points + clean screen
+              if (score >= waveThreshold - 100 && monstersRef.current.length === 0) {
+                setBossWaveCompleted(true);
+                setBossWaitingForCleanScreen(true);
+              }
+              // Condition C: threshold-150+ points + clean screen + 5 seconds without spawn
+              else if (score >= waveThreshold - 150 && monstersRef.current.length === 0 && timeSinceLastSpawn > 5000) {
+                setBossWaveCompleted(true);
+                setBossWaitingForCleanScreen(true);
+              }
+            }
+            
             draw(ctx, canvas.width, canvas.height);
         }
     }
     requestRef.current = requestAnimationFrame(gameLoop);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [gameState, score, attackPower]); 
+  }, [gameState, score, attackPower, bossWaitingForCleanScreen, bossPreparationActive, waveCompletionMessageShown]); 
 
   useEffect(() => {
     if (gameState === 'PLAYING') requestRef.current = requestAnimationFrame(gameLoop);
@@ -1296,12 +1769,22 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
   const handleAnswer = (answer: string) => {
     if (!currentVerb) return;
     
+    // SRS: Calculate response time
+    const responseTime = Date.now() - responseStartTimeRef.current;
+    
     // Normalize valid answers to array
     const validAnswers = Array.isArray(currentVerb.answer) 
         ? currentVerb.answer 
         : [currentVerb.answer];
 
     const isCorrect = validAnswers.some(a => a.toLowerCase() === answer.toLowerCase().trim());
+    
+    // SRS: Record the result for spaced repetition
+    if (isCorrect) {
+      recordVerbCorrect(currentVerb, responseTime);
+    } else {
+      recordVerbIncorrect(currentVerb, responseTime);
+    }
     
     // Contrarreloj uses damage streak system
     if (selectedBattleMode === 'contrarreloj') {
@@ -1665,7 +2148,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
     // Both modes use the same canvas-based UI
     return (
       <div className="min-h-screen bg-deep-blue p-4 flex flex-col items-center justify-start pt-8">
-        <div className="w-full max-w-4xl">
+        <div className={`w-full max-w-4xl ${screenShake ? 'animate-[screenShake_0.5s_ease-in-out]' : ''}`}>
           {/* Header */}
           <div className="flex justify-between items-center mb-4 text-white">
             <button onClick={() => setGameState('SELECTION')} className="p-2 hover:bg-white/10 rounded-full">
@@ -1691,14 +2174,149 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
             </button>
           </div>
 
-          {/* Canvas */}
-          <div className="bg-white rounded-2xl overflow-hidden shadow-2xl mb-6">
+          {/* Canvas with Boss Preparation Overlay */}
+          <div className="relative bg-white rounded-2xl shadow-2xl mb-6">
             <canvas
               ref={canvasRef}
               width={872}
               height={396}
-              className="w-full"
+              className="w-full rounded-2xl"
             />
+            
+            {/* Boss Preparation Overlay - Only visible during preparation */}
+            {bossPreparationActive && (
+              <div className="absolute top-0 left-0 right-0 z-10">
+                {/* Progress Bar - Enhanced with icon and urgency effects */}
+                <div className="px-6 py-8">
+                  <div className="flex items-center gap-3">
+                    <div 
+                      className={`flex-1 bg-gray-700 bg-opacity-60 rounded-full h-6 overflow-visible backdrop-blur-sm relative ${
+                        bossPreparationTimeRemaining <= 3 ? 'animate-[shake_0.3s_ease-in-out_infinite]' : ''
+                      }`}
+                    >
+                      <div 
+                        className="bg-gradient-to-r from-orange-500 to-red-600 h-full transition-all duration-75 ease-linear flex items-center justify-center rounded-full"
+                        style={{ width: `${bossPreparationProgress}%` }}
+                      >
+                        <span className="text-white font-black text-sm drop-shadow-lg">
+                          {bossPreparationTimeRemaining}s
+                        </span>
+                      </div>
+                      
+                      {/* Icon - moves with progress */}
+                      <div 
+                        className="absolute top-1/2 -translate-y-1/2 transition-all duration-75 ease-linear"
+                        style={{ 
+                          left: `${bossPreparationProgress}%`,
+                          transform: 'translate(-50%, -50%)'
+                        }}
+                      >
+                        <span 
+                          className="text-3xl drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)] inline-block"
+                          style={{
+                            filter: 'drop-shadow(0 0 8px rgba(239, 68, 68, 0.8))'
+                          }}
+                        >
+                          {(() => {
+                            const difficultySettings = selectedDifficulty ? DIFFICULTY_SETTINGS[selectedDifficulty] as any : null;
+                            const hasMoreWaves = difficultySettings?.waves && bossCurrentWave < difficultySettings.waves.length - 1;
+                            return hasMoreWaves ? '⚔️' : '🐉';
+                          })()}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+            
+            {/* Wizard Aura Overlay - Silhouette-based drop-shadow */}
+            {gameState === 'PLAYING' && imagesReady && (
+              <div
+                ref={wizardAuraOverlayRef}
+                className="absolute pointer-events-none"
+                style={{
+                  width: '1px',
+                  height: '1px',
+                  overflow: 'visible',
+                  padding: '50px',
+                  zIndex: 4
+                }}
+              >
+                <img
+                  src="/data/images/Mago.png"
+                  alt=""
+                  draggable={false}
+                  style={{
+                    position: 'absolute',
+                    left: 0,
+                    top: 0,
+                    width: `calc(${Math.floor((396 - 40) * 0.15)}px * var(--wizard-scale, 1))`,
+                    height: `calc(${Math.floor((396 - 40) * 0.15)}px * var(--wizard-scale, 1))`,
+                    pointerEvents: 'none',
+                    filter: `
+                      ${getAuraDropShadows(attackPower)}
+                      ${attackPower >= 7 ? 'brightness(1.2) contrast(1.1)' : ''}
+                    `,
+                    opacity: 0.95,
+                    mixBlendMode: 'screen'
+                  }}
+                />
+              </div>
+            )}
+            
+            {/* CSS Animations for Boss Preparation */}
+            <style>{`
+              @keyframes popIn {
+                0% {
+                  transform: scale(0);
+                  opacity: 0;
+                }
+                50% {
+                  transform: scale(1.1);
+                }
+                70% {
+                  transform: scale(0.9);
+                }
+                100% {
+                  transform: scale(1);
+                  opacity: 1;
+                }
+              }
+              
+              @keyframes glowPulse {
+                0%, 100% {
+                  box-shadow: 0 0 20px rgba(239, 68, 68, 0.6), 0 0 40px rgba(239, 68, 68, 0.4), 0 0 60px rgba(239, 68, 68, 0.2);
+                }
+                50% {
+                  box-shadow: 0 0 30px rgba(239, 68, 68, 0.8), 0 0 60px rgba(239, 68, 68, 0.6), 0 0 90px rgba(239, 68, 68, 0.4);
+                }
+              }
+              
+              @keyframes shake {
+                0%, 100% {
+                  transform: translateX(0);
+                }
+                25% {
+                  transform: translateX(-4px) rotate(-1deg);
+                }
+                75% {
+                  transform: translateX(4px) rotate(1deg);
+                }
+              }
+              
+              @keyframes screenShake {
+                0%, 100% {
+                  transform: translate(0, 0);
+                }
+                10%, 30%, 50%, 70%, 90% {
+                  transform: translate(-10px, 0);
+                }
+                20%, 40%, 60%, 80% {
+                  transform: translate(10px, 0);
+                }
+              }
+            `}</style>
           </div>
 
           {/* Question & Input/Choices */}
@@ -1824,9 +2442,15 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
                 <p>👾 <strong>Monstruos atacan:</strong> Usa tu poder para defenderlos</p>
                 <p>🏰 <strong>Protege el castillo:</strong> Si pierdes vidas, pierdes el juego</p>
                 <p>⚡ <strong>Ataca automáticamente:</strong> Cada segundo dispara proyectiles</p>
-                <p>🎯 <strong>Modo Contrarreloj:</strong> Derrota 30 enemigos conjugando verbos. Cada acierto hace ⚔️ daño al enemigo. ¡Las rachas aumentan tu poder!</p>
-                <p>📝 <strong>Modo Escritura:</strong> Usa las teclas 1-5 para vocales con tilde (1=á, 2=é, 3=í, 4=ó, 5=ú)</p>
-                <p>🐉 <strong>Modo Jefe:</strong> Derrota al dragón gigante que aparece después de un tiempo</p>
+                {selectedBattleMode === 'contrarreloj' && selectedDifficulty && (
+                  <p>🎯 <strong>Modo Contrarreloj:</strong> ¡Debes conseguir {DIFFICULTY_SETTINGS[selectedDifficulty].targetScore} puntos para completar el juego! Cada acierto hace ⚔️ daño al enemigo. ¡Las rachas aumentan tu poder!</p>
+                )}
+                {selectedBattleMode === 'jefe' && (
+                  <p>🐉 <strong>Modo Jefe:</strong> Derrota al dragón gigante que aparece después de un tiempo</p>
+                )}
+                {selectedMode === 'write' && (
+                  <p>📝 <strong>Modo Escritura:</strong> Usa las teclas 1-5 para vocales con tilde (1=á, 2=é, 3=í, 4=ó, 5=ú)</p>
+                )}
               </div>
               <button
                 onClick={() => setInstructionsOpen(false)}
