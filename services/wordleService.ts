@@ -60,7 +60,7 @@ export const loadHints = async (difficulty: string): Promise<{ [word: string]: s
       // Format A1/A2: Array of objects with 'palabra' field
       for (const entry of data) {
         if (entry.palabra) {
-          const palabra = entry.palabra.toUpperCase();
+          const palabra = normalizeAccents(entry.palabra);
           const pistas = [];
           if (entry.pista1) pistas.push(entry.pista1);
           if (entry.pista2) pistas.push(entry.pista2);
@@ -71,7 +71,7 @@ export const loadHints = async (difficulty: string): Promise<{ [word: string]: s
     } else if (typeof data === 'object') {
       // Format B1/B2: Object with word keys
       for (const [palabra, hints] of Object.entries(data)) {
-        const palabraUpper = palabra.toUpperCase();
+        const palabraUpper = normalizeAccents(palabra);
         const pistas = [];
         if (typeof hints === 'object' && hints !== null) {
           const h = hints as { pista1?: string; pista2?: string; pista3?: string };
@@ -100,7 +100,7 @@ export const isValidWord = async (word: string, wordLength: 3 | 4 | 5 | 6): Prom
 // Get hints progressively based on attempt number
 export const getHintsForAttempt = async (word: string, attemptNumber: number, difficulty: string): Promise<string[]> => {
   const hints = await loadHints(difficulty);
-  const wordHints = hints[word.toUpperCase()] || [];
+  const wordHints = hints[normalizeAccents(word)] || [];
   
   // Reveal hints progressively based on failed attempts:
   // After 3+ failed attempts (attempting 4th): 1 hint
