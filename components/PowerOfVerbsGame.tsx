@@ -330,81 +330,72 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
     { x: 850, y: 70, size: 45, speed: 0.08 }
   ]);
   
-  // Wizard aura overlay ref
-  const wizardAuraOverlayRef = useRef<HTMLDivElement>(null);
-  
   // Keep refs in sync with state for gameLoop access
   useEffect(() => { killCountRef.current = killCount; }, [killCount]);
   useEffect(() => { attackPowerRef.current = attackPower; }, [attackPower]);
   useEffect(() => { killsByTypeRef.current = killsByType; }, [killsByType]);
   
-  // Function to calculate aura drop-shadows based on power level
-  const getAuraDropShadows = (power: number): string => {
-    if (power <= 0) return 'none';
-    
-    // Base intensity increases with power
+  // Draw wizard aura glow on canvas using shadow properties
+  // This replaces the HTML overlay approach for cross-platform reliability
+  const drawWizardAura = (ctx: CanvasRenderingContext2D, img: HTMLImageElement, x: number, y: number, w: number, h: number, power: number) => {
+    if (power <= 0) return;
     const intensity = Math.min(power / 10, 1);
-    
-    // At power 10+, blur should be massive (half screen ~ 200-250px)
-    const maxBlur = power >= 10 ? 250 : 150;
-    const blur1 = Math.floor(8 * intensity);
-    const blur2 = Math.floor(20 * intensity);
-    const blur3 = Math.floor(50 * intensity * (maxBlur / 150));
-    const blur4 = Math.floor(100 * intensity * (maxBlur / 150));
-    const blur5 = Math.floor(maxBlur * intensity);
     
     // Color progression: blue (low) → cyan (mid) → white+cyan (high)
     if (power >= 8) {
-      // Maximum power: white core + cyan glow
-      return `
-        drop-shadow(0 0 ${blur1}px rgba(255, 255, 255, 1))
-        drop-shadow(0 0 ${blur2}px rgba(200, 255, 255, 1))
-        drop-shadow(0 0 ${blur3}px rgba(34, 211, 238, 1))
-        drop-shadow(0 0 ${blur4}px rgba(59, 130, 246, 0.9))
-        drop-shadow(0 0 ${blur5}px rgba(37, 99, 235, 0.7))
-      `;
+      // Maximum power: white core + cyan + blue outer glow
+      // Outer blue
+      ctx.save();
+      ctx.shadowOffsetX = 0;
+      ctx.shadowOffsetY = 0;
+      ctx.shadowColor = `rgba(37, 99, 235, ${0.7 * intensity})`;
+      ctx.shadowBlur = Math.floor(60 * intensity);
+      ctx.drawImage(img, x, y, w, h);
+      ctx.restore();
+      // Mid cyan
+      ctx.save();
+      ctx.shadowOffsetX = 0;
+      ctx.shadowOffsetY = 0;
+      ctx.shadowColor = `rgba(34, 211, 238, ${intensity})`;
+      ctx.shadowBlur = Math.floor(30 * intensity);
+      ctx.drawImage(img, x, y, w, h);
+      ctx.restore();
+      // Inner white-cyan
+      ctx.save();
+      ctx.shadowOffsetX = 0;
+      ctx.shadowOffsetY = 0;
+      ctx.shadowColor = `rgba(200, 255, 255, ${intensity})`;
+      ctx.shadowBlur = Math.floor(12 * intensity);
+      ctx.drawImage(img, x, y, w, h);
+      ctx.restore();
     } else if (power >= 4) {
-      // Medium power: cyan glow
-      return `
-        drop-shadow(0 0 ${blur1}px rgba(34, 211, 238, 1))
-        drop-shadow(0 0 ${blur2}px rgba(59, 130, 246, 0.9))
-        drop-shadow(0 0 ${blur3}px rgba(37, 99, 235, 0.7))
-      `;
+      // Medium power: cyan + blue
+      ctx.save();
+      ctx.shadowOffsetX = 0;
+      ctx.shadowOffsetY = 0;
+      ctx.shadowColor = `rgba(37, 99, 235, ${0.7 * intensity})`;
+      ctx.shadowBlur = Math.floor(40 * intensity);
+      ctx.drawImage(img, x, y, w, h);
+      ctx.restore();
+      // Inner cyan
+      ctx.save();
+      ctx.shadowOffsetX = 0;
+      ctx.shadowOffsetY = 0;
+      ctx.shadowColor = `rgba(34, 211, 238, ${intensity})`;
+      ctx.shadowBlur = Math.floor(10 * intensity);
+      ctx.drawImage(img, x, y, w, h);
+      ctx.restore();
     } else {
       // Low power: soft blue
-      return `
-        drop-shadow(0 0 ${blur1}px rgba(59, 130, 246, 0.8))
-        drop-shadow(0 0 ${blur2}px rgba(96, 165, 250, 0.6))
-      `;
+      ctx.save();
+      ctx.shadowOffsetX = 0;
+      ctx.shadowOffsetY = 0;
+      ctx.shadowColor = `rgba(59, 130, 246, ${0.8 * intensity})`;
+      ctx.shadowBlur = Math.floor(20 * intensity);
+      ctx.drawImage(img, x, y, w, h);
+      ctx.restore();
     }
   };
-  
-  // Update wizard aura overlay position
-  useEffect(() => {
-    if (!wizardAuraOverlayRef.current || gameState !== 'PLAYING' || !canvasRef.current) return;
-    
-    const updatePosition = () => {
-      if (wizardAuraOverlayRef.current && canvasRef.current) {
-        const canvas = canvasRef.current;
-        const rect = canvas.getBoundingClientRect();
-        const scaleX = rect.width / canvas.width;
-        const scaleY = rect.height / canvas.height;
-        
-        const wizardX = heroRef.current.x;
-        const wizardY = heroRef.current.y;
-        
-        // Position overlay at wizard's top-left corner (same as canvas)
-        wizardAuraOverlayRef.current.style.left = `${wizardX * scaleX}px`;
-        wizardAuraOverlayRef.current.style.top = `${wizardY * scaleY}px`;
-        
-        // Store scale for image sizing
-        wizardAuraOverlayRef.current.style.setProperty('--wizard-scale', String(scaleX));
-      }
-    };
-    
-    const interval = setInterval(updatePosition, 16); // 60fps
-    return () => clearInterval(interval);
-  }, [gameState]);
   
   // Boss preparation timer - handle wave transitions or boss spawn
   useEffect(() => {
@@ -1598,6 +1589,9 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
     // Draw wizard using image - positioned so feet are at ground level (same as castle base)
     
     if (imagesLoadedRef.current && wizardImageRef.current && wizardImageRef.current.complete) {
+      // Draw aura glow layers behind the wizard (canvas shadows follow silhouette)
+      drawWizardAura(ctx, wizardImageRef.current, heroRef.current.x, heroRef.current.y, wizardSize, wizardSize, attackPowerRef.current);
+      // Draw the main wizard on top
       ctx.drawImage(wizardImageRef.current, heroRef.current.x, heroRef.current.y, wizardSize, wizardSize);
     } else {
       // Fallback to emoji if image not loaded
@@ -2240,40 +2234,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
               </div>
             )}
             
-            {/* Wizard Aura Overlay - Silhouette-based drop-shadow */}
-            {gameState === 'PLAYING' && imagesReady && (
-              <div
-                ref={wizardAuraOverlayRef}
-                className="absolute pointer-events-none"
-                style={{
-                  width: '1px',
-                  height: '1px',
-                  overflow: 'visible',
-                  padding: '50px',
-                  zIndex: 4
-                }}
-              >
-                <img
-                  src={`${import.meta.env.BASE_URL}data/images/Mago.png`}
-                  alt=""
-                  draggable={false}
-                  style={{
-                    position: 'absolute',
-                    left: 0,
-                    top: 0,
-                    width: `calc(${Math.floor((396 - 40) * 0.15)}px * var(--wizard-scale, 1))`,
-                    height: `calc(${Math.floor((396 - 40) * 0.15)}px * var(--wizard-scale, 1))`,
-                    pointerEvents: 'none',
-                    filter: `
-                      ${getAuraDropShadows(attackPower)}
-                      ${attackPower >= 7 ? 'brightness(1.2) contrast(1.1)' : ''}
-                    `,
-                    opacity: 0.95,
-                    mixBlendMode: 'screen'
-                  }}
-                />
-              </div>
-            )}
+            {/* Wizard aura is now drawn directly on canvas via drawWizardAura() */}
             
             {/* CSS Animations for Boss Preparation */}
             <style>{`
