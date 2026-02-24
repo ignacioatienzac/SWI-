@@ -26,6 +26,7 @@ type Level = 'A1' | 'A2' | 'B1' | 'B2';
 type Difficulty = 'easy' | 'hard';
 type GameMode = 'practice' | 'timed' | 'lives';
 type GameState = 'MENU' | 'PLAYING' | 'CORRECT' | 'GAMEOVER' | 'VICTORY';
+type PhraseLength = 'short' | 'long';
 
 interface Phrase {
   id: number;
@@ -45,6 +46,7 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack }) => {
   const [selectedLevel, setSelectedLevel] = useState<Level | null>(null);
   const [selectedDifficulty, setSelectedDifficulty] = useState<Difficulty | null>(null);
   const [selectedMode, setSelectedMode] = useState<GameMode | null>(null);
+  const [selectedPhraseLength, setSelectedPhraseLength] = useState<PhraseLength | null>(null);
   
   // Game state
   const [gameState, setGameState] = useState<GameState>('MENU');
@@ -240,6 +242,7 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack }) => {
           juego: 'Constructor de Frases',
           estado: 'menu',
           nivel_seleccionado: selectedLevel || 'ninguno',
+          longitud_frases: selectedPhraseLength === 'short' ? 'cortas' : selectedPhraseLength === 'long' ? 'largas' : 'ninguna',
           dificultad_seleccionada: selectedDifficulty || 'ninguna',
           modo_seleccionado: selectedMode || 'ninguno',
           modos_disponibles: {
@@ -291,10 +294,11 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack }) => {
   // Load phrases
   useEffect(() => {
     const loadPhrases = async () => {
-      if (!selectedLevel) return; // No cargar si no hay nivel seleccionado
+      if (!selectedLevel || !selectedPhraseLength) return; // No cargar si no hay nivel o longitud seleccionada
       
       try {
-        const response = await fetch(`/data/frases-${selectedLevel.toLowerCase()}.json`);
+        const prefix = selectedPhraseLength === 'short' ? 'frases-cortas-' : 'frases-';
+        const response = await fetch(`/data/${prefix}${selectedLevel.toLowerCase()}.json`);
         if (response.ok) {
           const data = await response.json();
           // Shuffle phrases for random order
@@ -305,7 +309,7 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack }) => {
       }
     };
     loadPhrases();
-  }, [selectedLevel]);
+  }, [selectedLevel, selectedPhraseLength]);
 
   // Timer for timed mode
   useEffect(() => {
@@ -360,69 +364,68 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack }) => {
   // Start game
   const startGame = () => {
     if (phrases.length === 0) return;
-    
+
+    // Re-shuffle every time so each game run has a different order
+    const reshuffled = shuffleArray(phrases);
+    setPhrases(reshuffled);
+
     setScore(0);
     setStreak(0);
     setLives(3);
     setTimeLeft(60);
     setCurrentPhraseIndex(0);
     setShowHint(false);
-    loadPhrase(0);
+    // Use reshuffled[0] directly to avoid stale state on first phrase
+    loadPhraseData(reshuffled, 0);
     setGameState('PLAYING');
   };
 
-  // Load a phrase
-  const loadPhrase = (index: number) => {
-    if (index >= phrases.length) {
+  // Load a phrase — accepts explicit array to avoid stale state after re-shuffle
+  const loadPhraseData = (phraseArray: Phrase[], index: number) => {
+    if (index >= phraseArray.length) {
       setGameState('VICTORY');
       return;
     }
-    
-    const phrase = phrases[index];
-    // Split phrase into words, separating final punctuation (except periods which are removed)
-    // First, split by spaces and punctuation
+
+    const phrase = phraseArray[index];
     const rawWords = phrase.frase_objetivo.match(/[\w\u00C0-\u024F]+|[.,!?¡¿]/g) || [];
-    
+
     const processedWords: string[] = [];
-    
+
     for (let i = 0; i < rawWords.length; i++) {
       const word = rawWords[i];
-      
-      // Skip periods (.) entirely
+
       if (word === '.') continue;
-      
-      // Keep opening punctuation (¿, ¡) as separate words
+
       if (word === '¿' || word === '¡') {
         processedWords.push(word);
-      }
-      // Keep closing punctuation (?, !) as separate words
-      else if (word === '?' || word === '!') {
+      } else if (word === '?' || word === '!') {
         processedWords.push(word);
-      }
-      // Keep commas as separate blocks
-      else if (word === ',') {
+      } else if (word === ',') {
         processedWords.push(word);
-      }
-      // Regular words
-      else {
+      } else {
         processedWords.push(word);
       }
     }
-    
+
     let allWords = [...processedWords];
-    
-    // In hard mode, add trap words
+
     if (selectedDifficulty === 'hard' && phrase.trampas) {
       allWords = [...allWords, ...phrase.trampas];
     }
-    
+
     setAvailableWords(shuffleArray(allWords));
     setSelectedWords([]);
     setShowHint(false);
     setFeedback(null);
     setShowColorHints(false);
     setWordColors([]);
-    changeCobiState('start'); // Reset Cobi to start state for new phrase
+    changeCobiState('start');
+  };
+
+  // Convenience wrapper that uses current phrases state
+  const loadPhrase = (index: number) => {
+    loadPhraseData(phrases, index);
   };
 
   // Select a word from available
@@ -671,6 +674,39 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack }) => {
               </div>
             </div>
 
+            {/* Phrase Length Selection */}
+            <div className="mb-6">
+              <label className="block text-sm font-bold text-gray-700 mb-2">
+                📏 Longitud de Frases
+              </label>
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  onClick={() => setSelectedPhraseLength('short')}
+                  className={`py-4 rounded-xl border-2 font-bold transition-all ${
+                    selectedPhraseLength === 'short'
+                      ? 'border-amber-500 bg-amber-500 text-white shadow-md'
+                      : 'border-gray-200 text-gray-600 hover:border-amber-300 hover:bg-amber-50'
+                  }`}
+                >
+                  <span className="text-2xl mb-1 block">🧱</span>
+                  <span>Frases Cortas</span>
+                  <span className="text-xs block font-normal opacity-80">3–5 palabras</span>
+                </button>
+                <button
+                  onClick={() => setSelectedPhraseLength('long')}
+                  className={`py-4 rounded-xl border-2 font-bold transition-all ${
+                    selectedPhraseLength === 'long'
+                      ? 'border-amber-500 bg-amber-500 text-white shadow-md'
+                      : 'border-gray-200 text-gray-600 hover:border-amber-300 hover:bg-amber-50'
+                  }`}
+                >
+                  <span className="text-2xl mb-1 block">🏗️</span>
+                  <span>Frases Largas</span>
+                  <span className="text-xs block font-normal opacity-80">6–10 palabras</span>
+                </button>
+              </div>
+            </div>
+
             {/* Difficulty Selection */}
             <div className="mb-6">
               <label className="block text-sm font-bold text-gray-700 mb-2">
@@ -781,11 +817,11 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack }) => {
             {/* Start Button */}
             <button
               onClick={startGame}
-              disabled={phrases.length === 0 || !selectedLevel || !selectedDifficulty || !selectedMode}
+              disabled={phrases.length === 0 || !selectedLevel || !selectedPhraseLength || !selectedDifficulty || !selectedMode}
               className="w-full py-4 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-black text-xl rounded-xl shadow-lg transition-all transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
             >
               <Play size={24} />
-              {!selectedLevel || !selectedDifficulty || !selectedMode ? 'Elige todas las opciones' : '¡Empezar a Construir!'}
+              {!selectedLevel || !selectedPhraseLength || !selectedDifficulty || !selectedMode ? 'Elige todas las opciones' : '¡Empezar a Construir!'}
             </button>
           </div>
         </div>
