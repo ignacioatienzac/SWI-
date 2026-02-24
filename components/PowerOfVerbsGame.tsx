@@ -851,8 +851,10 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
         })
         .map(v => Array.isArray(v.answer) ? v.answer[0] : v.answer);
       
-      // Deduplicate answers (in case different pronouns have the same conjugation)
-      const uniqueSameVerbConjugations = Array.from(new Set(sameVerbConjugations));
+      // Deduplicate answers and exclude any that match the correct answer
+      // (e.g. in imperfecto de subjuntivo: yo/él/usted share the same form)
+      const uniqueSameVerbConjugations = Array.from(new Set(sameVerbConjugations))
+        .filter(ans => ans !== correct);
       
       // Shuffle same verb conjugations
       for (let i = uniqueSameVerbConjugations.length - 1; i > 0; i--) {
@@ -871,7 +873,8 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
       if (remainingNeeded > 0) {
         const otherVerbConjugations = pool
           .filter(v => v.verb !== randomVerb.verb)
-          .map(v => Array.isArray(v.answer) ? v.answer[0] : v.answer);
+          .map(v => Array.isArray(v.answer) ? v.answer[0] : v.answer)
+          .filter(ans => ans !== correct && !distractors.includes(ans));
         
         // Shuffle other verb conjugations
         for (let i = otherVerbConjugations.length - 1; i > 0; i--) {
