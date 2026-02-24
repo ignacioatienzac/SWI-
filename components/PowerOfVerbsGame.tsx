@@ -2254,7 +2254,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
                 }}
               >
                 <img
-                  src="/data/images/Mago.png"
+                  src={`${import.meta.env.BASE_URL}data/images/Mago.png`}
                   alt=""
                   draggable={false}
                   style={{
