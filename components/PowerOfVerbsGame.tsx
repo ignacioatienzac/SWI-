@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { ChevronLeft, Info, X, Pause, Play, Send } from 'lucide-react';
-import { getAvailableTenses, getFilteredVerbsSRS, recordVerbCorrect, recordVerbIncorrect } from '../services/powerVerbsService';
+import { getAvailableTenses, getFilteredVerbs, getFilteredVerbsSRS, recordVerbCorrect, recordVerbIncorrect } from '../services/powerVerbsService';
 import { PowerVerb, GameDifficulty, GameMode, BattleMode } from '../types';
 import { hablarConPanda } from '../services/geminiService';
 import { normalizePronoun } from '../services/srsService';
@@ -307,6 +307,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
   const [killCount, setKillCount] = useState(0);
   const [pointsStreak, setPointsStreak] = useState(0); // Racha para bonificación de puntos
   const [killsByType, setKillsByType] = useState<{ [key: number]: number }>({}); // Kills por tipo de enemigo
+  const fullChoicePoolRef = useRef<PowerVerb[]>([]);
   
   // Boss mode wave system state
   const [bossCurrentWave, setBossCurrentWave] = useState(0); // 0=not started, 1=wave 1 in progress, 2=wave 2 in progress, etc.
@@ -726,6 +727,10 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
       return;
     }
 
+    // Full filtered pool (non-SRS) for choice-mode distractor construction.
+    // This guarantees minimum same-verb options by difficulty.
+    fullChoicePoolRef.current = await getFilteredVerbs(selectedGrammar, selectedTense, selectedVerbType);
+
     setVerbsPool(pool);
     setScore(0);
     setAttackPower(1);
@@ -843,7 +848,9 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
       
       // Get distractors from the SAME VERB (different conjugations)
       // Filter out conjugations with the same normalized pronoun to avoid duplicates like "están" appearing twice
-      const sameVerbConjugations = pool
+      const choiceSourcePool = fullChoicePoolRef.current.length > 0 ? fullChoicePoolRef.current : pool;
+
+      const sameVerbConjugations = choiceSourcePool
         .filter(v => {
           if (v.verb !== randomVerb.verb || v === randomVerb) return false;
           const normalizedPronoun = normalizePronoun(v.pronoun);
@@ -871,7 +878,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
       const remainingNeeded = 3 - distractors.length;
       
       if (remainingNeeded > 0) {
-        const otherVerbConjugations = pool
+        const otherVerbConjugations = choiceSourcePool
           .filter(v => v.verb !== randomVerb.verb)
           .map(v => Array.isArray(v.answer) ? v.answer[0] : v.answer)
           .filter(ans => ans !== correct && !distractors.includes(ans));
