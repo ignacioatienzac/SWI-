@@ -36,7 +36,7 @@ const Header: React.FC<HeaderProps> = ({ currentView, onChangeView }) => {
                 <span className="text-white font-bold text-xl">Ñ</span>
               </div>
               <span className="ml-3 text-2xl font-bold text-deep-blue tracking-tight">
-                Spanish with <span className="text-spanish-red">Ignacio</span>
+                Cobi<span className="text-spanish-red">Spanish</span>
               </span>
             </div>
 
@@ -107,7 +107,7 @@ const Header: React.FC<HeaderProps> = ({ currentView, onChangeView }) => {
           </div>
           
           <div className="p-8 text-center text-gray-400 text-sm">
-            <p>© Spanish with Ignacio</p>
+            <p>© CobiSpanish</p>
           </div>
         </div>
       )}

@@ -24,17 +24,52 @@ const seleccionarMensajeCobiRandom = (): string => {
   return mensajesBienvenidaCobi[indice];
 };
 
+// ── Hash-based routing ──────────────────────────────────────────────────────
+const VIEW_TO_HASH: Record<View, string> = {
+  [View.HOME]: '/',
+  [View.GAMES]: '/juegos',
+  [View.RESOURCES]: '/recursos',
+};
+
+const GAME_TO_SLUG: Record<string, string> = {
+  'phrase-builder': 'constructor-de-frases',
+  'verb-master': 'maestro-de-verbos',
+  'wordle-game': 'adivina-la-palabra',
+  'power-verbs': 'poder-de-verbos',
+  'letter-wheel': 'rueda-de-letras',
+};
+
+const SLUG_TO_GAME: Record<string, string> = Object.fromEntries(
+  Object.entries(GAME_TO_SLUG).map(([id, slug]) => [slug, id])
+);
+
+const GAME_DISPLAY_NAMES: Record<string, string> = {
+  'phrase-builder': 'Constructor de Frases',
+  'verb-master': 'Maestro de Verbos',
+  'wordle-game': 'Adivina la Palabra',
+  'power-verbs': 'Poder de los Verbos',
+  'letter-wheel': 'Rueda de Letras',
+};
+
+function parseHash(): { view: View; gameId: string | null } {
+  const hash = window.location.hash.slice(1) || '/';
+  const parts = hash.split('/').filter(Boolean);
+  if (parts.length === 0) return { view: View.HOME, gameId: null };
+  if (parts[0] === 'juegos') {
+    if (parts[1] && SLUG_TO_GAME[parts[1]]) {
+      return { view: View.GAMES, gameId: SLUG_TO_GAME[parts[1]] };
+    }
+    return { view: View.GAMES, gameId: null };
+  }
+  if (parts[0] === 'recursos') return { view: View.RESOURCES, gameId: null };
+  return { view: View.HOME, gameId: null };
+}
+// ────────────────────────────────────────────────────────────────────────────
+
 const App: React.FC = () => {
-  // Cargar estado desde localStorage al iniciar
-  const [currentView, setCurrentView] = useState<View>(() => {
-    const savedView = localStorage.getItem('currentView');
-    return (savedView as View) || View.HOME;
-  });
-  
-  const [activeGameId, setActiveGameId] = useState<string | null>(() => {
-    const savedGame = localStorage.getItem('activeGameId');
-    return savedGame || null;
-  });
+  // Inicializar estado desde la URL (hash routing)
+  const [currentView, setCurrentView] = useState<View>(() => parseHash().view);
+  const [activeGameId, setActiveGameId] = useState<string | null>(() => parseHash().gameId);
 
   // Estado para mensaje de Cobi
   const [cobiMessage] = useState<string>(seleccionarMensajeCobiRandom());
@@ -84,18 +119,40 @@ const App: React.FC = () => {
     }
   };
 
-  // Guardar estado en localStorage cuando cambie
+  // Sincronizar URL y título de la pestaña con la vista activa
   useEffect(() => {
-    localStorage.setItem('currentView', currentView);
-  }, [currentView]);
-
-  useEffect(() => {
-    if (activeGameId) {
-      localStorage.setItem('activeGameId', activeGameId);
+    let hash: string;
+    if (currentView === View.GAMES && activeGameId && GAME_TO_SLUG[activeGameId]) {
+      hash = `/juegos/${GAME_TO_SLUG[activeGameId]}`;
     } else {
-      localStorage.removeItem('activeGameId');
+      hash = VIEW_TO_HASH[currentView] ?? '/';
     }
-  }, [activeGameId]);
+    // pushState para que el botón Atrás del navegador funcione
+    const newUrl = window.location.pathname + window.location.search + '#' + hash;
+    window.history.pushState(null, '', newUrl);
+
+    // Actualizar título de la pestaña dinámicamente
+    let title = 'CobiSpanish';
+    if (currentView === View.GAMES && activeGameId && GAME_DISPLAY_NAMES[activeGameId]) {
+      title = `${GAME_DISPLAY_NAMES[activeGameId]} | CobiSpanish`;
+    } else if (currentView === View.GAMES) {
+      title = 'Juegos | CobiSpanish';
+    } else if (currentView === View.RESOURCES) {
+      title = 'Recursos | CobiSpanish';
+    }
+    document.title = title;
+  }, [currentView, activeGameId]);
+
+  // Escuchar el botón Atrás/Adelante del navegador
+  useEffect(() => {
+    const handlePopState = () => {
+      const { view, gameId } = parseHash();
+      setCurrentView(view);
+      setActiveGameId(gameId);
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
 
   const handleViewChange = (view: View) => {
     setCurrentView(view);
@@ -273,7 +330,7 @@ const App: React.FC = () => {
       <footer className={`bg-deep-blue text-white py-12 ${activeGameId ? 'hidden md:block' : ''}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center">
           <div className="mb-4 md:mb-0">
-            <span className="font-bold text-xl">Spanish with Ignacio</span>
+            <span className="font-bold text-xl">CobiSpanish</span>
             <p className="text-gray-400 text-sm mt-2">© 2024 Todos los derechos reservados.</p>
           </div>
           <div className="flex space-x-6 text-sm text-gray-300">
