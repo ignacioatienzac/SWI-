@@ -441,6 +441,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
           clearInterval(checkTimer);
           
           setFeedbackMsg({ text: `¡Oleada ${bossCurrentWave + 2} iniciada! 💪`, type: 'success' });
+          playNewWave(); // Fanfare for new wave
           setTimeout(() => setFeedbackMsg({ text: '', type: '' }), 3000);
         } else {
           // No more waves, spawn the boss
@@ -718,6 +719,295 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
     setTimeout(() => playTone(220, 0.4, 'sawtooth'), 400);
   };
 
+  // --- Boss hit: heavier impact with reverb-like echo tail ---
+  const playBossHit = () => {
+    const ctx = getAudioCtx();
+    const t = ctx.currentTime;
+
+    // Layer 1: deep boom
+    const osc1 = ctx.createOscillator();
+    const g1 = ctx.createGain();
+    osc1.type = 'sine';
+    osc1.frequency.setValueAtTime(100, t);
+    osc1.frequency.exponentialRampToValueAtTime(30, t + 0.25);
+    g1.gain.setValueAtTime(0.30, t);
+    g1.gain.exponentialRampToValueAtTime(0.001, t + 0.30);
+    osc1.connect(g1).connect(ctx.destination);
+    osc1.start(t); osc1.stop(t + 0.32);
+
+    // Layer 2: distorted crunch
+    const osc2 = ctx.createOscillator();
+    const g2 = ctx.createGain();
+    osc2.type = 'sawtooth';
+    osc2.frequency.setValueAtTime(350, t);
+    osc2.frequency.exponentialRampToValueAtTime(80, t + 0.15);
+    g2.gain.setValueAtTime(0.18, t);
+    g2.gain.exponentialRampToValueAtTime(0.001, t + 0.18);
+    osc2.connect(g2).connect(ctx.destination);
+    osc2.start(t); osc2.stop(t + 0.20);
+
+    // Layer 3: noise burst for shatter
+    const bufLen = ctx.sampleRate * 0.12;
+    const nBuf = ctx.createBuffer(1, bufLen, ctx.sampleRate);
+    const nd = nBuf.getChannelData(0);
+    for (let i = 0; i < bufLen; i++) nd[i] = (Math.random() * 2 - 1);
+    const ns = ctx.createBufferSource();
+    ns.buffer = nBuf;
+    const ng = ctx.createGain();
+    const nf = ctx.createBiquadFilter();
+    nf.type = 'lowpass'; nf.frequency.value = 2000;
+    ng.gain.setValueAtTime(0.18, t);
+    ng.gain.exponentialRampToValueAtTime(0.001, t + 0.14);
+    ns.connect(nf).connect(ng).connect(ctx.destination);
+    ns.start(t); ns.stop(t + 0.15);
+
+    // Layer 4: echo tail (delayed faint repeat)
+    const osc3 = ctx.createOscillator();
+    const g3 = ctx.createGain();
+    osc3.type = 'sine';
+    osc3.frequency.setValueAtTime(60, t + 0.15);
+    osc3.frequency.exponentialRampToValueAtTime(25, t + 0.40);
+    g3.gain.setValueAtTime(0.001, t);
+    g3.gain.linearRampToValueAtTime(0.10, t + 0.16);
+    g3.gain.exponentialRampToValueAtTime(0.001, t + 0.42);
+    osc3.connect(g3).connect(ctx.destination);
+    osc3.start(t + 0.15); osc3.stop(t + 0.44);
+  };
+
+  // --- Damage received: pain sound when wizard loses a life ---
+  const playDamageReceived = () => {
+    const ctx = getAudioCtx();
+    const t = ctx.currentTime;
+
+    // Layer 1: descending "oof" tone
+    const osc1 = ctx.createOscillator();
+    const g1 = ctx.createGain();
+    osc1.type = 'triangle';
+    osc1.frequency.setValueAtTime(500, t);
+    osc1.frequency.exponentialRampToValueAtTime(150, t + 0.20);
+    g1.gain.setValueAtTime(0.22, t);
+    g1.gain.exponentialRampToValueAtTime(0.001, t + 0.25);
+    osc1.connect(g1).connect(ctx.destination);
+    osc1.start(t); osc1.stop(t + 0.27);
+
+    // Layer 2: low rumble
+    const osc2 = ctx.createOscillator();
+    const g2 = ctx.createGain();
+    osc2.type = 'sawtooth';
+    osc2.frequency.setValueAtTime(120, t);
+    osc2.frequency.exponentialRampToValueAtTime(60, t + 0.18);
+    g2.gain.setValueAtTime(0.12, t);
+    g2.gain.exponentialRampToValueAtTime(0.001, t + 0.22);
+    osc2.connect(g2).connect(ctx.destination);
+    osc2.start(t); osc2.stop(t + 0.24);
+
+    // Layer 3: sharp glass-crack noise
+    const bufLen = ctx.sampleRate * 0.06;
+    const nBuf = ctx.createBuffer(1, bufLen, ctx.sampleRate);
+    const nd = nBuf.getChannelData(0);
+    for (let i = 0; i < bufLen; i++) nd[i] = (Math.random() * 2 - 1);
+    const ns = ctx.createBufferSource();
+    ns.buffer = nBuf;
+    const ng = ctx.createGain();
+    const nf = ctx.createBiquadFilter();
+    nf.type = 'highpass'; nf.frequency.value = 4000;
+    ng.gain.setValueAtTime(0.14, t);
+    ng.gain.exponentialRampToValueAtTime(0.001, t + 0.07);
+    ns.connect(nf).connect(ng).connect(ctx.destination);
+    ns.start(t); ns.stop(t + 0.08);
+  };
+
+  // --- New wave fanfare: short brass roll ---
+  const playNewWave = () => {
+    const ctx = getAudioCtx();
+    const t = ctx.currentTime;
+    const notes = [392, 494, 587, 784]; // G4, B4, D5, G5
+    notes.forEach((freq, i) => {
+      const osc = ctx.createOscillator();
+      const g = ctx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.value = freq;
+      const start = t + i * 0.08;
+      g.gain.setValueAtTime(0.001, t);
+      g.gain.linearRampToValueAtTime(0.18, start);
+      g.gain.exponentialRampToValueAtTime(0.001, start + 0.15);
+      osc.connect(g).connect(ctx.destination);
+      osc.start(start); osc.stop(start + 0.18);
+    });
+    // Snare-like noise roll
+    const bufLen = ctx.sampleRate * 0.15;
+    const nBuf = ctx.createBuffer(1, bufLen, ctx.sampleRate);
+    const nd = nBuf.getChannelData(0);
+    for (let i = 0; i < bufLen; i++) nd[i] = (Math.random() * 2 - 1) * 0.5;
+    const ns = ctx.createBufferSource();
+    ns.buffer = nBuf;
+    const ng = ctx.createGain();
+    const nf = ctx.createBiquadFilter();
+    nf.type = 'bandpass'; nf.frequency.value = 5000; nf.Q.value = 0.8;
+    ng.gain.setValueAtTime(0.10, t);
+    ng.gain.exponentialRampToValueAtTime(0.001, t + 0.35);
+    ns.connect(nf).connect(ng).connect(ctx.destination);
+    ns.start(t); ns.stop(t + 0.38);
+  };
+
+  // --- Power-up ding: bright ascending chime ---
+  const playPowerUp = () => {
+    const ctx = getAudioCtx();
+    const t = ctx.currentTime;
+    // Two quick ascending crystal pings
+    [1047, 1319].forEach((freq, i) => {
+      const osc = ctx.createOscillator();
+      const g = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      const start = t + i * 0.06;
+      g.gain.setValueAtTime(0.20, start);
+      g.gain.exponentialRampToValueAtTime(0.001, start + 0.12);
+      osc.connect(g).connect(ctx.destination);
+      osc.start(start); osc.stop(start + 0.14);
+    });
+    // Shimmer harmonic
+    const osc3 = ctx.createOscillator();
+    const g3 = ctx.createGain();
+    osc3.type = 'sine';
+    osc3.frequency.value = 2637; // E7
+    g3.gain.setValueAtTime(0.08, t + 0.10);
+    g3.gain.exponentialRampToValueAtTime(0.001, t + 0.25);
+    osc3.connect(g3).connect(ctx.destination);
+    osc3.start(t + 0.10); osc3.stop(t + 0.27);
+  };
+
+  // --- Enemy spawn: distant rumble/growl ---
+  const lastSpawnSoundRef = useRef<number>(0);
+  const playEnemySpawn = () => {
+    // Throttle so we don't play on every single spawn (max once per 3s)
+    const now = performance.now();
+    if (now - lastSpawnSoundRef.current < 3000) return;
+    lastSpawnSoundRef.current = now;
+
+    const ctx = getAudioCtx();
+    const t = ctx.currentTime;
+    // Low ominous hum
+    const osc = ctx.createOscillator();
+    const g = ctx.createGain();
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(80, t);
+    osc.frequency.linearRampToValueAtTime(60, t + 0.30);
+    g.gain.setValueAtTime(0.001, t);
+    g.gain.linearRampToValueAtTime(0.10, t + 0.08);
+    g.gain.exponentialRampToValueAtTime(0.001, t + 0.35);
+    osc.connect(g).connect(ctx.destination);
+    osc.start(t); osc.stop(t + 0.38);
+    // Filtered noise hiss
+    const bufLen = ctx.sampleRate * 0.20;
+    const nBuf = ctx.createBuffer(1, bufLen, ctx.sampleRate);
+    const nd = nBuf.getChannelData(0);
+    for (let i = 0; i < bufLen; i++) nd[i] = (Math.random() * 2 - 1);
+    const ns = ctx.createBufferSource();
+    ns.buffer = nBuf;
+    const ng = ctx.createGain();
+    const nf = ctx.createBiquadFilter();
+    nf.type = 'lowpass'; nf.frequency.value = 400;
+    ng.gain.setValueAtTime(0.001, t);
+    ng.gain.linearRampToValueAtTime(0.06, t + 0.05);
+    ng.gain.exponentialRampToValueAtTime(0.001, t + 0.25);
+    ns.connect(nf).connect(ng).connect(ctx.destination);
+    ns.start(t); ns.stop(t + 0.28);
+  };
+
+  // --- Ambient music loop: procedural epic/magical background ---
+  const ambientNodesRef = useRef<{ gainNode: GainNode; intervals: number[] } | null>(null);
+
+  const startAmbientMusic = () => {
+    const ctx = getAudioCtx();
+    // Create a master gain for easy stop
+    const masterGain = ctx.createGain();
+    masterGain.gain.value = 0.06; // Very subtle
+    masterGain.connect(ctx.destination);
+
+    const intervals: number[] = [];
+
+    // Pad layer 1: slow chord drone (C minor)
+    const createPad = (freq: number, detune: number) => {
+      const osc = ctx.createOscillator();
+      const g = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      osc.detune.value = detune;
+      g.gain.value = 0.4;
+      osc.connect(g).connect(masterGain);
+      osc.start();
+      return { osc, gain: g };
+    };
+
+    const pads = [
+      createPad(131, 0),    // C3
+      createPad(156, 5),    // Eb3 (slightly detuned)
+      createPad(196, -3),   // G3
+    ];
+
+    // Slow LFO for pad volume swell (breathing effect)
+    const lfoInterval = setInterval(() => {
+      const t = ctx.currentTime;
+      pads.forEach((p, i) => {
+        const phase = (Date.now() / 4000 + i * 0.33) % 1;
+        const vol = 0.25 + 0.15 * Math.sin(phase * Math.PI * 2);
+        p.gain.gain.setTargetAtTime(vol, t, 0.5);
+      });
+    }, 200);
+    intervals.push(lfoInterval as unknown as number);
+
+    // Sparkle layer: random high-pitched pings (every 2-4s)
+    const sparkleInterval = setInterval(() => {
+      const sparkleFreqs = [1047, 1175, 1319, 1568, 1760, 2093]; // C6-C7
+      const freq = sparkleFreqs[Math.floor(Math.random() * sparkleFreqs.length)];
+      const osc = ctx.createOscillator();
+      const g = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      const t = ctx.currentTime;
+      g.gain.setValueAtTime(0.15, t);
+      g.gain.exponentialRampToValueAtTime(0.001, t + 0.6);
+      osc.connect(g).connect(masterGain);
+      osc.start(t); osc.stop(t + 0.65);
+    }, 2500 + Math.random() * 1500);
+    intervals.push(sparkleInterval as unknown as number);
+
+    ambientNodesRef.current = {
+      gainNode: masterGain,
+      intervals,
+    };
+  };
+
+  const stopAmbientMusic = () => {
+    if (ambientNodesRef.current) {
+      const { gainNode, intervals } = ambientNodesRef.current;
+      // Fade out
+      const ctx = getAudioCtx();
+      gainNode.gain.setTargetAtTime(0, ctx.currentTime, 0.3);
+      // Clean up after fade
+      setTimeout(() => {
+        gainNode.disconnect();
+      }, 1000);
+      intervals.forEach(id => clearInterval(id));
+      ambientNodesRef.current = null;
+    }
+  };
+
+  // Manage ambient music lifecycle based on game state
+  useEffect(() => {
+    if (gameState === 'PLAYING') {
+      // Start ambient music when entering PLAYING state (both initial and resume from pause)
+      if (!ambientNodesRef.current) {
+        startAmbientMusic();
+      }
+    } else {
+      stopAmbientMusic();
+    }
+    // Cleanup on unmount
+    return () => stopAmbientMusic();
+  }, [gameState]);
+
   // State to track images loaded
   const [imagesReady, setImagesReady] = useState(false);
   
@@ -866,6 +1156,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
     setCobiMagoMessage(seleccionarMensajeMagoRandom('juego'));
     
     setGameState('PLAYING');
+    // Ambient music is started/stopped via useEffect on gameState
     pickNewVerb(pool);
   };
 
@@ -1252,6 +1543,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
           color: '#8b5cf6',
           points: enemyPoints
         });
+        playEnemySpawn();
         return;
       }
       
@@ -1342,6 +1634,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
           color: ['#8b5cf6', '#ec4899', '#3b82f6', '#ef4444', '#f59e0b', '#dc2626'][enemy.id - 1],
           points: enemy.reward
         });
+        playEnemySpawn();
         
         // Track spawn time for fallback logic
         setLastSpawnTime(time);
@@ -1407,6 +1700,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
         color: type.color,
         points: type.points
       });
+      playEnemySpawn();
     }
   };
 
@@ -1462,7 +1756,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
         ) {
           boss.hp -= p.power;
           hit = true;
-          playHit(); // Play hit sound
+          playBossHit(); // Play heavy boss hit sound
           if (boss.hp <= 0) {
             boss.defeated = true;
             if (selectedBattleMode === 'jefe') {
@@ -1546,10 +1840,12 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
     for (let i = monstersRef.current.length - 1; i >= 0; i--) {
         const m = monstersRef.current[i];
         if (m.x <= 50) {
+            playDamageReceived(); // Play pain sound when losing life
             setLives(prev => {
                 const newLives = prev - 1;
                 if (newLives <= 0) {
                   playGameOver(); // Play game over sound
+                  stopAmbientMusic();
                   setGameState('GAMEOVER');
                 }
                 return newLives;
@@ -1890,6 +2186,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
         setPointsStreak(prev => prev + 1); // Incrementar racha de puntos
         // attackPower goes up +1 per correct (visual + aura), no limit
         setAttackPower(prev => prev + 1);
+        playPowerUp(); // Crystal chime for power increase
         setCobiMagoMessage(seleccionarMensajeMagoRandom('acierto'));
         setFeedbackMsg({ text: `¡Correcto! Daño: ${newDamage} (Racha: ${newStreak})`, type: 'success' });
         setTimeout(() => pickNewVerb(verbsPool), 600);
@@ -1917,6 +2214,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
       if (isCorrect) {
         playSuccess();
         setAttackPower(prev => prev + 1); // No limit
+        playPowerUp(); // Crystal chime for power increase
         setCobiMagoMessage(seleccionarMensajeMagoRandom('acierto'));
         setFeedbackMsg({ text: '¡Correcto! +Poder', type: 'success' });
         setTimeout(() => pickNewVerb(verbsPool), 600);
