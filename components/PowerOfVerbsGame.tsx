@@ -319,7 +319,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
   const [bossPreparationProgress, setBossPreparationProgress] = useState<number>(100); // Progress percentage (100 to 0)
   const [bossWaveNearCompletion, setBossWaveNearCompletion] = useState(false); // Stop spawning near threshold
   const [bossWaitingForCleanScreen, setBossWaitingForCleanScreen] = useState(false); // Waiting for monsters to clear
-  const [lastSpawnTime, setLastSpawnTime] = useState<number>(0); // Track when last enemy spawned
+  const lastSpawnTimeRef = useRef<number>(0); // Track when last enemy spawned (ref for loop stability)
   const [screenShake, setScreenShake] = useState(false); // Screen shake effect on boss spawn
   
   // Animated clouds state
@@ -441,7 +441,9 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
       preparationTime = difficultySettings.bossPreparationTime;
     }
     
-    const checkTimer = setInterval(() => {
+    let rafId = 0;
+
+    const tick = () => {
       const elapsed = performance.now() - bossPreparationStartTime;
       const remaining = Math.max(0, Math.ceil((preparationTime - elapsed) / 1000));
       const progress = Math.max(0, ((preparationTime - elapsed) / preparationTime) * 100);
@@ -462,7 +464,6 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
           setBossPreparationActive(false);
           setKillCount(0); // Reset kill counter for new wave
           nextSpawnTimeRef.current = performance.now() + 1000; // Reset spawn timing for new wave
-          clearInterval(checkTimer);
           
           setFeedbackMsg({ text: `¡Oleada ${bossCurrentWave + 2} iniciada! 💪`, type: 'success' });
           playNewWave(); // Fanfare for new wave
@@ -495,12 +496,16 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
           }
           
           setBossPreparationActive(false);
-          clearInterval(checkTimer);
         }
       }
-    }, 16); // Update ~60fps for smooth animation
+      else {
+        rafId = requestAnimationFrame(tick);
+      }
+    };
+
+    rafId = requestAnimationFrame(tick);
     
-    return () => clearInterval(checkTimer);
+    return () => cancelAnimationFrame(rafId);
   }, [bossPreparationActive, bossPreparationStartTime, selectedDifficulty, bossCurrentWave]);
   
   // Cobi Mago State
@@ -1292,7 +1297,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
       setKillCount(0); // Reset kill count for jefe mode
       setBossWaveNearCompletion(false);
       setBossWaitingForCleanScreen(false);
-      setLastSpawnTime(0);
+      lastSpawnTimeRef.current = 0;
       setBossPreparationProgress(100);
       setScreenShake(false);
     }
@@ -1782,7 +1787,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
         playEnemySpawn();
         
         // Track spawn time for fallback logic
-        setLastSpawnTime(time);
+        lastSpawnTimeRef.current = time;
         return;
       }
       
@@ -2284,7 +2289,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
             // Fallback conditions for wave completion (facil, intermedio, and dificil)
             if (selectedBattleMode === 'jefe' && (selectedDifficulty === 'facil' || selectedDifficulty === 'intermedio' || selectedDifficulty === 'dificil') && !bossWaveCompleted && !bossWaitingForCleanScreen && bossWaveNearCompletion) {
               const currentTime = time;
-              const timeSinceLastSpawn = currentTime - lastSpawnTime;
+              const timeSinceLastSpawn = currentTime - lastSpawnTimeRef.current;
               
               // Get current wave threshold
               const difficultySettings = DIFFICULTY_SETTINGS[selectedDifficulty] as any;
@@ -2316,7 +2321,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
     }
     requestRef.current = requestAnimationFrame(gameLoop);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [gameState, score, attackPower, bossWaitingForCleanScreen, bossPreparationActive, waveCompletionMessageShown, bossWaveNearCompletion, bossWaveCompleted, selectedBattleMode, selectedDifficulty, bossCurrentWave, lastSpawnTime]); 
+  }, [gameState, score, attackPower, bossWaitingForCleanScreen, bossPreparationActive, waveCompletionMessageShown, bossWaveNearCompletion, bossWaveCompleted, selectedBattleMode, selectedDifficulty, bossCurrentWave]); 
 
   useEffect(() => {
     if (gameState === 'PLAYING') requestRef.current = requestAnimationFrame(gameLoop);
