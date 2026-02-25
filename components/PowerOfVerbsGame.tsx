@@ -491,6 +491,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
               speed: settings.bossSpeed
             };
             
+            playBossSpawn(); // Epic dragon roar sound
             setFeedbackMsg({ text: '¡El dragón ha aparecido! 🐉', type: 'error' });
             setTimeout(() => setFeedbackMsg({ text: '', type: '' }), 3000);
           }
@@ -946,207 +947,83 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
     ns.start(t); ns.stop(t + 0.28);
   };
 
-  // --- Ambient music loop: procedural epic/magical background ---
-  const ambientNodesRef = useRef<{ gainNode: GainNode; intervals: number[] } | null>(null);
-
-  const startAmbientMusic = () => {
+  // --- Boss spawn: epic dragon roar ---
+  const playBossSpawn = () => {
     const ctx = getAudioCtx();
-    const masterGain = ctx.createGain();
-    masterGain.gain.value = 0.07;
-    masterGain.connect(ctx.destination);
+    const t = ctx.currentTime;
 
-    const intervals: number[] = [];
+    // Layer 1: Deep rumbling roar (low sawtooth sweep)
+    const roar = ctx.createOscillator();
+    const roarG = ctx.createGain();
+    const roarF = ctx.createBiquadFilter();
+    roar.type = 'sawtooth';
+    roar.frequency.setValueAtTime(60, t);
+    roar.frequency.linearRampToValueAtTime(120, t + 0.3);
+    roar.frequency.linearRampToValueAtTime(45, t + 1.2);
+    roarF.type = 'lowpass';
+    roarF.frequency.setValueAtTime(300, t);
+    roarF.frequency.linearRampToValueAtTime(600, t + 0.3);
+    roarF.frequency.linearRampToValueAtTime(200, t + 1.2);
+    roarF.Q.value = 2;
+    roarG.gain.setValueAtTime(0.001, t);
+    roarG.gain.linearRampToValueAtTime(0.25, t + 0.15);
+    roarG.gain.setValueAtTime(0.25, t + 0.5);
+    roarG.gain.exponentialRampToValueAtTime(0.001, t + 1.4);
+    roar.connect(roarF).connect(roarG).connect(ctx.destination);
+    roar.start(t); roar.stop(t + 1.5);
 
-    // --- Layer 1: Epic low string drone (D minor, cinematic) ---
-    const createDrone = (freq: number, detune: number, vol: number, type: OscillatorType) => {
-      const osc = ctx.createOscillator();
-      const g = ctx.createGain();
-      const filter = ctx.createBiquadFilter();
-      osc.type = type;
-      osc.frequency.value = freq;
-      osc.detune.value = detune;
-      filter.type = 'lowpass';
-      filter.frequency.value = 400;
-      filter.Q.value = 1;
-      g.gain.value = vol;
-      osc.connect(filter).connect(g).connect(masterGain);
-      osc.start();
-      return { osc, gain: g, filter };
-    };
-
-    const drones = [
-      createDrone(73.4, 0, 0.35, 'sawtooth'),     // D2 - deep bass
-      createDrone(110, 3, 0.25, 'sawtooth'),       // A2 - fifth
-      createDrone(146.8, -2, 0.2, 'triangle'),     // D3 - octave
-      createDrone(174.6, 5, 0.15, 'sine'),         // F3 - minor third
-    ];
-
-    // Slow breathing swell on drones
-    const droneBreathInterval = setInterval(() => {
-      const t = ctx.currentTime;
-      drones.forEach((d, i) => {
-        const phase = (Date.now() / 6000 + i * 0.25) % 1;
-        const baseVol = [0.35, 0.25, 0.2, 0.15][i];
-        const vol = baseVol * (0.6 + 0.4 * Math.sin(phase * Math.PI * 2));
-        d.gain.gain.setTargetAtTime(vol, t, 0.8);
-        // Subtle filter movement
-        const filterFreq = 300 + 200 * Math.sin((Date.now() / 8000 + i * 0.5) % 1 * Math.PI * 2);
-        d.filter.frequency.setTargetAtTime(filterFreq, t, 1.0);
-      });
-    }, 250);
-    intervals.push(droneBreathInterval as unknown as number);
-
-    // --- Layer 2: Slow war drum heartbeat (every ~2.5s) ---
-    const drumInterval = setInterval(() => {
-      const t = ctx.currentTime;
-      // Deep kick
-      const kick = ctx.createOscillator();
-      const kickG = ctx.createGain();
-      kick.type = 'sine';
-      kick.frequency.setValueAtTime(80, t);
-      kick.frequency.exponentialRampToValueAtTime(30, t + 0.3);
-      kickG.gain.setValueAtTime(0.3, t);
-      kickG.gain.exponentialRampToValueAtTime(0.001, t + 0.4);
-      kick.connect(kickG).connect(masterGain);
-      kick.start(t); kick.stop(t + 0.45);
-
-      // Subtle noise hit on top
-      const nLen = Math.floor(ctx.sampleRate * 0.08);
-      const nBuf = ctx.createBuffer(1, nLen, ctx.sampleRate);
-      const nd = nBuf.getChannelData(0);
-      for (let i = 0; i < nLen; i++) nd[i] = (Math.random() * 2 - 1) * 0.5;
-      const ns = ctx.createBufferSource();
-      ns.buffer = nBuf;
-      const nf = ctx.createBiquadFilter();
-      nf.type = 'lowpass'; nf.frequency.value = 200;
-      const ng = ctx.createGain();
-      ng.gain.setValueAtTime(0.15, t);
-      ng.gain.exponentialRampToValueAtTime(0.001, t + 0.15);
-      ns.connect(nf).connect(ng).connect(masterGain);
-      ns.start(t); ns.stop(t + 0.2);
-
-      // Second softer hit (double tap)
-      setTimeout(() => {
-        const t2 = ctx.currentTime;
-        const kick2 = ctx.createOscillator();
-        const kickG2 = ctx.createGain();
-        kick2.type = 'sine';
-        kick2.frequency.setValueAtTime(65, t2);
-        kick2.frequency.exponentialRampToValueAtTime(25, t2 + 0.25);
-        kickG2.gain.setValueAtTime(0.15, t2);
-        kickG2.gain.exponentialRampToValueAtTime(0.001, t2 + 0.3);
-        kick2.connect(kickG2).connect(masterGain);
-        kick2.start(t2); kick2.stop(t2 + 0.35);
-      }, 400);
-    }, 2500);
-    intervals.push(drumInterval as unknown as number);
-
-    // --- Layer 3: Mysterious wind/atmosphere (filtered noise) ---
-    const windBufLen = ctx.sampleRate * 2;
-    const windBuf = ctx.createBuffer(1, windBufLen, ctx.sampleRate);
-    const windData = windBuf.getChannelData(0);
-    for (let i = 0; i < windBufLen; i++) windData[i] = Math.random() * 2 - 1;
-    const windSource = ctx.createBufferSource();
-    windSource.buffer = windBuf;
-    windSource.loop = true;
-    const windFilter = ctx.createBiquadFilter();
-    windFilter.type = 'bandpass';
-    windFilter.frequency.value = 600;
-    windFilter.Q.value = 0.5;
-    const windGain = ctx.createGain();
-    windGain.gain.value = 0.06;
-    windSource.connect(windFilter).connect(windGain).connect(masterGain);
-    windSource.start();
-
-    // Slow wind modulation
-    const windInterval = setInterval(() => {
-      const t = ctx.currentTime;
-      const freq = 400 + 400 * Math.sin(Date.now() / 10000 * Math.PI * 2);
-      windFilter.frequency.setTargetAtTime(freq, t, 2.0);
-      const vol = 0.04 + 0.04 * Math.sin(Date.now() / 7000 * Math.PI * 2);
-      windGain.gain.setTargetAtTime(vol, t, 1.5);
-    }, 500);
-    intervals.push(windInterval as unknown as number);
-
-    // --- Layer 4: Occasional magical shimmer (every 5-8s) ---
-    const shimmerInterval = setInterval(() => {
-      if (Math.random() > 0.6) return; // Only play ~40% of the time
-      const t = ctx.currentTime;
-      const baseFreqs = [523, 659, 784, 988, 1175, 1319]; // C5-E6 magic scale
-      // Quick ascending arpeggio (3-4 notes)
-      const noteCount = 3 + Math.floor(Math.random() * 2);
-      for (let i = 0; i < noteCount; i++) {
-        const osc = ctx.createOscillator();
-        const g = ctx.createGain();
-        osc.type = 'sine';
-        osc.frequency.value = baseFreqs[Math.floor(Math.random() * baseFreqs.length)];
-        const noteTime = t + i * 0.08;
-        g.gain.setValueAtTime(0, noteTime);
-        g.gain.linearRampToValueAtTime(0.12, noteTime + 0.03);
-        g.gain.exponentialRampToValueAtTime(0.001, noteTime + 0.5);
-        osc.connect(g).connect(masterGain);
-        osc.start(noteTime); osc.stop(noteTime + 0.55);
-      }
-    }, 6000 + Math.random() * 2000);
-    intervals.push(shimmerInterval as unknown as number);
-
-    // --- Layer 5: Low horn call (every 12-18s) ---
-    const hornInterval = setInterval(() => {
-      if (Math.random() > 0.5) return;
-      const t = ctx.currentTime;
-      const horn = ctx.createOscillator();
-      const hornG = ctx.createGain();
-      const hornFilter = ctx.createBiquadFilter();
-      horn.type = 'sawtooth';
-      horn.frequency.setValueAtTime(147, t); // D3
-      horn.frequency.linearRampToValueAtTime(175, t + 1.5); // F3
-      horn.frequency.linearRampToValueAtTime(147, t + 3.0); // back to D3
-      hornFilter.type = 'lowpass';
-      hornFilter.frequency.value = 500;
-      hornFilter.Q.value = 2;
-      hornG.gain.setValueAtTime(0, t);
-      hornG.gain.linearRampToValueAtTime(0.1, t + 0.8);
-      hornG.gain.setValueAtTime(0.1, t + 2.0);
-      hornG.gain.exponentialRampToValueAtTime(0.001, t + 3.5);
-      horn.connect(hornFilter).connect(hornG).connect(masterGain);
-      horn.start(t); horn.stop(t + 3.6);
-    }, 14000 + Math.random() * 4000);
-    intervals.push(hornInterval as unknown as number);
-
-    ambientNodesRef.current = {
-      gainNode: masterGain,
-      intervals,
-    };
-  };
-
-  const stopAmbientMusic = () => {
-    if (ambientNodesRef.current) {
-      const { gainNode, intervals } = ambientNodesRef.current;
-      // Fade out
-      const ctx = getAudioCtx();
-      gainNode.gain.setTargetAtTime(0, ctx.currentTime, 0.3);
-      // Clean up after fade
-      setTimeout(() => {
-        gainNode.disconnect();
-      }, 1000);
-      intervals.forEach(id => clearInterval(id));
-      ambientNodesRef.current = null;
+    // Layer 2: Distorted mid growl
+    const growl = ctx.createOscillator();
+    const growlG = ctx.createGain();
+    const growlWS = ctx.createWaveShaper();
+    growl.type = 'square';
+    growl.frequency.setValueAtTime(90, t);
+    growl.frequency.linearRampToValueAtTime(150, t + 0.25);
+    growl.frequency.linearRampToValueAtTime(70, t + 1.0);
+    // Simple distortion curve
+    const curve = new Float32Array(256);
+    for (let i = 0; i < 256; i++) {
+      const x = (i * 2) / 256 - 1;
+      curve[i] = (Math.PI + 3) * x / (Math.PI + 3 * Math.abs(x));
     }
-  };
+    growlWS.curve = curve;
+    growlG.gain.setValueAtTime(0.001, t);
+    growlG.gain.linearRampToValueAtTime(0.12, t + 0.1);
+    growlG.gain.exponentialRampToValueAtTime(0.001, t + 1.2);
+    growl.connect(growlWS).connect(growlG).connect(ctx.destination);
+    growl.start(t); growl.stop(t + 1.3);
 
-  // Manage ambient music lifecycle based on game state
-  useEffect(() => {
-    if (gameState === 'PLAYING') {
-      // Start ambient music when entering PLAYING state (both initial and resume from pause)
-      if (!ambientNodesRef.current) {
-        startAmbientMusic();
-      }
-    } else {
-      stopAmbientMusic();
-    }
-    // Cleanup on unmount
-    return () => stopAmbientMusic();
-  }, [gameState]);
+    // Layer 3: Noisy breath burst
+    const nLen = Math.floor(ctx.sampleRate * 0.8);
+    const nBuf = ctx.createBuffer(1, nLen, ctx.sampleRate);
+    const nd = nBuf.getChannelData(0);
+    for (let i = 0; i < nLen; i++) nd[i] = (Math.random() * 2 - 1);
+    const ns = ctx.createBufferSource();
+    ns.buffer = nBuf;
+    const nf = ctx.createBiquadFilter();
+    nf.type = 'bandpass';
+    nf.frequency.setValueAtTime(400, t);
+    nf.frequency.linearRampToValueAtTime(1200, t + 0.2);
+    nf.frequency.linearRampToValueAtTime(300, t + 0.8);
+    nf.Q.value = 1.5;
+    const ng = ctx.createGain();
+    ng.gain.setValueAtTime(0.001, t);
+    ng.gain.linearRampToValueAtTime(0.15, t + 0.1);
+    ng.gain.exponentialRampToValueAtTime(0.001, t + 0.9);
+    ns.connect(nf).connect(ng).connect(ctx.destination);
+    ns.start(t); ns.stop(t + 1.0);
+
+    // Layer 4: Dramatic low boom impact
+    const boom = ctx.createOscillator();
+    const boomG = ctx.createGain();
+    boom.type = 'sine';
+    boom.frequency.setValueAtTime(80, t);
+    boom.frequency.exponentialRampToValueAtTime(20, t + 0.6);
+    boomG.gain.setValueAtTime(0.3, t);
+    boomG.gain.exponentialRampToValueAtTime(0.001, t + 0.7);
+    boom.connect(boomG).connect(ctx.destination);
+    boom.start(t); boom.stop(t + 0.75);
+  };
 
   // State to track images loaded
   const [imagesReady, setImagesReady] = useState(false);
@@ -1995,7 +1872,6 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
                 const newLives = prev - 1;
                 if (newLives <= 0) {
                   playGameOver(); // Play game over sound
-                  stopAmbientMusic();
                   setGameState('GAMEOVER');
                 }
                 return newLives;
