@@ -2251,6 +2251,35 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
               setBossPreparationActive(true);
               setBossPreparationStartTime(performance.now());
             }
+
+            // Recovery for wave near-completion lock:
+            // if prediction stopped spawns but real score is still below threshold and screen is clear,
+            // resume spawns to avoid getting stuck between waves.
+            if (
+              selectedBattleMode === 'jefe' &&
+              (selectedDifficulty === 'facil' || selectedDifficulty === 'intermedio' || selectedDifficulty === 'dificil') &&
+              bossWaveNearCompletion &&
+              !bossWaveCompleted &&
+              !bossWaitingForCleanScreen &&
+              monstersRef.current.length === 0
+            ) {
+              const difficultySettings = DIFFICULTY_SETTINGS[selectedDifficulty] as any;
+              let waveThreshold = 0;
+
+              if (difficultySettings.waves) {
+                const waveIndex = bossCurrentWave;
+                if (waveIndex < difficultySettings.waves.length) {
+                  waveThreshold = difficultySettings.waves[waveIndex].threshold;
+                }
+              } else if (difficultySettings.waveScoreThreshold) {
+                waveThreshold = difficultySettings.waveScoreThreshold;
+              }
+
+              if (waveThreshold > 0 && score < waveThreshold) {
+                setBossWaveNearCompletion(false);
+                nextSpawnTimeRef.current = Math.min(nextSpawnTimeRef.current, time + 1000);
+              }
+            }
             
             // Fallback conditions for wave completion (facil, intermedio, and dificil)
             if (selectedBattleMode === 'jefe' && (selectedDifficulty === 'facil' || selectedDifficulty === 'intermedio' || selectedDifficulty === 'dificil') && !bossWaveCompleted && !bossWaitingForCleanScreen && bossWaveNearCompletion) {
@@ -2287,7 +2316,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
     }
     requestRef.current = requestAnimationFrame(gameLoop);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [gameState, score, attackPower, bossWaitingForCleanScreen, bossPreparationActive, waveCompletionMessageShown]); 
+  }, [gameState, score, attackPower, bossWaitingForCleanScreen, bossPreparationActive, waveCompletionMessageShown, bossWaveNearCompletion, bossWaveCompleted, selectedBattleMode, selectedDifficulty, bossCurrentWave, lastSpawnTime]); 
 
   useEffect(() => {
     if (gameState === 'PLAYING') requestRef.current = requestAnimationFrame(gameLoop);
