@@ -581,11 +581,15 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
   };
 
   // --- AUDIO HELPERS ---
-  const playTone = (frequency: number, duration: number, type: OscillatorType = 'sine') => {
+  const getAudioCtx = (): AudioContext => {
     if (!audioCtxRef.current) {
       audioCtxRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
     }
-    const ctx = audioCtxRef.current;
+    return audioCtxRef.current;
+  };
+
+  const playTone = (frequency: number, duration: number, type: OscillatorType = 'sine') => {
+    const ctx = getAudioCtx();
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
     osc.type = type;
@@ -597,13 +601,99 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
     osc.stop(ctx.currentTime + duration);
   };
 
+  // --- Improved shoot: laser burst with descending sweep + crackle ---
   const playShoot = () => {
-    playTone(880, 0.08, 'square');
-    setTimeout(() => playTone(1100, 0.05, 'square'), 40);
+    const ctx = getAudioCtx();
+    const t = ctx.currentTime;
+
+    // Layer 1: fast descending sweep (the "pew")
+    const osc1 = ctx.createOscillator();
+    const g1 = ctx.createGain();
+    osc1.type = 'square';
+    osc1.frequency.setValueAtTime(1800, t);
+    osc1.frequency.exponentialRampToValueAtTime(300, t + 0.12);
+    g1.gain.setValueAtTime(0.18, t);
+    g1.gain.exponentialRampToValueAtTime(0.001, t + 0.13);
+    osc1.connect(g1).connect(ctx.destination);
+    osc1.start(t);
+    osc1.stop(t + 0.14);
+
+    // Layer 2: bright harmonic ping
+    const osc2 = ctx.createOscillator();
+    const g2 = ctx.createGain();
+    osc2.type = 'sine';
+    osc2.frequency.setValueAtTime(2400, t);
+    osc2.frequency.exponentialRampToValueAtTime(600, t + 0.08);
+    g2.gain.setValueAtTime(0.10, t);
+    g2.gain.exponentialRampToValueAtTime(0.001, t + 0.09);
+    osc2.connect(g2).connect(ctx.destination);
+    osc2.start(t);
+    osc2.stop(t + 0.10);
+
+    // Layer 3: short noise burst for "crackle" texture
+    const bufferSize = ctx.sampleRate * 0.06;
+    const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+    const data = noiseBuffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) data[i] = (Math.random() * 2 - 1) * 0.5;
+    const noise = ctx.createBufferSource();
+    noise.buffer = noiseBuffer;
+    const ng = ctx.createGain();
+    const nf = ctx.createBiquadFilter();
+    nf.type = 'highpass';
+    nf.frequency.value = 3000;
+    ng.gain.setValueAtTime(0.12, t);
+    ng.gain.exponentialRampToValueAtTime(0.001, t + 0.06);
+    noise.connect(nf).connect(ng).connect(ctx.destination);
+    noise.start(t);
+    noise.stop(t + 0.07);
   };
 
+  // --- Improved hit: punchy impact with sub-bass thud + metallic crunch ---
   const playHit = () => {
-    playTone(320, 0.12, 'sawtooth');
+    const ctx = getAudioCtx();
+    const t = ctx.currentTime;
+
+    // Layer 1: sub-bass thud (body of the impact)
+    const osc1 = ctx.createOscillator();
+    const g1 = ctx.createGain();
+    osc1.type = 'sine';
+    osc1.frequency.setValueAtTime(150, t);
+    osc1.frequency.exponentialRampToValueAtTime(40, t + 0.15);
+    g1.gain.setValueAtTime(0.25, t);
+    g1.gain.exponentialRampToValueAtTime(0.001, t + 0.18);
+    osc1.connect(g1).connect(ctx.destination);
+    osc1.start(t);
+    osc1.stop(t + 0.20);
+
+    // Layer 2: mid-frequency crunch
+    const osc2 = ctx.createOscillator();
+    const g2 = ctx.createGain();
+    osc2.type = 'sawtooth';
+    osc2.frequency.setValueAtTime(400, t);
+    osc2.frequency.exponentialRampToValueAtTime(120, t + 0.10);
+    g2.gain.setValueAtTime(0.13, t);
+    g2.gain.exponentialRampToValueAtTime(0.001, t + 0.12);
+    osc2.connect(g2).connect(ctx.destination);
+    osc2.start(t);
+    osc2.stop(t + 0.14);
+
+    // Layer 3: noise burst for "crunch/shatter" texture
+    const bufferSize = ctx.sampleRate * 0.08;
+    const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+    const data = noiseBuffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) data[i] = (Math.random() * 2 - 1);
+    const noise = ctx.createBufferSource();
+    noise.buffer = noiseBuffer;
+    const ng = ctx.createGain();
+    const nf = ctx.createBiquadFilter();
+    nf.type = 'bandpass';
+    nf.frequency.value = 1500;
+    nf.Q.value = 1.2;
+    ng.gain.setValueAtTime(0.15, t);
+    ng.gain.exponentialRampToValueAtTime(0.001, t + 0.09);
+    noise.connect(nf).connect(ng).connect(ctx.destination);
+    noise.start(t);
+    noise.stop(t + 0.10);
   };
 
   const playSuccess = () => {
