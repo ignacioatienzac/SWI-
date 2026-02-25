@@ -1945,7 +1945,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
     const wizardSize = Math.floor((canvasHeight - groundHeight) * 0.15);
     
     // Draw castle using image
-    const castleX = 10;
+    const castleX = 20;
     const castleBaseY = groundY;
     
     // Draw castle shadow (elliptical, before castle)
