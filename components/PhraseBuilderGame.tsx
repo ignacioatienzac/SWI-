@@ -298,7 +298,8 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack }) => {
       
       try {
         const prefix = selectedPhraseLength === 'short' ? 'frases-cortas-' : 'frases-';
-        const response = await fetch(`/data/${prefix}${selectedLevel.toLowerCase()}.json`);
+        const baseUrl = import.meta.env.BASE_URL || '/';
+        const response = await fetch(`${baseUrl}data/${prefix}${selectedLevel.toLowerCase()}.json`);
         if (response.ok) {
           const data = await response.json();
           // Shuffle phrases for random order
