@@ -336,62 +336,86 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
   useEffect(() => { killsByTypeRef.current = killsByType; }, [killsByType]);
   
   // Draw wizard aura glow on canvas using shadow properties
-  // This replaces the HTML overlay approach for cross-platform reliability
+  // Color progression: Green(0-5) → Blue(6-12) → Orange(13-20) → Purple(21-30) → White(31+)
+  // Aura is visible from the start and grows gradually up to power 31
   const drawWizardAura = (ctx: CanvasRenderingContext2D, img: HTMLImageElement, x: number, y: number, w: number, h: number, power: number) => {
-    if (power <= 0) return;
-    const intensity = Math.min(power / 10, 1);
+    // Aura visible from power 0: base intensity starts at 0.3, grows to 1.0 at power 31
+    const growthFactor = Math.min(power / 31, 1); // 0→1 over 31 levels
+    const baseIntensity = 0.3 + 0.7 * growthFactor; // 0.3→1.0
     
-    // Color progression: blue (low) → cyan (mid) → white+cyan (high)
-    if (power >= 8) {
-      // Maximum power: white core + cyan + blue outer glow
-      // Outer blue
-      ctx.save();
-      ctx.shadowOffsetX = 0;
-      ctx.shadowOffsetY = 0;
-      ctx.shadowColor = `rgba(37, 99, 235, ${0.7 * intensity})`;
-      ctx.shadowBlur = Math.floor(60 * intensity);
-      ctx.drawImage(img, x, y, w, h);
-      ctx.restore();
-      // Mid cyan
-      ctx.save();
-      ctx.shadowOffsetX = 0;
-      ctx.shadowOffsetY = 0;
-      ctx.shadowColor = `rgba(34, 211, 238, ${intensity})`;
-      ctx.shadowBlur = Math.floor(30 * intensity);
-      ctx.drawImage(img, x, y, w, h);
-      ctx.restore();
-      // Inner white-cyan
-      ctx.save();
-      ctx.shadowOffsetX = 0;
-      ctx.shadowOffsetY = 0;
-      ctx.shadowColor = `rgba(200, 255, 255, ${intensity})`;
-      ctx.shadowBlur = Math.floor(12 * intensity);
-      ctx.drawImage(img, x, y, w, h);
-      ctx.restore();
-    } else if (power >= 4) {
-      // Medium power: cyan + blue
-      ctx.save();
-      ctx.shadowOffsetX = 0;
-      ctx.shadowOffsetY = 0;
-      ctx.shadowColor = `rgba(37, 99, 235, ${0.7 * intensity})`;
-      ctx.shadowBlur = Math.floor(40 * intensity);
-      ctx.drawImage(img, x, y, w, h);
-      ctx.restore();
-      // Inner cyan
-      ctx.save();
-      ctx.shadowOffsetX = 0;
-      ctx.shadowOffsetY = 0;
-      ctx.shadowColor = `rgba(34, 211, 238, ${intensity})`;
-      ctx.shadowBlur = Math.floor(10 * intensity);
-      ctx.drawImage(img, x, y, w, h);
-      ctx.restore();
+    // Determine color tier and local progress within tier
+    let outerR: number, outerG: number, outerB: number;
+    let innerR: number, innerG: number, innerB: number;
+    let coreR: number, coreG: number, coreB: number;
+    
+    if (power >= 31) {
+      // White — brilliant white core with soft lavender outer
+      outerR = 200; outerG = 180; outerB = 255; // soft lavender
+      innerR = 230; innerG = 230; innerB = 255; // near-white
+      coreR = 255; coreG = 255; coreB = 255;    // pure white
+    } else if (power >= 21) {
+      // Purple — deep purple outer, violet-pink inner
+      outerR = 128; outerG = 0; outerB = 200;   // deep purple
+      innerR = 180; innerG = 80; innerB = 220;   // violet
+      coreR = 220; coreG = 160; coreB = 255;     // soft violet core
+    } else if (power >= 13) {
+      // Orange — warm orange outer, golden inner
+      outerR = 230; outerG = 120; outerB = 0;    // deep orange
+      innerR = 255; innerG = 170; innerB = 30;   // golden-orange
+      coreR = 255; coreG = 220; coreB = 100;     // warm gold core
+    } else if (power >= 6) {
+      // Blue — royal blue outer, cyan inner
+      outerR = 30; outerG = 80; outerB = 220;    // royal blue
+      innerR = 50; innerG = 160; innerB = 240;   // bright blue
+      coreR = 120; coreG = 210; coreB = 255;     // cyan core
     } else {
-      // Low power: soft blue
+      // Green — emerald green outer, lime inner (0-5)
+      outerR = 30; outerG = 160; outerB = 60;    // forest green
+      innerR = 60; innerG = 200; innerB = 80;    // emerald
+      coreR = 140; coreG = 255; coreB = 140;     // light green core
+    }
+    
+    // Scale blur sizes with growth — visible from start, expanding to max at 31
+    const outerBlur = Math.floor(15 + 50 * growthFactor);  // 15→65
+    const innerBlur = Math.floor(8 + 25 * growthFactor);   // 8→33
+    const coreBlur = Math.floor(4 + 12 * growthFactor);    // 4→16
+    
+    // Outer glow layer — large, soft, atmospheric
+    ctx.save();
+    ctx.shadowOffsetX = 0;
+    ctx.shadowOffsetY = 0;
+    ctx.shadowColor = `rgba(${outerR}, ${outerG}, ${outerB}, ${0.6 * baseIntensity})`;
+    ctx.shadowBlur = outerBlur;
+    ctx.drawImage(img, x, y, w, h);
+    ctx.restore();
+    
+    // Inner glow layer — medium, brighter
+    ctx.save();
+    ctx.shadowOffsetX = 0;
+    ctx.shadowOffsetY = 0;
+    ctx.shadowColor = `rgba(${innerR}, ${innerG}, ${innerB}, ${0.8 * baseIntensity})`;
+    ctx.shadowBlur = innerBlur;
+    ctx.drawImage(img, x, y, w, h);
+    ctx.restore();
+    
+    // Core glow layer — tight, intense
+    ctx.save();
+    ctx.shadowOffsetX = 0;
+    ctx.shadowOffsetY = 0;
+    ctx.shadowColor = `rgba(${coreR}, ${coreG}, ${coreB}, ${baseIntensity})`;
+    ctx.shadowBlur = coreBlur;
+    ctx.drawImage(img, x, y, w, h);
+    ctx.restore();
+    
+    // At higher tiers (13+), add a pulsing overlay for extra drama
+    if (power >= 13) {
+      const pulse = 0.5 + 0.5 * Math.sin(Date.now() / 400);
+      const pulseIntensity = 0.15 * growthFactor * pulse;
       ctx.save();
       ctx.shadowOffsetX = 0;
       ctx.shadowOffsetY = 0;
-      ctx.shadowColor = `rgba(59, 130, 246, ${0.8 * intensity})`;
-      ctx.shadowBlur = Math.floor(20 * intensity);
+      ctx.shadowColor = `rgba(${coreR}, ${coreG}, ${coreB}, ${pulseIntensity})`;
+      ctx.shadowBlur = Math.floor(outerBlur * 1.3);
       ctx.drawImage(img, x, y, w, h);
       ctx.restore();
     }
@@ -517,6 +541,8 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
   const enemyImagesRef = useRef<HTMLImageElement[]>([]);
   const bossImageRef = useRef<HTMLImageElement | null>(null);
   const wizardImageRef = useRef<HTMLImageElement | null>(null);
+  const castleImageRef = useRef<HTMLImageElement | null>(null);
+  const attackImagesRef = useRef<HTMLImageElement[]>([]);
   const imagesLoadedRef = useRef<boolean>(false);
 
   // Send message to Cobi Mago
@@ -920,58 +946,167 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
 
   const startAmbientMusic = () => {
     const ctx = getAudioCtx();
-    // Create a master gain for easy stop
     const masterGain = ctx.createGain();
-    masterGain.gain.value = 0.06; // Very subtle
+    masterGain.gain.value = 0.07;
     masterGain.connect(ctx.destination);
 
     const intervals: number[] = [];
 
-    // Pad layer 1: slow chord drone (C minor)
-    const createPad = (freq: number, detune: number) => {
+    // --- Layer 1: Epic low string drone (D minor, cinematic) ---
+    const createDrone = (freq: number, detune: number, vol: number, type: OscillatorType) => {
       const osc = ctx.createOscillator();
       const g = ctx.createGain();
-      osc.type = 'sine';
+      const filter = ctx.createBiquadFilter();
+      osc.type = type;
       osc.frequency.value = freq;
       osc.detune.value = detune;
-      g.gain.value = 0.4;
-      osc.connect(g).connect(masterGain);
+      filter.type = 'lowpass';
+      filter.frequency.value = 400;
+      filter.Q.value = 1;
+      g.gain.value = vol;
+      osc.connect(filter).connect(g).connect(masterGain);
       osc.start();
-      return { osc, gain: g };
+      return { osc, gain: g, filter };
     };
 
-    const pads = [
-      createPad(131, 0),    // C3
-      createPad(156, 5),    // Eb3 (slightly detuned)
-      createPad(196, -3),   // G3
+    const drones = [
+      createDrone(73.4, 0, 0.35, 'sawtooth'),     // D2 - deep bass
+      createDrone(110, 3, 0.25, 'sawtooth'),       // A2 - fifth
+      createDrone(146.8, -2, 0.2, 'triangle'),     // D3 - octave
+      createDrone(174.6, 5, 0.15, 'sine'),         // F3 - minor third
     ];
 
-    // Slow LFO for pad volume swell (breathing effect)
-    const lfoInterval = setInterval(() => {
+    // Slow breathing swell on drones
+    const droneBreathInterval = setInterval(() => {
       const t = ctx.currentTime;
-      pads.forEach((p, i) => {
-        const phase = (Date.now() / 4000 + i * 0.33) % 1;
-        const vol = 0.25 + 0.15 * Math.sin(phase * Math.PI * 2);
-        p.gain.gain.setTargetAtTime(vol, t, 0.5);
+      drones.forEach((d, i) => {
+        const phase = (Date.now() / 6000 + i * 0.25) % 1;
+        const baseVol = [0.35, 0.25, 0.2, 0.15][i];
+        const vol = baseVol * (0.6 + 0.4 * Math.sin(phase * Math.PI * 2));
+        d.gain.gain.setTargetAtTime(vol, t, 0.8);
+        // Subtle filter movement
+        const filterFreq = 300 + 200 * Math.sin((Date.now() / 8000 + i * 0.5) % 1 * Math.PI * 2);
+        d.filter.frequency.setTargetAtTime(filterFreq, t, 1.0);
       });
-    }, 200);
-    intervals.push(lfoInterval as unknown as number);
+    }, 250);
+    intervals.push(droneBreathInterval as unknown as number);
 
-    // Sparkle layer: random high-pitched pings (every 2-4s)
-    const sparkleInterval = setInterval(() => {
-      const sparkleFreqs = [1047, 1175, 1319, 1568, 1760, 2093]; // C6-C7
-      const freq = sparkleFreqs[Math.floor(Math.random() * sparkleFreqs.length)];
-      const osc = ctx.createOscillator();
-      const g = ctx.createGain();
-      osc.type = 'sine';
-      osc.frequency.value = freq;
+    // --- Layer 2: Slow war drum heartbeat (every ~2.5s) ---
+    const drumInterval = setInterval(() => {
       const t = ctx.currentTime;
-      g.gain.setValueAtTime(0.15, t);
-      g.gain.exponentialRampToValueAtTime(0.001, t + 0.6);
-      osc.connect(g).connect(masterGain);
-      osc.start(t); osc.stop(t + 0.65);
-    }, 2500 + Math.random() * 1500);
-    intervals.push(sparkleInterval as unknown as number);
+      // Deep kick
+      const kick = ctx.createOscillator();
+      const kickG = ctx.createGain();
+      kick.type = 'sine';
+      kick.frequency.setValueAtTime(80, t);
+      kick.frequency.exponentialRampToValueAtTime(30, t + 0.3);
+      kickG.gain.setValueAtTime(0.3, t);
+      kickG.gain.exponentialRampToValueAtTime(0.001, t + 0.4);
+      kick.connect(kickG).connect(masterGain);
+      kick.start(t); kick.stop(t + 0.45);
+
+      // Subtle noise hit on top
+      const nLen = Math.floor(ctx.sampleRate * 0.08);
+      const nBuf = ctx.createBuffer(1, nLen, ctx.sampleRate);
+      const nd = nBuf.getChannelData(0);
+      for (let i = 0; i < nLen; i++) nd[i] = (Math.random() * 2 - 1) * 0.5;
+      const ns = ctx.createBufferSource();
+      ns.buffer = nBuf;
+      const nf = ctx.createBiquadFilter();
+      nf.type = 'lowpass'; nf.frequency.value = 200;
+      const ng = ctx.createGain();
+      ng.gain.setValueAtTime(0.15, t);
+      ng.gain.exponentialRampToValueAtTime(0.001, t + 0.15);
+      ns.connect(nf).connect(ng).connect(masterGain);
+      ns.start(t); ns.stop(t + 0.2);
+
+      // Second softer hit (double tap)
+      setTimeout(() => {
+        const t2 = ctx.currentTime;
+        const kick2 = ctx.createOscillator();
+        const kickG2 = ctx.createGain();
+        kick2.type = 'sine';
+        kick2.frequency.setValueAtTime(65, t2);
+        kick2.frequency.exponentialRampToValueAtTime(25, t2 + 0.25);
+        kickG2.gain.setValueAtTime(0.15, t2);
+        kickG2.gain.exponentialRampToValueAtTime(0.001, t2 + 0.3);
+        kick2.connect(kickG2).connect(masterGain);
+        kick2.start(t2); kick2.stop(t2 + 0.35);
+      }, 400);
+    }, 2500);
+    intervals.push(drumInterval as unknown as number);
+
+    // --- Layer 3: Mysterious wind/atmosphere (filtered noise) ---
+    const windBufLen = ctx.sampleRate * 2;
+    const windBuf = ctx.createBuffer(1, windBufLen, ctx.sampleRate);
+    const windData = windBuf.getChannelData(0);
+    for (let i = 0; i < windBufLen; i++) windData[i] = Math.random() * 2 - 1;
+    const windSource = ctx.createBufferSource();
+    windSource.buffer = windBuf;
+    windSource.loop = true;
+    const windFilter = ctx.createBiquadFilter();
+    windFilter.type = 'bandpass';
+    windFilter.frequency.value = 600;
+    windFilter.Q.value = 0.5;
+    const windGain = ctx.createGain();
+    windGain.gain.value = 0.06;
+    windSource.connect(windFilter).connect(windGain).connect(masterGain);
+    windSource.start();
+
+    // Slow wind modulation
+    const windInterval = setInterval(() => {
+      const t = ctx.currentTime;
+      const freq = 400 + 400 * Math.sin(Date.now() / 10000 * Math.PI * 2);
+      windFilter.frequency.setTargetAtTime(freq, t, 2.0);
+      const vol = 0.04 + 0.04 * Math.sin(Date.now() / 7000 * Math.PI * 2);
+      windGain.gain.setTargetAtTime(vol, t, 1.5);
+    }, 500);
+    intervals.push(windInterval as unknown as number);
+
+    // --- Layer 4: Occasional magical shimmer (every 5-8s) ---
+    const shimmerInterval = setInterval(() => {
+      if (Math.random() > 0.6) return; // Only play ~40% of the time
+      const t = ctx.currentTime;
+      const baseFreqs = [523, 659, 784, 988, 1175, 1319]; // C5-E6 magic scale
+      // Quick ascending arpeggio (3-4 notes)
+      const noteCount = 3 + Math.floor(Math.random() * 2);
+      for (let i = 0; i < noteCount; i++) {
+        const osc = ctx.createOscillator();
+        const g = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.value = baseFreqs[Math.floor(Math.random() * baseFreqs.length)];
+        const noteTime = t + i * 0.08;
+        g.gain.setValueAtTime(0, noteTime);
+        g.gain.linearRampToValueAtTime(0.12, noteTime + 0.03);
+        g.gain.exponentialRampToValueAtTime(0.001, noteTime + 0.5);
+        osc.connect(g).connect(masterGain);
+        osc.start(noteTime); osc.stop(noteTime + 0.55);
+      }
+    }, 6000 + Math.random() * 2000);
+    intervals.push(shimmerInterval as unknown as number);
+
+    // --- Layer 5: Low horn call (every 12-18s) ---
+    const hornInterval = setInterval(() => {
+      if (Math.random() > 0.5) return;
+      const t = ctx.currentTime;
+      const horn = ctx.createOscillator();
+      const hornG = ctx.createGain();
+      const hornFilter = ctx.createBiquadFilter();
+      horn.type = 'sawtooth';
+      horn.frequency.setValueAtTime(147, t); // D3
+      horn.frequency.linearRampToValueAtTime(175, t + 1.5); // F3
+      horn.frequency.linearRampToValueAtTime(147, t + 3.0); // back to D3
+      hornFilter.type = 'lowpass';
+      hornFilter.frequency.value = 500;
+      hornFilter.Q.value = 2;
+      hornG.gain.setValueAtTime(0, t);
+      hornG.gain.linearRampToValueAtTime(0.1, t + 0.8);
+      hornG.gain.setValueAtTime(0.1, t + 2.0);
+      hornG.gain.exponentialRampToValueAtTime(0.001, t + 3.5);
+      horn.connect(hornFilter).connect(hornG).connect(masterGain);
+      horn.start(t); horn.stop(t + 3.6);
+    }, 14000 + Math.random() * 4000);
+    intervals.push(hornInterval as unknown as number);
 
     ambientNodesRef.current = {
       gainNode: masterGain,
@@ -1039,20 +1174,30 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
         enemyPromises.push(loadImage(`${baseUrl}data/images/enemigo_${i}.png`));
       }
       
-      // Load boss and wizard
+      // Load boss, wizard, castle and attack images
       const bossPromise = loadImage(`${baseUrl}data/images/Jefe.png`);
       const wizardPromise = loadImage(`${baseUrl}data/images/Mago.png`);
+      const castlePromise = loadImage(`${baseUrl}data/images/castillo.png`);
+      
+      const attackPromises = [];
+      for (let i = 1; i <= 5; i++) {
+        attackPromises.push(loadImage(`${baseUrl}data/images/ataque_${i}.png`));
+      }
       
       try {
-        const [enemyImages, bossImg, wizardImg] = await Promise.all([
+        const [enemyImages, bossImg, wizardImg, castleImg, attackImages] = await Promise.all([
           Promise.all(enemyPromises),
           bossPromise,
-          wizardPromise
+          wizardPromise,
+          castlePromise,
+          Promise.all(attackPromises)
         ]);
         
         enemyImagesRef.current = enemyImages;
         bossImageRef.current = bossImg;
         wizardImageRef.current = wizardImg;
+        castleImageRef.current = castleImg;
+        attackImagesRef.current = attackImages;
         imagesLoadedRef.current = true;
         setImagesReady(true);
       } catch (error) {
@@ -1915,14 +2060,15 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
     ctx.fillRect(0, groundY, canvasWidth, groundHeight);
 
     // Castle/wizard sizes for visibility
-    const castleFontSize = Math.floor((canvasHeight - groundHeight) * 0.35);
+    const castleSize = Math.floor((canvasHeight - groundHeight) * 0.35);
     const wizardSize = Math.floor((canvasHeight - groundHeight) * 0.15);
     
-    // Draw castle shadow (elliptical, before castle)
+    // Draw castle using image
     const castleX = 10;
-    const castleYOffset = 13; // 🎯 AJUSTA ESTE VALOR para controlar la altura del castillo
     const castleBaseY = groundY;
-    const castleShadowWidth = 50;
+    
+    // Draw castle shadow (elliptical, before castle)
+    const castleShadowWidth = castleSize * 0.7;
     const castleShadowHeight = 12;
     
     ctx.save();
@@ -1930,7 +2076,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
     ctx.filter = 'blur(8px)';
     ctx.beginPath();
     ctx.ellipse(
-      castleX + 30, 
+      castleX + castleSize / 2, 
       castleBaseY - 1, 
       castleShadowWidth, 
       castleShadowHeight, 
@@ -1941,13 +2087,18 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
     ctx.fill();
     ctx.restore();
     
-    // Draw castle (still using emoji)
-    ctx.font = `${castleFontSize}px Arial`;
-    ctx.fillText('🏰', castleX, groundY - castleYOffset);
+    // Draw castle image (bottom-aligned to ground)
+    if (castleImageRef.current && castleImageRef.current.complete) {
+      ctx.drawImage(castleImageRef.current, castleX, castleBaseY - castleSize, castleSize, castleSize);
+    } else {
+      // Fallback to emoji
+      ctx.font = `${castleSize}px Arial`;
+      ctx.fillText('🏰', castleX, groundY - 13);
+    }
     
-    // Calculate wizard position
-    const castleWidth = 60; // Approximate castle emoji width
-    heroRef.current.x = 10 + castleWidth + 10; // 10px padding from castle
+    // Calculate wizard position (same as before, relative to castle)
+    const castleWidth = castleSize;
+    heroRef.current.x = castleX + castleWidth + 10; // 10px padding from castle
     heroRef.current.y = groundY - wizardSize + 4; // Adjust for optimal ground contact
     heroRef.current.width = wizardSize;
     heroRef.current.height = wizardSize;
@@ -2057,11 +2208,23 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
         ctx.textAlign = 'left';
     }
 
-    // Draw projectiles (fire emoji)
+    // Draw projectiles using attack images based on attackPower level
     projectilesRef.current.forEach(p => {
-        ctx.font = `${p.width}px Arial`;
-        // Position emoji properly - y coordinate should be at baseline
-        ctx.fillText(p.emoji, p.x, p.y + p.height * 0.8);
+        const power = attackPowerRef.current;
+        let attackIdx = 0; // ataque_1 (green, 0-5)
+        if (power >= 31) attackIdx = 4;       // ataque_5 (white)
+        else if (power >= 21) attackIdx = 3;  // ataque_4 (purple)
+        else if (power >= 13) attackIdx = 2;  // ataque_3 (orange)
+        else if (power >= 6) attackIdx = 1;   // ataque_2 (blue)
+        
+        const attackImg = attackImagesRef.current[attackIdx];
+        if (attackImg && attackImg.complete) {
+          ctx.drawImage(attackImg, p.x, p.y, p.width, p.height);
+        } else {
+          // Fallback to emoji
+          ctx.font = `${p.width}px Arial`;
+          ctx.fillText(p.emoji, p.x, p.y + p.height * 0.8);
+        }
     });
   };
 
