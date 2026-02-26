@@ -546,6 +546,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
   const fpsFrameCountRef = useRef<number>(0);
   const fpsLastSecondRef = useRef<number>(0);
   const fpsDisplayRef = useRef<number>(0);
+  const deltaTimeRef = useRef<number>(1); // Frame-rate normalization (1.0 = 120fps)
   
   // History ref to avoid repeating same verb+pronoun combinations
   const verbHistoryRef = useRef<string[]>([]);
@@ -1679,12 +1680,13 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
   };
 
   const updateEntities = () => {
-    monstersRef.current.forEach(m => { m.x -= m.speed; });
-    projectilesRef.current.forEach(p => { p.x += p.speed; });
+    const dt = deltaTimeRef.current;
+    monstersRef.current.forEach(m => { m.x -= m.speed * dt; });
+    projectilesRef.current.forEach(p => { p.x += p.speed * dt; });
     
     // Move boss towards player if exists and not defeated
     if (bossRef.current && !bossRef.current.defeated) {
-      bossRef.current.x -= bossRef.current.speed;
+      bossRef.current.x -= bossRef.current.speed * dt;
       
       // Check if boss reached the castle
       if (bossRef.current.x <= 50) {
@@ -1871,8 +1873,8 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
       ctx.arc(cloud.x + cloud.size, cloud.y, cloud.size * 0.5, 0, Math.PI * 2);
       ctx.fill();
       
-      // Update cloud position
-      cloud.x -= cloud.speed;
+      // Update cloud position (frame-rate independent)
+      cloud.x -= cloud.speed * deltaTimeRef.current;
       // Reset cloud when it goes off screen
       if (cloud.x < -cloud.size * 2) {
         cloud.x = canvasWidth + cloud.size;
@@ -2059,6 +2061,11 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
   const gameLoop = useCallback((time: number) => {
     if (gameState !== 'PLAYING') return;
     if (!lastTimeRef.current) lastTimeRef.current = time;
+    
+    // Calculate deltaTime normalized to 120fps (8.33ms per frame)
+    // At 120fps: dt ≈ 1.0 (no change), at 60fps: dt ≈ 2.0 (moves 2x per frame to compensate)
+    const elapsed = time - lastTimeRef.current;
+    deltaTimeRef.current = Math.min(elapsed / (1000 / 120), 3); // Cap at 3x to prevent teleporting
     lastTimeRef.current = time;
     
     // FPS counter update
