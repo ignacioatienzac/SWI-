@@ -1887,7 +1887,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
     const wizardSize = Math.floor((canvasHeight - groundHeight) * 0.15);
     
     // Draw castle using image
-    const castleX = 70;
+    const castleX = 50;
     const castleBaseY = groundY;
     
     // Draw castle shadow (elliptical, before castle)
@@ -1921,7 +1921,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
     
     // Calculate wizard position (same as before, relative to castle)
     const castleWidth = castleSize;
-    heroRef.current.x = castleX + castleWidth + 10; // 10px padding from castle
+    heroRef.current.x = castleX + castleWidth - 20; // Wizard positioned closer to castle
     heroRef.current.y = groundY - wizardSize + 4; // Adjust for optimal ground contact
     heroRef.current.width = wizardSize;
     heroRef.current.height = wizardSize;
