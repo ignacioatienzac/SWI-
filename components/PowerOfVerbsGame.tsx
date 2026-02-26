@@ -2156,14 +2156,27 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
             
             draw(ctx, canvas.width, canvas.height);
             
-            // FPS overlay (temporary debug)
+            // Debug overlay (temporary) - FPS + canvas dimensions + DPR
             ctx.save();
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
-            ctx.fillRect(canvas.width - 80, 5, 75, 24);
+            const dpr = window.devicePixelRatio || 1;
+            const debugLines = [
+              `FPS: ${fpsDisplayRef.current}`,
+              `Canvas: ${canvas.width}x${canvas.height}`,
+              `Client: ${canvas.clientWidth}x${canvas.clientHeight}`,
+              `DPR: ${dpr}`,
+              `dt: ${deltaTimeRef.current.toFixed(2)}`
+            ];
+            const lineHeight = 16;
+            const boxWidth = 180;
+            const boxHeight = debugLines.length * lineHeight + 8;
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+            ctx.fillRect(canvas.width - boxWidth - 5, 5, boxWidth, boxHeight);
             ctx.fillStyle = '#00ff00';
-            ctx.font = 'bold 14px monospace';
+            ctx.font = 'bold 12px monospace';
             ctx.textAlign = 'right';
-            ctx.fillText(`FPS: ${fpsDisplayRef.current}`, canvas.width - 10, 22);
+            debugLines.forEach((line, i) => {
+              ctx.fillText(line, canvas.width - 12, 18 + i * lineHeight);
+            });
             ctx.restore();
         }
     }
