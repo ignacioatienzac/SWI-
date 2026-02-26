@@ -1667,67 +1667,6 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
         lastSpawnTimeRef.current = time;
         return;
       }
-      
-      // Jefe mode (intermedio/dificil) uses CONTRARRELOJ enemy stats with score progression
-      const enemyTypes = CONTRARRELOJ_ENEMIES.map((enemy, index) => ({
-        imageIndex: index,
-        hp: enemy.hp,
-        hpFacil: enemy.hpFacil,
-        hpDificil: enemy.hpDificil,
-        speed: 0.9 - (index * 0.08), // Progressive speed: starts at 0.9, decreases by 0.08 each level
-        emoji: ['👾', '👹', '👻', '👺', '💀', '☠️'][index],
-        points: enemy.reward,
-        color: ['#8b5cf6', '#ec4899', '#3b82f6', '#ef4444', '#f59e0b', '#dc2626'][index],
-        minScore: [0, 0, 100, 250, 400, 600][index]
-      }));
-      
-      // Filter enemies based on difficulty and score progression
-      let availableEnemies = enemyTypes.filter(enemy => {
-        // Enemigo 1 no aparece en difícil
-        if (selectedDifficulty === 'dificil' && enemy.imageIndex === 0) return false;
-        // Enemigo 6 no aparece en fácil
-        if (selectedDifficulty === 'facil' && enemy.imageIndex === 5) return false;
-        // Solo aparecen enemigos para los que el jugador tiene suficiente score
-        return score >= enemy.minScore;
-      });
-      
-      // Ensure at least one enemy is available
-      if (availableEnemies.length === 0) {
-        availableEnemies = [enemyTypes[selectedDifficulty === 'dificil' ? 1 : 0]]; // Start with E2 in difficult, E1 otherwise
-      }
-      
-      // Select random enemy from available ones
-      const type = availableEnemies[Math.floor(Math.random() * availableEnemies.length)];
-      
-      // Select appropriate HP based on difficulty
-      let enemyHp = type.hp;
-      if (selectedDifficulty === 'facil' && type.hpFacil) {
-        enemyHp = type.hpFacil;
-      } else if (selectedDifficulty === 'dificil' && type.hpDificil) {
-        enemyHp = type.hpDificil;
-      }
-      
-      // In boss mode, adjust enemy HP based on difficulty
-      const hpMultiplier = selectedBattleMode === 'jefe' ? 1.5 : 1;
-      
-      // Monster size should be 15% of game area height
-      const monsterSize = Math.floor((canvasHeight - 40) * 0.15);
-      
-      monstersRef.current.push({
-        id: Date.now(),
-        x: canvasWidth + 50,
-        y: groundLevel - monsterSize,
-        width: monsterSize,
-        height: monsterSize,
-        hp: Math.ceil(enemyHp * hpMultiplier),
-        maxHp: Math.ceil(enemyHp * hpMultiplier),
-        speed: type.speed * settings.enemySpeedMultiplier,
-        emoji: type.emoji,
-        imageIndex: type.imageIndex,
-        color: type.color,
-        points: type.points
-      });
-      playEnemySpawn();
     }
   };
 
@@ -1945,7 +1884,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
     const wizardSize = Math.floor((canvasHeight - groundHeight) * 0.15);
     
     // Draw castle using image
-    const castleX = 40;
+    const castleX = 70;
     const castleBaseY = groundY;
     
     // Draw castle shadow (elliptical, before castle)
@@ -2660,7 +2599,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
                       }`}
                     >
                       <div 
-                        className="bg-gradient-to-r from-orange-500 to-red-600 h-full transition-all duration-75 ease-linear flex items-center justify-center rounded-full"
+                        className="bg-gradient-to-r from-orange-500 to-red-600 h-full flex items-center justify-center rounded-full"
                         style={{ width: `${bossPreparationProgress}%` }}
                       >
                         <span className="text-white font-black text-sm drop-shadow-lg">
@@ -2670,7 +2609,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
                       
                       {/* Icon - moves with progress */}
                       <div 
-                        className="absolute top-1/2 -translate-y-1/2 transition-all duration-75 ease-linear"
+                        className="absolute top-1/2 -translate-y-1/2"
                         style={{ 
                           left: `${bossPreparationProgress}%`,
                           transform: 'translate(-50%, -50%)'
