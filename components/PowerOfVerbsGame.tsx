@@ -1579,7 +1579,6 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
           color: '#8b5cf6',
           points: enemyPoints
         });
-        playEnemySpawn();
         return;
       }
       
@@ -1670,7 +1669,6 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
           color: ['#8b5cf6', '#ec4899', '#3b82f6', '#ef4444', '#f59e0b', '#dc2626'][enemy.id - 1],
           points: enemy.reward
         });
-        playEnemySpawn();
         
         // Track spawn time for fallback logic
         lastSpawnTimeRef.current = time;
@@ -1894,7 +1892,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
     const wizardSize = Math.floor((canvasHeight - groundHeight) * 0.15);
     
     // Draw castle using image
-    const castleX = 50;
+    const castleX = 70;
     const castleBaseY = groundY;
     
     // Draw castle shadow (elliptical, before castle)
@@ -1928,7 +1926,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
     
     // Calculate wizard position (same as before, relative to castle)
     const castleWidth = castleSize;
-    heroRef.current.x = castleX + castleWidth - 20; // Wizard positioned closer to castle
+    heroRef.current.x = castleX + castleWidth - 60; // Wizard position relative to castle
     heroRef.current.y = groundY - wizardSize + 4; // Adjust for optimal ground contact
     heroRef.current.width = wizardSize;
     heroRef.current.height = wizardSize;
@@ -2155,29 +2153,6 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
             }
             
             draw(ctx, canvas.width, canvas.height);
-            
-            // Debug overlay (temporary) - FPS + canvas dimensions + DPR
-            ctx.save();
-            const dpr = window.devicePixelRatio || 1;
-            const debugLines = [
-              `FPS: ${fpsDisplayRef.current}`,
-              `Canvas: ${canvas.width}x${canvas.height}`,
-              `Client: ${canvas.clientWidth}x${canvas.clientHeight}`,
-              `DPR: ${dpr}`,
-              `dt: ${deltaTimeRef.current.toFixed(2)}`
-            ];
-            const lineHeight = 16;
-            const boxWidth = 180;
-            const boxHeight = debugLines.length * lineHeight + 8;
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
-            ctx.fillRect(canvas.width - boxWidth - 5, 5, boxWidth, boxHeight);
-            ctx.fillStyle = '#00ff00';
-            ctx.font = 'bold 12px monospace';
-            ctx.textAlign = 'right';
-            debugLines.forEach((line, i) => {
-              ctx.fillText(line, canvas.width - 12, 18 + i * lineHeight);
-            });
-            ctx.restore();
         }
     }
     requestRef.current = requestAnimationFrame(gameLoop);
