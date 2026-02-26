@@ -917,44 +917,6 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
     osc3.start(t + 0.10); osc3.stop(t + 0.27);
   };
 
-  // --- Enemy spawn: distant rumble/growl ---
-  const lastSpawnSoundRef = useRef<number>(0);
-  const playEnemySpawn = () => {
-    // Throttle so we don't play on every single spawn (max once per 3s)
-    const now = performance.now();
-    if (now - lastSpawnSoundRef.current < 3000) return;
-    lastSpawnSoundRef.current = now;
-
-    const ctx = getAudioCtx();
-    const t = ctx.currentTime;
-    // Low ominous hum
-    const osc = ctx.createOscillator();
-    const g = ctx.createGain();
-    osc.type = 'sawtooth';
-    osc.frequency.setValueAtTime(80, t);
-    osc.frequency.linearRampToValueAtTime(60, t + 0.30);
-    g.gain.setValueAtTime(0.001, t);
-    g.gain.linearRampToValueAtTime(0.10, t + 0.08);
-    g.gain.exponentialRampToValueAtTime(0.001, t + 0.35);
-    osc.connect(g).connect(ctx.destination);
-    osc.start(t); osc.stop(t + 0.38);
-    // Filtered noise hiss
-    const bufLen = ctx.sampleRate * 0.20;
-    const nBuf = ctx.createBuffer(1, bufLen, ctx.sampleRate);
-    const nd = nBuf.getChannelData(0);
-    for (let i = 0; i < bufLen; i++) nd[i] = (Math.random() * 2 - 1);
-    const ns = ctx.createBufferSource();
-    ns.buffer = nBuf;
-    const ng = ctx.createGain();
-    const nf = ctx.createBiquadFilter();
-    nf.type = 'lowpass'; nf.frequency.value = 400;
-    ng.gain.setValueAtTime(0.001, t);
-    ng.gain.linearRampToValueAtTime(0.06, t + 0.05);
-    ng.gain.exponentialRampToValueAtTime(0.001, t + 0.25);
-    ns.connect(nf).connect(ng).connect(ctx.destination);
-    ns.start(t); ns.stop(t + 0.28);
-  };
-
   // --- Boss spawn: epic dragon roar ---
   const playBossSpawn = () => {
     const ctx = getAudioCtx();
