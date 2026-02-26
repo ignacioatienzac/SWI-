@@ -45,15 +45,33 @@ export function getRandomWordForDate(words: VocabWord[], dateStr: string, minLen
     return null;
   }
 
-  // Create deterministic random based on date
-  const seed = dateStr.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  // Deduplicate by normalized form to avoid selecting the same word text repeatedly
+  // when source data contains duplicates with different hints/variants.
+  const seen = new Set<string>();
+  const uniqueSuitableWords = suitableWords.filter(word => {
+    const key = normalizeWord(word.palabra);
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+
+  if (uniqueSuitableWords.length === 0) {
+    return null;
+  }
+
+  // Create deterministic hash based on date string.
+  // Stronger than char-code sum to reduce collisions between nearby dates.
+  let seed = 0;
+  for (let i = 0; i < dateStr.length; i++) {
+    seed = (seed * 31 + dateStr.charCodeAt(i)) >>> 0;
+  }
   
   // Try multiple candidates to find one with good letters
   // Words with common vowels (a, e, o) and consonants (s, r, n, l, t) are better
   const goodLetters = new Set(['a', 'e', 'i', 'o', 'u', 's', 'r', 'n', 'l', 't', 'c', 'd', 'm', 'p']);
   
   // Score words by how many good letters they have
-  const scoredWords = suitableWords.map(word => {
+  const scoredWords = uniqueSuitableWords.map(word => {
     const normalized = normalizeWord(word.palabra).toLowerCase();
     let score = 0;
     const uniqueLetters = new Set(normalized);
