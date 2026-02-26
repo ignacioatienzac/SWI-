@@ -542,6 +542,11 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
   const pointsStreakRef = useRef<number>(0);
   const nextSpawnTimeRef = useRef<number>(0);
   
+  // FPS counter refs (temporary debug)
+  const fpsFrameCountRef = useRef<number>(0);
+  const fpsLastSecondRef = useRef<number>(0);
+  const fpsDisplayRef = useRef<number>(0);
+  
   // History ref to avoid repeating same verb+pronoun combinations
   const verbHistoryRef = useRef<string[]>([]);
   
@@ -2055,6 +2060,14 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
     if (gameState !== 'PLAYING') return;
     if (!lastTimeRef.current) lastTimeRef.current = time;
     lastTimeRef.current = time;
+    
+    // FPS counter update
+    fpsFrameCountRef.current++;
+    if (time - fpsLastSecondRef.current >= 1000) {
+      fpsDisplayRef.current = fpsFrameCountRef.current;
+      fpsFrameCountRef.current = 0;
+      fpsLastSecondRef.current = time;
+    }
 
     const canvas = canvasRef.current;
     if (canvas) {
@@ -2135,6 +2148,16 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
             }
             
             draw(ctx, canvas.width, canvas.height);
+            
+            // FPS overlay (temporary debug)
+            ctx.save();
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
+            ctx.fillRect(canvas.width - 80, 5, 75, 24);
+            ctx.fillStyle = '#00ff00';
+            ctx.font = 'bold 14px monospace';
+            ctx.textAlign = 'right';
+            ctx.fillText(`FPS: ${fpsDisplayRef.current}`, canvas.width - 10, 22);
+            ctx.restore();
         }
     }
     requestRef.current = requestAnimationFrame(gameLoop);
