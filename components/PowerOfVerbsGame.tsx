@@ -1863,7 +1863,10 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
     
     ctx.save();
     ctx.fillStyle = 'rgba(0, 0, 0, 0.25)';
-    ctx.filter = 'blur(8px)';
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.4)';
+    ctx.shadowBlur = 16;
+    ctx.shadowOffsetX = 0;
+    ctx.shadowOffsetY = 0;
     ctx.beginPath();
     ctx.ellipse(
       castleX + castleSize / 2, 
@@ -1879,7 +1882,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
     
     // Draw castle image (bottom-aligned to ground)
     if (castleImageRef.current && castleImageRef.current.complete) {
-      ctx.drawImage(castleImageRef.current, castleX, castleBaseY - castleSize, castleSize, castleSize);
+      ctx.drawImage(castleImageRef.current, castleX, castleBaseY - castleSize + 5, castleSize, castleSize);
     } else {
       // Fallback to emoji
       ctx.font = `${castleSize}px Arial`;
@@ -1899,7 +1902,10 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
     
     ctx.save();
     ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
-    ctx.filter = 'blur(6px)';
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+    ctx.shadowBlur = 12;
+    ctx.shadowOffsetX = 0;
+    ctx.shadowOffsetY = 0;
     ctx.beginPath();
     ctx.ellipse(
       heroRef.current.x + wizardSize / 2, 
