@@ -4,7 +4,9 @@ import { Send } from 'lucide-react';
 import { hablarConPanda } from '../services/geminiService';
 import {
   loadVerbData,
-  getFilteredVerbs,
+  getFilteredVerbsSRS,
+  recordVerbCorrect,
+  recordVerbIncorrect,
   generateChallenge,
   validateAnswer,
   calculateScore,
@@ -93,20 +95,21 @@ const seleccionarMensajeSenseiRandom = (tipo: 'juego' | 'victoria' | 'fallo' | '
   return mensajes[indice];
 };
 
-type GameState = 'LEVEL_SELECT' | 'PLAYING' | 'PAUSED' | 'GAMEOVER' | 'LEVEL_TRANSITION';
+type GameState = 'LEVEL_SELECT' | 'PLAYING' | 'PAUSED' | 'GAMEOVER' | 'LEVEL_TRANSITION' | 'VICTORY';
 
-// Level progression configuration (10 levels)
+// Level progression configuration (11 levels, level 11 is victory)
 const LEVEL_SETTINGS = [
   { level: 1, fallDuration: 60.0, pointsRequired: 0 },      // Starting level - Very slow
-  { level: 2, fallDuration: 55.0, pointsRequired: 100 },   // +100 = 100 total
-  { level: 3, fallDuration: 50.0, pointsRequired: 300 },   // +200 = 300 total
-  { level: 4, fallDuration: 45.0, pointsRequired: 600 },   // +300 = 600 total
-  { level: 5, fallDuration: 40.0, pointsRequired: 1000 },  // +400 = 1000 total
-  { level: 6, fallDuration: 37.5, pointsRequired: 1500 },  // +500 = 1500 total
-  { level: 7, fallDuration: 35.0, pointsRequired: 2100 },  // +600 = 2100 total
-  { level: 8, fallDuration: 30.0, pointsRequired: 2800 },  // +700 = 2800 total
-  { level: 9, fallDuration: 25.0, pointsRequired: 3600 },  // +800 = 3600 total
-  { level: 10, fallDuration: 20.0, pointsRequired: 4500 }   // +900 = 4500 total (max level)
+  { level: 2, fallDuration: 57.5, pointsRequired: 100 },   // +100 = 100 total
+  { level: 3, fallDuration: 55.0, pointsRequired: 300 },   // +200 = 300 total
+  { level: 4, fallDuration: 50.0, pointsRequired: 600 },   // +300 = 600 total
+  { level: 5, fallDuration: 47.5, pointsRequired: 1000 },  // +400 = 1000 total
+  { level: 6, fallDuration: 42.5, pointsRequired: 1500 },  // +500 = 1500 total
+  { level: 7, fallDuration: 40.0, pointsRequired: 2100 },  // +600 = 2100 total
+  { level: 8, fallDuration: 37.5, pointsRequired: 2800 },  // +700 = 2800 total
+  { level: 9, fallDuration: 35.0, pointsRequired: 3600 },  // +800 = 3600 total
+  { level: 10, fallDuration: 30.0, pointsRequired: 4500 }, // +900 = 4500 total
+  { level: 11, fallDuration: 30.0, pointsRequired: 6000 }  // +1500 = 6000 total (VICTORY)
 ];
 
 // Background colors for each level
@@ -120,10 +123,11 @@ const LEVEL_COLORS = [
   '#F8BBD0', // Level 7 - Pink
   '#D1C4E9', // Level 8 - Deep Purple
   '#FFAB91', // Level 9 - Deep Orange
-  '#CFD8DC'  // Level 10 - Blue Grey
+  '#CFD8DC', // Level 10 - Blue Grey
+  '#C5E1A5'  // Level 11 - Light Green (Victory)
 ];
 
-const MAX_LEVEL = 10;
+const MAX_LEVEL = 10; // Max playable level (level 11 triggers victory)
 
 interface Bubble {
   id: string;
@@ -261,6 +265,20 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack }) => {
   const lastSpawnRef = useRef<number>(0);
   const audioCtxRef = useRef<AudioContext | null>(null);
   
+  // SRS: Helper to find original VerbData from pool by challenge
+  const findVerbFromChallenge = useRef((_challenge: BubbleChallenge): VerbData | null => {
+    return null; // Will be updated when verbPool changes
+  });
+  
+  // Update the lookup function when verbPool changes
+  useEffect(() => {
+    findVerbFromChallenge.current = (challenge: BubbleChallenge): VerbData | null => {
+      return verbPool.find(v => 
+        v.verb === challenge.verb && v.pronoun === challenge.pronoun
+      ) || null;
+    };
+  }, [verbPool]);
+  
   const canvasWidth = 800;
   const canvasHeight = 600;
   const groundY = canvasHeight - 50;
@@ -349,7 +367,8 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack }) => {
   const handleStartGame = async () => {
     if (!selectedVerbType || !selectedGameMode) return;
     
-    const verbs = await getFilteredVerbs(selectedLevel, selectedVerbType, selectedTense, selectedVerbMode);
+    // Use SRS-based pool for intelligent conjugation selection
+    const verbs = await getFilteredVerbsSRS(selectedLevel, selectedVerbType, selectedTense, selectedVerbMode);
     if (verbs.length === 0) {
       alert('No hay verbos disponibles para esta configuración');
       return;
@@ -692,6 +711,12 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack }) => {
           bubble.isSplatting = true;
           bubble.splatStartTime = currentTime;
           
+          // SRS: Record missed bubble as incorrect answer
+          const missedVerb = findVerbFromChallenge.current(bubble.challenge);
+          if (missedVerb) {
+            recordVerbIncorrect(missedVerb, 30000); // 30s = maximum penalty time
+          }
+          
           // Play ground hit error sound
           playGroundHit();
           
@@ -1027,6 +1052,15 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack }) => {
         }
       }
       
+      // Check for victory at 6000 points
+      if (score >= 6000 && gameState === 'PLAYING') {
+        setGameState('VICTORY');
+        if (animationFrameRef.current) {
+          cancelAnimationFrame(animationFrameRef.current);
+        }
+        return;
+      }
+      
       if (newLevel !== gameLevel && newLevel <= MAX_LEVEL) {
         // Trigger level transition
         startLevelTransition(newLevel);
@@ -1053,6 +1087,16 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack }) => {
     bubblesRef.current.forEach(bubble => {
       if (!matched && !bubble.isPopping && validateAnswer(bubble.challenge, userInput)) {
         matched = true;
+        
+        // SRS: Calculate response time (from bubble birth to pop)
+        const responseTime = performance.now() - bubble.birthTime;
+        
+        // SRS: Find original verb data from pool and record correct answer
+        const originalVerb = findVerbFromChallenge.current(bubble.challenge);
+        if (originalVerb) {
+          recordVerbCorrect(originalVerb, responseTime);
+        }
+        
         // Mark bubble for popping animation instead of removing immediately
         bubble.isPopping = true;
         bubble.popStartTime = performance.now();
@@ -1952,6 +1996,256 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack }) => {
                   onClick={sendMessageToCobi}
                   disabled={isLoadingResponse || !chatInput.trim()}
                   className="w-10 h-10 bg-gradient-to-br from-red-800 to-red-600 rounded-full flex items-center justify-center hover:shadow-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <Send size={18} className="text-white" />
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // --- VICTORY STATE ---
+  // Cambiar avatar y mensaje al estado de victoria
+  if (gameState === 'VICTORY' && cobiSenseiAvatar !== './data/images/cobi-sensei-acierto.webp') {
+    setCobiSenseiAvatar('./data/images/cobi-sensei-acierto.webp');
+    setCobiSenseiMessage(seleccionarMensajeSenseiRandom('victoria'));
+  }
+  
+  if (gameState === 'VICTORY') {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-yellow-50 via-green-50 to-blue-50 p-4 flex items-center justify-center relative overflow-hidden">
+        {/* Confetti Animation */}
+        <style>{`
+          @keyframes confettiFall {
+            0% {
+              transform: translateY(-100vh) rotate(0deg);
+              opacity: 1;
+            }
+            100% {
+              transform: translateY(100vh) rotate(720deg);
+              opacity: 0;
+            }
+          }
+          @keyframes victoryBounce {
+            0% {
+              transform: scale(0);
+              opacity: 0;
+            }
+            50% {
+              transform: scale(1.1);
+              opacity: 1;
+            }
+            65% {
+              transform: scale(0.95);
+            }
+            80% {
+              transform: scale(1.05);
+            }
+            90% {
+              transform: scale(0.98);
+            }
+            100% {
+              transform: scale(1);
+            }
+          }
+          @keyframes victoryPulse {
+            0%, 100% {
+              transform: scale(1);
+            }
+            50% {
+              transform: scale(1.05);
+            }
+          }
+          .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            animation: confettiFall linear infinite;
+            pointer-events: none;
+          }
+          .victory-card {
+            animation: victoryBounce 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+          }
+          .victory-card-pulse {
+            animation: victoryPulse 0.5s ease-in-out 0.6s 4;
+          }
+        `}</style>
+        
+        {/* Generate 50 confetti pieces */}
+        {Array.from({ length: 50 }).map((_, i) => {
+          const colors = ['#FFD700', '#FFA500', '#FF6347', '#32CD32', '#4169E1', '#FF69B4', '#9370DB'];
+          const left = Math.random() * 100;
+          const animationDelay = Math.random() * 3;
+          const animationDuration = 3 + Math.random() * 2;
+          const backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+          
+          return (
+            <div
+              key={i}
+              className="confetti"
+              style={{
+                left: `${left}%`,
+                backgroundColor,
+                animationDelay: `${animationDelay}s`,
+                animationDuration: `${animationDuration}s`,
+              }}
+            />
+          );
+        })}
+        
+        <div className="bg-white rounded-3xl p-8 max-w-md text-center shadow-2xl border-4 border-yellow-400 victory-card victory-card-pulse relative z-10">
+          <p className="text-7xl mb-4">🏆</p>
+          <h1 className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-600 to-green-600 mb-2">
+            ¡Victoria!
+          </h1>
+          <p className="text-lg text-gray-600 mb-2">Has completado el juego</p>
+          <p className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-green-600 to-blue-600 mb-4">
+            {score}
+          </p>
+          <p className="text-gray-600 mb-6">¡Has alcanzado los 6000 puntos!</p>
+          <div className="space-y-3">
+            <button
+              onClick={handleStartGame}
+              className="w-full bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white font-bold py-3 rounded-lg"
+            >
+              Jugar de Nuevo
+            </button>
+            <button
+              onClick={() => {
+                setGameState('LEVEL_SELECT');
+                setCobiSenseiAvatar('./data/images/cobi-sensei.webp');
+                setCobiSenseiMessage(seleccionarMensajeSenseiRandom('juego'));
+              }}
+              className="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-3 rounded-lg"
+            >
+              Cambiar Configuración
+            </button>
+          </div>
+        </div>
+
+        {/* Cobi Sensei Victoria (solo desktop) */}
+        <div className="hidden lg:block fixed bottom-0 right-0 z-50 pointer-events-none overflow-visible">
+          <div className="relative animate-float">
+            {/* Bocadillo de diálogo */}
+            {cobiSenseiMessage && (
+              <div style={{ position: 'absolute', left: '-200px', bottom: '80px', zIndex: 5, maxWidth: '220px' }} className="bg-white/95 backdrop-blur-sm rounded-2xl px-4 py-2 shadow-lg border-2 border-yellow-300 pointer-events-auto">
+                <p className="text-gray-700 font-semibold text-sm text-center leading-snug">
+                  {cobiSenseiMessage}
+                </p>
+                <div className="absolute top-1/2 -translate-y-1/2 -right-3 w-4 h-4 bg-white border-r-2 border-b-2 border-yellow-300 transform rotate-[315deg]"></div>
+              </div>
+            )}
+            
+            {/* Imagen de Cobi Sensei Victoria */}
+            <div className="relative -mb-16 -mr-8" style={{ zIndex: 10 }}>
+              <img 
+                src="./data/images/cobi-sensei-acierto.webp"
+                alt="Cobi Sensei Victorioso" 
+                className="w-56 h-auto object-contain transition-opacity duration-300"
+                style={{
+                  filter: 'drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15)) drop-shadow(0 0 20px rgba(255, 215, 0, 0.3))'
+                }}
+              />
+            </div>
+            
+            {/* Botón CHARLAR */}
+            <div className="chat-button-wrapper">
+              <div
+                onClick={() => setShowChatWindow(!showChatWindow)}
+                className="cobi-chat-button-zen pointer-events-auto"
+              >
+                <svg viewBox="0 0 100 100" className="curved-text-svg">
+                  <path id="chatTextPathVictory" d="M 20,50 A 30,30 0 1,1 80,50" fill="none" />
+                  <text>
+                    <textPath href="#chatTextPathVictory" startOffset="50%" textAnchor="middle" className="curved-text-style-zen">
+                      CHARLAR
+                    </textPath>
+                  </text>
+                </svg>
+                <div className="paws-icon">🥋</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Chat Window de VICTORY */}
+        {showChatWindow && gameState === 'VICTORY' && (
+          <div className="fixed bottom-24 right-6 lg:bottom-48 lg:right-6 z-50 w-80 max-w-[calc(100vw-3rem)] bg-white rounded-3xl shadow-2xl border-2 border-yellow-300 overflow-hidden animate-fade-in">
+            {/* Header */}
+            <div className="bg-gradient-to-r from-yellow-600 to-green-600 p-4 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="text-2xl">🥋</span>
+                <div>
+                  <h3 className="text-white font-bold text-sm">Cobi Sensei</h3>
+                  <p className="text-xs text-yellow-50">¡Maestro Victorioso!</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowChatWindow(false)}
+                className="p-1 hover:bg-white/20 rounded-full transition"
+              >
+                <ChevronLeft size={20} className="text-white" />
+              </button>
+            </div>
+
+            {/* Chat History */}
+            <div className="h-64 overflow-y-auto p-4 space-y-3 bg-gradient-to-b from-yellow-50/30 to-white">
+              {chatHistory.length === 0 ? (
+                <div className="text-center text-gray-500 text-sm mt-8">
+                  <p className="mb-2">🏆</p>
+                  <p>¡Felicitaciones! Has demostrado ser un verdadero maestro.</p>
+                  <p className="text-xs mt-2">¿Quieres saber más técnicas avanzadas?</p>
+                </div>
+              ) : (
+                chatHistory.map((msg, idx) => (
+                  <div
+                    key={idx}
+                    className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                  >
+                    <div
+                      className={`max-w-[80%] rounded-2xl px-4 py-2 ${
+                        msg.role === 'user'
+                          ? 'bg-gradient-to-br from-blue-500 to-blue-600 text-white'
+                          : 'bg-white border-2 border-yellow-300 text-gray-700'
+                      }`}
+                    >
+                      <p className="text-sm whitespace-pre-wrap">{msg.text}</p>
+                    </div>
+                  </div>
+                ))
+              )}
+              
+              {/* Loading state */}
+              {isLoadingResponse && (
+                <div className="flex justify-start">
+                  <div className="bg-white border-2 border-yellow-300 rounded-2xl px-4 py-3">
+                    <p className="text-sm text-gray-600">
+                      El Sensei medita tu pregunta... 🎋
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Input Area */}
+            <div className="p-3 bg-white border-t-2 border-gray-100">
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={chatInput}
+                  onChange={(e) => setChatInput(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && sendMessageToCobi()}
+                  placeholder="Escribe tu pregunta..."
+                  disabled={isLoadingResponse}
+                  className="flex-1 px-4 py-2 border-2 border-gray-200 rounded-full focus:outline-none focus:border-yellow-400 transition text-sm disabled:bg-gray-100"
+                />
+                <button
+                  onClick={sendMessageToCobi}
+                  disabled={isLoadingResponse || !chatInput.trim()}
+                  className="w-10 h-10 bg-gradient-to-br from-yellow-600 to-green-600 rounded-full flex items-center justify-center hover:shadow-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <Send size={18} className="text-white" />
                 </button>

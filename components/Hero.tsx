@@ -15,15 +15,14 @@ const Hero: React.FC<HeroProps> = ({ onStart }) => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-32 relative z-10">
         <div className="text-center max-w-3xl mx-auto">
           <h1 className="text-5xl md:text-7xl font-extrabold text-deep-blue mb-8 tracking-tight leading-tight">
-            Domina el español <br />
+            ¡Aprende español <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-spanish-red to-orange-600">
-              con confianza
+              divirtiéndote!
             </span>
           </h1>
           
           <p className="text-xl md:text-2xl text-gray-600 mb-10 leading-relaxed">
-            Una plataforma moderna creada por Ignacio para llevar tu español al siguiente nivel. 
-            Gramática clara, recursos útiles y juegos interactivos.
+            Elige uno de nuestros juegos y completa desafíos junto a Cobi, tu compañero en tu aventura para aprender español
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">

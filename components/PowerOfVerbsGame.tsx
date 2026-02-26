@@ -334,6 +334,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
   useEffect(() => { killCountRef.current = killCount; }, [killCount]);
   useEffect(() => { attackPowerRef.current = attackPower; }, [attackPower]);
   useEffect(() => { killsByTypeRef.current = killsByType; }, [killsByType]);
+  useEffect(() => { pointsStreakRef.current = pointsStreak; }, [pointsStreak]);
   
   // Draw wizard aura glow on canvas using shadow properties
   // Color progression: Green(0-5) → Blue(6-12) → Orange(13-20) → Purple(21-30) → White(31+)
@@ -538,6 +539,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
   const killCountRef = useRef<number>(0);
   const attackPowerRef = useRef<number>(1);
   const killsByTypeRef = useRef<{ [key: number]: number }>({});
+  const pointsStreakRef = useRef<number>(0);
   const nextSpawnTimeRef = useRef<number>(0);
   
   // History ref to avoid repeating same verb+pronoun combinations
@@ -1155,6 +1157,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
     nextSpawnTimeRef.current = performance.now() + 1000; // First spawn after 1s
     killCountRef.current = 0;
     attackPowerRef.current = 1;
+    pointsStreakRef.current = 0;
     
     // Initialize damage system for Contrarreloj
     if (selectedBattleMode === 'contrarreloj') {
@@ -1388,7 +1391,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
       // Spawn rate adjusted for contrarreloj with progressive system
       if (selectedDifficulty === 'facil') {
         // Progressive spawn rate based on total kills
-        const totalKills = killCount;
+        const totalKills = killCountRef.current;
         if (totalKills <= 10) {
           baseSpawnRate = 3800; // Inicio muy tranquilo
         } else if (totalKills <= 25) {
@@ -1398,7 +1401,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
         }
       } else if (selectedDifficulty === 'intermedio') {
         // Progressive spawn rate based on total kills
-        const totalKills = killCount;
+        const totalKills = killCountRef.current;
         if (totalKills <= 10) {
           baseSpawnRate = 3500; // Inicio tranquilo
         } else if (totalKills <= 25) {
@@ -1408,7 +1411,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
         }
       } else {
         // Difícil: Progressive spawn rate
-        const totalKills = killCount;
+        const totalKills = killCountRef.current;
         if (totalKills <= 10) {
           baseSpawnRate = 3300; // Inicio controlado
         } else if (totalKills <= 25) {
@@ -1420,7 +1423,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
     } else if (selectedBattleMode === 'jefe' && (selectedDifficulty === 'facil' || selectedDifficulty === 'intermedio' || selectedDifficulty === 'dificil')) {
       // Boss mode with wave system: use kill-based spawn rate (same as contrarreloj)
       if (selectedDifficulty === 'facil') {
-        const totalKills = killCount;
+        const totalKills = killCountRef.current;
         if (totalKills <= 10) {
           baseSpawnRate = 3800; // Inicio muy tranquilo
         } else if (totalKills <= 25) {
@@ -1429,7 +1432,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
           baseSpawnRate = 2500; // Final moderado
         }
       } else if (selectedDifficulty === 'intermedio') {
-        const totalKills = killCount;
+        const totalKills = killCountRef.current;
         // Wave-specific spawn rates for intermedio
         if (bossCurrentWave === 0) {
           // Ola 1: Ritmo normal
@@ -1452,7 +1455,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
         }
       } else {
         // Difícil: Progressive spawn rate based on kills within current wave
-        const totalKills = killCount;
+        const totalKills = killCountRef.current;
         // Wave-specific spawn rates for dificil
         if (bossCurrentWave === 0) {
           // Ola 1: Same as before
@@ -1526,7 +1529,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
           };
           const basePoints = basePointsByEnemy[enemy.id] || enemy.reward;
           // Apply streak bonus: +10 per streak level, max at 3
-          const streakBonus = Math.min(pointsStreak, 3) * 10;
+          const streakBonus = Math.min(pointsStreakRef.current, 3) * 10;
           enemyPoints = basePoints + streakBonus;
         } else if (selectedDifficulty === 'intermedio') {
           // Base points by enemy type
@@ -1539,7 +1542,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
           };
           const basePoints = basePointsByEnemy[enemy.id] || enemy.reward;
           // Apply streak bonus: +15 per streak level, max at 4
-          const streakBonus = Math.min(pointsStreak, 4) * 15;
+          const streakBonus = Math.min(pointsStreakRef.current, 4) * 15;
           enemyPoints = basePoints + streakBonus;
         } else if (selectedDifficulty === 'dificil') {
           // Base points by enemy type
@@ -1552,7 +1555,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
           };
           const basePoints = basePointsByEnemy[enemy.id] || enemy.reward;
           // Apply streak bonus: +20 per streak level, max at 5
-          const streakBonus = Math.min(pointsStreak, 5) * 20;
+          const streakBonus = Math.min(pointsStreakRef.current, 5) * 20;
           enemyPoints = basePoints + streakBonus;
         }
         

@@ -1,5 +1,7 @@
 // Service for Verb Master Game - Bubble popping verb conjugation game
 
+import { createSRSPool, getConjugationId, loadSRSData, recordCorrectAnswer, recordIncorrectAnswer, saveSRSData, initializeConjugation } from "./srsService";
+
 export type VerbLevel = 'A1' | 'A2' | 'B1' | 'B2';
 export type VerbType = 'regular' | 'irregular' | 'all';
 export type VerbMode = 'indicativo' | 'subjuntivo' | 'imperativo';
@@ -22,6 +24,18 @@ export interface BubbleChallenge {
   mode: GameMode;
   displayText: string; // What shows in the bubble
   correctAnswer: string; // What the player should type
+}
+
+/**
+ * Fisher-Yates shuffle algorithm for uniform random distribution
+ */
+function shuffleArray<T>(array: T[]): T[] {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
 }
 
 // Verb lists by level (A1 verbs are most common/basic)
@@ -53,6 +67,7 @@ export async function loadVerbData(): Promise<VerbData[]> {
 }
 
 // Filter verbs by level, type, tense, and mode
+// Returns a shuffled array for uniform distribution
 export async function getFilteredVerbs(
   level: VerbLevel,
   verbType: VerbType,
@@ -65,7 +80,7 @@ export async function getFilteredVerbs(
   const levelVerbs = VERB_LEVELS[level];
   
   // Filter by level, tense, type, and mode
-  return allVerbs.filter(v => {
+  const filtered = allVerbs.filter(v => {
     const matchesLevel = levelVerbs.includes(v.verb);
     const matchesTense = v.tense === tense;
     const matchesType = 
@@ -83,6 +98,9 @@ export async function getFilteredVerbs(
     
     return matchesLevel && matchesTense && matchesType && matchesMode;
   });
+  
+  // Shuffle for uniform random distribution
+  return shuffleArray(filtered);
 }
 
 // Generate a random bubble challenge
@@ -188,4 +206,93 @@ export function getSpawnRate(level: number): number {
   const minRate = 800; // 0.8 seconds minimum for higher levels
   
   return Math.max(baseRate - rateDecrease, minRate);
+}
+
+// ============================================================================
+// SRS INTEGRATION
+// ============================================================================
+
+/**
+ * Get verbs using SRS (Spaced Repetition System)
+ * This replaces random selection with intelligent prioritization
+ */
+export async function getFilteredVerbsSRS(
+  level: VerbLevel,
+  verbType: VerbType,
+  tense: string = 'presente',
+  verbMode: VerbMode = 'indicativo',
+  poolSize: number = 50
+): Promise<VerbData[]> {
+  // First filter by game settings
+  const filtered = await getFilteredVerbs(level, verbType, tense, verbMode);
+  
+  if (filtered.length === 0) {
+    return [];
+  }
+  
+  // Use SRS to create intelligent pool, then map back to VerbData
+  const srsPool = createSRSPool(filtered, poolSize);
+  
+  return srsPool.map(v => ({
+    verb: v.verb,
+    tense: v.tense,
+    pronoun: v.pronoun,
+    answer: Array.isArray(v.answer) ? v.answer[0] : v.answer,
+    regular: v.regular,
+    mode: v.mode
+  }));
+}
+
+/**
+ * Record that user answered a conjugation correctly
+ * @param verb The verb that was answered
+ * @param responseTimeMs Time taken to respond in milliseconds
+ */
+export function recordVerbCorrect(verb: VerbData, responseTimeMs: number): void {
+  const srsData = loadSRSData();
+  const id = getConjugationId(verb.verb, verb.tense, verb.pronoun);
+  
+  // Initialize if doesn't exist (convert VerbData to PowerVerb format)
+  const powerVerb = {
+    verb: verb.verb,
+    tense: verb.tense,
+    pronoun: verb.pronoun,
+    answer: verb.answer,
+    regular: verb.regular,
+    mode: verb.mode
+  };
+  initializeConjugation(powerVerb, srsData);
+  
+  // Record the correct answer
+  recordCorrectAnswer(id, responseTimeMs, srsData);
+  
+  // Save to localStorage
+  saveSRSData(srsData);
+}
+
+/**
+ * Record that user answered a conjugation incorrectly
+ * @param verb The verb that was answered
+ * @param responseTimeMs Time taken to respond in milliseconds
+ */
+export function recordVerbIncorrect(verb: VerbData, responseTimeMs: number): void {
+  const srsData = loadSRSData();
+  const id = getConjugationId(verb.verb, verb.tense, verb.pronoun);
+  
+  // Initialize if doesn't exist (convert VerbData to PowerVerb format)
+  const powerVerb = {
+    verb: verb.verb,
+    tense: verb.tense,
+    pronoun: verb.pronoun,
+    answer: verb.answer,
+    regular: verb.regular,
+    mode: verb.mode
+  };
+  initializeConjugation(powerVerb, srsData);
+  
+  // Record the incorrect answer
+  recordIncorrectAnswer(id, responseTimeMs, srsData);
+  
+  // Save to localStorage
+  saveSRSData(srsData);
 }
