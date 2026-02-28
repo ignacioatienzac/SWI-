@@ -263,6 +263,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animationFrameRef = useRef<number>(0);
   const lastSpawnRef = useRef<number>(0);
+  const lastTimeRef = useRef<number>(0);
   const audioCtxRef = useRef<AudioContext | null>(null);
   
   // SRS: Helper to find original VerbData from pool by challenge
@@ -524,6 +525,14 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack }) => {
     if (!ctx) return;
 
     const gameLoop = (currentTime: number) => {
+      // Compute deltaTime normalized to 120fps
+      // Firefox runs at 120fps (dt≈1.0), Chrome/Edge/Safari run at 60fps (dt≈2.0)
+      // This ensures bubbles fall at the same speed across all browsers
+      if (!lastTimeRef.current) lastTimeRef.current = currentTime;
+      const elapsed = currentTime - lastTimeRef.current;
+      const dt = Math.min(elapsed / (1000 / 120), 3);
+      lastTimeRef.current = currentTime;
+
       // Clear canvas with current level background color
       ctx.fillStyle = backgroundColor;
       ctx.fillRect(0, 0, canvasWidth, canvasHeight);
@@ -702,7 +711,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack }) => {
         // Normal bubble behavior (not popping or splatting)
         // Only move bubbles if not in transition (no countdown)
         if (countdown === 0 && !showLevelTitle) {
-          bubble.y += bubble.speed;
+          bubble.y += bubble.speed * dt;
         }
         
         // Check if bubble reached ground
