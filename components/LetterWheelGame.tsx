@@ -406,8 +406,8 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack }) => {
 
     // Fallback levels for B1/B2: load lower-level vocabularies to fill gaps
     const fallbackLevels: ('a1' | 'a2' | 'b1' | 'b2')[] =
-      level === 'b2' ? ['b1', 'a2'] :
-      level === 'b1' ? ['a2'] :
+      level === 'b2' ? ['b1', 'a2', 'a1'] :
+      level === 'b1' ? ['a2', 'a1'] :
       [];
     
     // Preload fallback vocabularies
@@ -420,7 +420,7 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack }) => {
     const minValidWords = 4;
     const targetCount = 8;
     let attempts = 0;
-    const maxAttempts = 10;
+    const maxAttempts = 30;
     
     while (attempts < maxAttempts) {
       // Use a different date string for each attempt
@@ -437,31 +437,33 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack }) => {
       // Get related words from current level
       const validWords = getRelatedWords(allWords, baseWordObj.palabra, 30);
 
-      if (validWords.length >= minValidWords) {
-        // Start with words from current level
-        let combinedWords = [...validWords];
+      // Start with words from current level
+      let combinedWords = [...validWords];
 
-        // If not enough, fill from lower levels
-        if (combinedWords.length < targetCount && fallbackWords.length > 0) {
-          const usedNormalized = new Set([
-            baseWordNormalized,
-            ...combinedWords.map(w => normalize(w.palabra))
-          ]);
+      // Fill from lower levels BEFORE checking minimum
+      // (fixes B1/B2 where the primary level alone often has <4 related words)
+      if (combinedWords.length < targetCount && fallbackWords.length > 0) {
+        const usedNormalized = new Set([
+          baseWordNormalized,
+          ...combinedWords.map(w => normalize(w.palabra))
+        ]);
 
-          for (const lowerWords of fallbackWords) {
+        for (const lowerWords of fallbackWords) {
+          if (combinedWords.length >= targetCount) break;
+          const lowerRelated = getRelatedWords(lowerWords, baseWordObj.palabra, 30);
+          for (const w of lowerRelated) {
             if (combinedWords.length >= targetCount) break;
-            const lowerRelated = getRelatedWords(lowerWords, baseWordObj.palabra, 30);
-            for (const w of lowerRelated) {
-              if (combinedWords.length >= targetCount) break;
-              const wNorm = normalize(w.palabra);
-              if (!usedNormalized.has(wNorm)) {
-                combinedWords.push(w);
-                usedNormalized.add(wNorm);
-              }
+            const wNorm = normalize(w.palabra);
+            if (!usedNormalized.has(wNorm)) {
+              combinedWords.push(w);
+              usedNormalized.add(wNorm);
             }
           }
         }
+      }
 
+      // Now check if we have enough words (combining all levels)
+      if (combinedWords.length >= minValidWords) {
         const finalWords = combinedWords.slice(0, targetCount);
         const targetWords: GameWord[] = finalWords.map((word, idx) => ({
           word,
@@ -469,7 +471,9 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack }) => {
           number: idx + 1
         }));
 
-        console.log('[Game] Base word:', baseWordObj.palabra, '| Target words:', targetWords.map(t => t.word.palabra).join(', '), '| From level:', validWords.length, '| From fallback:', finalWords.length - Math.min(validWords.length, targetCount));
+        const fromLevel = Math.min(validWords.length, targetCount);
+        const fromFallback = finalWords.length - fromLevel;
+        console.log('[Game] Base word:', baseWordObj.palabra, '| Target words:', targetWords.map(t => t.word.palabra).join(', '), '| From level:', fromLevel, '| From fallback:', fromFallback);
 
         return {
           baseWord: baseWordObj,
