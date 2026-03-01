@@ -68,8 +68,17 @@ const Header: React.FC<HeaderProps> = ({ currentView, onChangeView, cobiVisible,
                   Cobi
                 </span>
                 <div className={`relative w-10 h-[22px] rounded-full transition-colors duration-300 ${cobiVisible ? 'bg-spanish-red' : 'bg-gray-300'}`}>
-                  <div className={`absolute top-[2px] w-[18px] h-[18px] rounded-full bg-white shadow-sm flex items-center justify-center transition-all duration-300 ${cobiVisible ? 'left-[20px]' : 'left-[2px]'}`}>
-                    <span className={`text-[10px] leading-none transition-opacity duration-300 ${cobiVisible ? 'opacity-100' : 'opacity-40'}`}>🐾</span>
+                  <div className={`absolute top-[2px] w-[18px] h-[18px] rounded-full overflow-hidden shadow-sm transition-all duration-300 ${cobiVisible ? 'left-[20px] opacity-100' : 'left-[2px] opacity-50'}`}>
+                    <img
+                      src="./data/images/favicon-cobi.png"
+                      alt="Cobi activo"
+                      className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${cobiVisible ? 'opacity-100' : 'opacity-0'}`}
+                    />
+                    <img
+                      src="./data/images/cobi-triste.png"
+                      alt="Cobi oculto"
+                      className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${cobiVisible ? 'opacity-0' : 'opacity-100'}`}
+                    />
                   </div>
                 </div>
               </button>
@@ -132,8 +141,17 @@ const Header: React.FC<HeaderProps> = ({ currentView, onChangeView, cobiVisible,
                 Cobi
               </span>
               <div className={`relative w-14 h-8 rounded-full transition-colors duration-300 ${cobiVisible ? 'bg-spanish-red' : 'bg-gray-300'}`}>
-                <div className={`absolute top-1 w-6 h-6 rounded-full bg-white shadow-sm flex items-center justify-center transition-all duration-300 ${cobiVisible ? 'left-[26px]' : 'left-1'}`}>
-                  <span className={`text-sm leading-none transition-opacity duration-300 ${cobiVisible ? 'opacity-100' : 'opacity-40'}`}>🐾</span>
+                <div className={`absolute top-1 w-6 h-6 rounded-full overflow-hidden shadow-sm transition-all duration-300 ${cobiVisible ? 'left-[26px] opacity-100' : 'left-1 opacity-50'}`}>
+                  <img
+                    src="./data/images/favicon-cobi.png"
+                    alt="Cobi activo"
+                    className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${cobiVisible ? 'opacity-100' : 'opacity-0'}`}
+                  />
+                  <img
+                    src="./data/images/cobi-triste.png"
+                    alt="Cobi oculto"
+                    className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${cobiVisible ? 'opacity-0' : 'opacity-100'}`}
+                  />
                 </div>
               </div>
             </button>
