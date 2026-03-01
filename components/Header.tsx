@@ -67,8 +67,8 @@ const Header: React.FC<HeaderProps> = ({ currentView, onChangeView, cobiVisible,
                 <span className={`text-xs font-semibold transition-colors duration-200 ${cobiVisible ? 'text-gray-600' : 'text-gray-400'}`}>
                   Cobi
                 </span>
-                <div className={`relative w-10 h-[22px] rounded-full transition-colors duration-300 ${cobiVisible ? 'bg-spanish-red' : 'bg-gray-300'}`}>
-                  <div className={`absolute top-[2px] w-[18px] h-[18px] rounded-full overflow-hidden shadow-sm transition-all duration-300 ${cobiVisible ? 'left-[20px] opacity-100' : 'left-[2px] opacity-50'}`}>
+                <div className={`relative w-11 h-[22px] rounded-full transition-colors duration-300 ${cobiVisible ? 'bg-spanish-red' : 'bg-gray-300'}`}>
+                  <div className={`absolute w-[28px] h-[28px] rounded-full overflow-hidden shadow-md transition-all duration-300 ${cobiVisible ? 'left-[18px] opacity-100' : 'left-[-2px] opacity-50'}`} style={{ top: '-3px' }}>
                     <img
                       src="./data/images/favicon-cobi.png"
                       alt="Cobi activo"
@@ -140,8 +140,8 @@ const Header: React.FC<HeaderProps> = ({ currentView, onChangeView, cobiVisible,
               <span className={`text-xl font-bold transition-colors duration-300 ${cobiVisible ? 'text-gray-500' : 'text-gray-300'}`}>
                 Cobi
               </span>
-              <div className={`relative w-14 h-8 rounded-full transition-colors duration-300 ${cobiVisible ? 'bg-spanish-red' : 'bg-gray-300'}`}>
-                <div className={`absolute top-1 w-6 h-6 rounded-full overflow-hidden shadow-sm transition-all duration-300 ${cobiVisible ? 'left-[26px] opacity-100' : 'left-1 opacity-50'}`}>
+              <div className={`relative w-16 h-9 rounded-full transition-colors duration-300 ${cobiVisible ? 'bg-spanish-red' : 'bg-gray-300'}`}>
+                <div className={`absolute w-10 h-10 rounded-full overflow-hidden shadow-md transition-all duration-300 ${cobiVisible ? 'left-[26px] opacity-100' : 'left-[-2px] opacity-50'}`} style={{ top: '-2px' }}>
                   <img
                     src="./data/images/favicon-cobi.png"
                     alt="Cobi activo"
