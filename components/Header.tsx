@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import { View } from '../types';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Eye, EyeOff } from 'lucide-react';
 
 interface HeaderProps {
   currentView: View;
   onChangeView: (view: View) => void;
+  cobiVisible: boolean;
+  onToggleCobi: () => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ currentView, onChangeView }) => {
+const Header: React.FC<HeaderProps> = ({ currentView, onChangeView, cobiVisible, onToggleCobi }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const navItems = [
@@ -55,6 +57,20 @@ const Header: React.FC<HeaderProps> = ({ currentView, onChangeView }) => {
                   {item.label}
                 </button>
               ))}
+
+              {/* Cobi Toggle */}
+              <button
+                onClick={onToggleCobi}
+                title={cobiVisible ? 'Ocultar a Cobi' : 'Mostrar a Cobi'}
+                className={`flex items-center gap-1.5 text-sm font-semibold transition-colors duration-200 px-3 py-2 rounded-md ${
+                  cobiVisible
+                    ? 'text-gray-600 hover:text-spanish-red hover:bg-gray-50'
+                    : 'text-gray-400 hover:text-spanish-red hover:bg-gray-50'
+                }`}
+              >
+                {cobiVisible ? <Eye size={18} /> : <EyeOff size={18} />}
+                <span>Cobi</span>
+              </button>
             </nav>
 
             {/* Mobile Menu Button */}
@@ -104,6 +120,19 @@ const Header: React.FC<HeaderProps> = ({ currentView, onChangeView }) => {
                 {item.label}
               </button>
             ))}
+
+            {/* Cobi Toggle (Mobile) */}
+            <button
+              onClick={onToggleCobi}
+              className={`flex items-center justify-center gap-3 w-full text-center text-xl font-bold py-3 rounded-2xl transition-all ${
+                cobiVisible
+                  ? 'text-gray-400 hover:text-deep-blue hover:bg-white/50'
+                  : 'text-gray-300 hover:text-deep-blue hover:bg-white/50'
+              }`}
+            >
+              {cobiVisible ? <Eye size={24} /> : <EyeOff size={24} />}
+              <span>{cobiVisible ? 'Ocultar Cobi' : 'Mostrar Cobi'}</span>
+            </button>
           </div>
           
           <div className="p-8 text-center text-gray-400 text-sm">

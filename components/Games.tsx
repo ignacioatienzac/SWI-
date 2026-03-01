@@ -30,6 +30,7 @@ const seleccionarMensajeRandom = (): string => {
 interface GamesProps {
   activeGameId: string | null;
   setActiveGameId: (id: string | null) => void;
+  cobiVisible: boolean;
 }
 
 interface Message {
@@ -37,7 +38,7 @@ interface Message {
   text: string;
 }
 
-const Games: React.FC<GamesProps> = ({ activeGameId, setActiveGameId }) => {
+const Games: React.FC<GamesProps> = ({ activeGameId, setActiveGameId, cobiVisible }) => {
   // Estado del chat
   const [showChatWindow, setShowChatWindow] = useState(false);
   const [chatMessages, setChatMessages] = useState<Message[]>([]);
@@ -135,7 +136,7 @@ const Games: React.FC<GamesProps> = ({ activeGameId, setActiveGameId }) => {
   if (activeGameId === 'phrase-builder') {
     return (
       <div className="w-full bg-cream min-h-screen">
-        <PhraseBuilderGame onBack={() => setActiveGameId(null)} />
+        <PhraseBuilderGame onBack={() => setActiveGameId(null)} cobiVisible={cobiVisible} />
       </div>
     );
   }
@@ -143,7 +144,7 @@ const Games: React.FC<GamesProps> = ({ activeGameId, setActiveGameId }) => {
   if (activeGameId === 'verb-master') {
     return (
       <div className="w-full bg-cream min-h-screen">
-        <VerbMasterGame onBack={() => setActiveGameId(null)} />
+        <VerbMasterGame onBack={() => setActiveGameId(null)} cobiVisible={cobiVisible} />
       </div>
     );
   }
@@ -151,7 +152,7 @@ const Games: React.FC<GamesProps> = ({ activeGameId, setActiveGameId }) => {
   if (activeGameId === 'wordle-game') {
       return (
           <div className="w-full bg-cream min-h-screen">
-               <WordleGame onBack={() => setActiveGameId(null)} />
+               <WordleGame onBack={() => setActiveGameId(null)} cobiVisible={cobiVisible} />
           </div>
       );
   }
@@ -159,7 +160,7 @@ const Games: React.FC<GamesProps> = ({ activeGameId, setActiveGameId }) => {
   if (activeGameId === 'power-verbs') {
     return (
         <div className="w-full bg-cream min-h-screen">
-             <PowerOfVerbsGame onBack={() => setActiveGameId(null)} />
+             <PowerOfVerbsGame onBack={() => setActiveGameId(null)} cobiVisible={cobiVisible} />
         </div>
     );
   }
@@ -167,7 +168,7 @@ const Games: React.FC<GamesProps> = ({ activeGameId, setActiveGameId }) => {
   if (activeGameId === 'letter-wheel') {
     return (
         <div className="w-full bg-cream min-h-screen">
-             <LetterWheelGame onBack={() => setActiveGameId(null)} />
+             <LetterWheelGame onBack={() => setActiveGameId(null)} cobiVisible={cobiVisible} />
         </div>
     );
   }
@@ -274,6 +275,7 @@ const Games: React.FC<GamesProps> = ({ activeGameId, setActiveGameId }) => {
       </div>
 
       {/* Avatar del panda asomándose desde la esquina (solo desktop) */}
+      {cobiVisible && (
       <div className="hidden lg:block fixed bottom-0 right-0 z-50 pointer-events-none overflow-visible">
         <div className="relative animate-float">
           {/* Bocadillo de diálogo con mensaje aleatorio - A la derecha de Cobi, debajo del bocadillo de pensamiento */}
@@ -326,9 +328,10 @@ const Games: React.FC<GamesProps> = ({ activeGameId, setActiveGameId }) => {
           </div>
         </div>
       </div>
+      )}
 
       {/* Chat Window */}
-      {showChatWindow && (
+      {cobiVisible && showChatWindow && (
         <div className="fixed bottom-24 right-6 lg:bottom-48 lg:right-6 z-50 w-80 max-w-[calc(100vw-3rem)] bg-white rounded-3xl shadow-2xl border-2 border-gray-200 overflow-hidden animate-fade-in">
           {/* Header */}
           <div className="bg-gradient-to-r from-blue-gray-500 to-blue-gray-600 p-4 flex items-center justify-between" style={{ background: 'linear-gradient(to right, #607D8B, #546E7A)' }}>

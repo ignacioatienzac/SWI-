@@ -72,6 +72,7 @@ type GameStatus = 'SELECT_LEVEL' | 'PLAYING' | 'WON' | 'LOST';
 
 interface WordleGameProps {
   onBack: () => void;
+  cobiVisible?: boolean;
 }
 
 // Utility to play sounds
@@ -128,7 +129,7 @@ const playSound = (type: 'correct' | 'present' | 'absent' | 'win' | 'lose') => {
   }
 };
 
-const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
+const WordleGame: React.FC<WordleGameProps> = ({ onBack, cobiVisible = true }) => {
   const [status, setStatus] = useState<GameStatus>('SELECT_LEVEL');
   const [difficulty, setDifficulty] = useState<string>('a1');
   const [secretWord, setSecretWord] = useState<string>('');
@@ -589,6 +590,7 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
         </div>
 
         {/* Cobi Detective pensando en el menú (solo desktop) */}
+        {cobiVisible && (
         <div className="hidden lg:block fixed bottom-0 right-0 z-50 pointer-events-none overflow-visible">
           <div className="relative animate-float">
             {/* Bocadillo de diálogo con mensaje aleatorio - solo si NO hay chat abierto */}
@@ -628,19 +630,20 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
                     </textPath>
                   </text>
                 </svg>
-                <div className="paws-icon">�</div>
+                <div className="paws-icon">🔎</div>
               </div>
             </div>
           </div>
         </div>
+        )}
 
         {/* Chat Window del Menú */}
-        {showChatWindow && status === 'SELECT_LEVEL' && (
+        {cobiVisible && showChatWindow && status === 'SELECT_LEVEL' && (
           <div className="fixed bottom-24 right-6 lg:bottom-48 lg:right-6 z-50 w-80 max-w-[calc(100vw-3rem)] bg-white rounded-3xl shadow-2xl border-2 border-gray-200 overflow-hidden animate-fade-in">
             {/* Header */}
             <div className="p-4 flex items-center justify-between" style={{ background: 'linear-gradient(to right, #2D5A27, #234A1F)' }}>
               <div className="flex items-center gap-2">
-                <span className="text-2xl">�</span>
+                <span className="text-2xl">🔎</span>
                 <div>
                   <h3 className="text-white font-bold text-sm">Cobi el Detective</h3>
                   <p className="text-xs" style={{ color: '#FFF5E1' }}>Tu guía investigador</p>
@@ -1182,6 +1185,7 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
       {/* Cobi Detective (durante el juego, victoria y derrota en desktop) */}
       {(status === 'PLAYING' || status === 'WON' || status === 'LOST') && (
         <>
+          {cobiVisible && (
           <div className="hidden lg:block fixed bottom-0 right-0 z-50 pointer-events-none overflow-visible">
             <div className="relative animate-float">
               {/* Bocadillo de diálogo con mensaje aleatorio */}
@@ -1221,19 +1225,20 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
                       </textPath>
                     </text>
                   </svg>
-                  <div className="paws-icon">�</div>
+                  <div className="paws-icon">🔎</div>
                 </div>
               </div>
             </div>
           </div>
+          )}
 
           {/* Chat Window */}
-          {showChatWindow && (
+          {cobiVisible && showChatWindow && (
             <div className="fixed bottom-24 right-6 lg:bottom-48 lg:right-6 z-50 w-80 max-w-[calc(100vw-3rem)] bg-white rounded-3xl shadow-2xl border-2 border-gray-200 overflow-hidden animate-fade-in">
               {/* Header */}
               <div className="p-4 flex items-center justify-between" style={{ background: 'linear-gradient(to right, #2D5A27, #234A1F)' }}>
                 <div className="flex items-center gap-2">
-                  <span className="text-2xl">�</span>
+                  <span className="text-2xl">🔎</span>
                   <div>
                     <h3 className="text-white font-bold text-sm">Cobi el Detective</h3>
                     <p className="text-xs" style={{ color: '#FFF5E1' }}>Tu asistente investigador</p>

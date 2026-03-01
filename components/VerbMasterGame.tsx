@@ -21,6 +21,7 @@ import {
 
 interface VerbMasterGameProps {
   onBack: () => void;
+  cobiVisible?: boolean;
 }
 
 // Mensajes aleatorios para Cobi Sensei en el menú
@@ -145,7 +146,7 @@ interface Bubble {
   shrinkStartTime: number; // When shrink animation started
 }
 
-const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack }) => {
+const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = true }) => {
   // Game configuration
   const [selectedVerbMode, setSelectedVerbMode] = useState<VerbMode>('indicativo');
   const [selectedVerbType, setSelectedVerbType] = useState<VerbType | null>(null);
@@ -1353,6 +1354,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack }) => {
           </div>
 
           {/* Cobi Sensei Pensando en el menú (solo desktop) */}
+          {cobiVisible && (
           <div className="hidden lg:block fixed bottom-0 right-0 z-50 pointer-events-none overflow-visible">
             <div className="relative animate-float">
               {/* Bocadillo de diálogo con mensaje aleatorio */}
@@ -1397,10 +1399,11 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack }) => {
               </div>
             </div>
           </div>
+          )}
         </div>
 
         {/* Chat Window del Menú */}
-        {showChatWindow && gameState === 'LEVEL_SELECT' && (
+        {cobiVisible && showChatWindow && gameState === 'LEVEL_SELECT' && (
           <div className="fixed bottom-24 right-6 lg:bottom-48 lg:right-6 z-50 w-80 max-w-[calc(100vw-3rem)] bg-white rounded-3xl shadow-2xl border-2 border-gray-200 overflow-hidden animate-fade-in">
             {/* Header */}
             <div className="bg-gradient-to-r from-red-800 to-red-600 p-4 flex items-center justify-between">
@@ -1730,6 +1733,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack }) => {
         `}} />
 
         {/* Cobi Sensei (solo desktop) */}
+        {cobiVisible && (
         <div className="hidden lg:block fixed bottom-0 right-0 z-50 pointer-events-none overflow-visible">
           <div className="relative animate-float">
             {/* Bocadillo de diálogo con mensaje aleatorio */}
@@ -1774,9 +1778,10 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack }) => {
             </div>
           </div>
         </div>
+        )}
 
         {/* Chat Window durante el juego */}
-        {showChatWindow && gameState === 'PLAYING' && (
+        {cobiVisible && showChatWindow && gameState === 'PLAYING' && (
           <div className="fixed bottom-24 right-6 lg:bottom-48 lg:right-6 z-50 w-80 max-w-[calc(100vw-3rem)] bg-white rounded-3xl shadow-2xl border-2 border-gray-200 overflow-hidden animate-fade-in">
             {/* Header */}
             <div className="bg-gradient-to-r from-red-800 to-red-600 p-4 flex items-center justify-between">
@@ -1887,6 +1892,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack }) => {
         </div>
 
         {/* Cobi Sensei Pausa (solo desktop) */}
+        {cobiVisible && (
         <div className="hidden lg:block fixed bottom-0 right-0 z-50 pointer-events-none overflow-visible">
           <div className="relative animate-float">
             {/* Bocadillo de diálogo */}
@@ -1929,9 +1935,10 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack }) => {
             </div>
           </div>
         </div>
+        )}
 
         {/* Chat Window en pausa */}
-        {showChatWindow && gameState === 'PAUSED' && (
+        {cobiVisible && showChatWindow && gameState === 'PAUSED' && (
           <div className="fixed bottom-24 right-6 lg:bottom-48 lg:right-6 z-50 w-80 max-w-[calc(100vw-3rem)] bg-white rounded-3xl shadow-2xl border-2 border-gray-200 overflow-hidden animate-fade-in">
             {/* Header */}
             <div className="bg-gradient-to-r from-red-800 to-red-600 p-4 flex items-center justify-between">
@@ -2136,6 +2143,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack }) => {
         </div>
 
         {/* Cobi Sensei Victoria (solo desktop) */}
+        {cobiVisible && (
         <div className="hidden lg:block fixed bottom-0 right-0 z-50 pointer-events-none overflow-visible">
           <div className="relative animate-float">
             {/* Bocadillo de diálogo */}
@@ -2179,9 +2187,10 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack }) => {
             </div>
           </div>
         </div>
+        )}
 
         {/* Chat Window de VICTORY */}
-        {showChatWindow && gameState === 'VICTORY' && (
+        {cobiVisible && showChatWindow && gameState === 'VICTORY' && (
           <div className="fixed bottom-24 right-6 lg:bottom-48 lg:right-6 z-50 w-80 max-w-[calc(100vw-3rem)] bg-white rounded-3xl shadow-2xl border-2 border-yellow-300 overflow-hidden animate-fade-in">
             {/* Header */}
             <div className="bg-gradient-to-r from-yellow-600 to-green-600 p-4 flex items-center justify-between">
@@ -2303,6 +2312,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack }) => {
       </div>
 
       {/* Cobi Sensei Fallo (solo desktop) */}
+      {cobiVisible && (
       <div className="hidden lg:block fixed bottom-0 right-0 z-50 pointer-events-none overflow-visible">
         <div className="relative animate-float">
           {/* Bocadillo de diálogo */}
@@ -2346,9 +2356,10 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack }) => {
           </div>
         </div>
       </div>
+      )}
 
       {/* Chat Window de GAMEOVER */}
-      {showChatWindow && gameState === 'GAMEOVER' && (
+      {cobiVisible && showChatWindow && gameState === 'GAMEOVER' && (
         <div className="fixed bottom-24 right-6 lg:bottom-48 lg:right-6 z-50 w-80 max-w-[calc(100vw-3rem)] bg-white rounded-3xl shadow-2xl border-2 border-gray-200 overflow-hidden animate-fade-in">
           {/* Header */}
           <div className="bg-gradient-to-r from-red-800 to-red-600 p-4 flex items-center justify-between">

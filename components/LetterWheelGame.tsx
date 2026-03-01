@@ -5,6 +5,7 @@ import { hablarConPanda } from '../services/geminiService';
 
 interface LetterWheelGameProps {
   onBack: () => void;
+  cobiVisible?: boolean;
 }
 
 interface VocabWord {
@@ -104,7 +105,7 @@ const seleccionarMensajeExploradorRandom = (tipo: 'entrada' | 'acierto' | 'fallo
   return mensajes[Math.floor(Math.random() * mensajes.length)];
 };
 
-const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack }) => {
+const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible = true }) => {
   const [gameStatus, setGameStatus] = useState<GameStatus>('MENU');
   const [gameState, setGameState] = useState<GameState | null>(null);
   const [foundWords, setFoundWords] = useState<Set<string>>(new Set());
@@ -786,6 +787,7 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack }) => {
         </div>
 
         {/* Cobi Explorador Menu */}
+        {cobiVisible && (
         <div className="hidden lg:block fixed bottom-0 right-0 z-50 pointer-events-none overflow-visible" key="cobi-explorador-menu">
           <div className="relative animate-float">
             {/* Bocadillo de diálogo con mensaje */}
@@ -828,9 +830,10 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack }) => {
             </div>
           </div>
         </div>
+        )}
 
         {/* Chat Window del Menu */}
-        {showChatWindow && gameStatus === 'MENU' && (
+        {cobiVisible && showChatWindow && gameStatus === 'MENU' && (
           <div className="fixed bottom-24 right-6 lg:bottom-48 lg:right-6 z-50 w-80 max-w-[calc(100vw-3rem)] bg-white rounded-3xl shadow-2xl border-2 border-gray-200 overflow-hidden animate-fade-in">
             {/* Header */}
             <div className="bg-gradient-to-r from-amber-600 to-orange-600 p-4 flex items-center justify-between">
@@ -952,6 +955,7 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack }) => {
         </div>
 
         {/* Cobi Explorador Victoria */}
+        {cobiVisible && (
         <div className="hidden lg:block fixed bottom-0 right-0 z-50 pointer-events-none overflow-visible" key="cobi-explorador-victoria">
           <div className="relative animate-float">
             {/* Bocadillo de diálogo con mensaje */}
@@ -994,9 +998,10 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack }) => {
             </div>
           </div>
         </div>
+        )}
 
         {/* Chat Window de Victoria */}
-        {showChatWindow && gameStatus === 'VICTORY' && (
+        {cobiVisible && showChatWindow && gameStatus === 'VICTORY' && (
           <div className="fixed bottom-24 right-6 lg:bottom-48 lg:right-6 z-50 w-80 max-w-[calc(100vw-3rem)] bg-white rounded-3xl shadow-2xl border-2 border-gray-200 overflow-hidden animate-fade-in">
             {/* Header */}
             <div className="bg-gradient-to-r from-amber-600 to-orange-600 p-4 flex items-center justify-between">
@@ -1596,7 +1601,7 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack }) => {
       </div>
 
       {/* Cobi Explorador - Visible solo en PLAYING */}
-      {gameStatus === 'PLAYING' && (
+      {cobiVisible && gameStatus === 'PLAYING' && (
         <div className="hidden lg:block fixed bottom-0 right-0 z-50 pointer-events-none overflow-visible" key="cobi-explorador-container">
           <div className="relative animate-float">
             {/* Bocadillo de diálogo con mensaje */}
@@ -1643,7 +1648,7 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack }) => {
       )}
 
       {/* Chat Window del Juego */}
-      {showChatWindow && gameStatus === 'PLAYING' && (
+      {cobiVisible && showChatWindow && gameStatus === 'PLAYING' && (
         <div className="fixed bottom-24 right-6 lg:bottom-48 lg:right-6 z-50 w-80 max-w-[calc(100vw-3rem)] bg-white rounded-3xl shadow-2xl border-2 border-gray-200 overflow-hidden animate-fade-in">
           {/* Header */}
           <div className="bg-gradient-to-r from-amber-600 to-orange-600 p-4 flex items-center justify-between">

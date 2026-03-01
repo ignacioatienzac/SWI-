@@ -7,6 +7,7 @@ import { normalizePronoun } from '../services/srsService';
 
 interface PowerOfVerbsGameProps {
   onBack: () => void;
+  cobiVisible?: boolean;
 }
 
 // Función para formatear nombres de tiempos verbales
@@ -277,7 +278,7 @@ interface Boss extends Entity {
 }
 
 // --- COMPONENT ---
-const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
+const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible = true }) => {
   // UI State
   const [gameState, setGameState] = useState<GameState>('SELECTION');
   const [selectedGrammar, setSelectedGrammar] = useState<string>('indicativo');
@@ -2401,6 +2402,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
         </div>
 
         {/* Cobi Mago Menú (solo desktop) */}
+        {cobiVisible && (
         <div className="hidden lg:block fixed bottom-0 right-0 z-50 pointer-events-none overflow-visible" key="cobi-mago-menu">
           <div className="relative animate-float">
             {/* Bocadillo de diálogo con mensaje */}
@@ -2443,9 +2445,10 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
             </div>
           </div>
         </div>
+        )}
 
         {/* Chat Window del Menú */}
-        {showChatWindow && gameState === 'SELECTION' && (
+        {cobiVisible && showChatWindow && gameState === 'SELECTION' && (
           <div className="fixed bottom-24 right-6 lg:bottom-48 lg:right-6 z-50 w-80 max-w-[calc(100vw-3rem)] bg-white rounded-3xl shadow-2xl border-2 border-gray-200 overflow-hidden animate-fade-in">
             {/* Header */}
             <div className="bg-gradient-to-r from-purple-600 to-indigo-600 p-4 flex items-center justify-between">
@@ -2817,6 +2820,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
         )}
 
         {/* Cobi Mago (solo desktop) */}
+        {cobiVisible && (
         <div className="hidden lg:block fixed bottom-0 right-0 z-50 pointer-events-none overflow-visible" key="cobi-mago-container">
           <div className="relative animate-float">
             {/* Bocadillo de diálogo con mensaje */}
@@ -2859,9 +2863,10 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
             </div>
           </div>
         </div>
+        )}
 
         {/* Chat Window del Juego */}
-        {showChatWindow && gameState === 'PLAYING' && (
+        {cobiVisible && showChatWindow && gameState === 'PLAYING' && (
           <div className="fixed bottom-24 right-6 lg:bottom-48 lg:right-6 z-50 w-80 max-w-[calc(100vw-3rem)] bg-white rounded-3xl shadow-2xl border-2 border-gray-200 overflow-hidden animate-fade-in">
             {/* Header */}
             <div className="bg-gradient-to-r from-purple-600 to-indigo-600 p-4 flex items-center justify-between">
@@ -2977,6 +2982,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
         </div>
 
         {/* Cobi Mago Pausa (solo desktop) */}
+        {cobiVisible && (
         <div className="hidden lg:block fixed bottom-0 right-0 z-50 pointer-events-none overflow-visible" key="cobi-mago-pausa">
           <div className="relative animate-float">
             {/* Bocadillo de diálogo con mensaje */}
@@ -3019,9 +3025,10 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
             </div>
           </div>
         </div>
+        )}
 
         {/* Chat Window de Pausa */}
-        {showChatWindow && gameState === 'PAUSED' && (
+        {cobiVisible && showChatWindow && gameState === 'PAUSED' && (
           <div className="fixed bottom-24 right-6 lg:bottom-48 lg:right-6 z-50 w-80 max-w-[calc(100vw-3rem)] bg-white rounded-3xl shadow-2xl border-2 border-gray-200 overflow-hidden animate-fade-in">
             {/* Header */}
             <div className="bg-gradient-to-r from-purple-600 to-indigo-600 p-4 flex items-center justify-between">
@@ -3128,6 +3135,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
         </div>
 
         {/* Cobi Mago Derrota (solo desktop) */}
+        {cobiVisible && (
         <div className="hidden lg:block fixed bottom-0 right-0 z-50 pointer-events-none overflow-visible" key="cobi-mago-derrota">
           <div className="relative animate-float">
             {/* Bocadillo de diálogo con mensaje */}
@@ -3170,9 +3178,10 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
             </div>
           </div>
         </div>
+        )}
 
         {/* Chat Window de Derrota */}
-        {showChatWindow && gameState === 'GAMEOVER' && (
+        {cobiVisible && showChatWindow && gameState === 'GAMEOVER' && (
           <div className="fixed bottom-24 right-6 lg:bottom-48 lg:right-6 z-50 w-80 max-w-[calc(100vw-3rem)] bg-white rounded-3xl shadow-2xl border-2 border-gray-200 overflow-hidden animate-fade-in">
             {/* Header */}
             <div className="bg-gradient-to-r from-purple-600 to-indigo-600 p-4 flex items-center justify-between">
@@ -3279,6 +3288,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
         </div>
 
         {/* Cobi Mago Victoria (solo desktop) */}
+        {cobiVisible && (
         <div className="hidden lg:block fixed bottom-0 right-0 z-50 pointer-events-none overflow-visible" key="cobi-mago-victoria">
           <div className="relative animate-float">
             {/* Bocadillo de diálogo con mensaje */}
@@ -3321,9 +3331,10 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack }) => {
             </div>
           </div>
         </div>
+        )}
 
         {/* Chat Window de Victoria */}
-        {showChatWindow && gameState === 'VICTORY' && (
+        {cobiVisible && showChatWindow && gameState === 'VICTORY' && (
           <div className="fixed bottom-24 right-6 lg:bottom-48 lg:right-6 z-50 w-80 max-w-[calc(100vw-3rem)] bg-white rounded-3xl shadow-2xl border-2 border-gray-200 overflow-hidden animate-fade-in">
             {/* Header */}
             <div className="bg-gradient-to-r from-purple-600 to-indigo-600 p-4 flex items-center justify-between">

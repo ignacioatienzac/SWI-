@@ -73,6 +73,20 @@ const App: React.FC = () => {
   const [currentView, setCurrentView] = useState<View>(() => parseHash().view);
   const [activeGameId, setActiveGameId] = useState<string | null>(() => parseHash().gameId);
 
+  // Estado global para mostrar/ocultar Cobi (persistido en localStorage)
+  const [cobiVisible, setCobiVisible] = useState<boolean>(() => {
+    const saved = localStorage.getItem('cobiVisible');
+    return saved !== null ? saved === 'true' : true;
+  });
+
+  const toggleCobi = () => {
+    setCobiVisible(prev => {
+      const next = !prev;
+      localStorage.setItem('cobiVisible', String(next));
+      return next;
+    });
+  };
+
   // Estado para mensaje de Cobi
   const [cobiMessage] = useState<string>(seleccionarMensajeCobiRandom());
   
@@ -176,7 +190,7 @@ const App: React.FC = () => {
           </>
         );
       case View.GAMES:
-        return <Games activeGameId={activeGameId} setActiveGameId={setActiveGameId} />;
+        return <Games activeGameId={activeGameId} setActiveGameId={setActiveGameId} cobiVisible={cobiVisible} />;
       case View.RESOURCES:
         return <Resources />;
       default:
@@ -194,14 +208,14 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col font-sans bg-cream text-gray-800">
-      <Header currentView={currentView} onChangeView={handleViewChange} />
+      <Header currentView={currentView} onChangeView={handleViewChange} cobiVisible={cobiVisible} onToggleCobi={toggleCobi} />
       
       <main className="flex-grow">
         {renderContent()}
       </main>
 
       {/* Cobi en la página principal (solo en HOME y solo desktop) */}
-      {currentView === View.HOME && (
+      {cobiVisible && currentView === View.HOME && (
         <div className="hidden lg:block fixed bottom-0 right-0 z-50 pointer-events-none overflow-visible">
           <div className="relative animate-float">
             {/* Bocadillo de diálogo con mensaje de bienvenida */}
@@ -249,7 +263,7 @@ const App: React.FC = () => {
       )}
 
       {/* Chat Window de la página principal */}
-      {showChatWindow && currentView === View.HOME && (
+      {cobiVisible && showChatWindow && currentView === View.HOME && (
         <div className="fixed bottom-24 right-6 lg:bottom-48 lg:right-6 z-50 w-80 max-w-[calc(100vw-3rem)] bg-white rounded-3xl shadow-2xl border-2 border-gray-200 overflow-hidden animate-fade-in">
           {/* Header */}
           <div className="bg-gradient-to-r from-blue-gray-500 to-blue-gray-600 p-4 flex items-center justify-between" style={{ background: 'linear-gradient(to right, #607D8B, #546E7A)' }}>

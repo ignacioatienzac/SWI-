@@ -20,6 +20,7 @@ const seleccionarMensajeMenuRandom = (): string => {
 
 interface PhraseBuilderGameProps {
   onBack: () => void;
+  cobiVisible?: boolean;
 }
 
 type Level = 'A1' | 'A2' | 'B1' | 'B2';
@@ -41,7 +42,7 @@ interface Phrase {
   };
 }
 
-const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack }) => {
+const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisible = true }) => {
   // Configuration
   const [selectedLevel, setSelectedLevel] = useState<Level | null>(null);
   const [selectedDifficulty, setSelectedDifficulty] = useState<Difficulty | null>(null);
@@ -828,6 +829,7 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack }) => {
         </div>
         
         {/* Cobi Constructor en el menú (solo desktop) */}
+        {cobiVisible && (
         <div className="hidden lg:block fixed bottom-0 right-0 z-50 pointer-events-none overflow-visible">
           <div className="relative animate-float">
             {/* Bocadillo de diálogo con mensaje aleatorio - solo si NO hay chat abierto */}
@@ -867,19 +869,20 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack }) => {
                     </textPath>
                   </text>
                 </svg>
-                <div className="paws-icon">🏗️</div>
+                <div className="paws-icon">🔨</div>
               </div>
             </div>
           </div>
         </div>
+        )}
 
         {/* Chat Window del Menú */}
-        {showChatWindow && gameState === 'MENU' && (
+        {cobiVisible && showChatWindow && gameState === 'MENU' && (
           <div className="fixed bottom-24 right-6 lg:bottom-48 lg:right-6 z-50 w-80 max-w-[calc(100vw-3rem)] bg-white rounded-3xl shadow-2xl border-2 border-gray-200 overflow-hidden animate-fade-in">
             {/* Header */}
             <div className="bg-gradient-to-r from-amber-400 to-orange-500 p-4 flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <span className="text-2xl">🏗️</span>
+                <span className="text-2xl">🔨</span>
                 <div>
                   <h3 className="text-white font-bold text-sm">Cobi el Constructor</h3>
                   <p className="text-xs text-amber-50">Tu arquitecto de frases</p>
@@ -1309,6 +1312,7 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack }) => {
       {/* Cobi Avatar - Asomándose desde la esquina inferior derecha */}
       {gameState === 'PLAYING' && (
         <>
+          {cobiVisible && (
           <div className="hidden lg:block fixed bottom-0 right-0 z-40 pointer-events-none overflow-visible">
             <div className="relative animate-float">
               {/* Bocadillo de diálogo */}
@@ -1358,19 +1362,20 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack }) => {
                       </textPath>
                     </text>
                   </svg>
-                  <div className="paws-icon">🏗️</div>
+                  <div className="paws-icon">🔨</div>
                 </div>
               </div>
             </div>
           </div>
+          )}
 
           {/* Chat Window */}
-          {showChatWindow && (
+          {cobiVisible && showChatWindow && (
             <div className="fixed bottom-24 right-6 lg:bottom-48 lg:right-6 z-50 w-80 max-w-[calc(100vw-3rem)] bg-white rounded-3xl shadow-2xl border-2 border-gray-200 overflow-hidden animate-fade-in">
               {/* Header */}
               <div className="bg-gradient-to-r from-amber-400 to-orange-500 p-4 flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <span className="text-2xl">🏗️</span>
+                  <span className="text-2xl">🔨</span>
                   <div>
                     <h3 className="text-white font-bold text-sm">Cobi el Constructor</h3>
                     <p className="text-white/80 text-xs">Tu asistente arquitecto</p>
