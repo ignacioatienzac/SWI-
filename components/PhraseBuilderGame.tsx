@@ -21,6 +21,7 @@ const seleccionarMensajeMenuRandom = (): string => {
 interface PhraseBuilderGameProps {
   onBack: () => void;
   cobiVisible?: boolean;
+  soundEnabled?: boolean;
 }
 
 type Level = 'A1' | 'A2' | 'B1' | 'B2';
@@ -42,7 +43,7 @@ interface Phrase {
   };
 }
 
-const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisible = true }) => {
+const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisible = true, soundEnabled = true }) => {
   // Configuration
   const [selectedLevel, setSelectedLevel] = useState<Level | null>(null);
   const [selectedDifficulty, setSelectedDifficulty] = useState<Difficulty | null>(null);
@@ -115,8 +116,11 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
   
   // Audio
   const audioCtxRef = useRef<AudioContext | null>(null);
+  const soundEnabledRef = useRef(soundEnabled);
+  soundEnabledRef.current = soundEnabled;
   
   const playTone = (frequency: number, duration: number, type: OscillatorType = 'sine') => {
+    if (!soundEnabledRef.current) return;
     if (!audioCtxRef.current) {
       audioCtxRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
     }

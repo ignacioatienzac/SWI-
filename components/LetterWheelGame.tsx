@@ -6,6 +6,7 @@ import { hablarConPanda } from '../services/geminiService';
 interface LetterWheelGameProps {
   onBack: () => void;
   cobiVisible?: boolean;
+  soundEnabled?: boolean;
 }
 
 interface VocabWord {
@@ -105,7 +106,7 @@ const seleccionarMensajeExploradorRandom = (tipo: 'entrada' | 'acierto' | 'fallo
   return mensajes[Math.floor(Math.random() * mensajes.length)];
 };
 
-const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible = true }) => {
+const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible = true, soundEnabled = true }) => {
   const [gameStatus, setGameStatus] = useState<GameStatus>('MENU');
   const [gameState, setGameState] = useState<GameState | null>(null);
   const [foundWords, setFoundWords] = useState<Set<string>>(new Set());
@@ -201,7 +202,11 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
   }, []);
 
   // Audio functions
+  const soundEnabledRef = useRef(soundEnabled);
+  soundEnabledRef.current = soundEnabled;
+
   const playTone = (frequency: number, duration: number, type: OscillatorType = 'sine') => {
+    if (!soundEnabledRef.current) return;
     if (!audioCtxRef.current) {
       audioCtxRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
     }

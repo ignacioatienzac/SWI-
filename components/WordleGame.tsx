@@ -73,10 +73,13 @@ type GameStatus = 'SELECT_LEVEL' | 'PLAYING' | 'WON' | 'LOST';
 interface WordleGameProps {
   onBack: () => void;
   cobiVisible?: boolean;
+  soundEnabled?: boolean;
 }
 
 // Utility to play sounds
 const playSound = (type: 'correct' | 'present' | 'absent' | 'win' | 'lose') => {
+  // Respect global sound toggle
+  if (localStorage.getItem('soundEnabled') === 'false') return;
   const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
   const oscillator = audioContext.createOscillator();
   const gain = audioContext.createGain();
@@ -129,7 +132,7 @@ const playSound = (type: 'correct' | 'present' | 'absent' | 'win' | 'lose') => {
   }
 };
 
-const WordleGame: React.FC<WordleGameProps> = ({ onBack, cobiVisible = true }) => {
+const WordleGame: React.FC<WordleGameProps> = ({ onBack, cobiVisible = true, soundEnabled: _soundEnabled = true }) => {
   const [status, setStatus] = useState<GameStatus>('SELECT_LEVEL');
   const [difficulty, setDifficulty] = useState<string>('a1');
   const [secretWord, setSecretWord] = useState<string>('');

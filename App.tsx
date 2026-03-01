@@ -204,7 +204,7 @@ const App: React.FC = () => {
           </>
         );
       case View.GAMES:
-        return <Games activeGameId={activeGameId} setActiveGameId={setActiveGameId} cobiVisible={cobiVisible} />;
+        return <Games activeGameId={activeGameId} setActiveGameId={setActiveGameId} cobiVisible={cobiVisible} soundEnabled={soundEnabled} />;
       case View.RESOURCES:
         return <Resources />;
       default:

@@ -8,6 +8,7 @@ import { normalizePronoun } from '../services/srsService';
 interface PowerOfVerbsGameProps {
   onBack: () => void;
   cobiVisible?: boolean;
+  soundEnabled?: boolean;
 }
 
 // Función para formatear nombres de tiempos verbales
@@ -278,7 +279,7 @@ interface Boss extends Entity {
 }
 
 // --- COMPONENT ---
-const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible = true }) => {
+const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible = true, soundEnabled = true }) => {
   // UI State
   const [gameState, setGameState] = useState<GameState>('SELECTION');
   const [selectedGrammar, setSelectedGrammar] = useState<string>('indicativo');
@@ -531,6 +532,8 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
   const lastSpawnRef = useRef<number>(0);
   const lastShotRef = useRef<number>(0);
   const audioCtxRef = useRef<AudioContext | null>(null);
+  const soundEnabledRef = useRef(soundEnabled);
+  soundEnabledRef.current = soundEnabled;
   
   const heroRef = useRef({ x: 50, y: 0, width: 40, height: 40 }); // Y position set dynamically
   const monstersRef = useRef<Monster[]>([]);
@@ -631,6 +634,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
   };
 
   const playTone = (frequency: number, duration: number, type: OscillatorType = 'sine') => {
+    if (!soundEnabledRef.current) return;
     const ctx = getAudioCtx();
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
@@ -645,6 +649,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
 
   // --- Improved shoot: laser burst with descending sweep + crackle ---
   const playShoot = () => {
+    if (!soundEnabledRef.current) return;
     const ctx = getAudioCtx();
     const t = ctx.currentTime;
 
@@ -692,6 +697,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
 
   // --- Improved hit: punchy impact with sub-bass thud + metallic crunch ---
   const playHit = () => {
+    if (!soundEnabledRef.current) return;
     const ctx = getAudioCtx();
     const t = ctx.currentTime;
 
@@ -762,6 +768,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
 
   // --- Boss hit: heavier impact with reverb-like echo tail ---
   const playBossHit = () => {
+    if (!soundEnabledRef.current) return;
     const ctx = getAudioCtx();
     const t = ctx.currentTime;
 
@@ -817,6 +824,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
 
   // --- Damage received: pain sound when wizard loses a life ---
   const playDamageReceived = () => {
+    if (!soundEnabledRef.current) return;
     const ctx = getAudioCtx();
     const t = ctx.currentTime;
 
@@ -860,6 +868,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
 
   // --- New wave fanfare: short brass roll ---
   const playNewWave = () => {
+    if (!soundEnabledRef.current) return;
     const ctx = getAudioCtx();
     const t = ctx.currentTime;
     const notes = [392, 494, 587, 784]; // G4, B4, D5, G5
@@ -893,6 +902,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
 
   // --- Power-up ding: bright ascending chime ---
   const playPowerUp = () => {
+    if (!soundEnabledRef.current) return;
     const ctx = getAudioCtx();
     const t = ctx.currentTime;
     // Two quick ascending crystal pings
@@ -920,6 +930,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
 
   // --- Boss spawn: epic dragon roar ---
   const playBossSpawn = () => {
+    if (!soundEnabledRef.current) return;
     const ctx = getAudioCtx();
     const t = ctx.currentTime;
 
@@ -1855,7 +1866,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
     const wizardSize = Math.floor((canvasHeight - groundHeight) * 0.15);
     
     // Draw castle using image
-    const castleX = 70;
+    const castleX = 60;
     const castleBaseY = groundY;
     
     // Draw castle shadow (elliptical, before castle)

@@ -14,7 +14,6 @@ import {
   VerbLevel,
   VerbType,
   VerbMode,
-  GameMode,
   BubbleChallenge,
   VerbData
 } from '../services/verbMasterService';
@@ -22,12 +21,13 @@ import {
 interface VerbMasterGameProps {
   onBack: () => void;
   cobiVisible?: boolean;
+  soundEnabled?: boolean;
 }
 
 // Mensajes aleatorios para Cobi Sensei en el menú
 const mensajesSenseiMenu = [
   "� ¡Bienvenido al Maestro de Verbos! Elige sabiamente tu desafío. 🐾",
-  "🎯 Regular o irregular... Conjugar o identificar... ¡Tú decides! 🐾",
+  "🎯 Regular o irregular... ¡Tú decides cómo conjugar! 🐾",
   "📚 Cada burbuja es una oportunidad de aprendizaje. ¿Listo? 🐾",
   "🥋 La práctica hace al maestro. ¡Configura tu entrenamiento! 🐾",
   "✨ Las burbujas caen, pero tu conocimiento permanece. ¡Adelante! 🐾",
@@ -146,14 +146,12 @@ interface Bubble {
   shrinkStartTime: number; // When shrink animation started
 }
 
-const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = true }) => {
+const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = true, soundEnabled = true }) => {
   // Game configuration
   const [selectedVerbMode, setSelectedVerbMode] = useState<VerbMode>('indicativo');
   const [selectedVerbType, setSelectedVerbType] = useState<VerbType | null>(null);
-  const [selectedGameMode, setSelectedGameMode] = useState<GameMode | null>(null);
   const [selectedTense, setSelectedTense] = useState<string>('presente');
   const [selectedLevel] = useState<VerbLevel>('A1');
-  const [showTooltip, setShowTooltip] = useState<string | null>(null);
   
   // Cobi Sensei State
   const [cobiSenseiMenuMessage] = useState<string>(seleccionarMensajeSenseiMenuRandom());
@@ -190,7 +188,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
           modo_verbal_seleccionado: selectedVerbMode || 'ninguno',
           tiempo_seleccionado: selectedTense || 'ninguno',
           tipo_verbos: selectedVerbType || 'ninguno',
-          modo_juego: selectedGameMode || 'ninguno'
+          modo_juego: 'conjugate'
         };
         tipo = 'lobby';
       } else {
@@ -201,7 +199,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
           modo_verbal: selectedVerbMode,
           tiempo_verbal: selectedTense,
           tipo_verbos: selectedVerbType,
-          modo_juego: selectedGameMode,
+          modo_juego: 'conjugate',
           puntuacion: score,
           racha: streak,
           vidas: lives
@@ -286,7 +284,11 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
   const groundY = canvasHeight - 50;
 
   // Audio functions
+  const soundEnabledRef = useRef(soundEnabled);
+  soundEnabledRef.current = soundEnabled;
+
   const playTone = (frequency: number, duration: number, type: OscillatorType = 'sine') => {
+    if (!soundEnabledRef.current) return;
     if (!audioCtxRef.current) {
       audioCtxRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
     }
@@ -367,7 +369,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
 
   // Start game
   const handleStartGame = async () => {
-    if (!selectedVerbType || !selectedGameMode) return;
+    if (!selectedVerbType) return;
     
     // Use SRS-based pool for intelligent conjugation selection
     const verbs = await getFilteredVerbsSRS(selectedLevel, selectedVerbType, selectedTense, selectedVerbMode);
@@ -455,7 +457,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
     if (currentBubbleCount >= maxBubbles) return;
     
     if (currentTime - lastSpawnRef.current > spawnRate && verbs.length > 0) {
-      const challenge = generateChallenge(verbs, selectedGameMode!);
+      const challenge = generateChallenge(verbs, 'conjugate');
       if (!challenge) return;
       
       const radius = 40 + Math.random() * 20;
@@ -1086,7 +1088,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
         cancelAnimationFrame(animationFrameRef.current);
       }
     };
-  }, [gameState, verbPool, selectedGameMode, score, showLevelTitle, countdown, backgroundColor]);
+  }, [gameState, verbPool, score, showLevelTitle, countdown, backgroundColor]);
 
   // Handle answer submission
   const handleSubmit = () => {
@@ -1284,69 +1286,10 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
               </div>
             </div>
 
-            {/* Game Mode Selection */}
-            <div className="mb-8">
-              <label className="block text-sm font-bold text-gray-700 mb-2">
-                Modo de Juego
-              </label>
-              <div className="grid grid-cols-2 gap-3">
-                <button
-                  onClick={() => setSelectedGameMode('conjugate')}
-                  className={`p-4 rounded-lg border-2 transition-all relative ${
-                    selectedGameMode === 'conjugate'
-                      ? 'border-deep-blue bg-deep-blue'
-                      : 'border-gray-200 hover:border-gray-300'
-                  }`}
-                >
-                  <button
-                    onMouseEnter={() => setShowTooltip('conjugate')}
-                    onMouseLeave={() => setShowTooltip(null)}
-                    onClick={(e) => { e.stopPropagation(); setShowTooltip(showTooltip === 'conjugate' ? null : 'conjugate'); }}
-                    className="absolute top-1 left-1 w-5 h-5 rounded-full bg-white/20 hover:bg-white/40 text-xs flex items-center justify-center transition-colors"
-                  >
-                    ?
-                  </button>
-                  {showTooltip === 'conjugate' && (
-                    <div className="absolute -top-14 left-0 right-0 bg-gray-800 text-white text-xs px-2 py-2 rounded-lg z-10">
-                      Ver: "hablar, yo" → Escribir: "hablo"
-                    </div>
-                  )}
-                  <div className={`font-bold mb-1 ${
-                    selectedGameMode === 'conjugate' ? 'text-white' : 'text-gray-800'
-                  }`}>Conjugar</div>
-                </button>
-                <button
-                  onClick={() => setSelectedGameMode('identify')}
-                  className={`p-4 rounded-lg border-2 transition-all relative ${
-                    selectedGameMode === 'identify'
-                      ? 'border-deep-blue bg-deep-blue'
-                      : 'border-gray-200 hover:border-gray-300'
-                  }`}
-                >
-                  <button
-                    onMouseEnter={() => setShowTooltip('identify')}
-                    onMouseLeave={() => setShowTooltip(null)}
-                    onClick={(e) => { e.stopPropagation(); setShowTooltip(showTooltip === 'identify' ? null : 'identify'); }}
-                    className="absolute top-1 left-1 w-5 h-5 rounded-full bg-white/20 hover:bg-white/40 text-xs flex items-center justify-center transition-colors"
-                  >
-                    ?
-                  </button>
-                  {showTooltip === 'identify' && (
-                    <div className="absolute -top-14 left-0 right-0 bg-gray-800 text-white text-xs px-2 py-2 rounded-lg z-10">
-                      Ver: "hablo" → Escribir: "hablar, yo"
-                    </div>
-                  )}
-                  <div className={`font-bold mb-1 ${
-                    selectedGameMode === 'identify' ? 'text-white' : 'text-gray-800'
-                  }`}>Identificar</div>
-                </button>
-              </div>
-            </div>
-
             {/* Start Button */}
             <button
               onClick={handleStartGame}
-              disabled={!selectedVerbType || !selectedGameMode}
+              disabled={!selectedVerbType}
               className="w-full py-4 bg-gradient-to-r from-spanish-red to-spanish-red hover:from-red-700 hover:to-red-700 disabled:from-gray-300 disabled:to-gray-300 text-white font-bold text-xl rounded-xl transition-all shadow-lg"
             >
               Comenzar Juego

@@ -5,7 +5,7 @@ import { createSRSPool, getConjugationId, loadSRSData, recordCorrectAnswer, reco
 export type VerbLevel = 'A1' | 'A2' | 'B1' | 'B2';
 export type VerbType = 'regular' | 'irregular' | 'all';
 export type VerbMode = 'indicativo' | 'subjuntivo' | 'imperativo';
-export type GameMode = 'conjugate' | 'identify'; // Mode 1: conjugate, Mode 2: identify
+export type GameMode = 'conjugate'; // Only conjugate mode
 
 export interface VerbData {
   verb: string;
@@ -113,29 +113,16 @@ export function generateChallenge(
   const randomVerb = verbs[Math.floor(Math.random() * verbs.length)];
   const id = `${Date.now()}_${Math.random()}`;
   
-  if (mode === 'conjugate') {
-    // Mode 1: Show infinitive + pronoun, player writes conjugation
-    return {
-      id,
-      verb: randomVerb.verb,
-      pronoun: randomVerb.pronoun,
-      conjugated: randomVerb.answer,
-      mode,
-      displayText: `${randomVerb.verb}, ${randomVerb.pronoun}`,
-      correctAnswer: randomVerb.answer
-    };
-  } else {
-    // Mode 2: Show conjugation, player writes infinitive + pronoun
-    return {
-      id,
-      verb: randomVerb.verb,
-      pronoun: randomVerb.pronoun,
-      conjugated: randomVerb.answer,
-      mode,
-      displayText: randomVerb.answer,
-      correctAnswer: `${randomVerb.verb}, ${randomVerb.pronoun}`
-    };
-  }
+  // Show infinitive + pronoun, player writes conjugation
+  return {
+    id,
+    verb: randomVerb.verb,
+    pronoun: randomVerb.pronoun,
+    conjugated: randomVerb.answer,
+    mode,
+    displayText: `${randomVerb.verb}, ${randomVerb.pronoun}`,
+    correctAnswer: randomVerb.answer
+  };
 }
 
 // Validate player's answer
@@ -144,41 +131,7 @@ export function validateAnswer(challenge: BubbleChallenge, userInput: string): b
   const correct = challenge.correctAnswer.toLowerCase();
   
   // Direct match
-  if (normalized === correct) return true;
-  
-  // For identify mode, check alternative pronoun variations
-  if (challenge.mode === 'identify') {
-    // Split the correct answer into verb and pronoun
-    const correctParts = correct.split(',').map(p => p.trim());
-    const userParts = normalized.split(',').map(p => p.trim());
-    
-    // Must have 2 parts: verb, pronoun
-    if (correctParts.length !== 2 || userParts.length !== 2) return false;
-    
-    const [correctVerb, correctPronoun] = correctParts;
-    const [userVerb, userPronoun] = userParts;
-    
-    // Verb must match exactly
-    if (correctVerb !== userVerb) return false;
-    
-    // Check pronoun variations for third person
-    // Third person singular: él/ella/usted are interchangeable
-    const thirdSingular = ['él', 'ella', 'usted', 'él/ella'];
-    if (thirdSingular.includes(correctPronoun) && thirdSingular.includes(userPronoun)) {
-      return true;
-    }
-    
-    // Third person plural: ellos/ellas/ustedes are interchangeable
-    const thirdPlural = ['ellos', 'ellas', 'ustedes', 'ellos/ellas'];
-    if (thirdPlural.includes(correctPronoun) && thirdPlural.includes(userPronoun)) {
-      return true;
-    }
-    
-    // If not third person, pronoun must match exactly
-    return correctPronoun === userPronoun;
-  }
-  
-  return false;
+  return normalized === correct;
 }
 
 // Calculate score based on game level and streak

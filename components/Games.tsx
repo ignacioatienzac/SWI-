@@ -31,6 +31,7 @@ interface GamesProps {
   activeGameId: string | null;
   setActiveGameId: (id: string | null) => void;
   cobiVisible: boolean;
+  soundEnabled: boolean;
 }
 
 interface Message {
@@ -38,7 +39,7 @@ interface Message {
   text: string;
 }
 
-const Games: React.FC<GamesProps> = ({ activeGameId, setActiveGameId, cobiVisible }) => {
+const Games: React.FC<GamesProps> = ({ activeGameId, setActiveGameId, cobiVisible, soundEnabled }) => {
   // Estado del chat
   const [showChatWindow, setShowChatWindow] = useState(false);
   const [chatMessages, setChatMessages] = useState<Message[]>([]);
@@ -136,7 +137,7 @@ const Games: React.FC<GamesProps> = ({ activeGameId, setActiveGameId, cobiVisibl
   if (activeGameId === 'phrase-builder') {
     return (
       <div className="w-full bg-cream min-h-screen">
-        <PhraseBuilderGame onBack={() => setActiveGameId(null)} cobiVisible={cobiVisible} />
+        <PhraseBuilderGame onBack={() => setActiveGameId(null)} cobiVisible={cobiVisible} soundEnabled={soundEnabled} />
       </div>
     );
   }
@@ -144,7 +145,7 @@ const Games: React.FC<GamesProps> = ({ activeGameId, setActiveGameId, cobiVisibl
   if (activeGameId === 'verb-master') {
     return (
       <div className="w-full bg-cream min-h-screen">
-        <VerbMasterGame onBack={() => setActiveGameId(null)} cobiVisible={cobiVisible} />
+        <VerbMasterGame onBack={() => setActiveGameId(null)} cobiVisible={cobiVisible} soundEnabled={soundEnabled} />
       </div>
     );
   }
@@ -152,7 +153,7 @@ const Games: React.FC<GamesProps> = ({ activeGameId, setActiveGameId, cobiVisibl
   if (activeGameId === 'wordle-game') {
       return (
           <div className="w-full bg-cream min-h-screen">
-               <WordleGame onBack={() => setActiveGameId(null)} cobiVisible={cobiVisible} />
+               <WordleGame onBack={() => setActiveGameId(null)} cobiVisible={cobiVisible} soundEnabled={soundEnabled} />
           </div>
       );
   }
@@ -160,7 +161,7 @@ const Games: React.FC<GamesProps> = ({ activeGameId, setActiveGameId, cobiVisibl
   if (activeGameId === 'power-verbs') {
     return (
         <div className="w-full bg-cream min-h-screen">
-             <PowerOfVerbsGame onBack={() => setActiveGameId(null)} cobiVisible={cobiVisible} />
+             <PowerOfVerbsGame onBack={() => setActiveGameId(null)} cobiVisible={cobiVisible} soundEnabled={soundEnabled} />
         </div>
     );
   }
@@ -168,7 +169,7 @@ const Games: React.FC<GamesProps> = ({ activeGameId, setActiveGameId, cobiVisibl
   if (activeGameId === 'letter-wheel') {
     return (
         <div className="w-full bg-cream min-h-screen">
-             <LetterWheelGame onBack={() => setActiveGameId(null)} cobiVisible={cobiVisible} />
+             <LetterWheelGame onBack={() => setActiveGameId(null)} cobiVisible={cobiVisible} soundEnabled={soundEnabled} />
         </div>
     );
   }
