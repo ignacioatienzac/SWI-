@@ -17,7 +17,7 @@ This document provides guidance for AI coding agents working within this codebas
 - Follow the naming conventions for files and functions as outlined in the project documentation.
 
 ## Integration Points
-- The project integrates with Google GenAI for AI functionalities. Refer to the `geminiService.ts` for implementation details.
+- The project integrates with Groq API (Llama 3.3) via Firebase Functions for AI functionalities. Refer to `functions/index.js` for the server-side implementation and `services/geminiService.ts` for the client-side caller.
 - Ensure that environment variables are set correctly for API keys.
 
 ## Additional Resources

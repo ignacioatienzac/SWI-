@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View } from '../types';
-import { Menu, X, Eye, EyeOff } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 
 interface HeaderProps {
   currentView: View;
@@ -62,14 +62,16 @@ const Header: React.FC<HeaderProps> = ({ currentView, onChangeView, cobiVisible,
               <button
                 onClick={onToggleCobi}
                 title={cobiVisible ? 'Ocultar a Cobi' : 'Mostrar a Cobi'}
-                className={`flex items-center gap-1.5 text-sm font-semibold transition-colors duration-200 px-3 py-2 rounded-md ${
-                  cobiVisible
-                    ? 'text-gray-600 hover:text-spanish-red hover:bg-gray-50'
-                    : 'text-gray-400 hover:text-spanish-red hover:bg-gray-50'
-                }`}
+                className="flex items-center gap-2 px-2 py-2 rounded-md transition-colors duration-200 hover:bg-gray-50 group"
               >
-                {cobiVisible ? <Eye size={18} /> : <EyeOff size={18} />}
-                <span>Cobi</span>
+                <span className={`text-xs font-semibold transition-colors duration-200 ${cobiVisible ? 'text-gray-600' : 'text-gray-400'}`}>
+                  Cobi
+                </span>
+                <div className={`relative w-10 h-[22px] rounded-full transition-colors duration-300 ${cobiVisible ? 'bg-spanish-red' : 'bg-gray-300'}`}>
+                  <div className={`absolute top-[2px] w-[18px] h-[18px] rounded-full bg-white shadow-sm flex items-center justify-center transition-all duration-300 ${cobiVisible ? 'left-[20px]' : 'left-[2px]'}`}>
+                    <span className={`text-[10px] leading-none transition-opacity duration-300 ${cobiVisible ? 'opacity-100' : 'opacity-40'}`}>🐾</span>
+                  </div>
+                </div>
               </button>
             </nav>
 
@@ -124,14 +126,16 @@ const Header: React.FC<HeaderProps> = ({ currentView, onChangeView, cobiVisible,
             {/* Cobi Toggle (Mobile) */}
             <button
               onClick={onToggleCobi}
-              className={`flex items-center justify-center gap-3 w-full text-center text-xl font-bold py-3 rounded-2xl transition-all ${
-                cobiVisible
-                  ? 'text-gray-400 hover:text-deep-blue hover:bg-white/50'
-                  : 'text-gray-300 hover:text-deep-blue hover:bg-white/50'
-              }`}
+              className="flex items-center justify-center gap-4 w-full py-3 rounded-2xl transition-all hover:bg-white/50"
             >
-              {cobiVisible ? <Eye size={24} /> : <EyeOff size={24} />}
-              <span>{cobiVisible ? 'Ocultar Cobi' : 'Mostrar Cobi'}</span>
+              <span className={`text-xl font-bold transition-colors duration-300 ${cobiVisible ? 'text-gray-500' : 'text-gray-300'}`}>
+                Cobi
+              </span>
+              <div className={`relative w-14 h-8 rounded-full transition-colors duration-300 ${cobiVisible ? 'bg-spanish-red' : 'bg-gray-300'}`}>
+                <div className={`absolute top-1 w-6 h-6 rounded-full bg-white shadow-sm flex items-center justify-center transition-all duration-300 ${cobiVisible ? 'left-[26px]' : 'left-1'}`}>
+                  <span className={`text-sm leading-none transition-opacity duration-300 ${cobiVisible ? 'opacity-100' : 'opacity-40'}`}>🐾</span>
+                </div>
+              </div>
             </button>
           </div>
           

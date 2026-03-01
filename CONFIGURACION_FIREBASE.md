@@ -1,10 +1,10 @@
 # 🔒 Guía de Configuración Firebase Functions
-## Protección segura de tu API Key de Gemini
+## Protección segura de las API Keys con Firebase Functions
 
 ---
 
 ## ✅ Lo que ya está hecho (código)
-- ✅ Función serverless creada en `functions/index.js`
+- ✅ Función serverless creada en `functions/index.js` (usa Groq API con Llama 3.3)
 - ✅ Cliente actualizado en `services/geminiService.ts`
 - ✅ Tu API Key eliminada del código frontend
 
@@ -79,18 +79,13 @@ Te preguntará:
 
 ### **PASO 4: 🔒 Configurar tu API Key de forma SEGURA** (2 min)
 
-Copia y pega esto en tu Terminal (reemplaza con tu API Key real):
+Copia y pega esto en tu Terminal (reemplaza con tu API Key real de Groq):
 
 ```bash
-cd "/Users/ignacio/Documents/Spanish with Ignacio/SWI-" && npx firebase functions:config:set gemini.key="TU_API_KEY_AQUI"
+cd "/Users/ignacio/Documents/Spanish with Ignacio/SWI-" && npx firebase functions:config:set groq.key="TU_GROQ_API_KEY_AQUI"
 ```
 
-⚠️ **IMPORTANTE**: Reemplaza `TU_API_KEY_AQUI` con tu API Key real de Gemini.
-
-Ejemplo:
-```bash
-cd "/Users/ignacio/Documents/Spanish with Ignacio/SWI-" && npx firebase functions:config:set gemini.key="AIzaSyBEzEiqx-jmezWTvfqmIM6Xq15wBj__sAs"
-```
+⚠️ **IMPORTANTE**: Reemplaza `TU_GROQ_API_KEY_AQUI` con tu API Key real de Groq (empieza con `gsk_`).
 
 Verifica que se guardó:
 
@@ -101,8 +96,8 @@ cd "/Users/ignacio/Documents/Spanish with Ignacio/SWI-" && npx firebase function
 Deberías ver:
 ```json
 {
-  "gemini": {
-    "key": "AIza..."
+  "groq": {
+    "key": "gsk_..."
   }
 }
 ```
