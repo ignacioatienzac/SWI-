@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
 import { View } from '../types';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Volume2, VolumeX } from 'lucide-react';
 
 interface HeaderProps {
   currentView: View;
   onChangeView: (view: View) => void;
   cobiVisible: boolean;
   onToggleCobi: () => void;
+  soundEnabled: boolean;
+  onToggleSound: () => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ currentView, onChangeView, cobiVisible, onToggleCobi }) => {
+const Header: React.FC<HeaderProps> = ({ currentView, onChangeView, cobiVisible, onToggleCobi, soundEnabled, onToggleSound }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const navItems = [
@@ -57,6 +59,15 @@ const Header: React.FC<HeaderProps> = ({ currentView, onChangeView, cobiVisible,
                   {item.label}
                 </button>
               ))}
+
+              {/* Sound Toggle */}
+              <button
+                onClick={onToggleSound}
+                title={soundEnabled ? 'Silenciar sonido' : 'Activar sonido'}
+                className="flex items-center px-2 py-2 rounded-md transition-colors duration-200 hover:bg-gray-50 text-gray-500 hover:text-spanish-red"
+              >
+                {soundEnabled ? <Volume2 size={20} /> : <VolumeX size={20} className="text-gray-400" />}
+              </button>
 
               {/* Cobi Toggle */}
               <button
@@ -128,6 +139,21 @@ const Header: React.FC<HeaderProps> = ({ currentView, onChangeView, cobiVisible,
                 {item.label}
               </button>
             ))}
+
+            {/* Sound Toggle (Mobile) */}
+            <button
+              onClick={onToggleSound}
+              className="flex items-center justify-center gap-3 w-full py-3 rounded-2xl transition-all hover:bg-white/50"
+            >
+              {soundEnabled ? (
+                <Volume2 size={28} className="text-gray-600" />
+              ) : (
+                <VolumeX size={28} className="text-gray-400" />
+              )}
+              <span className={`text-lg font-semibold ${soundEnabled ? 'text-gray-600' : 'text-gray-400'}`}>
+                {soundEnabled ? 'Sonido activado' : 'Sonido desactivado'}
+              </span>
+            </button>
 
             {/* Cobi Toggle (Mobile) */}
             <button

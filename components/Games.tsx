@@ -275,8 +275,7 @@ const Games: React.FC<GamesProps> = ({ activeGameId, setActiveGameId, cobiVisibl
       </div>
 
       {/* Avatar del panda asomándose desde la esquina (solo desktop) */}
-      {cobiVisible && (
-      <div className="hidden lg:block fixed bottom-0 right-0 z-50 pointer-events-none overflow-visible">
+      <div className={`cobi-container hidden lg:block fixed bottom-0 right-0 z-50 pointer-events-none overflow-visible${!cobiVisible ? ' cobi-hidden' : ''}`}>
         <div className="relative animate-float">
           {/* Bocadillo de diálogo con mensaje aleatorio - A la derecha de Cobi, debajo del bocadillo de pensamiento */}
           <div style={{ position: 'absolute', left: '-200px', bottom: '80px', zIndex: 5, maxWidth: '220px' }} className="bg-white/95 backdrop-blur-sm rounded-2xl px-4 py-2 shadow-lg border-2 border-gray-200 pointer-events-auto">
@@ -328,11 +327,10 @@ const Games: React.FC<GamesProps> = ({ activeGameId, setActiveGameId, cobiVisibl
           </div>
         </div>
       </div>
-      )}
 
       {/* Chat Window */}
-      {cobiVisible && showChatWindow && (
-        <div className="fixed bottom-24 right-6 lg:bottom-48 lg:right-6 z-50 w-80 max-w-[calc(100vw-3rem)] bg-white rounded-3xl shadow-2xl border-2 border-gray-200 overflow-hidden animate-fade-in">
+      {showChatWindow && (
+        <div className={`cobi-container fixed bottom-24 right-6 lg:bottom-48 lg:right-6 z-50 w-80 max-w-[calc(100vw-3rem)] bg-white rounded-3xl shadow-2xl border-2 border-gray-200 overflow-hidden animate-fade-in${!cobiVisible ? ' cobi-hidden' : ''}`}>
           {/* Header */}
           <div className="bg-gradient-to-r from-blue-gray-500 to-blue-gray-600 p-4 flex items-center justify-between" style={{ background: 'linear-gradient(to right, #607D8B, #546E7A)' }}>
             <div className="flex items-center gap-2">

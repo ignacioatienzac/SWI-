@@ -2402,8 +2402,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
         </div>
 
         {/* Cobi Mago Menú (solo desktop) */}
-        {cobiVisible && (
-        <div className="hidden lg:block fixed bottom-0 right-0 z-50 pointer-events-none overflow-visible" key="cobi-mago-menu">
+        <div className={`hidden lg:block fixed bottom-0 right-0 z-50 pointer-events-none overflow-visible cobi-container${!cobiVisible ? ' cobi-hidden' : ''}`} key="cobi-mago-menu">
           <div className="relative animate-float">
             {/* Bocadillo de diálogo con mensaje */}
             <div style={{ position: 'absolute', left: '-200px', bottom: '80px', zIndex: 5, maxWidth: '220px' }} className="bg-white/95 backdrop-blur-sm rounded-2xl px-4 py-2 shadow-lg border-2 border-gray-200 pointer-events-auto">
@@ -2445,11 +2444,10 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
             </div>
           </div>
         </div>
-        )}
 
         {/* Chat Window del Menú */}
-        {cobiVisible && showChatWindow && gameState === 'SELECTION' && (
-          <div className="fixed bottom-24 right-6 lg:bottom-48 lg:right-6 z-50 w-80 max-w-[calc(100vw-3rem)] bg-white rounded-3xl shadow-2xl border-2 border-gray-200 overflow-hidden animate-fade-in">
+        {showChatWindow && gameState === 'SELECTION' && (
+          <div className={`fixed bottom-24 right-6 lg:bottom-48 lg:right-6 z-50 w-80 max-w-[calc(100vw-3rem)] bg-white rounded-3xl shadow-2xl border-2 border-gray-200 overflow-hidden animate-fade-in cobi-container${!cobiVisible ? ' cobi-hidden' : ''}`}>
             {/* Header */}
             <div className="bg-gradient-to-r from-purple-600 to-indigo-600 p-4 flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -2820,8 +2818,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
         )}
 
         {/* Cobi Mago (solo desktop) */}
-        {cobiVisible && (
-        <div className="hidden lg:block fixed bottom-0 right-0 z-50 pointer-events-none overflow-visible" key="cobi-mago-container">
+        <div className={`hidden lg:block fixed bottom-0 right-0 z-50 pointer-events-none overflow-visible cobi-container${!cobiVisible ? ' cobi-hidden' : ''}`} key="cobi-mago-container">
           <div className="relative animate-float">
             {/* Bocadillo de diálogo con mensaje */}
             <div style={{ position: 'absolute', left: '-200px', bottom: '80px', zIndex: 5, maxWidth: '220px' }} className="bg-white/95 backdrop-blur-sm rounded-2xl px-4 py-2 shadow-lg border-2 border-gray-200 pointer-events-auto">
@@ -2863,11 +2860,10 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
             </div>
           </div>
         </div>
-        )}
 
         {/* Chat Window del Juego */}
-        {cobiVisible && showChatWindow && gameState === 'PLAYING' && (
-          <div className="fixed bottom-24 right-6 lg:bottom-48 lg:right-6 z-50 w-80 max-w-[calc(100vw-3rem)] bg-white rounded-3xl shadow-2xl border-2 border-gray-200 overflow-hidden animate-fade-in">
+        {showChatWindow && gameState === 'PLAYING' && (
+          <div className={`fixed bottom-24 right-6 lg:bottom-48 lg:right-6 z-50 w-80 max-w-[calc(100vw-3rem)] bg-white rounded-3xl shadow-2xl border-2 border-gray-200 overflow-hidden animate-fade-in cobi-container${!cobiVisible ? ' cobi-hidden' : ''}`}>
             {/* Header */}
             <div className="bg-gradient-to-r from-purple-600 to-indigo-600 p-4 flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -2982,8 +2978,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
         </div>
 
         {/* Cobi Mago Pausa (solo desktop) */}
-        {cobiVisible && (
-        <div className="hidden lg:block fixed bottom-0 right-0 z-50 pointer-events-none overflow-visible" key="cobi-mago-pausa">
+        <div className={`hidden lg:block fixed bottom-0 right-0 z-50 pointer-events-none overflow-visible cobi-container${!cobiVisible ? ' cobi-hidden' : ''}`} key="cobi-mago-pausa">
           <div className="relative animate-float">
             {/* Bocadillo de diálogo con mensaje */}
             <div style={{ position: 'absolute', left: '-200px', bottom: '80px', zIndex: 5, maxWidth: '220px' }} className="bg-white/95 backdrop-blur-sm rounded-2xl px-4 py-2 shadow-lg border-2 border-gray-200 pointer-events-auto">
@@ -3025,11 +3020,10 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
             </div>
           </div>
         </div>
-        )}
 
         {/* Chat Window de Pausa */}
-        {cobiVisible && showChatWindow && gameState === 'PAUSED' && (
-          <div className="fixed bottom-24 right-6 lg:bottom-48 lg:right-6 z-50 w-80 max-w-[calc(100vw-3rem)] bg-white rounded-3xl shadow-2xl border-2 border-gray-200 overflow-hidden animate-fade-in">
+        {showChatWindow && gameState === 'PAUSED' && (
+          <div className={`fixed bottom-24 right-6 lg:bottom-48 lg:right-6 z-50 w-80 max-w-[calc(100vw-3rem)] bg-white rounded-3xl shadow-2xl border-2 border-gray-200 overflow-hidden animate-fade-in cobi-container${!cobiVisible ? ' cobi-hidden' : ''}`}>
             {/* Header */}
             <div className="bg-gradient-to-r from-purple-600 to-indigo-600 p-4 flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -3135,8 +3129,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
         </div>
 
         {/* Cobi Mago Derrota (solo desktop) */}
-        {cobiVisible && (
-        <div className="hidden lg:block fixed bottom-0 right-0 z-50 pointer-events-none overflow-visible" key="cobi-mago-derrota">
+        <div className={`hidden lg:block fixed bottom-0 right-0 z-50 pointer-events-none overflow-visible cobi-container${!cobiVisible ? ' cobi-hidden' : ''}`} key="cobi-mago-derrota">
           <div className="relative animate-float">
             {/* Bocadillo de diálogo con mensaje */}
             <div style={{ position: 'absolute', left: '-200px', bottom: '80px', zIndex: 5, maxWidth: '220px' }} className="bg-white/95 backdrop-blur-sm rounded-2xl px-4 py-2 shadow-lg border-2 border-gray-200 pointer-events-auto">
@@ -3178,11 +3171,10 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
             </div>
           </div>
         </div>
-        )}
 
         {/* Chat Window de Derrota */}
-        {cobiVisible && showChatWindow && gameState === 'GAMEOVER' && (
-          <div className="fixed bottom-24 right-6 lg:bottom-48 lg:right-6 z-50 w-80 max-w-[calc(100vw-3rem)] bg-white rounded-3xl shadow-2xl border-2 border-gray-200 overflow-hidden animate-fade-in">
+        {showChatWindow && gameState === 'GAMEOVER' && (
+          <div className={`fixed bottom-24 right-6 lg:bottom-48 lg:right-6 z-50 w-80 max-w-[calc(100vw-3rem)] bg-white rounded-3xl shadow-2xl border-2 border-gray-200 overflow-hidden animate-fade-in cobi-container${!cobiVisible ? ' cobi-hidden' : ''}`}>
             {/* Header */}
             <div className="bg-gradient-to-r from-purple-600 to-indigo-600 p-4 flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -3288,8 +3280,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
         </div>
 
         {/* Cobi Mago Victoria (solo desktop) */}
-        {cobiVisible && (
-        <div className="hidden lg:block fixed bottom-0 right-0 z-50 pointer-events-none overflow-visible" key="cobi-mago-victoria">
+        <div className={`hidden lg:block fixed bottom-0 right-0 z-50 pointer-events-none overflow-visible cobi-container${!cobiVisible ? ' cobi-hidden' : ''}`} key="cobi-mago-victoria">
           <div className="relative animate-float">
             {/* Bocadillo de diálogo con mensaje */}
             <div style={{ position: 'absolute', left: '-200px', bottom: '80px', zIndex: 5, maxWidth: '220px' }} className="bg-white/95 backdrop-blur-sm rounded-2xl px-4 py-2 shadow-lg border-2 border-gray-200 pointer-events-auto">
@@ -3331,11 +3322,10 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
             </div>
           </div>
         </div>
-        )}
 
         {/* Chat Window de Victoria */}
-        {cobiVisible && showChatWindow && gameState === 'VICTORY' && (
-          <div className="fixed bottom-24 right-6 lg:bottom-48 lg:right-6 z-50 w-80 max-w-[calc(100vw-3rem)] bg-white rounded-3xl shadow-2xl border-2 border-gray-200 overflow-hidden animate-fade-in">
+        {showChatWindow && gameState === 'VICTORY' && (
+          <div className={`fixed bottom-24 right-6 lg:bottom-48 lg:right-6 z-50 w-80 max-w-[calc(100vw-3rem)] bg-white rounded-3xl shadow-2xl border-2 border-gray-200 overflow-hidden animate-fade-in cobi-container${!cobiVisible ? ' cobi-hidden' : ''}`}>
             {/* Header */}
             <div className="bg-gradient-to-r from-purple-600 to-indigo-600 p-4 flex items-center justify-between">
               <div className="flex items-center gap-2">

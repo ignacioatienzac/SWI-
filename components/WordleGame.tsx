@@ -590,8 +590,7 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack, cobiVisible = true }) =
         </div>
 
         {/* Cobi Detective pensando en el menú (solo desktop) */}
-        {cobiVisible && (
-        <div className="hidden lg:block fixed bottom-0 right-0 z-50 pointer-events-none overflow-visible">
+        <div className={`cobi-container hidden lg:block fixed bottom-0 right-0 z-50 pointer-events-none overflow-visible${!cobiVisible ? ' cobi-hidden' : ''}`}>
           <div className="relative animate-float">
             {/* Bocadillo de diálogo con mensaje aleatorio - solo si NO hay chat abierto */}
             {!showChatWindow && (
@@ -635,11 +634,10 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack, cobiVisible = true }) =
             </div>
           </div>
         </div>
-        )}
 
         {/* Chat Window del Menú */}
-        {cobiVisible && showChatWindow && status === 'SELECT_LEVEL' && (
-          <div className="fixed bottom-24 right-6 lg:bottom-48 lg:right-6 z-50 w-80 max-w-[calc(100vw-3rem)] bg-white rounded-3xl shadow-2xl border-2 border-gray-200 overflow-hidden animate-fade-in">
+        {showChatWindow && status === 'SELECT_LEVEL' && (
+          <div className={`cobi-container fixed bottom-24 right-6 lg:bottom-48 lg:right-6 z-50 w-80 max-w-[calc(100vw-3rem)] bg-white rounded-3xl shadow-2xl border-2 border-gray-200 overflow-hidden animate-fade-in${!cobiVisible ? ' cobi-hidden' : ''}`}>
             {/* Header */}
             <div className="p-4 flex items-center justify-between" style={{ background: 'linear-gradient(to right, #2D5A27, #234A1F)' }}>
               <div className="flex items-center gap-2">
@@ -1185,8 +1183,7 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack, cobiVisible = true }) =
       {/* Cobi Detective (durante el juego, victoria y derrota en desktop) */}
       {(status === 'PLAYING' || status === 'WON' || status === 'LOST') && (
         <>
-          {cobiVisible && (
-          <div className="hidden lg:block fixed bottom-0 right-0 z-50 pointer-events-none overflow-visible">
+          <div className={`cobi-container hidden lg:block fixed bottom-0 right-0 z-50 pointer-events-none overflow-visible${!cobiVisible ? ' cobi-hidden' : ''}`}>
             <div className="relative animate-float">
               {/* Bocadillo de diálogo con mensaje aleatorio */}
               {cobiDetectiveMessage && !showChatWindow && (
@@ -1230,11 +1227,10 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack, cobiVisible = true }) =
               </div>
             </div>
           </div>
-          )}
 
           {/* Chat Window */}
-          {cobiVisible && showChatWindow && (
-            <div className="fixed bottom-24 right-6 lg:bottom-48 lg:right-6 z-50 w-80 max-w-[calc(100vw-3rem)] bg-white rounded-3xl shadow-2xl border-2 border-gray-200 overflow-hidden animate-fade-in">
+          {showChatWindow && (
+            <div className={`cobi-container fixed bottom-24 right-6 lg:bottom-48 lg:right-6 z-50 w-80 max-w-[calc(100vw-3rem)] bg-white rounded-3xl shadow-2xl border-2 border-gray-200 overflow-hidden animate-fade-in${!cobiVisible ? ' cobi-hidden' : ''}`}>
               {/* Header */}
               <div className="p-4 flex items-center justify-between" style={{ background: 'linear-gradient(to right, #2D5A27, #234A1F)' }}>
                 <div className="flex items-center gap-2">

@@ -87,6 +87,20 @@ const App: React.FC = () => {
     });
   };
 
+  // Estado global para sonido (persistido en localStorage)
+  const [soundEnabled, setSoundEnabled] = useState<boolean>(() => {
+    const saved = localStorage.getItem('soundEnabled');
+    return saved !== null ? saved === 'true' : true;
+  });
+
+  const toggleSound = () => {
+    setSoundEnabled(prev => {
+      const next = !prev;
+      localStorage.setItem('soundEnabled', String(next));
+      return next;
+    });
+  };
+
   // Estado para mensaje de Cobi
   const [cobiMessage] = useState<string>(seleccionarMensajeCobiRandom());
   
@@ -208,15 +222,15 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col font-sans bg-cream text-gray-800">
-      <Header currentView={currentView} onChangeView={handleViewChange} cobiVisible={cobiVisible} onToggleCobi={toggleCobi} />
+      <Header currentView={currentView} onChangeView={handleViewChange} cobiVisible={cobiVisible} onToggleCobi={toggleCobi} soundEnabled={soundEnabled} onToggleSound={toggleSound} />
       
       <main className="flex-grow">
         {renderContent()}
       </main>
 
       {/* Cobi en la página principal (solo en HOME y solo desktop) */}
-      {cobiVisible && currentView === View.HOME && (
-        <div className="hidden lg:block fixed bottom-0 right-0 z-50 pointer-events-none overflow-visible">
+      {currentView === View.HOME && (
+        <div className={`cobi-container hidden lg:block fixed bottom-0 right-0 z-50 pointer-events-none overflow-visible${!cobiVisible ? ' cobi-hidden' : ''}`}>
           <div className="relative animate-float">
             {/* Bocadillo de diálogo con mensaje de bienvenida */}
             {cobiMessage && (
@@ -263,8 +277,8 @@ const App: React.FC = () => {
       )}
 
       {/* Chat Window de la página principal */}
-      {cobiVisible && showChatWindow && currentView === View.HOME && (
-        <div className="fixed bottom-24 right-6 lg:bottom-48 lg:right-6 z-50 w-80 max-w-[calc(100vw-3rem)] bg-white rounded-3xl shadow-2xl border-2 border-gray-200 overflow-hidden animate-fade-in">
+      {showChatWindow && currentView === View.HOME && (
+        <div className={`cobi-container fixed bottom-24 right-6 lg:bottom-48 lg:right-6 z-50 w-80 max-w-[calc(100vw-3rem)] bg-white rounded-3xl shadow-2xl border-2 border-gray-200 overflow-hidden animate-fade-in${!cobiVisible ? ' cobi-hidden' : ''}`}>
           {/* Header */}
           <div className="bg-gradient-to-r from-blue-gray-500 to-blue-gray-600 p-4 flex items-center justify-between" style={{ background: 'linear-gradient(to right, #607D8B, #546E7A)' }}>
             <div className="flex items-center gap-2">

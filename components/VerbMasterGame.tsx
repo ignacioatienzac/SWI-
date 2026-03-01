@@ -1354,8 +1354,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
           </div>
 
           {/* Cobi Sensei Pensando en el menú (solo desktop) */}
-          {cobiVisible && (
-          <div className="hidden lg:block fixed bottom-0 right-0 z-50 pointer-events-none overflow-visible">
+          <div className={`hidden lg:block fixed bottom-0 right-0 z-50 pointer-events-none overflow-visible cobi-container${!cobiVisible ? ' cobi-hidden' : ''}`}>
             <div className="relative animate-float">
               {/* Bocadillo de diálogo con mensaje aleatorio */}
               {cobiSenseiMenuMessage && (
@@ -1399,12 +1398,11 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
               </div>
             </div>
           </div>
-          )}
         </div>
 
         {/* Chat Window del Menú */}
-        {cobiVisible && showChatWindow && gameState === 'LEVEL_SELECT' && (
-          <div className="fixed bottom-24 right-6 lg:bottom-48 lg:right-6 z-50 w-80 max-w-[calc(100vw-3rem)] bg-white rounded-3xl shadow-2xl border-2 border-gray-200 overflow-hidden animate-fade-in">
+        {showChatWindow && gameState === 'LEVEL_SELECT' && (
+          <div className={`fixed bottom-24 right-6 lg:bottom-48 lg:right-6 z-50 w-80 max-w-[calc(100vw-3rem)] bg-white rounded-3xl shadow-2xl border-2 border-gray-200 overflow-hidden animate-fade-in cobi-container${!cobiVisible ? ' cobi-hidden' : ''}`}>
             {/* Header */}
             <div className="bg-gradient-to-r from-red-800 to-red-600 p-4 flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -1733,8 +1731,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
         `}} />
 
         {/* Cobi Sensei (solo desktop) */}
-        {cobiVisible && (
-        <div className="hidden lg:block fixed bottom-0 right-0 z-50 pointer-events-none overflow-visible">
+        <div className={`hidden lg:block fixed bottom-0 right-0 z-50 pointer-events-none overflow-visible cobi-container${!cobiVisible ? ' cobi-hidden' : ''}`}>
           <div className="relative animate-float">
             {/* Bocadillo de diálogo con mensaje aleatorio */}
             {cobiSenseiMessage && (
@@ -1778,11 +1775,10 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
             </div>
           </div>
         </div>
-        )}
 
         {/* Chat Window durante el juego */}
-        {cobiVisible && showChatWindow && gameState === 'PLAYING' && (
-          <div className="fixed bottom-24 right-6 lg:bottom-48 lg:right-6 z-50 w-80 max-w-[calc(100vw-3rem)] bg-white rounded-3xl shadow-2xl border-2 border-gray-200 overflow-hidden animate-fade-in">
+        {showChatWindow && gameState === 'PLAYING' && (
+          <div className={`fixed bottom-24 right-6 lg:bottom-48 lg:right-6 z-50 w-80 max-w-[calc(100vw-3rem)] bg-white rounded-3xl shadow-2xl border-2 border-gray-200 overflow-hidden animate-fade-in cobi-container${!cobiVisible ? ' cobi-hidden' : ''}`}>
             {/* Header */}
             <div className="bg-gradient-to-r from-red-800 to-red-600 p-4 flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -1892,8 +1888,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
         </div>
 
         {/* Cobi Sensei Pausa (solo desktop) */}
-        {cobiVisible && (
-        <div className="hidden lg:block fixed bottom-0 right-0 z-50 pointer-events-none overflow-visible">
+        <div className={`hidden lg:block fixed bottom-0 right-0 z-50 pointer-events-none overflow-visible cobi-container${!cobiVisible ? ' cobi-hidden' : ''}`}>
           <div className="relative animate-float">
             {/* Bocadillo de diálogo */}
             <div style={{ position: 'absolute', left: '-200px', bottom: '80px', zIndex: 5, maxWidth: '220px' }} className="bg-white/95 backdrop-blur-sm rounded-2xl px-4 py-2 shadow-lg border-2 border-gray-200 pointer-events-auto">
@@ -1935,11 +1930,10 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
             </div>
           </div>
         </div>
-        )}
 
         {/* Chat Window en pausa */}
-        {cobiVisible && showChatWindow && gameState === 'PAUSED' && (
-          <div className="fixed bottom-24 right-6 lg:bottom-48 lg:right-6 z-50 w-80 max-w-[calc(100vw-3rem)] bg-white rounded-3xl shadow-2xl border-2 border-gray-200 overflow-hidden animate-fade-in">
+        {showChatWindow && gameState === 'PAUSED' && (
+          <div className={`fixed bottom-24 right-6 lg:bottom-48 lg:right-6 z-50 w-80 max-w-[calc(100vw-3rem)] bg-white rounded-3xl shadow-2xl border-2 border-gray-200 overflow-hidden animate-fade-in cobi-container${!cobiVisible ? ' cobi-hidden' : ''}`}>
             {/* Header */}
             <div className="bg-gradient-to-r from-red-800 to-red-600 p-4 flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -2143,8 +2137,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
         </div>
 
         {/* Cobi Sensei Victoria (solo desktop) */}
-        {cobiVisible && (
-        <div className="hidden lg:block fixed bottom-0 right-0 z-50 pointer-events-none overflow-visible">
+        <div className={`hidden lg:block fixed bottom-0 right-0 z-50 pointer-events-none overflow-visible cobi-container${!cobiVisible ? ' cobi-hidden' : ''}`}>
           <div className="relative animate-float">
             {/* Bocadillo de diálogo */}
             {cobiSenseiMessage && (
@@ -2187,11 +2180,10 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
             </div>
           </div>
         </div>
-        )}
 
         {/* Chat Window de VICTORY */}
-        {cobiVisible && showChatWindow && gameState === 'VICTORY' && (
-          <div className="fixed bottom-24 right-6 lg:bottom-48 lg:right-6 z-50 w-80 max-w-[calc(100vw-3rem)] bg-white rounded-3xl shadow-2xl border-2 border-yellow-300 overflow-hidden animate-fade-in">
+        {showChatWindow && gameState === 'VICTORY' && (
+          <div className={`fixed bottom-24 right-6 lg:bottom-48 lg:right-6 z-50 w-80 max-w-[calc(100vw-3rem)] bg-white rounded-3xl shadow-2xl border-2 border-yellow-300 overflow-hidden animate-fade-in cobi-container${!cobiVisible ? ' cobi-hidden' : ''}`}>
             {/* Header */}
             <div className="bg-gradient-to-r from-yellow-600 to-green-600 p-4 flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -2312,8 +2304,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
       </div>
 
       {/* Cobi Sensei Fallo (solo desktop) */}
-      {cobiVisible && (
-      <div className="hidden lg:block fixed bottom-0 right-0 z-50 pointer-events-none overflow-visible">
+      <div className={`hidden lg:block fixed bottom-0 right-0 z-50 pointer-events-none overflow-visible cobi-container${!cobiVisible ? ' cobi-hidden' : ''}`}>
         <div className="relative animate-float">
           {/* Bocadillo de diálogo */}
           {cobiSenseiMessage && (
@@ -2356,11 +2347,10 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
           </div>
         </div>
       </div>
-      )}
 
       {/* Chat Window de GAMEOVER */}
-      {cobiVisible && showChatWindow && gameState === 'GAMEOVER' && (
-        <div className="fixed bottom-24 right-6 lg:bottom-48 lg:right-6 z-50 w-80 max-w-[calc(100vw-3rem)] bg-white rounded-3xl shadow-2xl border-2 border-gray-200 overflow-hidden animate-fade-in">
+      {showChatWindow && gameState === 'GAMEOVER' && (
+        <div className={`fixed bottom-24 right-6 lg:bottom-48 lg:right-6 z-50 w-80 max-w-[calc(100vw-3rem)] bg-white rounded-3xl shadow-2xl border-2 border-gray-200 overflow-hidden animate-fade-in cobi-container${!cobiVisible ? ' cobi-hidden' : ''}`}>
           {/* Header */}
           <div className="bg-gradient-to-r from-red-800 to-red-600 p-4 flex items-center justify-between">
             <div className="flex items-center gap-2">

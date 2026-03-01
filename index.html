@@ -8,6 +8,33 @@
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="./data/images/favicon-cobi.png" />
     
+    <!-- Preload avatar images -->
+    <link rel="preload" as="image" href="./data/images/cobi.webp" />
+    <link rel="preload" as="image" href="./data/images/Avatar-pensando.webp" />
+    <link rel="preload" as="image" href="./data/images/cobi-detective.webp" />
+    <link rel="preload" as="image" href="./data/images/cobi-detective-pensando.webp" />
+    <link rel="preload" as="image" href="./data/images/cobi-detective-acierto.webp" />
+    <link rel="preload" as="image" href="./data/images/cobi-detective-fallo.webp" />
+    <link rel="preload" as="image" href="./data/images/Avatar-construction.webp" />
+    <link rel="preload" as="image" href="./data/images/Avatar-construction-correcto.webp" />
+    <link rel="preload" as="image" href="./data/images/Avatar-construction-fallo.webp" />
+    <link rel="preload" as="image" href="./data/images/cobi-constructor-pensando.webp" />
+    <link rel="preload" as="image" href="./data/images/cobi-mago.webp" />
+    <link rel="preload" as="image" href="./data/images/cobi-mago-menu.webp" />
+    <link rel="preload" as="image" href="./data/images/cobi-mago-pausa.webp" />
+    <link rel="preload" as="image" href="./data/images/cobi-mago-derrota.webp" />
+    <link rel="preload" as="image" href="./data/images/cobi-mago-victoria.webp" />
+    <link rel="preload" as="image" href="./data/images/cobi-sensei.webp" />
+    <link rel="preload" as="image" href="./data/images/cobi-sensei-pensando.webp" />
+    <link rel="preload" as="image" href="./data/images/cobi-sensei-acierto.webp" />
+    <link rel="preload" as="image" href="./data/images/cobi-sensei-fallo.webp" />
+    <link rel="preload" as="image" href="./data/images/cobi-sensei-pausa.webp" />
+    <link rel="preload" as="image" href="./data/images/cobi-explorador.webp" />
+    <link rel="preload" as="image" href="./data/images/cobi-explorador-menu.webp" />
+    <link rel="preload" as="image" href="./data/images/cobi-explorador-victoria.webp" />
+    <link rel="preload" as="image" href="./data/images/cobi-explorador-derrota.webp" />
+    <link rel="preload" as="image" href="./data/images/cobi-triste.png" />
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
     <script>
@@ -96,6 +123,15 @@
       
       .animate-float {
         animation: float 3s ease-in-out infinite;
+      }
+
+      /* Cobi show/hide fade transition */
+      .cobi-container {
+        transition: opacity 200ms ease-in-out;
+      }
+      .cobi-container.cobi-hidden {
+        opacity: 0;
+        pointer-events: none;
       }
 
       /* Contrarreloj Animations */
