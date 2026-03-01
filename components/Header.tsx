@@ -62,13 +62,10 @@ const Header: React.FC<HeaderProps> = ({ currentView, onChangeView, cobiVisible,
               <button
                 onClick={onToggleCobi}
                 title={cobiVisible ? 'Ocultar a Cobi' : 'Mostrar a Cobi'}
-                className="flex items-center gap-2 px-2 py-2 rounded-md transition-colors duration-200 hover:bg-gray-50 group"
+                className="flex items-center px-1 py-2 rounded-md transition-colors duration-200 hover:bg-gray-50"
               >
-                <span className={`text-xs font-semibold transition-colors duration-200 ${cobiVisible ? 'text-gray-600' : 'text-gray-400'}`}>
-                  Cobi
-                </span>
-                <div className={`relative w-11 h-[22px] rounded-full transition-colors duration-300 ${cobiVisible ? 'bg-spanish-red' : 'bg-gray-300'}`}>
-                  <div className={`absolute w-[28px] h-[28px] rounded-full overflow-hidden shadow-md transition-all duration-300 ${cobiVisible ? 'left-[18px] opacity-100' : 'left-[-2px] opacity-50'}`} style={{ top: '-3px' }}>
+                <div className={`relative w-11 h-[22px] rounded-full transition-colors duration-300 ${cobiVisible ? 'bg-emerald-500' : 'bg-gray-300'}`}>
+                  <div className={`absolute w-[30px] h-[30px] rounded-full overflow-hidden transition-all duration-300 bg-transparent ${cobiVisible ? 'left-[16px] opacity-100' : 'left-[-3px] opacity-50'}`} style={{ top: '-4px' }}>
                     <img
                       src="./data/images/favicon-cobi.png"
                       alt="Cobi activo"
@@ -135,13 +132,10 @@ const Header: React.FC<HeaderProps> = ({ currentView, onChangeView, cobiVisible,
             {/* Cobi Toggle (Mobile) */}
             <button
               onClick={onToggleCobi}
-              className="flex items-center justify-center gap-4 w-full py-3 rounded-2xl transition-all hover:bg-white/50"
+              className="flex items-center justify-center w-full py-3 rounded-2xl transition-all hover:bg-white/50"
             >
-              <span className={`text-xl font-bold transition-colors duration-300 ${cobiVisible ? 'text-gray-500' : 'text-gray-300'}`}>
-                Cobi
-              </span>
-              <div className={`relative w-16 h-9 rounded-full transition-colors duration-300 ${cobiVisible ? 'bg-spanish-red' : 'bg-gray-300'}`}>
-                <div className={`absolute w-10 h-10 rounded-full overflow-hidden shadow-md transition-all duration-300 ${cobiVisible ? 'left-[26px] opacity-100' : 'left-[-2px] opacity-50'}`} style={{ top: '-2px' }}>
+              <div className={`relative w-16 h-9 rounded-full transition-colors duration-300 ${cobiVisible ? 'bg-emerald-500' : 'bg-gray-300'}`}>
+                <div className={`absolute w-11 h-11 rounded-full overflow-hidden transition-all duration-300 bg-transparent ${cobiVisible ? 'left-[24px] opacity-100' : 'left-[-3px] opacity-50'}`} style={{ top: '-4px' }}>
                   <img
                     src="./data/images/favicon-cobi.png"
                     alt="Cobi activo"
