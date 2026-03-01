@@ -6,6 +6,7 @@ import Games from './components/Games';
 import Resources from './components/Resources';
 import AboutMe from './components/AboutMe';
 import MeetCobi from './components/MeetCobi';
+import GamesExplainer from './components/GamesExplainer';
 import SocialMedia from './components/SocialMedia';
 import { View } from './types';
 import { hablarConPanda } from './services/geminiService';
@@ -169,6 +170,7 @@ const App: React.FC = () => {
           <>
             <Hero onStart={() => setCurrentView(View.GAMES)} />
             <MeetCobi />
+            <GamesExplainer />
             <AboutMe />
             <SocialMedia />
           </>
@@ -182,6 +184,7 @@ const App: React.FC = () => {
           <>
             <Hero onStart={() => setCurrentView(View.GAMES)} />
             <MeetCobi />
+            <GamesExplainer />
             <AboutMe />
             <SocialMedia />
           </>

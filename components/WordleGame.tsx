@@ -333,7 +333,7 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
         setCobiDetectiveMessage(seleccionarMensajeVictoria());
       } else if (newGuesses.length >= MAX_GUESSES) {
         setStatus('LOST');
-        setMessage(`¡Game over! La palabra era ${secretWord}`);
+        setMessage('¡Game over! ¿Lo intentamos de nuevo?');
         playSound('lose');
         setIsAnimating(false);
         // Derrota: cambiar a avatar de fallo
@@ -628,7 +628,7 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
                     </textPath>
                   </text>
                 </svg>
-                <div className="paws-icon">🐾</div>
+                <div className="paws-icon">�</div>
               </div>
             </div>
           </div>
@@ -640,7 +640,7 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
             {/* Header */}
             <div className="p-4 flex items-center justify-between" style={{ background: 'linear-gradient(to right, #2D5A27, #234A1F)' }}>
               <div className="flex items-center gap-2">
-                <span className="text-2xl">🐾</span>
+                <span className="text-2xl">�</span>
                 <div>
                   <h3 className="text-white font-bold text-sm">Cobi el Detective</h3>
                   <p className="text-xs" style={{ color: '#FFF5E1' }}>Tu guía investigador</p>
@@ -1221,7 +1221,7 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
                       </textPath>
                     </text>
                   </svg>
-                  <div className="paws-icon">🐾</div>
+                  <div className="paws-icon">�</div>
                 </div>
               </div>
             </div>
@@ -1233,7 +1233,7 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack }) => {
               {/* Header */}
               <div className="p-4 flex items-center justify-between" style={{ background: 'linear-gradient(to right, #2D5A27, #234A1F)' }}>
                 <div className="flex items-center gap-2">
-                  <span className="text-2xl">🐾</span>
+                  <span className="text-2xl">�</span>
                   <div>
                     <h3 className="text-white font-bold text-sm">Cobi el Detective</h3>
                     <p className="text-xs" style={{ color: '#FFF5E1' }}>Tu asistente investigador</p>

@@ -867,7 +867,7 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack }) => {
                     </textPath>
                   </text>
                 </svg>
-                <div className="paws-icon">🐾</div>
+                <div className="paws-icon">🏗️</div>
               </div>
             </div>
           </div>
@@ -879,7 +879,7 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack }) => {
             {/* Header */}
             <div className="bg-gradient-to-r from-amber-400 to-orange-500 p-4 flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <span className="text-2xl">🐾</span>
+                <span className="text-2xl">🏗️</span>
                 <div>
                   <h3 className="text-white font-bold text-sm">Cobi el Constructor</h3>
                   <p className="text-xs text-amber-50">Tu arquitecto de frases</p>
@@ -1358,7 +1358,7 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack }) => {
                       </textPath>
                     </text>
                   </svg>
-                  <div className="paws-icon">🐾</div>
+                  <div className="paws-icon">🏗️</div>
                 </div>
               </div>
             </div>
@@ -1370,7 +1370,7 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack }) => {
               {/* Header */}
               <div className="bg-gradient-to-r from-amber-400 to-orange-500 p-4 flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <span className="text-2xl">🐾</span>
+                  <span className="text-2xl">🏗️</span>
                   <div>
                     <h3 className="text-white font-bold text-sm">Cobi el Constructor</h3>
                     <p className="text-white/80 text-xs">Tu asistente arquitecto</p>
