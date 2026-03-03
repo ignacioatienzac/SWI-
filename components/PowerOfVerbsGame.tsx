@@ -2456,6 +2456,16 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
           </div>
         </div>
 
+        {/* Botón Cobi móvil */}
+        <button
+          onClick={() => setShowChatWindow(!showChatWindow)}
+          className={`lg:hidden fixed bottom-5 right-5 z-50 w-14 h-14 rounded-full flex items-center justify-center text-2xl active:scale-95 transition-transform border-2 border-gray-300 cobi-container${!cobiVisible ? ' cobi-hidden' : ''}`}
+          style={{ backgroundColor: '#FFFFFF', boxShadow: '0 4px 12px rgba(0,0,0,0.15)' }}
+          aria-label="Chatear con Cobi"
+        >
+          🔮
+        </button>
+
         {/* Chat Window del Menú */}
         {showChatWindow && gameState === 'SELECTION' && (
           <div className={`fixed bottom-24 right-6 lg:bottom-48 lg:right-6 z-50 w-80 max-w-[calc(100vw-3rem)] bg-white rounded-3xl shadow-2xl border-2 border-gray-200 overflow-hidden animate-fade-in cobi-container${!cobiVisible ? ' cobi-hidden' : ''}`}>
@@ -2872,6 +2882,16 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
           </div>
         </div>
 
+        {/* Botón Cobi móvil */}
+        <button
+          onClick={() => setShowChatWindow(!showChatWindow)}
+          className={`lg:hidden fixed bottom-5 right-5 z-50 w-14 h-14 rounded-full flex items-center justify-center text-2xl active:scale-95 transition-transform border-2 border-gray-300 cobi-container${!cobiVisible ? ' cobi-hidden' : ''}`}
+          style={{ backgroundColor: '#FFFFFF', boxShadow: '0 4px 12px rgba(0,0,0,0.15)' }}
+          aria-label="Chatear con Cobi"
+        >
+          🔮
+        </button>
+
         {/* Chat Window del Juego */}
         {showChatWindow && gameState === 'PLAYING' && (
           <div className={`fixed bottom-24 right-6 lg:bottom-48 lg:right-6 z-50 w-80 max-w-[calc(100vw-3rem)] bg-white rounded-3xl shadow-2xl border-2 border-gray-200 overflow-hidden animate-fade-in cobi-container${!cobiVisible ? ' cobi-hidden' : ''}`}>
@@ -3032,6 +3052,16 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
           </div>
         </div>
 
+        {/* Botón Cobi móvil */}
+        <button
+          onClick={() => setShowChatWindow(!showChatWindow)}
+          className={`lg:hidden fixed bottom-5 right-5 z-50 w-14 h-14 rounded-full flex items-center justify-center text-2xl active:scale-95 transition-transform border-2 border-gray-300 cobi-container${!cobiVisible ? ' cobi-hidden' : ''}`}
+          style={{ backgroundColor: '#FFFFFF', boxShadow: '0 4px 12px rgba(0,0,0,0.15)' }}
+          aria-label="Chatear con Cobi"
+        >
+          🔮
+        </button>
+
         {/* Chat Window de Pausa */}
         {showChatWindow && gameState === 'PAUSED' && (
           <div className={`fixed bottom-24 right-6 lg:bottom-48 lg:right-6 z-50 w-80 max-w-[calc(100vw-3rem)] bg-white rounded-3xl shadow-2xl border-2 border-gray-200 overflow-hidden animate-fade-in cobi-container${!cobiVisible ? ' cobi-hidden' : ''}`}>
@@ -3183,6 +3213,16 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
           </div>
         </div>
 
+        {/* Botón Cobi móvil */}
+        <button
+          onClick={() => setShowChatWindow(!showChatWindow)}
+          className={`lg:hidden fixed bottom-5 right-5 z-50 w-14 h-14 rounded-full flex items-center justify-center text-2xl active:scale-95 transition-transform border-2 border-gray-300 cobi-container${!cobiVisible ? ' cobi-hidden' : ''}`}
+          style={{ backgroundColor: '#FFFFFF', boxShadow: '0 4px 12px rgba(0,0,0,0.15)' }}
+          aria-label="Chatear con Cobi"
+        >
+          🔮
+        </button>
+
         {/* Chat Window de Derrota */}
         {showChatWindow && gameState === 'GAMEOVER' && (
           <div className={`fixed bottom-24 right-6 lg:bottom-48 lg:right-6 z-50 w-80 max-w-[calc(100vw-3rem)] bg-white rounded-3xl shadow-2xl border-2 border-gray-200 overflow-hidden animate-fade-in cobi-container${!cobiVisible ? ' cobi-hidden' : ''}`}>
@@ -3333,6 +3373,16 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
             </div>
           </div>
         </div>
+
+        {/* Botón Cobi móvil */}
+        <button
+          onClick={() => setShowChatWindow(!showChatWindow)}
+          className={`lg:hidden fixed bottom-5 right-5 z-50 w-14 h-14 rounded-full flex items-center justify-center text-2xl active:scale-95 transition-transform border-2 border-gray-300 cobi-container${!cobiVisible ? ' cobi-hidden' : ''}`}
+          style={{ backgroundColor: '#FFFFFF', boxShadow: '0 4px 12px rgba(0,0,0,0.15)' }}
+          aria-label="Chatear con Cobi"
+        >
+          🔮
+        </button>
 
         {/* Chat Window de Victoria */}
         {showChatWindow && gameState === 'VICTORY' && (

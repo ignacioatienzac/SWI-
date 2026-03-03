@@ -878,6 +878,16 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
           </div>
         </div>
 
+        {/* Botón Cobi móvil */}
+        <button
+          onClick={() => setShowChatWindow(!showChatWindow)}
+          className={`lg:hidden fixed bottom-5 right-5 z-50 w-14 h-14 rounded-full flex items-center justify-center text-2xl active:scale-95 transition-transform cobi-container${!cobiVisible ? ' cobi-hidden' : ''}`}
+          style={{ backgroundColor: '#FF9F55', boxShadow: '0 4px 12px rgba(0,0,0,0.15), 0 0 0 3px rgba(255,159,85,0.3)' }}
+          aria-label="Chatear con Cobi"
+        >
+          🔨
+        </button>
+
         {/* Chat Window del Menú */}
         {showChatWindow && gameState === 'MENU' && (
           <div className={`cobi-container fixed bottom-24 right-6 lg:bottom-48 lg:right-6 z-50 w-80 max-w-[calc(100vw-3rem)] bg-white rounded-3xl shadow-2xl border-2 border-gray-200 overflow-hidden animate-fade-in${!cobiVisible ? ' cobi-hidden' : ''}`}>
@@ -1368,6 +1378,16 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
               </div>
             </div>
           </div>
+
+          {/* Botón Cobi móvil */}
+          <button
+            onClick={() => setShowChatWindow(!showChatWindow)}
+            className={`lg:hidden fixed bottom-5 right-5 z-50 w-14 h-14 rounded-full flex items-center justify-center text-2xl active:scale-95 transition-transform cobi-container${!cobiVisible ? ' cobi-hidden' : ''}`}
+            style={{ backgroundColor: '#FF9F55', boxShadow: '0 4px 12px rgba(0,0,0,0.15), 0 0 0 3px rgba(255,159,85,0.3)' }}
+            aria-label="Chatear con Cobi"
+          >
+            🔨
+          </button>
 
           {/* Chat Window */}
           {showChatWindow && (

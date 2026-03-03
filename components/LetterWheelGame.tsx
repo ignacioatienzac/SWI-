@@ -835,6 +835,16 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
           </div>
         </div>
 
+        {/* Botón Cobi móvil */}
+        <button
+          onClick={() => setShowChatWindow(!showChatWindow)}
+          className={`lg:hidden fixed bottom-5 right-5 z-50 w-14 h-14 rounded-full flex items-center justify-center text-2xl active:scale-95 transition-transform cobi-container${!cobiVisible ? ' cobi-hidden' : ''}`}
+          style={{ backgroundColor: '#CEAE85', boxShadow: '0 4px 12px rgba(0,0,0,0.15), 0 0 0 3px rgba(206,174,133,0.5)' }}
+          aria-label="Chatear con Cobi"
+        >
+          🧭
+        </button>
+
         {/* Chat Window del Menu */}
         {showChatWindow && gameStatus === 'MENU' && (
           <div className={`fixed bottom-24 right-6 lg:bottom-48 lg:right-6 z-50 w-80 max-w-[calc(100vw-3rem)] bg-white rounded-3xl shadow-2xl border-2 border-gray-200 overflow-hidden animate-fade-in cobi-container${!cobiVisible ? ' cobi-hidden' : ''}`}>
@@ -1000,6 +1010,16 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
             </div>
           </div>
         </div>
+
+        {/* Botón Cobi móvil */}
+        <button
+          onClick={() => setShowChatWindow(!showChatWindow)}
+          className={`lg:hidden fixed bottom-5 right-5 z-50 w-14 h-14 rounded-full flex items-center justify-center text-2xl active:scale-95 transition-transform cobi-container${!cobiVisible ? ' cobi-hidden' : ''}`}
+          style={{ backgroundColor: '#CEAE85', boxShadow: '0 4px 12px rgba(0,0,0,0.15), 0 0 0 3px rgba(206,174,133,0.5)' }}
+          aria-label="Chatear con Cobi"
+        >
+          🧭
+        </button>
 
         {/* Chat Window de Victoria */}
         {showChatWindow && gameStatus === 'VICTORY' && (
@@ -1647,6 +1667,16 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
           </div>
         </div>
       )}
+
+      {/* Botón Cobi móvil */}
+      <button
+        onClick={() => setShowChatWindow(!showChatWindow)}
+        className={`lg:hidden fixed bottom-5 right-5 z-50 w-14 h-14 rounded-full flex items-center justify-center text-2xl active:scale-95 transition-transform cobi-container${!cobiVisible ? ' cobi-hidden' : ''}`}
+        style={{ backgroundColor: '#CEAE85', boxShadow: '0 4px 12px rgba(0,0,0,0.15), 0 0 0 3px rgba(206,174,133,0.5)' }}
+        aria-label="Chatear con Cobi"
+      >
+        🧭
+      </button>
 
       {/* Chat Window del Juego */}
       {showChatWindow && gameStatus === 'PLAYING' && (
