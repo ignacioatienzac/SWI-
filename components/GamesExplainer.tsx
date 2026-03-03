@@ -4,47 +4,52 @@ const games = [
   {
     emoji: '⚔️',
     title: 'El Poder de los Verbos',
-    description: 'Defiende el castillo conjugando verbos. Cada respuesta correcta potencia a tu mago y derrota a los monstruos que se acercan. Practica presente, pasado y subjuntivo en una aventura épica.',
+    description: 'Defiende el castillo conjugando verbos. Cada respuesta correcta potencia a tu mago y derrota a los monstruos que se acercan.',
     skills: ['Conjugaciones', 'Reflejos', 'Vocabulario verbal'],
     color: 'from-purple-500 to-indigo-600',
-    bgLight: 'bg-purple-50',
-    textColor: 'text-purple-700'
+    bgLight: 'bg-purple-100/60',
+    textColor: 'text-purple-700',
+    shadowColor: '139, 92, 246',   // purple-500
   },
   {
     emoji: '🔍',
     title: 'Adivina la Palabra',
-    description: 'El clásico juego de palabras adaptado al español. Tienes 6 intentos para descubrir la palabra oculta del día. Las pistas de colores te guiarán hasta la solución.',
+    description: 'El clásico juego de palabras adaptado al español. Tienes 6 intentos para descubrir la palabra oculta del día.',
     skills: ['Vocabulario', 'Ortografía', 'Deducción'],
     color: 'from-emerald-500 to-green-600',
-    bgLight: 'bg-emerald-50',
-    textColor: 'text-emerald-700'
+    bgLight: 'bg-emerald-100/60',
+    textColor: 'text-emerald-700',
+    shadowColor: '16, 185, 129',   // emerald-500
   },
   {
     emoji: '🎡',
     title: 'La Rueda de Letras',
-    description: 'Forma todas las palabras posibles usando las letras de la rueda para completar el crucigrama del día. Un nuevo reto cada día con palabras de tu nivel.',
+    description: 'Forma todas las palabras posibles usando las letras de la rueda para completar el crucigrama del día.',
     skills: ['Vocabulario', 'Anagramas', 'Agilidad mental'],
     color: 'from-amber-500 to-orange-600',
-    bgLight: 'bg-amber-50',
-    textColor: 'text-amber-700'
+    bgLight: 'bg-amber-100/60',
+    textColor: 'text-amber-700',
+    shadowColor: '245, 158, 11',   // amber-500
   },
   {
     emoji: '🫧',
     title: 'Maestro de Verbos',
-    description: 'Explota las burbujas antes de que lleguen al suelo seleccionando la conjugación correcta. La velocidad aumenta con cada nivel. ¿Cuánto aguantarás?',
+    description: 'Explota las burbujas antes de que lleguen al suelo escribiendo la conjugación correcta. La velocidad aumenta con cada nivel.',
     skills: ['Conjugaciones', 'Velocidad', 'Concentración'],
     color: 'from-cyan-500 to-blue-600',
-    bgLight: 'bg-cyan-50',
-    textColor: 'text-cyan-700'
+    bgLight: 'bg-cyan-100/60',
+    textColor: 'text-cyan-700',
+    shadowColor: '6, 182, 212',    // cyan-500
   },
   {
     emoji: '🏗️',
     title: 'Constructor de Frases',
-    description: 'Ordena las palabras desordenadas para formar oraciones correctas. Practica la estructura gramatical del español de forma interactiva y divertida.',
+    description: 'Ordena las palabras desordenadas para formar oraciones correctas en español de forma interactiva y divertida.',
     skills: ['Gramática', 'Orden de palabras', 'Comprensión'],
     color: 'from-rose-500 to-red-600',
-    bgLight: 'bg-rose-50',
-    textColor: 'text-rose-700'
+    bgLight: 'bg-rose-100/60',
+    textColor: 'text-rose-700',
+    shadowColor: '244, 63, 94',    // rose-500
   }
 ];
 
@@ -66,32 +71,40 @@ const GamesExplainer: React.FC = () => {
           </p>
         </div>
 
-        {/* Games Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {/* Games Grid — flex-wrap so the bottom row auto-centers */}
+        <div className="flex flex-wrap justify-center gap-8">
           {games.map((game, index) => (
             <div
               key={index}
-              className="group relative bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 hover:-translate-y-1"
+              className="group relative w-full sm:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1.4rem)] rounded-3xl bg-white/80 backdrop-blur-sm text-center transition-all duration-300 ease-out cursor-default"
+              style={{
+                boxShadow: `0 4px 24px rgba(${game.shadowColor}, 0.15)`,
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-8px)';
+                e.currentTarget.style.boxShadow = `0 12px 36px rgba(${game.shadowColor}, 0.30)`;
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = `0 4px 24px rgba(${game.shadowColor}, 0.15)`;
+              }}
             >
-              {/* Color bar top */}
-              <div className={`h-1.5 bg-gradient-to-r ${game.color}`}></div>
+              <div className="p-7">
+                {/* Emoji */}
+                <span className="text-4xl block mb-3">{game.emoji}</span>
 
-              <div className="p-6">
-                {/* Emoji & Title */}
-                <div className="flex items-center gap-3 mb-4">
-                  <span className="text-3xl">{game.emoji}</span>
-                  <h3 className="text-lg font-extrabold text-deep-blue leading-tight">
-                    {game.title}
-                  </h3>
-                </div>
+                {/* Title */}
+                <h3 className="text-lg font-extrabold text-deep-blue leading-tight mb-3">
+                  {game.title}
+                </h3>
 
                 {/* Description */}
-                <p className="text-gray-600 text-sm leading-relaxed mb-5">
+                <p className="text-gray-500 text-sm leading-relaxed mb-5">
                   {game.description}
                 </p>
 
-                {/* Skills Tags */}
-                <div className="flex flex-wrap gap-2">
+                {/* Skills Pills */}
+                <div className="flex flex-wrap justify-center gap-2">
                   {game.skills.map((skill, i) => (
                     <span
                       key={i}
