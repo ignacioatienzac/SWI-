@@ -76,9 +76,9 @@ const Header: React.FC<HeaderProps> = ({ currentView, onChangeView, cobiVisible,
                 className="flex items-center px-1 py-2 rounded-md transition-colors duration-200 hover:bg-gray-50"
               >
                 <div className={`relative w-12 h-[24px] rounded-full transition-colors duration-300 ${cobiVisible ? 'bg-spanish-red' : 'bg-gray-300'}`}>
-                  <div className={`absolute w-[34px] h-[34px] rounded-full overflow-hidden transition-all duration-300 bg-transparent border-2 border-white shadow-sm ${cobiVisible ? 'left-[18px] opacity-100' : 'left-[-4px] opacity-50'}`} style={{ top: '-5px' }}>
+                  <div className={`absolute w-[34px] h-[34px] rounded-full overflow-hidden transition-all duration-300 bg-transparent border-2 border-transparent ${cobiVisible ? 'left-[18px] opacity-100' : 'left-[-4px] opacity-50'}`} style={{ top: '-5px' }}>
                     <img
-                      src="./data/images/favicon-cobi.png"
+                      src="./data/images/cobi-feliz.png"
                       alt="Cobi activo"
                       className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${cobiVisible ? 'opacity-100' : 'opacity-0'}`}
                     />
@@ -175,9 +175,9 @@ const Header: React.FC<HeaderProps> = ({ currentView, onChangeView, cobiVisible,
             className="flex items-center gap-3 w-full py-3 px-5 rounded-xl transition-all hover:bg-gray-50"
           >
             <div className={`relative w-14 h-8 rounded-full transition-colors duration-300 ${cobiVisible ? 'bg-spanish-red' : 'bg-gray-300'}`}>
-              <div className={`absolute w-10 h-10 rounded-full overflow-hidden transition-all duration-300 bg-transparent border-2 border-white shadow-sm ${cobiVisible ? 'left-[20px] opacity-100' : 'left-[-3px] opacity-50'}`} style={{ top: '-4px' }}>
+              <div className={`absolute w-10 h-10 rounded-full overflow-hidden transition-all duration-300 bg-transparent border-2 border-transparent ${cobiVisible ? 'left-[20px] opacity-100' : 'left-[-3px] opacity-50'}`} style={{ top: '-4px' }}>
                 <img
-                  src="./data/images/favicon-cobi.png"
+                  src="./data/images/cobi-feliz.png"
                   alt="Cobi activo"
                   className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${cobiVisible ? 'opacity-100' : 'opacity-0'}`}
                 />

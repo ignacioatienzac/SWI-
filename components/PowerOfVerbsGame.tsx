@@ -290,6 +290,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
   const [selectedDifficulty, setSelectedDifficulty] = useState<GameDifficulty | null>(null);
   const [feedbackMsg, setFeedbackMsg] = useState<{ text: string; type: 'success' | 'error' | '' }>({ text: '', type: '' });
   const [instructionsOpen, setInstructionsOpen] = useState(false);
+  const [mobileMenuPage, setMobileMenuPage] = useState(1); // Pages 1-6 for mobile wizard
 
   // Game Logic State
   const [currentVerb, setCurrentVerb] = useState<PowerVerb | null>(null);
@@ -1714,8 +1715,8 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
     const now = performance.now();
     // Don't shoot during boss preparation phase
     if (now - lastShotRef.current > 1000 && !bossPreparationActive) { 
-       // Increase projectile size to match larger elements
-       const projectileSize = 35;
+       // Increase projectile size to match larger elements (scaled on mobile)
+       const projectileSize = 35 * mobileSpriteFactor;
        
        // Shoot from wizard's current position (center of wizard)
        const wizardCenterX = heroRef.current.x + heroRef.current.width;
@@ -2292,26 +2293,288 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
   // --- RENDER HELPERS ---
 
   if (gameState === 'SELECTION') {
-    // Progressive Revelation: determine which steps are unlocked (mobile only)
-    const step2Visible = !!selectedGrammar;
-    const step3Visible = !!selectedTense;
-    const step4Visible = !!selectedVerbType;
-    const step5Visible = !!selectedBattleMode;
-    const step6Visible = !!selectedMode;
-    const allSelected = !!selectedTense && !!selectedVerbType && !!selectedBattleMode && !!selectedMode && !!selectedDifficulty;
 
-    // Helper for progressive section wrapper (mobile-only animation)
-    const revealStyle = (visible: boolean): React.CSSProperties => 
-      isMobile ? {
-        maxHeight: visible ? '500px' : '0px',
-        opacity: visible ? 1 : 0,
-        overflow: 'hidden',
-        transition: 'max-height 0.4s ease, opacity 0.3s ease',
-      } : {};
+    // --- MOBILE: Paginated Wizard Menu ---
+    if (isMobile) {
+      const canGoNext = mobileMenuPage < 6;
+      const canGoBack = mobileMenuPage > 1;
 
+      // Render mobile page content
+      const renderMobilePage = () => {
+        switch (mobileMenuPage) {
+          case 1:
+            return (
+              <div>
+                <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">1. Modo Gramatical</h3>
+                <div className="flex flex-col gap-3">
+                  {['indicativo', 'subjuntivo', 'imperativo'].map(g => (
+                    <button
+                      key={g}
+                      onClick={() => setSelectedGrammar(g)}
+                      className={`w-full py-4 rounded-xl border-2 font-bold text-lg capitalize transition-all ${
+                        selectedGrammar === g ? 'bg-deep-blue text-white border-deep-blue' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
+                      }`}
+                    >
+                      {g}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            );
+          case 2:
+            return (
+              <div>
+                <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">2. Tiempo Verbal</h3>
+                {availableTenses.length > 0 ? (
+                  <div className="grid grid-cols-2 gap-2">
+                    {availableTenses.map(t => (
+                      <button
+                        key={t}
+                        onClick={() => setSelectedTense(t)}
+                        className={`py-3 px-2 rounded-xl border-2 font-bold text-sm transition-all ${
+                          selectedTense === t ? 'bg-deep-blue text-white border-deep-blue' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
+                        }`}
+                      >
+                        {formatTenseName(t)}
+                      </button>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-sm text-gray-400 italic">No hay tiempos disponibles para este modo.</p>
+                )}
+              </div>
+            );
+          case 3:
+            return (
+              <div>
+                <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">3. Tipo de Verbos</h3>
+                <div className="flex flex-col gap-3">
+                  {['regular', 'irregular', 'mixed'].map(t => (
+                    <button
+                      key={t}
+                      onClick={() => setSelectedVerbType(t)}
+                      className={`w-full py-4 rounded-xl border-2 font-bold text-lg capitalize transition-all ${
+                        selectedVerbType === t ? 'bg-deep-blue text-white border-deep-blue' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
+                      }`}
+                    >
+                      {t === 'mixed' ? 'Todos' : t}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            );
+          case 4:
+            return (
+              <div>
+                <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">4. Modo de Batalla</h3>
+                <div className="grid grid-cols-2 gap-4">
+                  <button
+                    onClick={() => setSelectedBattleMode('contrarreloj')}
+                    className={`p-5 rounded-xl border-2 text-center transition-all ${selectedBattleMode === 'contrarreloj' ? 'border-spanish-red bg-red-50 ring-2 ring-red-200' : 'border-gray-200 hover:bg-gray-50'}`}
+                  >
+                    <div className="text-4xl mb-2">⏱️</div>
+                    <span className="block font-bold text-sm text-deep-blue">Contrarreloj</span>
+                  </button>
+                  <button
+                    onClick={() => setSelectedBattleMode('jefe')}
+                    className={`p-5 rounded-xl border-2 text-center transition-all ${selectedBattleMode === 'jefe' ? 'border-spanish-red bg-red-50 ring-2 ring-red-200' : 'border-gray-200 hover:bg-gray-50'}`}
+                  >
+                    <div className="text-4xl mb-2">🐉</div>
+                    <span className="block font-bold text-sm text-deep-blue">Modo Jefe</span>
+                  </button>
+                </div>
+              </div>
+            );
+          case 5:
+            return (
+              <div>
+                <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">5. Modo de Respuesta</h3>
+                <div className="flex flex-col gap-3">
+                  <button
+                    onClick={() => setSelectedMode('write')}
+                    className={`w-full py-4 rounded-xl border-2 text-center transition-all font-bold text-lg ${selectedMode === 'write' ? 'bg-deep-blue text-white border-deep-blue' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'}`}
+                  >
+                    ✍️ Escribir
+                  </button>
+                  <button
+                    onClick={() => setSelectedMode('choice')}
+                    className={`w-full py-4 rounded-xl border-2 text-center transition-all font-bold text-lg ${selectedMode === 'choice' ? 'bg-deep-blue text-white border-deep-blue' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'}`}
+                  >
+                    🎯 Selección
+                  </button>
+                </div>
+              </div>
+            );
+          case 6:
+            return (
+              <div>
+                <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">6. Dificultad</h3>
+                <div className="flex flex-col gap-3">
+                  {(Object.keys(DIFFICULTY_SETTINGS) as GameDifficulty[]).map(d => (
+                    <button
+                      key={d}
+                      onClick={() => setSelectedDifficulty(d)}
+                      className={`w-full py-4 rounded-xl border-2 font-bold text-lg capitalize transition-all ${
+                        selectedDifficulty === d ? 'bg-deep-blue text-white border-deep-blue' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
+                      }`}
+                    >
+                      {DIFFICULTY_SETTINGS[d].label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            );
+          default:
+            return null;
+        }
+      };
+
+      return (
+        <div className="min-h-screen bg-deep-blue p-4 flex flex-col">
+          {/* Header */}
+          <div className="bg-white rounded-3xl p-6 shadow-2xl flex-1 flex flex-col">
+            <div className="flex items-center gap-3 mb-2 pb-3 border-b border-gray-100">
+              <button onClick={onBack} className="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-500">
+                <ChevronLeft />
+              </button>
+              <h1 className="text-xl font-black text-deep-blue flex-1 text-center">Configura tu Batalla</h1>
+              <div className="w-10"></div>
+            </div>
+
+            {/* Page indicator dots */}
+            <div className="flex justify-center gap-2 my-3">
+              {[1, 2, 3, 4, 5, 6].map(p => (
+                <div
+                  key={p}
+                  className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                    p === mobileMenuPage ? 'bg-spanish-red w-6' : p < mobileMenuPage ? 'bg-deep-blue' : 'bg-gray-300'
+                  }`}
+                />
+              ))}
+            </div>
+
+            {/* Page content */}
+            <div className="flex-1 flex flex-col justify-center py-4">
+              {renderMobilePage()}
+            </div>
+
+            {/* Navigation arrows & start button */}
+            <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+              {canGoBack ? (
+                <button
+                  onClick={() => setMobileMenuPage(p => p - 1)}
+                  className="w-12 h-12 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-xl transition-all active:scale-95"
+                >
+                  ⬅️
+                </button>
+              ) : (
+                <div className="w-12" />
+              )}
+
+              {mobileMenuPage === 6 ? (
+                <button
+                  onClick={handleStartGame}
+                  disabled={!selectedTense || !selectedVerbType || !selectedBattleMode || !selectedMode || !selectedDifficulty}
+                  className="flex-1 ml-4 py-3 bg-gradient-to-r from-spanish-red to-spanish-red hover:from-red-700 hover:to-red-700 disabled:from-gray-300 disabled:to-gray-300 text-white font-bold text-lg rounded-xl transition-all shadow-lg"
+                >
+                  Iniciar Batalla
+                </button>
+              ) : (
+                <div className="flex-1" />
+              )}
+
+              {canGoNext ? (
+                <button
+                  onClick={() => setMobileMenuPage(p => p + 1)}
+                  className="w-12 h-12 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-xl transition-all active:scale-95"
+                >
+                  ➡️
+                </button>
+              ) : (
+                <div className="w-12" />
+              )}
+            </div>
+          </div>
+
+          {/* Botón Cobi móvil */}
+          <button
+            onClick={() => setShowChatWindow(!showChatWindow)}
+            className={`lg:hidden fixed bottom-5 right-5 z-50 w-14 h-14 rounded-full flex items-center justify-center text-2xl active:scale-95 transition-transform border-2 border-gray-300 cobi-container${!cobiVisible ? ' cobi-hidden' : ''}`}
+            style={{ backgroundColor: '#FFFFFF', boxShadow: '0 4px 12px rgba(0,0,0,0.15)' }}
+            aria-label="Chatear con Cobi"
+          >
+            🔮
+          </button>
+
+          {/* Chat Window del Menú (mobile) */}
+          {showChatWindow && gameState === 'SELECTION' && (
+            <div className={`fixed bottom-24 right-6 z-50 w-80 max-w-[calc(100vw-3rem)] bg-white rounded-3xl shadow-2xl border-2 border-gray-200 overflow-hidden animate-fade-in cobi-container${!cobiVisible ? ' cobi-hidden' : ''}`}>
+              <div className="bg-gradient-to-r from-purple-600 to-indigo-600 p-4 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="text-2xl">🪄</span>
+                  <div>
+                    <h3 className="text-white font-bold text-sm">Cobi Mago</h3>
+                    <p className="text-xs text-purple-50">Experto en Gramática Española</p>
+                  </div>
+                </div>
+                <button onClick={() => setShowChatWindow(false)} className="p-1 hover:bg-white/20 rounded-full transition">
+                  <ChevronLeft size={20} className="text-white" />
+                </button>
+              </div>
+              <div className="h-64 overflow-y-auto p-4 space-y-3 bg-gradient-to-b from-purple-50/30 to-white">
+                {chatHistory.length === 0 ? (
+                  <div className="text-center text-gray-500 text-sm mt-8">
+                    <p className="mb-2">🪄</p>
+                    <p>¡Bienvenido a mi estudio mágico! Soy Cobi Mago.</p>
+                    <p className="text-xs mt-2">Pregúntame sobre gramática o el juego. ✨</p>
+                  </div>
+                ) : (
+                  chatHistory.map((msg, idx) => (
+                    <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                      <div className={`max-w-[80%] rounded-2xl px-4 py-2 ${msg.role === 'user' ? 'bg-gradient-to-br from-blue-500 to-blue-600 text-white' : 'bg-white border-2 border-purple-200 text-gray-700'}`}>
+                        <p className="text-sm whitespace-pre-wrap">{msg.text}</p>
+                      </div>
+                    </div>
+                  ))
+                )}
+                {isLoadingResponse && (
+                  <div className="flex justify-start">
+                    <div className="bg-white border-2 border-purple-200 rounded-2xl px-4 py-3">
+                      <p className="text-sm text-gray-600">El Mago consulta su grimorio... 📖✨</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+              <div className="p-3 bg-white border-t-2 border-gray-100">
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={chatInput}
+                    onChange={(e) => setChatInput(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && sendMessageToCobi()}
+                    placeholder="Escribe tu pregunta..."
+                    disabled={isLoadingResponse}
+                    className="flex-1 px-4 py-2 border-2 border-gray-200 rounded-full focus:outline-none focus:border-purple-400 transition text-sm disabled:bg-gray-100"
+                  />
+                  <button
+                    onClick={sendMessageToCobi}
+                    disabled={isLoadingResponse || !chatInput.trim()}
+                    className="p-2 bg-gradient-to-br from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 disabled:from-gray-300 disabled:to-gray-300 text-white rounded-full transition-all"
+                  >
+                    <Send size={20} />
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    // --- DESKTOP: Original full menu (unchanged) ---
     return (
       <div className="min-h-screen bg-deep-blue p-4 flex items-center justify-center">
-        <div className={`bg-white rounded-3xl p-8 max-w-4xl w-full shadow-2xl overflow-y-auto max-h-[90vh] ${isMobile ? 'pb-24' : ''}`}>
+        <div className="bg-white rounded-3xl p-8 max-w-4xl w-full shadow-2xl overflow-y-auto max-h-[90vh]">
           <div className="flex items-center gap-4 mb-8 border-b border-gray-100 pb-4">
             <button onClick={onBack} className="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-500">
                <ChevronLeft />
@@ -2321,7 +2584,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
           </div>
 
           <div className="space-y-8">
-            {/* Step 1: Grammar Mode - always visible */}
+            {/* Step 1: Grammar Mode */}
             <div>
                <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-3">1. Modo Gramatical</h3>
                <div className="flex gap-4">
@@ -2340,7 +2603,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
             </div>
 
             {/* Step 2: Tense (Dynamic) */}
-            <div style={revealStyle(step2Visible)}>
+            <div>
                <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-3">2. Tiempo Verbal</h3>
                {availableTenses.length > 0 ? (
                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
@@ -2362,7 +2625,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
             </div>
 
             {/* Step 3: Type */}
-             <div style={revealStyle(step3Visible)}>
+             <div>
                <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-3">3. Tipo de Verbos</h3>
                <div className="flex gap-3">
                  {['regular', 'irregular', 'mixed'].map(t => (
@@ -2380,7 +2643,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
             </div>
 
             {/* Step 4: Battle Mode */}
-            <div style={revealStyle(step4Visible)}>
+            <div>
                <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-3">4. Modo de Batalla</h3>
                <div className="grid grid-cols-2 gap-4">
                   <button 
@@ -2427,7 +2690,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
             </div>
 
             {/* Step 5: Mode */}
-            <div style={revealStyle(step5Visible)}>
+            <div>
                <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-3">5. Modo de Respuesta</h3>
                <div className="flex gap-4">
                   <button 
@@ -2446,7 +2709,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
             </div>
 
              {/* Step 6: Difficulty */}
-             <div style={revealStyle(step6Visible)}>
+             <div>
                <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-3">6. Dificultad</h3>
                <div className="flex gap-3">
                  {(Object.keys(DIFFICULTY_SETTINGS) as GameDifficulty[]).map(d => (
@@ -2463,32 +2726,14 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
                </div>
             </div>
 
-            {/* Start Button - sticky on mobile, normal on desktop */}
-            {isMobile ? (
-              <div
-                className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-200 shadow-[0_-4px_12px_rgba(0,0,0,0.1)] z-30"
-                style={{
-                  opacity: allSelected ? 1 : 0.5,
-                  transition: 'opacity 0.3s ease',
-                }}
-              >
-                <button
-                  onClick={handleStartGame}
-                  disabled={!selectedTense || !selectedVerbType || !selectedBattleMode || !selectedMode || !selectedDifficulty}
-                  className="w-full py-4 bg-gradient-to-r from-spanish-red to-spanish-red hover:from-red-700 hover:to-red-700 disabled:from-gray-300 disabled:to-gray-300 text-white font-bold text-xl rounded-xl transition-all shadow-lg"
-                >
-                  Iniciar Batalla
-                </button>
-              </div>
-            ) : (
-              <button
-                onClick={handleStartGame}
-                disabled={!selectedTense || !selectedVerbType || !selectedBattleMode || !selectedMode || !selectedDifficulty}
-                className="w-full py-4 bg-gradient-to-r from-spanish-red to-spanish-red hover:from-red-700 hover:to-red-700 disabled:from-gray-300 disabled:to-gray-300 text-white font-bold text-xl rounded-xl transition-all shadow-lg"
-              >
-                Iniciar Batalla
-              </button>
-            )}
+            {/* Start Button */}
+            <button
+              onClick={handleStartGame}
+              disabled={!selectedTense || !selectedVerbType || !selectedBattleMode || !selectedMode || !selectedDifficulty}
+              className="w-full py-4 bg-gradient-to-r from-spanish-red to-spanish-red hover:from-red-700 hover:to-red-700 disabled:from-gray-300 disabled:to-gray-300 text-white font-bold text-xl rounded-xl transition-all shadow-lg"
+            >
+              Iniciar Batalla
+            </button>
           </div>
         </div>
 
