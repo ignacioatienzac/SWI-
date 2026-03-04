@@ -563,6 +563,51 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
   const attackImagesRef = useRef<HTMLImageElement[]>([]);
   const imagesLoadedRef = useRef<boolean>(false);
 
+  // Mobile detection & responsive canvas
+  const [isMobile, setIsMobile] = useState(false);
+  const [isLandscape, setIsLandscape] = useState(false);
+  const [canvasDims, setCanvasDims] = useState({ w: 872, h: 396 });
+
+  useEffect(() => {
+    const checkMobile = () => {
+      const mobile = window.innerWidth < 768;
+      const landscape = window.innerWidth > window.innerHeight;
+      setIsMobile(mobile);
+      setIsLandscape(landscape);
+      if (mobile) {
+        const vw = window.innerWidth;
+        const vh = window.innerHeight;
+        if (landscape) {
+          // Landscape: use nearly full width, limited height
+          setCanvasDims({ w: Math.floor(vw * 0.92), h: Math.floor(vh * 0.50) });
+        } else {
+          // Portrait: full width, proportional height
+          setCanvasDims({ w: Math.floor(vw * 0.92), h: Math.floor(vw * 0.45) });
+        }
+      } else {
+        setCanvasDims({ w: 872, h: 396 });
+      }
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // Mobile sprite scale factor: triple size on mobile, keep desktop at 1x
+  const mobileSpriteFactor = isMobile ? 3 : 1;
+  // To maintain constant arrival time when sprites are larger:
+  // Larger sprites have their collision edge closer to castle (arrive sooner).
+  // Original monster width = (canvasHeight-40)*0.15, new = that * 3.
+  // Difference in x covered = 2 * originalWidth. Need to slow down proportionally.
+  // Speed compensation: reduce speed so time-to-castle stays the same.
+  // arrival_time = distanceToCastle / speed. With bigger sprite, distance is shorter.
+  // newDistance = oldDistance - (newWidth - oldWidth). Factor = newDistance / oldDistance.
+  // Approx: castle at x=50, spawn at canvasWidth+50, distance ≈ canvasWidth.
+  // monsterSize grows by 2*original, so distance shrinks by 2*original.
+  // speedFactor = (canvasWidth - 2*origMonsterSize) / canvasWidth ≈ ~0.9 (barely changes).
+  // But tripling changes collision detection significantly, so we use a simple ratio:
+  const mobileSpeedCompensation = isMobile ? 0.85 : 1;
+
   // Send message to Cobi Mago
   const sendMessageToCobi = async () => {
     if (!chatInput.trim() || isLoadingResponse) return;
@@ -1490,11 +1535,11 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
         } else if (selectedDifficulty === 'dificil' && enemy.hpDificil) {
           enemyHp = enemy.hpDificil;
         }
-        const monsterSize = Math.floor((canvasHeight - 40) * 0.15);
+        const monsterSize = Math.floor((canvasHeight - 40) * 0.15 * mobileSpriteFactor);
         
         // Apply timeMultiplier to speed (higher baseTime = slower, so inverse relationship)
         // Base speed 0.5, adjusted by baseTime ratio and difficulty multiplier
-        const baseSpeed = 0.5 * (12 / enemy.baseTime) * crConfig.timeMultiplier;
+        const baseSpeed = 0.5 * (12 / enemy.baseTime) * crConfig.timeMultiplier * mobileSpeedCompensation;
         
         // Calculate points with streak bonus (all difficulties)
         let enemyPoints = enemy.reward;
@@ -1623,11 +1668,11 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
           enemyHp = enemy.hpDificil;
         }
         
-        const monsterSize = Math.floor((canvasHeight - 40) * 0.15);
+        const monsterSize = Math.floor((canvasHeight - 40) * 0.15 * mobileSpriteFactor);
         
         // Calculate speed using same formula as contrarreloj for consistency
         const crConfig = CONTRARRELOJ_DIFFICULTY[selectedDifficulty];
-        const baseSpeed = 0.5 * (12 / enemy.baseTime) * crConfig.timeMultiplier;
+        const baseSpeed = 0.5 * (12 / enemy.baseTime) * crConfig.timeMultiplier * mobileSpeedCompensation;
         
         monstersRef.current.push({
           id: Date.now(),
@@ -1861,9 +1906,9 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
     ctx.fillStyle = groundGradient;
     ctx.fillRect(0, groundY, canvasWidth, groundHeight);
 
-    // Castle/wizard sizes for visibility
-    const castleSize = Math.floor((canvasHeight - groundHeight) * 0.35);
-    const wizardSize = Math.floor((canvasHeight - groundHeight) * 0.15);
+    // Castle/wizard sizes for visibility (scaled on mobile)
+    const castleSize = Math.floor((canvasHeight - groundHeight) * 0.35 * mobileSpriteFactor);
+    const wizardSize = Math.floor((canvasHeight - groundHeight) * 0.15 * mobileSpriteFactor);
     
     // Draw castle using image
     const castleX = 60;
@@ -2247,9 +2292,26 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
   // --- RENDER HELPERS ---
 
   if (gameState === 'SELECTION') {
+    // Progressive Revelation: determine which steps are unlocked (mobile only)
+    const step2Visible = !!selectedGrammar;
+    const step3Visible = !!selectedTense;
+    const step4Visible = !!selectedVerbType;
+    const step5Visible = !!selectedBattleMode;
+    const step6Visible = !!selectedMode;
+    const allSelected = !!selectedTense && !!selectedVerbType && !!selectedBattleMode && !!selectedMode && !!selectedDifficulty;
+
+    // Helper for progressive section wrapper (mobile-only animation)
+    const revealStyle = (visible: boolean): React.CSSProperties => 
+      isMobile ? {
+        maxHeight: visible ? '500px' : '0px',
+        opacity: visible ? 1 : 0,
+        overflow: 'hidden',
+        transition: 'max-height 0.4s ease, opacity 0.3s ease',
+      } : {};
+
     return (
       <div className="min-h-screen bg-deep-blue p-4 flex items-center justify-center">
-        <div className="bg-white rounded-3xl p-8 max-w-4xl w-full shadow-2xl overflow-y-auto max-h-[90vh]">
+        <div className={`bg-white rounded-3xl p-8 max-w-4xl w-full shadow-2xl overflow-y-auto max-h-[90vh] ${isMobile ? 'pb-24' : ''}`}>
           <div className="flex items-center gap-4 mb-8 border-b border-gray-100 pb-4">
             <button onClick={onBack} className="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-500">
                <ChevronLeft />
@@ -2259,7 +2321,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
           </div>
 
           <div className="space-y-8">
-            {/* Step 1: Grammar Mode */}
+            {/* Step 1: Grammar Mode - always visible */}
             <div>
                <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-3">1. Modo Gramatical</h3>
                <div className="flex gap-4">
@@ -2278,7 +2340,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
             </div>
 
             {/* Step 2: Tense (Dynamic) */}
-            <div>
+            <div style={revealStyle(step2Visible)}>
                <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-3">2. Tiempo Verbal</h3>
                {availableTenses.length > 0 ? (
                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
@@ -2300,7 +2362,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
             </div>
 
             {/* Step 3: Type */}
-             <div>
+             <div style={revealStyle(step3Visible)}>
                <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-3">3. Tipo de Verbos</h3>
                <div className="flex gap-3">
                  {['regular', 'irregular', 'mixed'].map(t => (
@@ -2318,7 +2380,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
             </div>
 
             {/* Step 4: Battle Mode */}
-            <div>
+            <div style={revealStyle(step4Visible)}>
                <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-3">4. Modo de Batalla</h3>
                <div className="grid grid-cols-2 gap-4">
                   <button 
@@ -2365,7 +2427,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
             </div>
 
             {/* Step 5: Mode */}
-            <div>
+            <div style={revealStyle(step5Visible)}>
                <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-3">5. Modo de Respuesta</h3>
                <div className="flex gap-4">
                   <button 
@@ -2384,7 +2446,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
             </div>
 
              {/* Step 6: Difficulty */}
-             <div>
+             <div style={revealStyle(step6Visible)}>
                <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-3">6. Dificultad</h3>
                <div className="flex gap-3">
                  {(Object.keys(DIFFICULTY_SETTINGS) as GameDifficulty[]).map(d => (
@@ -2401,14 +2463,32 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
                </div>
             </div>
 
-            {/* Start Button */}
-            <button
-              onClick={handleStartGame}
-              disabled={!selectedTense || !selectedVerbType || !selectedBattleMode || !selectedMode || !selectedDifficulty}
-              className="w-full py-4 bg-gradient-to-r from-spanish-red to-spanish-red hover:from-red-700 hover:to-red-700 disabled:from-gray-300 disabled:to-gray-300 text-white font-bold text-xl rounded-xl transition-all shadow-lg"
-            >
-              Iniciar Batalla
-            </button>
+            {/* Start Button - sticky on mobile, normal on desktop */}
+            {isMobile ? (
+              <div
+                className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-200 shadow-[0_-4px_12px_rgba(0,0,0,0.1)] z-30"
+                style={{
+                  opacity: allSelected ? 1 : 0.5,
+                  transition: 'opacity 0.3s ease',
+                }}
+              >
+                <button
+                  onClick={handleStartGame}
+                  disabled={!selectedTense || !selectedVerbType || !selectedBattleMode || !selectedMode || !selectedDifficulty}
+                  className="w-full py-4 bg-gradient-to-r from-spanish-red to-spanish-red hover:from-red-700 hover:to-red-700 disabled:from-gray-300 disabled:to-gray-300 text-white font-bold text-xl rounded-xl transition-all shadow-lg"
+                >
+                  Iniciar Batalla
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={handleStartGame}
+                disabled={!selectedTense || !selectedVerbType || !selectedBattleMode || !selectedMode || !selectedDifficulty}
+                className="w-full py-4 bg-gradient-to-r from-spanish-red to-spanish-red hover:from-red-700 hover:to-red-700 disabled:from-gray-300 disabled:to-gray-300 text-white font-bold text-xl rounded-xl transition-all shadow-lg"
+              >
+                Iniciar Batalla
+              </button>
+            )}
           </div>
         </div>
 
@@ -2556,40 +2636,40 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
   if (gameState === 'PLAYING') {
     // Both modes use the same canvas-based UI
     return (
-      <div className="min-h-screen bg-deep-blue p-4 flex flex-col items-center justify-start pt-8">
+      <div className={`min-h-screen bg-deep-blue flex flex-col items-center justify-start ${isMobile && isLandscape ? 'p-1 pt-1' : 'p-4 pt-8'}`}>
         <div className={`w-full max-w-4xl ${screenShake ? 'animate-[screenShake_0.5s_ease-in-out]' : ''}`}>
-          {/* Header */}
-          <div className="flex justify-between items-center mb-4 text-white">
-            <button onClick={() => setGameState('SELECTION')} className="p-2 hover:bg-white/10 rounded-full">
-              <ChevronLeft size={32} />
+          {/* Header - minimal on mobile landscape */}
+          <div className={`flex justify-between items-center text-white ${isMobile && isLandscape ? 'mb-1 px-2' : 'mb-4'}`}>
+            <button onClick={() => setGameState('SELECTION')} className="p-1 md:p-2 hover:bg-white/10 rounded-full">
+              <ChevronLeft size={isMobile && isLandscape ? 20 : 32} />
             </button>
             <div className="text-center flex-1">
-              <p className="text-sm opacity-70">Puntuación</p>
-              <p className="text-4xl font-black">{score}</p>
+              <p className={`opacity-70 ${isMobile && isLandscape ? 'text-[10px] leading-tight' : 'text-sm'}`}>Puntos</p>
+              <p className={`font-black ${isMobile && isLandscape ? 'text-lg' : 'text-4xl'}`}>{score}</p>
             </div>
             <div className="text-center flex-1">
-              <p className="text-sm opacity-70">Poder</p>
-              <p className="text-4xl font-black">{attackPower}x</p>
+              <p className={`opacity-70 ${isMobile && isLandscape ? 'text-[10px] leading-tight' : 'text-sm'}`}>Poder</p>
+              <p className={`font-black ${isMobile && isLandscape ? 'text-lg' : 'text-4xl'}`}>{attackPower}x</p>
             </div>
             <div className="text-center flex-1">
-              <p className="text-sm opacity-70">Vidas</p>
-              <p className="text-4xl font-black text-red-400">{lives}</p>
+              <p className={`opacity-70 ${isMobile && isLandscape ? 'text-[10px] leading-tight' : 'text-sm'}`}>Vidas</p>
+              <p className={`font-black text-red-400 ${isMobile && isLandscape ? 'text-lg' : 'text-4xl'}`}>{lives}</p>
             </div>
-            <button onClick={() => setGameState('PAUSED')} className="p-2 hover:bg-white/10 rounded-full">
-              <Pause size={32} />
+            <button onClick={() => setGameState('PAUSED')} className="p-1 md:p-2 hover:bg-white/10 rounded-full">
+              <Pause size={isMobile && isLandscape ? 20 : 32} />
             </button>
-            <button onClick={() => setInstructionsOpen(true)} className="p-2 hover:bg-white/10 rounded-full">
-              <Info size={32} />
+            <button onClick={() => setInstructionsOpen(true)} className="p-1 md:p-2 hover:bg-white/10 rounded-full">
+              <Info size={isMobile && isLandscape ? 20 : 32} />
             </button>
           </div>
 
           {/* Canvas with Boss Preparation Overlay */}
-          <div className="relative bg-white rounded-2xl shadow-2xl mb-6">
+          <div className={`relative bg-white shadow-2xl ${isMobile && isLandscape ? 'rounded-xl mb-2' : 'rounded-2xl mb-6'}`}>
             <canvas
               ref={canvasRef}
-              width={872}
-              height={396}
-              className="w-full rounded-2xl"
+              width={canvasDims.w}
+              height={canvasDims.h}
+              className={`w-full ${isMobile && isLandscape ? 'rounded-xl' : 'rounded-2xl'}`}
             />
             
             {/* Boss Preparation Overlay - Only visible during preparation */}
@@ -2696,15 +2776,15 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
           </div>
 
           {/* Question & Input/Choices */}
-          <div className="bg-white rounded-2xl p-8 shadow-2xl">
+          <div className={`bg-white shadow-2xl ${isMobile && isLandscape ? 'rounded-xl p-3' : 'rounded-2xl p-8'}`}>
             {currentVerb ? (
               <div>
                 {/* Nuevo layout: verbo,pronombre a la izquierda, tiempo verbal en rectángulo azul a la derecha */}
-                <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-2xl font-bold text-deep-blue">
+                <div className={`flex justify-between items-center ${isMobile && isLandscape ? 'mb-2' : 'mb-6'}`}>
+                  <h2 className={`font-bold text-deep-blue ${isMobile && isLandscape ? 'text-base' : 'text-2xl'}`}>
                     {currentVerb.verb}, {currentVerb.pronoun}
                   </h2>
-                  <div className="bg-deep-blue text-white px-6 py-2 rounded-lg font-bold">
+                  <div className={`bg-deep-blue text-white rounded-lg font-bold ${isMobile && isLandscape ? 'px-3 py-1 text-xs' : 'px-6 py-2'}`}>
                     {currentVerb.tense}
                   </div>
                 </div>

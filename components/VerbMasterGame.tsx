@@ -283,6 +283,16 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
   const canvasHeight = 600;
   const groundY = canvasHeight - 50;
 
+  // Mobile detection for progressive revelation
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   // Audio functions
   const soundEnabledRef = useRef(soundEnabled);
   soundEnabledRef.current = soundEnabled;
@@ -1135,6 +1145,19 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
 
   // --- LEVEL SELECT STATE ---
   if (gameState === 'LEVEL_SELECT') {
+    // Progressive Revelation: determine visibility for mobile
+    const vmStep2Visible = !!selectedVerbMode;
+    const vmStep3Visible = !!selectedTense;
+    const vmAllSelected = !!selectedVerbType;
+
+    const vmRevealStyle = (visible: boolean): React.CSSProperties =>
+      isMobile ? {
+        maxHeight: visible ? '500px' : '0px',
+        opacity: visible ? 1 : 0,
+        overflow: 'hidden',
+        transition: 'max-height 0.4s ease, opacity 0.3s ease',
+      } : {};
+
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-50 p-4">
         <div className="max-w-2xl mx-auto">
@@ -1146,7 +1169,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
             Volver a Juegos
           </button>
 
-          <div className="bg-white rounded-3xl p-8 shadow-xl">
+          <div className={`bg-white rounded-3xl p-8 shadow-xl ${isMobile ? 'pb-24' : ''}`}>
             <div className="text-center mb-8">
               <h1 className="text-4xl font-black text-deep-blue mb-2">
                 🫧 Maestro de Verbos
@@ -1156,7 +1179,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
               </p>
             </div>
 
-            {/* Verb Mode Selection */}
+            {/* Verb Mode Selection - always visible */}
             <div className="mb-6">
               <label className="block text-sm font-bold text-gray-700 mb-2">
                 Modo Verbal
@@ -1185,8 +1208,8 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
               </div>
             </div>
 
-            {/* Tense Selection */}
-            <div className="mb-6">
+            {/* Tense Selection - revealed after mode selected */}
+            <div className="mb-6" style={vmRevealStyle(vmStep2Visible)}>
               <label className="block text-sm font-bold text-gray-700 mb-2">
                 Tiempo Verbal
               </label>
@@ -1260,8 +1283,8 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
               )}
             </div>
 
-            {/* Verb Type Selection */}
-            <div className="mb-6">
+            {/* Verb Type Selection - revealed after tense selected */}
+            <div className="mb-6" style={vmRevealStyle(vmStep3Visible)}>
               <label className="block text-sm font-bold text-gray-700 mb-2">
                 Tipo de Verbos
               </label>
@@ -1286,14 +1309,32 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
               </div>
             </div>
 
-            {/* Start Button */}
-            <button
-              onClick={handleStartGame}
-              disabled={!selectedVerbType}
-              className="w-full py-4 bg-gradient-to-r from-spanish-red to-spanish-red hover:from-red-700 hover:to-red-700 disabled:from-gray-300 disabled:to-gray-300 text-white font-bold text-xl rounded-xl transition-all shadow-lg"
-            >
-              Comenzar Juego
-            </button>
+            {/* Start Button - sticky on mobile, normal on desktop */}
+            {isMobile ? (
+              <div
+                className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-200 shadow-[0_-4px_12px_rgba(0,0,0,0.1)] z-30"
+                style={{
+                  opacity: vmAllSelected ? 1 : 0.5,
+                  transition: 'opacity 0.3s ease',
+                }}
+              >
+                <button
+                  onClick={handleStartGame}
+                  disabled={!selectedVerbType}
+                  className="w-full py-4 bg-gradient-to-r from-spanish-red to-spanish-red hover:from-red-700 hover:to-red-700 disabled:from-gray-300 disabled:to-gray-300 text-white font-bold text-xl rounded-xl transition-all shadow-lg"
+                >
+                  Comenzar Juego
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={handleStartGame}
+                disabled={!selectedVerbType}
+                className="w-full py-4 bg-gradient-to-r from-spanish-red to-spanish-red hover:from-red-700 hover:to-red-700 disabled:from-gray-300 disabled:to-gray-300 text-white font-bold text-xl rounded-xl transition-all shadow-lg"
+              >
+                Comenzar Juego
+              </button>
+            )}
           </div>
 
           {/* Cobi Sensei Pensando en el menú (solo desktop) */}
