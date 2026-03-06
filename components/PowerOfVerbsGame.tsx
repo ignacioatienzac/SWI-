@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { ChevronLeft, Info, X, Pause, Play, Send } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Info, X, Pause, Play, Send } from 'lucide-react';
 import { getAvailableTenses, getFilteredVerbs, getFilteredVerbsSRS, recordVerbCorrect, recordVerbIncorrect } from '../services/powerVerbsService';
 import { PowerVerb, GameDifficulty, GameMode, BattleMode } from '../types';
 import { hablarConPanda } from '../services/geminiService';
@@ -282,7 +282,7 @@ interface Boss extends Entity {
 const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible = true, soundEnabled = true }) => {
   // UI State
   const [gameState, setGameState] = useState<GameState>('SELECTION');
-  const [selectedGrammar, setSelectedGrammar] = useState<string>('indicativo');
+  const [selectedGrammar, setSelectedGrammar] = useState<string>('');
   const [selectedTense, setSelectedTense] = useState<string>('');
   const [selectedVerbType, setSelectedVerbType] = useState<string>('');
   const [selectedBattleMode, setSelectedBattleMode] = useState<BattleMode | null>(null);
@@ -594,8 +594,8 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // Mobile sprite scale factor: triple size on mobile, keep desktop at 1x
-  const mobileSpriteFactor = isMobile ? 3 : 1;
+  // Mobile sprite scale factor: 1x everywhere (same as desktop)
+  const mobileSpriteFactor = 1;
   // To maintain constant arrival time when sprites are larger:
   // Larger sprites have their collision edge closer to castle (arrive sooner).
   // Original monster width = (canvasHeight-40)*0.15, new = that * 3.
@@ -607,7 +607,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
   // monsterSize grows by 2*original, so distance shrinks by 2*original.
   // speedFactor = (canvasWidth - 2*origMonsterSize) / canvasWidth ≈ ~0.9 (barely changes).
   // But tripling changes collision detection significantly, so we use a simple ratio:
-  const mobileSpeedCompensation = isMobile ? 0.85 : 1;
+  const mobileSpeedCompensation = 1;
 
   // Send message to Cobi Mago
   const sendMessageToCobi = async () => {
@@ -1126,10 +1126,15 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
   // Load available tenses when grammar mode changes
   useEffect(() => {
     const loadTenses = async () => {
+      if (!selectedGrammar) {
+        setAvailableTenses([]);
+        return;
+      }
       const tenses = await getAvailableTenses(selectedGrammar);
       setAvailableTenses(tenses);
-      if (tenses.length > 0 && (!selectedTense || !tenses.includes(selectedTense))) {
-        setSelectedTense(tenses[0]);
+      // Clear tense if it's no longer available for the new grammar mode
+      if (selectedTense && !tenses.includes(selectedTense)) {
+        setSelectedTense('');
       }
     };
     loadTenses();
@@ -2430,19 +2435,19 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
       };
 
       return (
-        <div className="min-h-screen bg-deep-blue p-4 flex flex-col">
+        <div className="h-[100dvh] bg-deep-blue p-3 flex flex-col">
           {/* Header */}
-          <div className="bg-white rounded-3xl p-6 shadow-2xl flex-1 flex flex-col">
-            <div className="flex items-center gap-3 mb-2 pb-3 border-b border-gray-100">
-              <button onClick={onBack} className="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-500">
-                <ChevronLeft />
+          <div className="bg-white rounded-3xl px-5 py-4 shadow-2xl flex-1 flex flex-col min-h-0">
+            <div className="flex items-center gap-2 pb-2 border-b border-gray-100">
+              <button onClick={onBack} className="p-1.5 hover:bg-gray-100 rounded-full transition-colors text-gray-500">
+                <ChevronLeft size={20} />
               </button>
-              <h1 className="text-xl font-black text-deep-blue flex-1 text-center">Configura tu Batalla</h1>
-              <div className="w-10"></div>
+              <h1 className="text-lg font-black text-deep-blue flex-1 text-center">Configura tu Batalla</h1>
+              <div className="w-8"></div>
             </div>
 
             {/* Page indicator dots */}
-            <div className="flex justify-center gap-2 my-3">
+            <div className="flex justify-center gap-2 my-2">
               {[1, 2, 3, 4, 5, 6].map(p => (
                 <div
                   key={p}
@@ -2454,28 +2459,28 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
             </div>
 
             {/* Page content */}
-            <div className="flex-1 flex flex-col justify-center py-4">
+            <div className="flex-1 flex flex-col justify-center py-2 min-h-0 overflow-y-auto">
               {renderMobilePage()}
             </div>
 
             {/* Navigation arrows & start button */}
-            <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+            <div className="flex items-center justify-between pt-3 border-t border-gray-100">
               {canGoBack ? (
                 <button
                   onClick={() => setMobileMenuPage(p => p - 1)}
-                  className="w-12 h-12 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-xl transition-all active:scale-95"
+                  className="w-11 h-11 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-all active:scale-95 text-gray-600"
                 >
-                  ⬅️
+                  <ChevronLeft size={22} />
                 </button>
               ) : (
-                <div className="w-12" />
+                <div className="w-11" />
               )}
 
               {mobileMenuPage === 6 ? (
                 <button
                   onClick={handleStartGame}
-                  disabled={!selectedTense || !selectedVerbType || !selectedBattleMode || !selectedMode || !selectedDifficulty}
-                  className="flex-1 ml-4 py-3 bg-gradient-to-r from-spanish-red to-spanish-red hover:from-red-700 hover:to-red-700 disabled:from-gray-300 disabled:to-gray-300 text-white font-bold text-lg rounded-xl transition-all shadow-lg"
+                  disabled={!selectedGrammar || !selectedTense || !selectedVerbType || !selectedBattleMode || !selectedMode || !selectedDifficulty}
+                  className="flex-1 mx-3 py-3 bg-gradient-to-r from-spanish-red to-spanish-red hover:from-red-700 hover:to-red-700 disabled:from-gray-300 disabled:to-gray-300 text-white font-bold text-lg rounded-xl transition-all shadow-lg"
                 >
                   Iniciar Batalla
                 </button>
@@ -2486,12 +2491,12 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
               {canGoNext ? (
                 <button
                   onClick={() => setMobileMenuPage(p => p + 1)}
-                  className="w-12 h-12 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-xl transition-all active:scale-95"
+                  className="w-11 h-11 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-all active:scale-95 text-gray-600"
                 >
-                  ➡️
+                  <ChevronRight size={22} />
                 </button>
               ) : (
-                <div className="w-12" />
+                <div className="w-11" />
               )}
             </div>
           </div>
@@ -2729,7 +2734,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
             {/* Start Button */}
             <button
               onClick={handleStartGame}
-              disabled={!selectedTense || !selectedVerbType || !selectedBattleMode || !selectedMode || !selectedDifficulty}
+              disabled={!selectedGrammar || !selectedTense || !selectedVerbType || !selectedBattleMode || !selectedMode || !selectedDifficulty}
               className="w-full py-4 bg-gradient-to-r from-spanish-red to-spanish-red hover:from-red-700 hover:to-red-700 disabled:from-gray-300 disabled:to-gray-300 text-white font-bold text-xl rounded-xl transition-all shadow-lg"
             >
               Iniciar Batalla
