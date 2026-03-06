@@ -1720,8 +1720,8 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
     const now = performance.now();
     // Don't shoot during boss preparation phase
     if (now - lastShotRef.current > 1000 && !bossPreparationActive) { 
-       // Increase projectile size to match larger elements (scaled on mobile)
-       const projectileSize = 35 * mobileSpriteFactor;
+       // Projectile size: keep at 35px (desktop size) on all platforms
+       const projectileSize = 35;
        
        // Shoot from wizard's current position (center of wizard)
        const wizardCenterX = heroRef.current.x + heroRef.current.width;
@@ -1917,7 +1917,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
     const wizardSize = Math.floor((canvasHeight - groundHeight) * 0.15 * mobileSpriteFactor);
     
     // Draw castle using image
-    const castleX = isMobile ? 45 : 60;
+    const castleX = isMobile ? 30 : 60;
     const castleBaseY = groundY;
     
     // Draw castle shadow (elliptical, before castle)
@@ -2331,14 +2331,15 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
               <div>
                 <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">2. Tiempo Verbal</h3>
                 {availableTenses.length > 0 ? (
-                  <div className="grid grid-cols-2 gap-2">
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gridAutoRows: '1fr', gap: '8px' }}>
                     {availableTenses.map(t => (
                       <button
                         key={t}
                         onClick={() => setSelectedTense(t)}
-                        className={`py-3 px-2 rounded-xl border-2 font-bold text-sm transition-all ${
+                        className={`py-3 px-2 rounded-xl border-2 font-bold transition-all flex items-center justify-center text-center ${
                           selectedTense === t ? 'bg-deep-blue text-white border-deep-blue' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
                         }`}
+                        style={{ fontSize: '0.8rem', hyphens: 'auto', wordBreak: 'break-word' } as React.CSSProperties}
                       >
                         {formatTenseName(t)}
                       </button>
@@ -2435,9 +2436,9 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
       };
 
       return (
-        <div className="h-[100dvh] bg-deep-blue p-3 flex flex-col">
+        <div className="h-[100dvh] bg-deep-blue p-3 flex flex-col" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
           {/* Header */}
-          <div className="bg-white rounded-3xl px-5 py-4 shadow-2xl flex-1 flex flex-col min-h-0">
+          <div className="bg-white rounded-3xl px-5 py-4 shadow-2xl flex flex-col" style={{ height: 'auto', maxHeight: 'calc(100dvh - 120px)', flex: '0 1 auto' }}>
             <div className="flex items-center gap-2 pb-2 border-b border-gray-100">
               <button onClick={onBack} className="p-1.5 hover:bg-gray-100 rounded-full transition-colors text-gray-500">
                 <ChevronLeft size={20} />
@@ -2459,12 +2460,12 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
             </div>
 
             {/* Page content */}
-            <div className="flex-1 flex flex-col justify-center py-2 min-h-0 overflow-y-auto">
+            <div className="flex-1 flex flex-col justify-center py-2 min-h-0 overflow-y-auto" style={{ flexShrink: 1 }}>
               {renderMobilePage()}
             </div>
 
             {/* Navigation arrows & start button */}
-            <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+            <div className="flex items-center justify-between pt-3 border-t border-gray-100 flex-shrink-0">
               {canGoBack ? (
                 <button
                   onClick={() => setMobileMenuPage(p => p - 1)}

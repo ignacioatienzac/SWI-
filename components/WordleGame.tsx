@@ -995,8 +995,9 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack, cobiVisible = true, sou
       <div className="mb-8 flex justify-center overflow-x-auto">
         <div style={{ 
           display: 'grid',
-          gridTemplateColumns: `repeat(${wordLength}, 1fr)`,
-          gap: '8px',
+          gridTemplateColumns: `repeat(${wordLength}, minmax(0, 1fr))`,
+          gap: 'clamp(4px, 1.5vw, 8px)',
+          width: 'min(100%, 400px)',
         }}>
           {/* Render completed guesses */}
           {guesses.map((guess, guessIdx) => (
@@ -1015,7 +1016,7 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack, cobiVisible = true, sou
                       ? 'bg-gray-400 text-white'
                       : 'bg-white border-2 border-gray-300'
                   }`}
-                  style={{ borderRadius: '7px', boxSizing: 'border-box' }}
+                  style={{ borderRadius: '9px', boxSizing: 'border-box', boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.05)' }}
                 >
                   {letter}
                 </div>
@@ -1031,7 +1032,7 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack, cobiVisible = true, sou
             return (
               <div
                 key={`revealing-${letterIdx}`}
-                style={{ ...style, borderRadius: '7px', boxSizing: 'border-box' as const }}
+                style={{ ...style, borderRadius: '9px', boxSizing: 'border-box' as const, boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.05)' }}
                 className={`w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center text-lg sm:text-xl font-bold ${
                   status === 'correct'
                     ? 'tile-flip-correct'
@@ -1051,8 +1052,8 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack, cobiVisible = true, sou
           {status === 'PLAYING' && !revealingGuess && currentGuess.split('').map((letter, idx) => (
             <div
               key={`current-${idx}`}
-              className="w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center text-lg sm:text-xl font-bold bg-white border-2 border-gray-400 animate-pulse"
-              style={{ borderRadius: '7px', boxSizing: 'border-box' }}
+              className="w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center text-lg sm:text-xl font-bold bg-white border-2 border-gray-400"
+              style={{ borderRadius: '9px', boxSizing: 'border-box', boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.05)' }}
             >
               {letter}
             </div>
@@ -1063,7 +1064,7 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack, cobiVisible = true, sou
             <div
               key={`empty-${idx}`}
               className="w-12 h-12 sm:w-14 sm:h-14 bg-white border-2 border-gray-200"
-              style={{ borderRadius: '7px', boxSizing: 'border-box' }}
+              style={{ borderRadius: '9px', boxSizing: 'border-box', boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.05)' }}
             />
           ))}
 
@@ -1073,7 +1074,7 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack, cobiVisible = true, sou
               <div
                 key={`empty-row-${rowIdx}-${colIdx}`}
                 className="w-12 h-12 sm:w-14 sm:h-14 bg-gray-100 border-2 border-gray-200"
-                style={{ borderRadius: '7px', boxSizing: 'border-box' }}
+                style={{ borderRadius: '9px', boxSizing: 'border-box', boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.05)' }}
               />
             ))
           )}
