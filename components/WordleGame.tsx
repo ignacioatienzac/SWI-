@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { RotateCcw, Calendar, Lightbulb, ChevronLeft, ChevronRight, X, Send } from 'lucide-react';
+import { RotateCcw, Calendar, Lightbulb, ChevronLeft, ChevronRight, X, Send, Delete } from 'lucide-react';
 import { getWordOfDay } from '../services/vocabularyService';
 import { isValidWord, getHintsForAttempt, normalizeAccents } from '../services/wordleService';
 import { hablarConPanda } from '../services/geminiService';
@@ -1006,7 +1006,7 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack, cobiVisible = true, sou
               return (
                 <div
                   key={`${guessIdx}-${letterIdx}`}
-                  className={`w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center text-lg sm:text-xl font-bold rounded-lg ${
+                  className={`w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center text-lg sm:text-xl font-bold ${
                     status === 'correct'
                       ? 'bg-green-500 text-white'
                       : status === 'present'
@@ -1015,6 +1015,7 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack, cobiVisible = true, sou
                       ? 'bg-gray-400 text-white'
                       : 'bg-white border-2 border-gray-300'
                   }`}
+                  style={{ borderRadius: '7px', boxSizing: 'border-box' }}
                 >
                   {letter}
                 </div>
@@ -1030,8 +1031,8 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack, cobiVisible = true, sou
             return (
               <div
                 key={`revealing-${letterIdx}`}
-                style={style}
-                className={`w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center text-lg sm:text-xl font-bold rounded-lg ${
+                style={{ ...style, borderRadius: '7px', boxSizing: 'border-box' as const }}
+                className={`w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center text-lg sm:text-xl font-bold ${
                   status === 'correct'
                     ? 'tile-flip-correct'
                     : status === 'present'
@@ -1050,7 +1051,8 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack, cobiVisible = true, sou
           {status === 'PLAYING' && !revealingGuess && currentGuess.split('').map((letter, idx) => (
             <div
               key={`current-${idx}`}
-              className="w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center text-lg sm:text-xl font-bold rounded-lg bg-white border-2 border-gray-400 animate-pulse"
+              className="w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center text-lg sm:text-xl font-bold bg-white border-2 border-gray-400 animate-pulse"
+              style={{ borderRadius: '7px', boxSizing: 'border-box' }}
             >
               {letter}
             </div>
@@ -1060,7 +1062,8 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack, cobiVisible = true, sou
           {status === 'PLAYING' && !revealingGuess && Array.from({ length: wordLength - currentGuess.length }).map((_, idx) => (
             <div
               key={`empty-${idx}`}
-              className="w-12 h-12 sm:w-14 sm:h-14 rounded-lg bg-white border-2 border-gray-200"
+              className="w-12 h-12 sm:w-14 sm:h-14 bg-white border-2 border-gray-200"
+              style={{ borderRadius: '7px', boxSizing: 'border-box' }}
             />
           ))}
 
@@ -1069,7 +1072,8 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack, cobiVisible = true, sou
             Array.from({ length: wordLength }).map((_, colIdx) => (
               <div
                 key={`empty-row-${rowIdx}-${colIdx}`}
-                className="w-12 h-12 sm:w-14 sm:h-14 rounded-lg bg-gray-100 border-2 border-gray-200"
+                className="w-12 h-12 sm:w-14 sm:h-14 bg-gray-100 border-2 border-gray-200"
+                style={{ borderRadius: '7px', boxSizing: 'border-box' }}
               />
             ))
           )}
@@ -1107,7 +1111,7 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack, cobiVisible = true, sou
       {/* Keyboard */}
       <div className="mb-6 max-w-xl mx-auto">
         {/* Row 1 */}
-        <div className="flex gap-1 justify-center mb-2">
+        <div className="flex gap-1.5 justify-center mb-2">
           {['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'].map(key => (
             <button
               key={key}
@@ -1117,7 +1121,8 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack, cobiVisible = true, sou
                   playSound('present');
                 }
               }}
-              className={`w-8 h-12 sm:w-10 sm:h-12 flex items-center justify-center rounded font-bold text-base transition ${getKeyColor(key)}`}
+              className={`w-8 h-14 sm:w-10 sm:h-14 flex items-center justify-center rounded-lg font-bold text-base transition-all active:translate-y-0.5 ${getKeyColor(key)}`}
+              style={{ boxShadow: '0 3px 0 rgba(0,0,0,0.15)' }}
               disabled={status !== 'PLAYING' || isAnimating}
             >
               {key}
@@ -1125,7 +1130,7 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack, cobiVisible = true, sou
           ))}
         </div>
         {/* Row 2 */}
-        <div className="flex gap-1 justify-center mb-2">
+        <div className="flex gap-1.5 justify-center mb-2">
           {['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'Ñ'].map(key => (
             <button
               key={key}
@@ -1135,7 +1140,8 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack, cobiVisible = true, sou
                   playSound('present');
                 }
               }}
-              className={`w-8 h-12 sm:w-10 sm:h-12 flex items-center justify-center rounded font-bold text-base transition ${getKeyColor(key)}`}
+              className={`w-8 h-14 sm:w-10 sm:h-14 flex items-center justify-center rounded-lg font-bold text-base transition-all active:translate-y-0.5 ${getKeyColor(key)}`}
+              style={{ boxShadow: '0 3px 0 rgba(0,0,0,0.15)' }}
               disabled={status !== 'PLAYING' || isAnimating}
             >
               {key}
@@ -1143,18 +1149,19 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack, cobiVisible = true, sou
           ))}
         </div>
         {/* Row 3 */}
-        <div className="flex gap-1 justify-center">
+        <div className="flex gap-1.5 justify-center">
           <button
             onClick={() => {
               if (currentGuess.length > 0 && currentGuess.length === wordLength && !isAnimating) {
                 submitGuess();
               }
             }}
-            className="w-12 h-12 sm:w-14 sm:h-12 flex items-center justify-center rounded font-bold text-base bg-blue-500 text-white hover:bg-blue-600 transition"
+            className="px-3 h-14 sm:px-4 sm:h-14 flex items-center justify-center rounded-lg font-bold text-xs sm:text-sm bg-deep-blue text-white hover:bg-blue-800 transition-all active:translate-y-0.5"
+            style={{ boxShadow: '0 3px 0 rgba(0,0,0,0.2)' }}
             disabled={status !== 'PLAYING' || currentGuess.length !== wordLength || isAnimating}
             title="Enviar"
           >
-            ↑
+            ENVIAR
           </button>
           {['Z', 'X', 'C', 'V', 'B', 'N', 'M'].map(key => (
             <button
@@ -1165,7 +1172,8 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack, cobiVisible = true, sou
                   playSound('present');
                 }
               }}
-              className={`w-8 h-12 sm:w-10 sm:h-12 flex items-center justify-center rounded font-bold text-base transition ${getKeyColor(key)}`}
+              className={`w-8 h-14 sm:w-10 sm:h-14 flex items-center justify-center rounded-lg font-bold text-base transition-all active:translate-y-0.5 ${getKeyColor(key)}`}
+              style={{ boxShadow: '0 3px 0 rgba(0,0,0,0.15)' }}
               disabled={status !== 'PLAYING' || isAnimating}
             >
               {key}
@@ -1173,11 +1181,12 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack, cobiVisible = true, sou
           ))}
           <button
             onClick={() => !isAnimating && setCurrentGuess(prev => prev.slice(0, -1))}
-            className="w-12 h-12 sm:w-14 sm:h-12 flex items-center justify-center rounded font-bold text-base bg-red-500 text-white hover:bg-red-600 transition"
+            className="px-3 h-14 sm:px-4 sm:h-14 flex items-center justify-center rounded-lg font-bold text-base transition-all active:translate-y-0.5"
+            style={{ backgroundColor: '#F87171', color: 'white', boxShadow: '0 3px 0 rgba(0,0,0,0.2)' }}
             disabled={status !== 'PLAYING' || isAnimating}
             title="Borrar"
           >
-            ⌫
+            <Delete size={20} />
           </button>
         </div>
       </div>

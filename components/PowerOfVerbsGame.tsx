@@ -594,8 +594,8 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // Mobile sprite scale factor: 1x everywhere (same as desktop)
-  const mobileSpriteFactor = 1;
+  // Mobile sprite scale factor: 1.5x on mobile for better visibility
+  const mobileSpriteFactor = isMobile ? 1.5 : 1;
   // To maintain constant arrival time when sprites are larger:
   // Larger sprites have their collision edge closer to castle (arrive sooner).
   // Original monster width = (canvasHeight-40)*0.15, new = that * 3.
@@ -607,7 +607,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
   // monsterSize grows by 2*original, so distance shrinks by 2*original.
   // speedFactor = (canvasWidth - 2*origMonsterSize) / canvasWidth ≈ ~0.9 (barely changes).
   // But tripling changes collision detection significantly, so we use a simple ratio:
-  const mobileSpeedCompensation = 1;
+  const mobileSpeedCompensation = isMobile ? 0.95 : 1;
 
   // Send message to Cobi Mago
   const sendMessageToCobi = async () => {
@@ -1917,7 +1917,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
     const wizardSize = Math.floor((canvasHeight - groundHeight) * 0.15 * mobileSpriteFactor);
     
     // Draw castle using image
-    const castleX = 60;
+    const castleX = isMobile ? 45 : 60;
     const castleBaseY = groundY;
     
     // Draw castle shadow (elliptical, before castle)
