@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ChevronLeft, ChevronRight, Play, Pause } from 'lucide-react';
-import { Send } from 'lucide-react';
+import { Send, Delete } from 'lucide-react';
 import { hablarConPanda } from '../services/geminiService';
 import DraggableCobi from './DraggableCobi';
 import {
@@ -1816,75 +1816,78 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
                 type="text"
                 value={userInput}
                 readOnly
-                placeholder="Usa el teclado de abajo..."
                 className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-lg text-center"
               />
             </div>
             
-            {/* Virtual Keyboard - Mobile only */}
+            {/* Virtual Keyboard - Mobile only (Wordle 3D style) */}
             <div className="md:hidden mt-4">
+              {/* Row 0 - Accented vowels */}
+              <div className="flex gap-1.5 justify-center mb-2">
+                {['á', 'é', 'í', 'ó', 'ú'].map(key => (
+                  <button
+                    key={key}
+                    onClick={() => setUserInput(prev => prev + key)}
+                    className="w-10 h-11 flex items-center justify-center rounded-lg font-bold text-base bg-blue-100 text-blue-800 transition-all active:translate-y-0.5"
+                    style={{ boxShadow: '0 3px 0 rgba(0,0,0,0.15)' }}
+                  >
+                    {key}
+                  </button>
+                ))}
+              </div>
               {/* Row 1 */}
-              <div className="flex gap-1 justify-center mb-2">
+              <div className="flex gap-1.5 justify-center mb-2">
                 {['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'].map(key => (
                   <button
                     key={key}
                     onClick={() => setUserInput(prev => prev + key.toLowerCase())}
-                    className="w-8 h-10 flex items-center justify-center rounded font-bold text-sm bg-gray-200 hover:bg-gray-300 transition"
+                    className="w-8 h-11 flex items-center justify-center rounded-lg font-bold text-base bg-white transition-all active:translate-y-0.5"
+                    style={{ boxShadow: '0 3px 0 rgba(0,0,0,0.15)' }}
                   >
                     {key}
                   </button>
                 ))}
               </div>
               {/* Row 2 */}
-              <div className="flex gap-1 justify-center mb-2">
+              <div className="flex gap-1.5 justify-center mb-2">
                 {['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'Ñ'].map(key => (
                   <button
                     key={key}
                     onClick={() => setUserInput(prev => prev + key.toLowerCase())}
-                    className="w-8 h-10 flex items-center justify-center rounded font-bold text-sm bg-gray-200 hover:bg-gray-300 transition"
+                    className="w-8 h-11 flex items-center justify-center rounded-lg font-bold text-base bg-white transition-all active:translate-y-0.5"
+                    style={{ boxShadow: '0 3px 0 rgba(0,0,0,0.15)' }}
                   >
                     {key}
                   </button>
                 ))}
               </div>
-              {/* Row 3 */}
-              <div className="flex gap-1 justify-center mb-2">
+              {/* Row 3 - Send + letters + Delete */}
+              <div className="flex gap-1.5 justify-center">
+                <button
+                  onClick={handleSubmit}
+                  className="px-3 h-11 flex items-center justify-center rounded-lg font-bold text-sm bg-deep-blue text-white transition-all active:translate-y-0.5"
+                  style={{ boxShadow: '0 3px 0 rgba(0,0,0,0.2)' }}
+                  title="Enviar"
+                >
+                  <Send size={18} />
+                </button>
                 {['Z', 'X', 'C', 'V', 'B', 'N', 'M'].map(key => (
                   <button
                     key={key}
                     onClick={() => setUserInput(prev => prev + key.toLowerCase())}
-                    className="w-8 h-10 flex items-center justify-center rounded font-bold text-sm bg-gray-200 hover:bg-gray-300 transition"
+                    className="w-8 h-11 flex items-center justify-center rounded-lg font-bold text-base bg-white transition-all active:translate-y-0.5"
+                    style={{ boxShadow: '0 3px 0 rgba(0,0,0,0.15)' }}
                   >
                     {key}
                   </button>
                 ))}
                 <button
                   onClick={() => setUserInput(prev => prev.slice(0, -1))}
-                  className="w-12 h-10 flex items-center justify-center rounded font-bold text-sm bg-red-500 text-white hover:bg-red-600 transition"
+                  className="px-3 h-11 flex items-center justify-center rounded-lg font-bold text-base transition-all active:translate-y-0.5"
+                  style={{ backgroundColor: '#F87171', color: 'white', boxShadow: '0 3px 0 rgba(0,0,0,0.2)' }}
                   title="Borrar"
                 >
-                  ⌫
-                </button>
-              </div>
-              {/* Row 4 - Accented vowels */}
-              <div className="flex gap-1 justify-center mb-2">
-                {['á', 'é', 'í', 'ó', 'ú'].map(key => (
-                  <button
-                    key={key}
-                    onClick={() => setUserInput(prev => prev + key)}
-                    className="w-12 h-10 flex items-center justify-center rounded font-bold text-sm bg-blue-200 hover:bg-blue-300 transition"
-                  >
-                    {key}
-                  </button>
-                ))}
-              </div>
-              {/* Submit button centered */}
-              <div className="flex justify-center">
-                <button
-                  onClick={handleSubmit}
-                  className="px-12 py-2 bg-deep-blue hover:bg-blue-700 text-white font-bold rounded-lg transition-colors"
-                >
-                  Enviar
+                  <Delete size={18} />
                 </button>
               </div>
             </div>

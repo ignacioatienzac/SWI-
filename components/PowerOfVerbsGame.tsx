@@ -608,7 +608,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
   // monsterSize grows by 2*original, so distance shrinks by 2*original.
   // speedFactor = (canvasWidth - 2*origMonsterSize) / canvasWidth ≈ ~0.9 (barely changes).
   // But tripling changes collision detection significantly, so we use a simple ratio:
-  const mobileSpeedCompensation = isMobile ? 0.95 : 1;
+  const mobileSpeedCompensation = isMobile ? (0.95 / 1.5) : 1;
 
   // Send message to Cobi Mago
   const sendMessageToCobi = async () => {
@@ -1521,8 +1521,11 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
     } else {
       baseSpawnRate = Math.max(settings.minSpawnRate, settings.spawnRate - (score * 2));
     }
-    const spawnVariation = baseSpawnRate * 0.3;
-    nextSpawnTimeRef.current = time + baseSpawnRate + (Math.random() * spawnVariation * 2 - spawnVariation);
+    // On mobile, multiply spawn rate by 1.5 to slow down enemy spawning
+    const mobileSpawnFactor = isMobile ? 1.5 : 1;
+    const adjustedSpawnRate = baseSpawnRate * mobileSpawnFactor;
+    const spawnVariation = adjustedSpawnRate * 0.3;
+    nextSpawnTimeRef.current = time + adjustedSpawnRate + (Math.random() * spawnVariation * 2 - spawnVariation);
 
     {
       const groundLevel = canvasHeight - 40;
@@ -1720,9 +1723,9 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
 
     const now = performance.now();
     // Don't shoot during boss preparation phase
-    if (now - lastShotRef.current > 1000 && !bossPreparationActive) { 
-       // Projectile size: keep at 35px (desktop size) on all platforms
-       const projectileSize = 35;
+    if (now - lastShotRef.current > (isMobile ? 1500 : 1000) && !bossPreparationActive) { 
+       // Projectile size: 75% on mobile for better proportions
+       const projectileSize = isMobile ? Math.round(35 * 0.75) : 35;
        
        // Shoot from wizard's current position (center of wizard)
        const wizardCenterX = heroRef.current.x + heroRef.current.width;
@@ -2504,7 +2507,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
           </div>
 
           {/* Botón Cobi móvil */}
-          <DraggableCobi onClick={() => setShowChatWindow(!showChatWindow)} icon="🔮" themeColor="#7C3AED" cobiVisible={cobiVisible} />
+          <DraggableCobi onClick={() => setShowChatWindow(!showChatWindow)} icon="🔮" themeColor="#7C3AED" cobiVisible={cobiVisible} useWhiteBg />
 
           {/* Chat Window del Menú (mobile) */}
           {showChatWindow && gameState === 'SELECTION' && (
@@ -2782,7 +2785,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
         </div>
 
         {/* Botón Cobi móvil */}
-        <DraggableCobi onClick={() => setShowChatWindow(!showChatWindow)} icon="🔮" themeColor="#7C3AED" cobiVisible={cobiVisible} />
+        <DraggableCobi onClick={() => setShowChatWindow(!showChatWindow)} icon="🔮" themeColor="#7C3AED" cobiVisible={cobiVisible} useWhiteBg />
 
         {/* Chat Window del Menú */}
         {showChatWindow && gameState === 'SELECTION' && (
@@ -3201,7 +3204,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
         </div>
 
         {/* Botón Cobi móvil */}
-        <DraggableCobi onClick={() => setShowChatWindow(!showChatWindow)} icon="🔮" themeColor="#7C3AED" cobiVisible={cobiVisible} />
+        <DraggableCobi onClick={() => setShowChatWindow(!showChatWindow)} icon="🔮" themeColor="#7C3AED" cobiVisible={cobiVisible} useWhiteBg />
 
         {/* Chat Window del Juego */}
         {showChatWindow && gameState === 'PLAYING' && (
@@ -3364,7 +3367,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
         </div>
 
         {/* Botón Cobi móvil */}
-        <DraggableCobi onClick={() => setShowChatWindow(!showChatWindow)} icon="🔮" themeColor="#7C3AED" cobiVisible={cobiVisible} />
+        <DraggableCobi onClick={() => setShowChatWindow(!showChatWindow)} icon="🔮" themeColor="#7C3AED" cobiVisible={cobiVisible} useWhiteBg />
 
         {/* Chat Window de Pausa */}
         {showChatWindow && gameState === 'PAUSED' && (
@@ -3518,7 +3521,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
         </div>
 
         {/* Botón Cobi móvil */}
-        <DraggableCobi onClick={() => setShowChatWindow(!showChatWindow)} icon="🔮" themeColor="#7C3AED" cobiVisible={cobiVisible} />
+        <DraggableCobi onClick={() => setShowChatWindow(!showChatWindow)} icon="🔮" themeColor="#7C3AED" cobiVisible={cobiVisible} useWhiteBg />
 
         {/* Chat Window de Derrota */}
         {showChatWindow && gameState === 'GAMEOVER' && (
@@ -3672,7 +3675,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
         </div>
 
         {/* Botón Cobi móvil */}
-        <DraggableCobi onClick={() => setShowChatWindow(!showChatWindow)} icon="🔮" themeColor="#7C3AED" cobiVisible={cobiVisible} />
+        <DraggableCobi onClick={() => setShowChatWindow(!showChatWindow)} icon="🔮" themeColor="#7C3AED" cobiVisible={cobiVisible} useWhiteBg />
 
         {/* Chat Window de Victoria */}
         {showChatWindow && gameState === 'VICTORY' && (

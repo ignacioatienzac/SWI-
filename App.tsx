@@ -8,6 +8,7 @@ import AboutMe from './components/AboutMe';
 import MeetCobi from './components/MeetCobi';
 import GamesExplainer from './components/GamesExplainer';
 import SocialMedia from './components/SocialMedia';
+import DraggableCobi from './components/DraggableCobi';
 import { View } from './types';
 import { hablarConPanda } from './services/geminiService';
 
@@ -274,6 +275,11 @@ const App: React.FC = () => {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Botón Cobi móvil - página principal */}
+      {currentView === View.HOME && (
+        <DraggableCobi onClick={() => setShowChatWindow(!showChatWindow)} icon="🐾" themeColor="#607D8B" cobiVisible={cobiVisible} />
       )}
 
       {/* Chat Window de la página principal */}

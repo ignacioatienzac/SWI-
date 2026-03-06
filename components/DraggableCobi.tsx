@@ -6,9 +6,10 @@ interface DraggableCobiProps {
   themeColor: string; // hex color for border and shadow ring
   cobiVisible: boolean;
   ariaLabel?: string;
+  useWhiteBg?: boolean; // When true, keep white background instead of colored (e.g. PowerOfVerbs)
 }
 
-const DraggableCobi: React.FC<DraggableCobiProps> = ({ onClick, icon, themeColor, cobiVisible, ariaLabel = 'Chatear con Cobi' }) => {
+const DraggableCobi: React.FC<DraggableCobiProps> = ({ onClick, icon, themeColor, cobiVisible, ariaLabel = 'Chatear con Cobi', useWhiteBg = false }) => {
   const [position, setPosition] = useState({ x: -1, y: -1 }); // -1 means default position
   const isDragging = useRef(false);
   const dragStartPos = useRef({ x: 0, y: 0 });
@@ -83,8 +84,9 @@ const DraggableCobi: React.FC<DraggableCobiProps> = ({ onClick, icon, themeColor
       className={`lg:hidden fixed z-[60] w-14 h-14 rounded-full flex items-center justify-center text-2xl active:scale-95 transition-transform cobi-container${!cobiVisible ? ' cobi-hidden' : ''}`}
       style={{
         ...positionStyle,
-        backgroundColor: '#FFFFFF',
+        backgroundColor: useWhiteBg ? '#FFFFFF' : themeColor,
         border: `2px solid ${themeColor}`,
+        color: useWhiteBg ? undefined : '#FFFFFF',
         boxShadow: `0 8px 16px rgba(0,0,0,0.25)`,
         touchAction: 'none',
       }}
