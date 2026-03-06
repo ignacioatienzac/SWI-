@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { ChevronLeft, Play, Pause } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Play, Pause } from 'lucide-react';
 import { Send } from 'lucide-react';
 import { hablarConPanda } from '../services/geminiService';
+import DraggableCobi from './DraggableCobi';
 import {
   loadVerbData,
   getFilteredVerbsSRS,
@@ -285,6 +286,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
 
   // Mobile detection for progressive revelation
   const [isMobile, setIsMobile] = useState(false);
+  const [mobileMenuPage, setMobileMenuPage] = useState(1);
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
@@ -1158,6 +1160,257 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
         transition: 'max-height 0.4s ease, opacity 0.3s ease',
       } : {};
 
+    // --- MOBILE: Paginated Wizard Menu ---
+    if (isMobile) {
+      const canGoNext = mobileMenuPage < 3;
+      const canGoBack = mobileMenuPage > 1;
+
+      const renderVMPage = () => {
+        switch (mobileMenuPage) {
+          case 1:
+            return (
+              <div>
+                <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">1. Modo Verbal</h3>
+                <div className="flex flex-col gap-3">
+                  {[
+                    { value: 'indicativo' as VerbMode, label: 'Indicativo' },
+                    { value: 'subjuntivo' as VerbMode, label: 'Subjuntivo' },
+                    { value: 'imperativo' as VerbMode, label: 'Imperativo' }
+                  ].map(option => (
+                    <button
+                      key={option.value}
+                      onClick={() => handleVerbModeChange(option.value)}
+                      className={`w-full py-4 rounded-xl border-2 font-bold text-lg transition-all ${
+                        selectedVerbMode === option.value ? 'bg-deep-blue text-white border-deep-blue' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
+                      }`}
+                    >
+                      {option.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            );
+          case 2:
+            return (
+              <div>
+                <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">2. Tiempo Verbal</h3>
+                {selectedVerbMode === 'indicativo' && (
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gridAutoRows: '1fr', gap: '8px' }}>
+                    {[
+                      { value: 'presente', label: 'Presente' },
+                      { value: 'pretérito perfecto', label: 'Pretérito Perfecto' },
+                      { value: 'indefinido', label: 'Pretérito Indefinido' },
+                      { value: 'imperfecto', label: 'Pretérito Imperfecto' },
+                      { value: 'presente continuo', label: 'Presente Continuo' },
+                      { value: 'futuro simple', label: 'Futuro Simple' },
+                      { value: 'condicional simple', label: 'Condicional Simple' },
+                      { value: 'pretérito pluscuamperfecto', label: 'Pret. Pluscuamperfecto' }
+                    ].map(option => (
+                      <button
+                        key={option.value}
+                        onClick={() => setSelectedTense(option.value)}
+                        className={`py-3 px-2 rounded-xl border-2 font-bold transition-all flex items-center justify-center text-center ${
+                          selectedTense === option.value ? 'bg-deep-blue text-white border-deep-blue' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
+                        }`}
+                        style={{ fontSize: '0.8rem', hyphens: 'auto', wordBreak: 'break-word' } as React.CSSProperties}
+                      >
+                        {option.label}
+                      </button>
+                    ))}
+                  </div>
+                )}
+                {selectedVerbMode === 'imperativo' && (
+                  <div className="flex flex-col gap-3">
+                    {[
+                      { value: 'afirmativo', label: 'Afirmativo' },
+                      { value: 'negativo', label: 'Negativo' }
+                    ].map(option => (
+                      <button
+                        key={option.value}
+                        onClick={() => setSelectedTense(option.value)}
+                        className={`w-full py-4 rounded-xl border-2 font-bold text-lg transition-all ${
+                          selectedTense === option.value ? 'bg-deep-blue text-white border-deep-blue' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
+                        }`}
+                      >
+                        {option.label}
+                      </button>
+                    ))}
+                  </div>
+                )}
+                {selectedVerbMode === 'subjuntivo' && (
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gridAutoRows: '1fr', gap: '8px' }}>
+                    {[
+                      { value: 'presente', label: 'Presente' },
+                      { value: 'imperfecto', label: 'Pretérito Imperfecto' },
+                      { value: 'pretérito perfecto', label: 'Pretérito Perfecto' },
+                      { value: 'pretérito pluscuamperfecto', label: 'Pret. Pluscuamperfecto' }
+                    ].map(option => (
+                      <button
+                        key={option.value}
+                        onClick={() => setSelectedTense(option.value)}
+                        className={`py-3 px-2 rounded-xl border-2 font-bold transition-all flex items-center justify-center text-center ${
+                          selectedTense === option.value ? 'bg-deep-blue text-white border-deep-blue' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
+                        }`}
+                        style={{ fontSize: '0.8rem', hyphens: 'auto', wordBreak: 'break-word' } as React.CSSProperties}
+                      >
+                        {option.label}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          case 3:
+            return (
+              <div>
+                <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">3. Tipo de Verbos</h3>
+                <div className="flex flex-col gap-3">
+                  {[
+                    { value: 'regular' as VerbType, label: 'Regulares' },
+                    { value: 'irregular' as VerbType, label: 'Irregulares' },
+                    { value: 'all' as VerbType, label: 'Todos' }
+                  ].map(option => (
+                    <button
+                      key={option.value}
+                      onClick={() => setSelectedVerbType(option.value)}
+                      className={`w-full py-4 rounded-xl border-2 font-bold text-lg transition-all ${
+                        selectedVerbType === option.value ? 'bg-deep-blue text-white border-deep-blue' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
+                      }`}
+                    >
+                      {option.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            );
+          default:
+            return null;
+        }
+      };
+
+      return (
+        <div className="h-[100dvh] bg-deep-blue p-3 flex flex-col" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
+          <div className="bg-white rounded-3xl px-5 py-4 shadow-2xl flex flex-col" style={{ height: 'auto', maxHeight: 'calc(100dvh - 120px)', flex: '0 1 auto' }}>
+            <div className="flex items-center gap-2 pb-2 border-b border-gray-100">
+              <button onClick={onBack} className="p-1.5 hover:bg-gray-100 rounded-full transition-colors text-gray-500">
+                <ChevronLeft size={20} />
+              </button>
+              <h1 className="text-lg font-black text-deep-blue flex-1 text-center">🫧 Maestro de Verbos</h1>
+              <div className="w-8"></div>
+            </div>
+
+            <div className="flex justify-center gap-2 my-2">
+              {[1, 2, 3].map(p => (
+                <div key={p} className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                  p === mobileMenuPage ? 'bg-spanish-red w-6' : p < mobileMenuPage ? 'bg-deep-blue' : 'bg-gray-300'
+                }`} />
+              ))}
+            </div>
+
+            <div className="flex-1 flex flex-col justify-center py-2 min-h-0 overflow-y-auto" style={{ flexShrink: 1 }}>
+              {renderVMPage()}
+            </div>
+
+            <div className="flex items-center justify-between pt-3 border-t border-gray-100 flex-shrink-0">
+              {canGoBack ? (
+                <button onClick={() => setMobileMenuPage(p => p - 1)} className="w-11 h-11 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-all active:scale-95 text-gray-600">
+                  <ChevronLeft size={22} />
+                </button>
+              ) : (
+                <div className="w-11" />
+              )}
+
+              {mobileMenuPage === 3 ? (
+                <button
+                  onClick={handleStartGame}
+                  disabled={!selectedVerbType}
+                  className="flex-1 mx-3 py-3 bg-gradient-to-r from-spanish-red to-spanish-red hover:from-red-700 hover:to-red-700 disabled:from-gray-300 disabled:to-gray-300 text-white font-bold text-lg rounded-xl transition-all shadow-lg"
+                >
+                  Comenzar Juego
+                </button>
+              ) : (
+                <div className="flex-1" />
+              )}
+
+              {canGoNext ? (
+                <button onClick={() => setMobileMenuPage(p => p + 1)} className="w-11 h-11 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-all active:scale-95 text-gray-600">
+                  <ChevronRight size={22} />
+                </button>
+              ) : (
+                <div className="w-11" />
+              )}
+            </div>
+          </div>
+
+          <DraggableCobi onClick={() => setShowChatWindow(!showChatWindow)} icon="🥋" themeColor="#B71C1C" cobiVisible={cobiVisible} />
+
+          {showChatWindow && gameState === 'LEVEL_SELECT' && (
+            <div className={`fixed bottom-24 right-6 z-50 w-80 max-w-[calc(100vw-3rem)] bg-white rounded-3xl shadow-2xl border-2 border-gray-200 overflow-hidden animate-fade-in cobi-container${!cobiVisible ? ' cobi-hidden' : ''}`}>
+              <div className="bg-gradient-to-r from-red-800 to-red-600 p-4 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="text-2xl">🥋</span>
+                  <div>
+                    <h3 className="text-white font-bold text-sm">Cobi Sensei</h3>
+                    <p className="text-xs text-red-50">Instructor Zen</p>
+                  </div>
+                </div>
+                <button onClick={() => setShowChatWindow(false)} className="p-1 hover:bg-white/20 rounded-full transition">
+                  <ChevronLeft size={20} className="text-white" />
+                </button>
+              </div>
+              <div className="h-64 overflow-y-auto p-4 space-y-3 bg-gradient-to-b from-red-50/30 to-white">
+                {chatHistory.length === 0 ? (
+                  <div className="text-center text-gray-500 text-sm mt-8">
+                    <p className="mb-2">🥋</p>
+                    <p>¡Bienvenido al dojo! Soy tu Maestro Cobi.</p>
+                    <p className="text-xs mt-2">Pregúntame sobre conjugaciones.</p>
+                  </div>
+                ) : (
+                  chatHistory.map((msg, idx) => (
+                    <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                      <div className={`max-w-[80%] rounded-2xl px-4 py-2 ${
+                        msg.role === 'user' ? 'bg-gradient-to-br from-blue-500 to-blue-600 text-white' : 'bg-white border-2 border-red-200 text-gray-700'
+                      }`}>
+                        <p className="text-sm whitespace-pre-wrap">{msg.text}</p>
+                      </div>
+                    </div>
+                  ))
+                )}
+                {isLoadingResponse && (
+                  <div className="flex justify-start">
+                    <div className="bg-white border-2 border-red-200 rounded-2xl px-4 py-3">
+                      <p className="text-sm text-gray-600">El Sensei medita tu pregunta... 🎋</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+              <div className="p-3 bg-white border-t-2 border-gray-100">
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={chatInput}
+                    onChange={(e) => setChatInput(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && sendMessageToCobi()}
+                    placeholder="Escribe tu pregunta..."
+                    disabled={isLoadingResponse}
+                    className="flex-1 px-4 py-2 border-2 border-gray-200 rounded-full focus:outline-none focus:border-red-400 transition text-sm disabled:bg-gray-100"
+                  />
+                  <button
+                    onClick={sendMessageToCobi}
+                    disabled={isLoadingResponse || !chatInput.trim()}
+                    className="w-10 h-10 bg-gradient-to-br from-red-800 to-red-600 rounded-full flex items-center justify-center hover:shadow-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <Send size={18} className="text-white" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    // --- DESKTOP ---
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-50 p-4">
         <div className="max-w-2xl mx-auto">
@@ -1385,14 +1638,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
         </div>
 
         {/* Botón Cobi móvil */}
-        <button
-          onClick={() => setShowChatWindow(!showChatWindow)}
-          className={`lg:hidden fixed bottom-5 right-5 z-50 w-14 h-14 rounded-full flex items-center justify-center text-2xl active:scale-95 transition-transform cobi-container${!cobiVisible ? ' cobi-hidden' : ''}`}
-          style={{ backgroundColor: '#B71C1C', boxShadow: '0 4px 12px rgba(0,0,0,0.15), 0 0 0 3px rgba(183,28,28,0.3)' }}
-          aria-label="Chatear con Cobi"
-        >
-          🥋
-        </button>
+        <DraggableCobi onClick={() => setShowChatWindow(!showChatWindow)} icon="🥋" themeColor="#B71C1C" cobiVisible={cobiVisible} />
 
         {/* Chat Window del Menú */}
         {showChatWindow && gameState === 'LEVEL_SELECT' && (
@@ -1771,14 +2017,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
         </div>
 
         {/* Botón Cobi móvil */}
-        <button
-          onClick={() => setShowChatWindow(!showChatWindow)}
-          className={`lg:hidden fixed bottom-5 right-5 z-50 w-14 h-14 rounded-full flex items-center justify-center text-2xl active:scale-95 transition-transform cobi-container${!cobiVisible ? ' cobi-hidden' : ''}`}
-          style={{ backgroundColor: '#B71C1C', boxShadow: '0 4px 12px rgba(0,0,0,0.15), 0 0 0 3px rgba(183,28,28,0.3)' }}
-          aria-label="Chatear con Cobi"
-        >
-          🥋
-        </button>
+        <DraggableCobi onClick={() => setShowChatWindow(!showChatWindow)} icon="🥋" themeColor="#B71C1C" cobiVisible={cobiVisible} />
 
         {/* Chat Window durante el juego */}
         {showChatWindow && gameState === 'PLAYING' && (
@@ -1936,14 +2175,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
         </div>
 
         {/* Botón Cobi móvil */}
-        <button
-          onClick={() => setShowChatWindow(!showChatWindow)}
-          className={`lg:hidden fixed bottom-5 right-5 z-50 w-14 h-14 rounded-full flex items-center justify-center text-2xl active:scale-95 transition-transform cobi-container${!cobiVisible ? ' cobi-hidden' : ''}`}
-          style={{ backgroundColor: '#B71C1C', boxShadow: '0 4px 12px rgba(0,0,0,0.15), 0 0 0 3px rgba(183,28,28,0.3)' }}
-          aria-label="Chatear con Cobi"
-        >
-          🥋
-        </button>
+        <DraggableCobi onClick={() => setShowChatWindow(!showChatWindow)} icon="🥋" themeColor="#B71C1C" cobiVisible={cobiVisible} />
 
         {/* Chat Window en pausa */}
         {showChatWindow && gameState === 'PAUSED' && (
@@ -2196,14 +2428,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
         </div>
 
         {/* Botón Cobi móvil */}
-        <button
-          onClick={() => setShowChatWindow(!showChatWindow)}
-          className={`lg:hidden fixed bottom-5 right-5 z-50 w-14 h-14 rounded-full flex items-center justify-center text-2xl active:scale-95 transition-transform cobi-container${!cobiVisible ? ' cobi-hidden' : ''}`}
-          style={{ backgroundColor: '#B71C1C', boxShadow: '0 4px 12px rgba(0,0,0,0.15), 0 0 0 3px rgba(183,28,28,0.3)' }}
-          aria-label="Chatear con Cobi"
-        >
-          🥋
-        </button>
+        <DraggableCobi onClick={() => setShowChatWindow(!showChatWindow)} icon="🥋" themeColor="#B71C1C" cobiVisible={cobiVisible} />
 
         {/* Chat Window de VICTORY */}
         {showChatWindow && gameState === 'VICTORY' && (
@@ -2373,14 +2598,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
       </div>
 
       {/* Botón Cobi móvil */}
-      <button
-        onClick={() => setShowChatWindow(!showChatWindow)}
-        className={`lg:hidden fixed bottom-5 right-5 z-50 w-14 h-14 rounded-full flex items-center justify-center text-2xl active:scale-95 transition-transform cobi-container${!cobiVisible ? ' cobi-hidden' : ''}`}
-        style={{ backgroundColor: '#B71C1C', boxShadow: '0 4px 12px rgba(0,0,0,0.15), 0 0 0 3px rgba(183,28,28,0.3)' }}
-        aria-label="Chatear con Cobi"
-      >
-        🥋
-      </button>
+      <DraggableCobi onClick={() => setShowChatWindow(!showChatWindow)} icon="🥋" themeColor="#B71C1C" cobiVisible={cobiVisible} />
 
       {/* Chat Window de GAMEOVER */}
       {showChatWindow && gameState === 'GAMEOVER' && (

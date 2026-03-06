@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { ChevronLeft, Info, X, Lightbulb, Calendar, ChevronRight, Send } from 'lucide-react';
 import { loadLetterWheelVocabulary, getRandomWordForDate, getRelatedWords } from '../services/letterWheelService';
 import { hablarConPanda } from '../services/geminiService';
+import DraggableCobi from './DraggableCobi';
 
 interface LetterWheelGameProps {
   onBack: () => void;
@@ -836,14 +837,7 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
         </div>
 
         {/* Botón Cobi móvil */}
-        <button
-          onClick={() => setShowChatWindow(!showChatWindow)}
-          className={`lg:hidden fixed bottom-5 right-5 z-50 w-14 h-14 rounded-full flex items-center justify-center text-2xl active:scale-95 transition-transform cobi-container${!cobiVisible ? ' cobi-hidden' : ''}`}
-          style={{ backgroundColor: '#CEAE85', boxShadow: '0 4px 12px rgba(0,0,0,0.15), 0 0 0 3px rgba(206,174,133,0.5)' }}
-          aria-label="Chatear con Cobi"
-        >
-          🧭
-        </button>
+        <DraggableCobi onClick={() => setShowChatWindow(!showChatWindow)} icon="🧭" themeColor="#CEAE85" cobiVisible={cobiVisible} />
 
         {/* Chat Window del Menu */}
         {showChatWindow && gameStatus === 'MENU' && (
@@ -1012,14 +1006,7 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
         </div>
 
         {/* Botón Cobi móvil */}
-        <button
-          onClick={() => setShowChatWindow(!showChatWindow)}
-          className={`lg:hidden fixed bottom-5 right-5 z-50 w-14 h-14 rounded-full flex items-center justify-center text-2xl active:scale-95 transition-transform cobi-container${!cobiVisible ? ' cobi-hidden' : ''}`}
-          style={{ backgroundColor: '#CEAE85', boxShadow: '0 4px 12px rgba(0,0,0,0.15), 0 0 0 3px rgba(206,174,133,0.5)' }}
-          aria-label="Chatear con Cobi"
-        >
-          🧭
-        </button>
+        <DraggableCobi onClick={() => setShowChatWindow(!showChatWindow)} icon="🧭" themeColor="#CEAE85" cobiVisible={cobiVisible} />
 
         {/* Chat Window de Victoria */}
         {showChatWindow && gameStatus === 'VICTORY' && (
@@ -1669,14 +1656,7 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
       )}
 
       {/* Botón Cobi móvil */}
-      <button
-        onClick={() => setShowChatWindow(!showChatWindow)}
-        className={`lg:hidden fixed bottom-5 right-5 z-50 w-14 h-14 rounded-full flex items-center justify-center text-2xl active:scale-95 transition-transform cobi-container${!cobiVisible ? ' cobi-hidden' : ''}`}
-        style={{ backgroundColor: '#CEAE85', boxShadow: '0 4px 12px rgba(0,0,0,0.15), 0 0 0 3px rgba(206,174,133,0.5)' }}
-        aria-label="Chatear con Cobi"
-      >
-        🧭
-      </button>
+      <DraggableCobi onClick={() => setShowChatWindow(!showChatWindow)} icon="🧭" themeColor="#CEAE85" cobiVisible={cobiVisible} />
 
       {/* Chat Window del Juego */}
       {showChatWindow && gameStatus === 'PLAYING' && (

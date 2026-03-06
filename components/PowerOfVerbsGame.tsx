@@ -3,6 +3,7 @@ import { ChevronLeft, ChevronRight, Info, X, Pause, Play, Send } from 'lucide-re
 import { getAvailableTenses, getFilteredVerbs, getFilteredVerbsSRS, recordVerbCorrect, recordVerbIncorrect } from '../services/powerVerbsService';
 import { PowerVerb, GameDifficulty, GameMode, BattleMode } from '../types';
 import { hablarConPanda } from '../services/geminiService';
+import DraggableCobi from './DraggableCobi';
 import { normalizePronoun } from '../services/srsService';
 
 interface PowerOfVerbsGameProps {
@@ -2503,14 +2504,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
           </div>
 
           {/* Botón Cobi móvil */}
-          <button
-            onClick={() => setShowChatWindow(!showChatWindow)}
-            className={`lg:hidden fixed bottom-5 right-5 z-50 w-14 h-14 rounded-full flex items-center justify-center text-2xl active:scale-95 transition-transform border-2 border-gray-300 cobi-container${!cobiVisible ? ' cobi-hidden' : ''}`}
-            style={{ backgroundColor: '#FFFFFF', boxShadow: '0 4px 12px rgba(0,0,0,0.15)' }}
-            aria-label="Chatear con Cobi"
-          >
-            🔮
-          </button>
+          <DraggableCobi onClick={() => setShowChatWindow(!showChatWindow)} icon="🔮" themeColor="#7C3AED" cobiVisible={cobiVisible} />
 
           {/* Chat Window del Menú (mobile) */}
           {showChatWindow && gameState === 'SELECTION' && (
@@ -2788,14 +2782,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
         </div>
 
         {/* Botón Cobi móvil */}
-        <button
-          onClick={() => setShowChatWindow(!showChatWindow)}
-          className={`lg:hidden fixed bottom-5 right-5 z-50 w-14 h-14 rounded-full flex items-center justify-center text-2xl active:scale-95 transition-transform border-2 border-gray-300 cobi-container${!cobiVisible ? ' cobi-hidden' : ''}`}
-          style={{ backgroundColor: '#FFFFFF', boxShadow: '0 4px 12px rgba(0,0,0,0.15)' }}
-          aria-label="Chatear con Cobi"
-        >
-          🔮
-        </button>
+        <DraggableCobi onClick={() => setShowChatWindow(!showChatWindow)} icon="🔮" themeColor="#7C3AED" cobiVisible={cobiVisible} />
 
         {/* Chat Window del Menú */}
         {showChatWindow && gameState === 'SELECTION' && (
@@ -3214,14 +3201,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
         </div>
 
         {/* Botón Cobi móvil */}
-        <button
-          onClick={() => setShowChatWindow(!showChatWindow)}
-          className={`lg:hidden fixed bottom-5 right-5 z-50 w-14 h-14 rounded-full flex items-center justify-center text-2xl active:scale-95 transition-transform border-2 border-gray-300 cobi-container${!cobiVisible ? ' cobi-hidden' : ''}`}
-          style={{ backgroundColor: '#FFFFFF', boxShadow: '0 4px 12px rgba(0,0,0,0.15)' }}
-          aria-label="Chatear con Cobi"
-        >
-          🔮
-        </button>
+        <DraggableCobi onClick={() => setShowChatWindow(!showChatWindow)} icon="🔮" themeColor="#7C3AED" cobiVisible={cobiVisible} />
 
         {/* Chat Window del Juego */}
         {showChatWindow && gameState === 'PLAYING' && (
@@ -3384,14 +3364,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
         </div>
 
         {/* Botón Cobi móvil */}
-        <button
-          onClick={() => setShowChatWindow(!showChatWindow)}
-          className={`lg:hidden fixed bottom-5 right-5 z-50 w-14 h-14 rounded-full flex items-center justify-center text-2xl active:scale-95 transition-transform border-2 border-gray-300 cobi-container${!cobiVisible ? ' cobi-hidden' : ''}`}
-          style={{ backgroundColor: '#FFFFFF', boxShadow: '0 4px 12px rgba(0,0,0,0.15)' }}
-          aria-label="Chatear con Cobi"
-        >
-          🔮
-        </button>
+        <DraggableCobi onClick={() => setShowChatWindow(!showChatWindow)} icon="🔮" themeColor="#7C3AED" cobiVisible={cobiVisible} />
 
         {/* Chat Window de Pausa */}
         {showChatWindow && gameState === 'PAUSED' && (
@@ -3545,14 +3518,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
         </div>
 
         {/* Botón Cobi móvil */}
-        <button
-          onClick={() => setShowChatWindow(!showChatWindow)}
-          className={`lg:hidden fixed bottom-5 right-5 z-50 w-14 h-14 rounded-full flex items-center justify-center text-2xl active:scale-95 transition-transform border-2 border-gray-300 cobi-container${!cobiVisible ? ' cobi-hidden' : ''}`}
-          style={{ backgroundColor: '#FFFFFF', boxShadow: '0 4px 12px rgba(0,0,0,0.15)' }}
-          aria-label="Chatear con Cobi"
-        >
-          🔮
-        </button>
+        <DraggableCobi onClick={() => setShowChatWindow(!showChatWindow)} icon="🔮" themeColor="#7C3AED" cobiVisible={cobiVisible} />
 
         {/* Chat Window de Derrota */}
         {showChatWindow && gameState === 'GAMEOVER' && (
@@ -3706,14 +3672,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
         </div>
 
         {/* Botón Cobi móvil */}
-        <button
-          onClick={() => setShowChatWindow(!showChatWindow)}
-          className={`lg:hidden fixed bottom-5 right-5 z-50 w-14 h-14 rounded-full flex items-center justify-center text-2xl active:scale-95 transition-transform border-2 border-gray-300 cobi-container${!cobiVisible ? ' cobi-hidden' : ''}`}
-          style={{ backgroundColor: '#FFFFFF', boxShadow: '0 4px 12px rgba(0,0,0,0.15)' }}
-          aria-label="Chatear con Cobi"
-        >
-          🔮
-        </button>
+        <DraggableCobi onClick={() => setShowChatWindow(!showChatWindow)} icon="🔮" themeColor="#7C3AED" cobiVisible={cobiVisible} />
 
         {/* Chat Window de Victoria */}
         {showChatWindow && gameState === 'VICTORY' && (

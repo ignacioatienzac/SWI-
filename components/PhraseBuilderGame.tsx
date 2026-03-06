@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { ChevronLeft, Play, RotateCcw, Lightbulb, Check, X, Clock, Hammer, Send } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Play, RotateCcw, Lightbulb, Check, X, Clock, Hammer, Send } from 'lucide-react';
 import { hablarConPanda } from '../services/geminiService';
+import DraggableCobi from './DraggableCobi';
 
 // Mensajes aleatorios para el bocadillo de Cobi en el menú
 const mensajesMenuCobi = [
@@ -80,6 +81,17 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
   const [showButtonPulse, setShowButtonPulse] = useState(false);
   const cobiTimerRef = useRef<NodeJS.Timeout | null>(null);
   const aiPromptTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Mobile detection
+  const [isMobile, setIsMobile] = useState(false);
+  const [mobileMenuPage, setMobileMenuPage] = useState(1);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
   
   // Cobi avatar image URLs - centralized for easy scalability
   const COBI_AVATARS = {
@@ -626,6 +638,258 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
 
   // --- MENU STATE ---
   if (gameState === 'MENU') {
+    // --- MOBILE: Paginated Wizard Menu ---
+    if (isMobile) {
+      const canGoNext = mobileMenuPage < 4;
+      const canGoBack = mobileMenuPage > 1;
+
+      const renderPBPage = () => {
+        switch (mobileMenuPage) {
+          case 1:
+            return (
+              <div>
+                <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">1. Nivel de Español</h3>
+                <div className="flex flex-col gap-3">
+                  {(['A1', 'A2', 'B1', 'B2'] as Level[]).map(level => {
+                    const isDisabled = level !== 'A1';
+                    return (
+                      <button
+                        key={level}
+                        onClick={() => !isDisabled && setSelectedLevel(level)}
+                        disabled={isDisabled}
+                        className={`w-full py-4 rounded-xl border-2 font-bold text-lg transition-all ${
+                          selectedLevel === level
+                            ? 'bg-amber-500 text-white border-amber-500'
+                            : isDisabled
+                            ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed opacity-50'
+                            : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
+                        }`}
+                      >
+                        {level}
+                        {isDisabled && <span className="text-xs block font-normal">Próximamente</span>}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          case 2:
+            return (
+              <div>
+                <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">2. Longitud de Frases</h3>
+                <div className="flex flex-col gap-3">
+                  <button
+                    onClick={() => setSelectedPhraseLength('short')}
+                    className={`w-full py-5 rounded-xl border-2 font-bold text-lg transition-all ${
+                      selectedPhraseLength === 'short' ? 'bg-amber-500 text-white border-amber-500' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
+                    }`}
+                  >
+                    <span className="text-2xl mb-1 block">🧱</span>
+                    Frases Cortas
+                    <span className="text-xs block font-normal opacity-80">3–5 palabras</span>
+                  </button>
+                  <button
+                    onClick={() => setSelectedPhraseLength('long')}
+                    className={`w-full py-5 rounded-xl border-2 font-bold text-lg transition-all ${
+                      selectedPhraseLength === 'long' ? 'bg-amber-500 text-white border-amber-500' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
+                    }`}
+                  >
+                    <span className="text-2xl mb-1 block">🏗️</span>
+                    Frases Largas
+                    <span className="text-xs block font-normal opacity-80">6–10 palabras</span>
+                  </button>
+                </div>
+              </div>
+            );
+          case 3:
+            return (
+              <div>
+                <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">3. Dificultad</h3>
+                <div className="flex flex-col gap-3">
+                  <button
+                    onClick={() => setSelectedDifficulty('easy')}
+                    className={`w-full py-5 rounded-xl border-2 font-bold text-lg transition-all ${
+                      selectedDifficulty === 'easy' ? 'bg-green-500 text-white border-green-500' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
+                    }`}
+                  >
+                    😊 Fácil
+                    <span className="text-xs block font-normal opacity-80">Solo palabras necesarias</span>
+                  </button>
+                  <button
+                    onClick={() => setSelectedDifficulty('hard')}
+                    className={`w-full py-5 rounded-xl border-2 font-bold text-lg transition-all ${
+                      selectedDifficulty === 'hard' ? 'bg-red-500 text-white border-red-500' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
+                    }`}
+                  >
+                    😈 Difícil
+                    <span className="text-xs block font-normal opacity-80">Incluye palabras trampa</span>
+                  </button>
+                </div>
+              </div>
+            );
+          case 4:
+            return (
+              <div>
+                <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">4. Modo de Juego</h3>
+                <div className="flex flex-col gap-3">
+                  <button
+                    onClick={() => setSelectedMode('practice')}
+                    className={`w-full py-5 rounded-xl border-2 font-bold text-lg transition-all ${
+                      selectedMode === 'practice' ? 'bg-amber-500 text-white border-amber-500' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
+                    }`}
+                  >
+                    <span className="text-2xl mb-1 block">📖</span>
+                    Práctica
+                  </button>
+                  <button
+                    onClick={() => setSelectedMode('timed')}
+                    className={`w-full py-5 rounded-xl border-2 font-bold text-lg transition-all ${
+                      selectedMode === 'timed' ? 'bg-amber-500 text-white border-amber-500' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
+                    }`}
+                  >
+                    <span className="text-2xl mb-1 block">⏱️</span>
+                    Contrarreloj
+                  </button>
+                  <button
+                    onClick={() => setSelectedMode('lives')}
+                    className={`w-full py-5 rounded-xl border-2 font-bold text-lg transition-all ${
+                      selectedMode === 'lives' ? 'bg-amber-500 text-white border-amber-500' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
+                    }`}
+                  >
+                    <span className="text-2xl mb-1 block">❤️</span>
+                    Vidas
+                  </button>
+                </div>
+              </div>
+            );
+          default:
+            return null;
+        }
+      };
+
+      return (
+        <div className="h-[100dvh] bg-amber-600 p-3 flex flex-col" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
+          <div className="bg-white rounded-3xl px-5 py-4 shadow-2xl flex flex-col" style={{ height: 'auto', maxHeight: 'calc(100dvh - 120px)', flex: '0 1 auto' }}>
+            <div className="flex items-center gap-2 pb-2 border-b border-gray-100">
+              <button onClick={onBack} className="p-1.5 hover:bg-gray-100 rounded-full transition-colors text-gray-500">
+                <ChevronLeft size={20} />
+              </button>
+              <h1 className="text-lg font-black text-amber-700 flex-1 text-center">🏗️ Constructor de Frases</h1>
+              <div className="w-8"></div>
+            </div>
+
+            <div className="flex justify-center gap-2 my-2">
+              {[1, 2, 3, 4].map(p => (
+                <div key={p} className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                  p === mobileMenuPage ? 'bg-amber-500 w-6' : p < mobileMenuPage ? 'bg-amber-700' : 'bg-gray-300'
+                }`} />
+              ))}
+            </div>
+
+            <div className="flex-1 flex flex-col justify-center py-2 min-h-0 overflow-y-auto" style={{ flexShrink: 1 }}>
+              {renderPBPage()}
+            </div>
+
+            <div className="flex items-center justify-between pt-3 border-t border-gray-100 flex-shrink-0">
+              {canGoBack ? (
+                <button onClick={() => setMobileMenuPage(p => p - 1)} className="w-11 h-11 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-all active:scale-95 text-gray-600">
+                  <ChevronLeft size={22} />
+                </button>
+              ) : (
+                <div className="w-11" />
+              )}
+
+              {mobileMenuPage === 4 ? (
+                <button
+                  onClick={startGame}
+                  disabled={phrases.length === 0 || !selectedLevel || !selectedPhraseLength || !selectedDifficulty || !selectedMode}
+                  className="flex-1 mx-3 py-3 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 disabled:from-gray-300 disabled:to-gray-300 text-white font-bold text-lg rounded-xl transition-all shadow-lg"
+                >
+                  ¡Empezar a Construir!
+                </button>
+              ) : (
+                <div className="flex-1" />
+              )}
+
+              {canGoNext ? (
+                <button onClick={() => setMobileMenuPage(p => p + 1)} className="w-11 h-11 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-all active:scale-95 text-gray-600">
+                  <ChevronRight size={22} />
+                </button>
+              ) : (
+                <div className="w-11" />
+              )}
+            </div>
+          </div>
+
+          <DraggableCobi onClick={() => setShowChatWindow(!showChatWindow)} icon="🔨" themeColor="#FF9F55" cobiVisible={cobiVisible} />
+
+          {showChatWindow && gameState === 'MENU' && (
+            <div className={`fixed bottom-24 right-6 z-50 w-80 max-w-[calc(100vw-3rem)] bg-white rounded-3xl shadow-2xl border-2 border-gray-200 overflow-hidden animate-fade-in cobi-container${!cobiVisible ? ' cobi-hidden' : ''}`}>
+              <div className="bg-gradient-to-r from-amber-400 to-orange-500 p-4 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="text-2xl">🔨</span>
+                  <div>
+                    <h3 className="text-white font-bold text-sm">Cobi Constructor</h3>
+                    <p className="text-xs text-amber-50">Tu arquitecto de frases</p>
+                  </div>
+                </div>
+                <button onClick={() => setShowChatWindow(false)} className="p-1 hover:bg-white/20 rounded-full transition">
+                  <ChevronLeft size={20} className="text-white" />
+                </button>
+              </div>
+              <div className="h-64 overflow-y-auto p-4 space-y-3 bg-gradient-to-b from-amber-50/30 to-white">
+                {chatHistory.length === 0 ? (
+                  <div className="text-center text-gray-500 text-sm mt-8">
+                    <p className="mb-2">👷‍♂️</p>
+                    <p>¡Hola! Soy Cobi, tu arquitecto personal.</p>
+                    <p className="text-xs mt-2">Pregúntame sobre los modos de juego.</p>
+                  </div>
+                ) : (
+                  chatHistory.map((msg, idx) => (
+                    <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                      <div className={`max-w-[80%] rounded-2xl px-4 py-2 ${
+                        msg.role === 'user' ? 'bg-gradient-to-br from-blue-500 to-blue-600 text-white' : 'bg-white border-2 border-amber-200 text-gray-700'
+                      }`}>
+                        <p className="text-sm whitespace-pre-wrap">{msg.text}</p>
+                      </div>
+                    </div>
+                  ))
+                )}
+                {isLoadingResponse && (
+                  <div className="flex justify-start">
+                    <div className="bg-white border-2 border-amber-200 rounded-2xl px-4 py-3">
+                      <p className="text-sm text-gray-600">El Panda revisa los planos... 🐾</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+              <div className="p-3 bg-white border-t-2 border-gray-100">
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={chatInput}
+                    onChange={(e) => setChatInput(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && sendMessageToCobi()}
+                    placeholder="Escribe tu pregunta..."
+                    disabled={isLoadingResponse}
+                    className="flex-1 px-4 py-2 border-2 border-gray-200 rounded-full focus:outline-none focus:border-amber-400 transition text-sm disabled:bg-gray-100"
+                  />
+                  <button
+                    onClick={sendMessageToCobi}
+                    disabled={isLoadingResponse || !chatInput.trim()}
+                    className="w-10 h-10 bg-gradient-to-br from-amber-400 to-orange-500 rounded-full flex items-center justify-center hover:shadow-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <Send size={18} className="text-white" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    // --- DESKTOP ---
     return (
       <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 p-4">
         <div className="max-w-2xl mx-auto">
@@ -879,14 +1143,7 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
         </div>
 
         {/* Botón Cobi móvil */}
-        <button
-          onClick={() => setShowChatWindow(!showChatWindow)}
-          className={`lg:hidden fixed bottom-5 right-5 z-50 w-14 h-14 rounded-full flex items-center justify-center text-2xl active:scale-95 transition-transform cobi-container${!cobiVisible ? ' cobi-hidden' : ''}`}
-          style={{ backgroundColor: '#FF9F55', boxShadow: '0 4px 12px rgba(0,0,0,0.15), 0 0 0 3px rgba(255,159,85,0.3)' }}
-          aria-label="Chatear con Cobi"
-        >
-          🔨
-        </button>
+        <DraggableCobi onClick={() => setShowChatWindow(!showChatWindow)} icon="🔨" themeColor="#FF9F55" cobiVisible={cobiVisible} />
 
         {/* Chat Window del Menú */}
         {showChatWindow && gameState === 'MENU' && (
@@ -1380,14 +1637,7 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
           </div>
 
           {/* Botón Cobi móvil */}
-          <button
-            onClick={() => setShowChatWindow(!showChatWindow)}
-            className={`lg:hidden fixed bottom-5 right-5 z-50 w-14 h-14 rounded-full flex items-center justify-center text-2xl active:scale-95 transition-transform cobi-container${!cobiVisible ? ' cobi-hidden' : ''}`}
-            style={{ backgroundColor: '#FF9F55', boxShadow: '0 4px 12px rgba(0,0,0,0.15), 0 0 0 3px rgba(255,159,85,0.3)' }}
-            aria-label="Chatear con Cobi"
-          >
-            🔨
-          </button>
+          <DraggableCobi onClick={() => setShowChatWindow(!showChatWindow)} icon="🔨" themeColor="#FF9F55" cobiVisible={cobiVisible} />
 
           {/* Chat Window */}
           {showChatWindow && (

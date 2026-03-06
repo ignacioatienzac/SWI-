@@ -3,6 +3,7 @@ import { RotateCcw, Calendar, Lightbulb, ChevronLeft, ChevronRight, X, Send, Del
 import { getWordOfDay } from '../services/vocabularyService';
 import { isValidWord, getHintsForAttempt, normalizeAccents } from '../services/wordleService';
 import { hablarConPanda } from '../services/geminiService';
+import DraggableCobi from './DraggableCobi';
 
 // Mensajes aleatorios para el bocadillo del Cobi detective en el MENÚ
 const mensajesMenuDetective = [
@@ -639,14 +640,7 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack, cobiVisible = true, sou
         </div>
 
         {/* Botón Cobi móvil */}
-        <button
-          onClick={() => setShowChatWindow(!showChatWindow)}
-          className={`lg:hidden fixed bottom-5 right-5 z-50 w-14 h-14 rounded-full flex items-center justify-center text-2xl active:scale-95 transition-transform cobi-container${!cobiVisible ? ' cobi-hidden' : ''}`}
-          style={{ backgroundColor: '#2D5A27', boxShadow: '0 4px 12px rgba(0,0,0,0.15), 0 0 0 3px rgba(45,90,39,0.3)' }}
-          aria-label="Chatear con Cobi"
-        >
-          🔎
-        </button>
+        <DraggableCobi onClick={() => setShowChatWindow(!showChatWindow)} icon="🔎" themeColor="#2D5A27" cobiVisible={cobiVisible} />
 
         {/* Chat Window del Menú */}
         {showChatWindow && status === 'SELECT_LEVEL' && (
@@ -992,12 +986,11 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack, cobiVisible = true, sou
           animation: flipToAbsent 0.6s ease-in-out forwards;
         }
       `}</style>
-      <div className="mb-8 flex justify-center overflow-x-auto">
+      <div className="mb-8 flex justify-center">
         <div style={{ 
           display: 'grid',
-          gridTemplateColumns: `repeat(${wordLength}, minmax(0, 1fr))`,
-          gap: 'clamp(4px, 1.5vw, 8px)',
-          width: 'min(100%, 400px)',
+          gridTemplateColumns: `repeat(${wordLength}, 3.5rem)`,
+          gap: '8px',
         }}>
           {/* Render completed guesses */}
           {guesses.map((guess, guessIdx) => (
@@ -1252,14 +1245,7 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack, cobiVisible = true, sou
           </div>
 
           {/* Botón Cobi móvil */}
-          <button
-            onClick={() => setShowChatWindow(!showChatWindow)}
-            className={`lg:hidden fixed bottom-5 right-5 z-50 w-14 h-14 rounded-full flex items-center justify-center text-2xl active:scale-95 transition-transform cobi-container${!cobiVisible ? ' cobi-hidden' : ''}`}
-            style={{ backgroundColor: '#2D5A27', boxShadow: '0 4px 12px rgba(0,0,0,0.15), 0 0 0 3px rgba(45,90,39,0.3)' }}
-            aria-label="Chatear con Cobi"
-          >
-            🔎
-          </button>
+          <DraggableCobi onClick={() => setShowChatWindow(!showChatWindow)} icon="🔎" themeColor="#2D5A27" cobiVisible={cobiVisible} />
 
           {/* Chat Window */}
           {showChatWindow && (

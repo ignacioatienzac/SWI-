@@ -7,6 +7,7 @@ import VerbMasterGame from './VerbMasterGame';
 import PhraseBuilderGame from './PhraseBuilderGame';
 import { Send, X } from 'lucide-react';
 import { hablarConPanda } from '../services/geminiService';
+import DraggableCobi from './DraggableCobi';
 
 // Banco de Mensajes de Cobi (incluye datos curiosos y recomendaciones de juegos)
 const mensajesCobi = [
@@ -330,14 +331,7 @@ const Games: React.FC<GamesProps> = ({ activeGameId, setActiveGameId, cobiVisibl
       </div>
 
       {/* Botón Cobi móvil */}
-      <button
-        onClick={() => setShowChatWindow(!showChatWindow)}
-        className={`lg:hidden fixed bottom-5 right-5 z-50 w-14 h-14 rounded-full flex items-center justify-center text-2xl active:scale-95 transition-transform cobi-container${!cobiVisible ? ' cobi-hidden' : ''}`}
-        style={{ backgroundColor: '#607D8B', boxShadow: '0 4px 12px rgba(0,0,0,0.15), 0 0 0 3px rgba(96,125,139,0.3)' }}
-        aria-label="Chatear con Cobi"
-      >
-        🐾
-      </button>
+      <DraggableCobi onClick={() => setShowChatWindow(!showChatWindow)} icon="🐾" themeColor="#607D8B" cobiVisible={cobiVisible} />
 
       {/* Chat Window */}
       {showChatWindow && (
