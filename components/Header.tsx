@@ -129,19 +129,20 @@ const Header: React.FC<HeaderProps> = ({ currentView, onChangeView, cobiVisible,
           </div>
           <button
             onClick={() => setIsMobileMenuOpen(false)}
-            className="p-2 rounded-full bg-gray-100 text-gray-600 hover:bg-spanish-red hover:text-white transition-all"
+            className="w-10 h-10 flex items-center justify-center rounded-full bg-white text-spanish-red transition-all active:translate-y-0.5"
+            style={{ border: '2px solid #B91C1C', boxShadow: '0 3px 0 rgba(0,0,0,0.15)' }}
           >
-            <X size={24} />
+            <X size={20} />
           </button>
         </div>
 
         {/* Nav Items */}
-        <div className="flex-1 flex flex-col gap-2 p-5 pt-8">
+        <div className="flex-1 flex flex-col gap-1.5 p-5 pt-6">
           {navItems.map((item) => (
             <button
               key={item.value}
               onClick={() => handleNavClick(item.value)}
-              className={`w-full text-left text-xl font-bold py-4 px-5 rounded-xl transition-all ${
+              className={`w-full text-left text-lg font-bold py-3.5 px-5 rounded-xl transition-all flex items-center min-h-[48px] ${
                 currentView === item.value
                   ? 'text-spanish-red bg-red-50 border border-red-100'
                   : 'text-gray-500 hover:text-deep-blue hover:bg-gray-50'
@@ -152,17 +153,17 @@ const Header: React.FC<HeaderProps> = ({ currentView, onChangeView, cobiVisible,
           ))}
 
           {/* Divider */}
-          <div className="border-t border-gray-100 my-4"></div>
+          <div className="border-t border-gray-100 my-3"></div>
 
           {/* Sound Toggle */}
           <button
             onClick={onToggleSound}
-            className="flex items-center gap-3 w-full py-3 px-5 rounded-xl transition-all hover:bg-gray-50"
+            className="flex items-center gap-3 w-full py-3 px-5 rounded-xl transition-all hover:bg-gray-50 min-h-[48px]"
           >
             {soundEnabled ? (
-              <Volume2 size={22} className="text-gray-600" />
+              <Volume2 size={22} className="text-gray-600 flex-shrink-0" />
             ) : (
-              <VolumeX size={22} className="text-gray-400" />
+              <VolumeX size={22} className="text-gray-400 flex-shrink-0" />
             )}
             <span className={`text-base font-semibold ${soundEnabled ? 'text-gray-600' : 'text-gray-400'}`}>
               {soundEnabled ? 'Sonido activado' : 'Sonido desactivado'}
@@ -172,7 +173,7 @@ const Header: React.FC<HeaderProps> = ({ currentView, onChangeView, cobiVisible,
           {/* Cobi Toggle */}
           <button
             onClick={onToggleCobi}
-            className="flex items-center gap-3 w-full py-3 px-5 rounded-xl transition-all hover:bg-gray-50"
+            className="flex items-center gap-3 w-full py-3 px-5 rounded-xl transition-all hover:bg-gray-50 min-h-[48px]"
           >
             <div className={`relative w-14 h-8 rounded-full transition-colors duration-300 ${cobiVisible ? 'bg-spanish-red' : 'bg-gray-300'}`}>
               <div className={`absolute w-10 h-10 rounded-full overflow-hidden transition-all duration-300 bg-transparent border-2 border-transparent ${cobiVisible ? 'left-[20px] opacity-100' : 'left-[-3px] opacity-50'}`} style={{ top: '-4px' }}>

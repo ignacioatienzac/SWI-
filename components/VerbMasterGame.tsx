@@ -1782,7 +1782,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
           </div>
 
           {/* Input */}
-          <div className="bg-white rounded-2xl p-6 shadow-xl">
+          <div className="md:bg-white md:rounded-2xl md:p-6 md:shadow-xl">
             {/* Desktop input with button */}
             <div className="hidden md:flex gap-3">
               <input
@@ -1811,24 +1811,24 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
             </div>
             
             {/* Mobile input without native keyboard */}
-            <div className="md:hidden">
+            <div className="md:hidden px-2 mb-3">
               <input
                 type="text"
                 value={userInput}
                 readOnly
-                className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-lg text-center"
+                className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-lg text-center bg-white"
               />
             </div>
             
-            {/* Virtual Keyboard - Mobile only (Wordle 3D style) */}
-            <div className="md:hidden mt-4">
+            {/* Virtual Keyboard - Mobile only (Wordle 3D style, full-width) */}
+            <div className="md:hidden w-screen -mx-[50vw] relative left-1/2 right-1/2 px-1.5 pb-2" style={{ marginLeft: '-50vw', marginRight: '-50vw', width: '100vw', left: '50%', position: 'relative' }}>
               {/* Row 0 - Accented vowels */}
-              <div className="flex gap-1.5 justify-center mb-2">
+              <div className="flex gap-[3px] justify-center mb-[3px] px-[2px]">
                 {['á', 'é', 'í', 'ó', 'ú'].map(key => (
                   <button
                     key={key}
                     onClick={() => setUserInput(prev => prev + key)}
-                    className="w-10 h-11 flex items-center justify-center rounded-lg font-bold text-base bg-blue-100 text-blue-800 transition-all active:translate-y-0.5"
+                    className="flex-1 max-w-[4.5rem] h-12 flex items-center justify-center rounded-[10px] font-bold text-base bg-blue-100 text-blue-800 transition-all active:translate-y-0.5"
                     style={{ boxShadow: '0 3px 0 rgba(0,0,0,0.15)' }}
                   >
                     {key}
@@ -1836,12 +1836,12 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
                 ))}
               </div>
               {/* Row 1 */}
-              <div className="flex gap-1.5 justify-center mb-2">
+              <div className="flex gap-[3px] justify-center mb-[3px] px-[2px]">
                 {['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'].map(key => (
                   <button
                     key={key}
                     onClick={() => setUserInput(prev => prev + key.toLowerCase())}
-                    className="w-8 h-11 flex items-center justify-center rounded-lg font-bold text-base bg-white transition-all active:translate-y-0.5"
+                    className="flex-1 h-12 flex items-center justify-center rounded-[10px] font-bold text-base bg-white transition-all active:translate-y-0.5"
                     style={{ boxShadow: '0 3px 0 rgba(0,0,0,0.15)' }}
                   >
                     {key}
@@ -1849,12 +1849,12 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
                 ))}
               </div>
               {/* Row 2 */}
-              <div className="flex gap-1.5 justify-center mb-2">
+              <div className="flex gap-[3px] justify-center mb-[3px] px-[2px]">
                 {['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'Ñ'].map(key => (
                   <button
                     key={key}
                     onClick={() => setUserInput(prev => prev + key.toLowerCase())}
-                    className="w-8 h-11 flex items-center justify-center rounded-lg font-bold text-base bg-white transition-all active:translate-y-0.5"
+                    className="flex-1 h-12 flex items-center justify-center rounded-[10px] font-bold text-base bg-white transition-all active:translate-y-0.5"
                     style={{ boxShadow: '0 3px 0 rgba(0,0,0,0.15)' }}
                   >
                     {key}
@@ -1862,20 +1862,20 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
                 ))}
               </div>
               {/* Row 3 - Send + letters + Delete */}
-              <div className="flex gap-1.5 justify-center">
+              <div className="flex gap-[3px] justify-center px-[2px]">
                 <button
                   onClick={handleSubmit}
-                  className="px-3 h-11 flex items-center justify-center rounded-lg font-bold text-sm bg-deep-blue text-white transition-all active:translate-y-0.5"
+                  className="flex-[1.5] h-12 flex items-center justify-center rounded-[10px] font-bold text-sm bg-deep-blue text-white transition-all active:translate-y-0.5"
                   style={{ boxShadow: '0 3px 0 rgba(0,0,0,0.2)' }}
                   title="Enviar"
                 >
-                  <Send size={18} />
+                  <Send size={20} />
                 </button>
                 {['Z', 'X', 'C', 'V', 'B', 'N', 'M'].map(key => (
                   <button
                     key={key}
                     onClick={() => setUserInput(prev => prev + key.toLowerCase())}
-                    className="w-8 h-11 flex items-center justify-center rounded-lg font-bold text-base bg-white transition-all active:translate-y-0.5"
+                    className="flex-1 h-12 flex items-center justify-center rounded-[10px] font-bold text-base bg-white transition-all active:translate-y-0.5"
                     style={{ boxShadow: '0 3px 0 rgba(0,0,0,0.15)' }}
                   >
                     {key}
@@ -1883,11 +1883,11 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
                 ))}
                 <button
                   onClick={() => setUserInput(prev => prev.slice(0, -1))}
-                  className="px-3 h-11 flex items-center justify-center rounded-lg font-bold text-base transition-all active:translate-y-0.5"
+                  className="flex-[1.5] h-12 flex items-center justify-center rounded-[10px] font-bold text-base transition-all active:translate-y-0.5"
                   style={{ backgroundColor: '#F87171', color: 'white', boxShadow: '0 3px 0 rgba(0,0,0,0.2)' }}
                   title="Borrar"
                 >
-                  <Delete size={18} />
+                  <Delete size={20} />
                 </button>
               </div>
             </div>
@@ -1908,12 +1908,12 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
         {/* Level Transition Overlay */}
         {showLevelTitle && (
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-30 z-50">
-            <div style={{
+            <div className="w-full text-center" style={{
               animation: 'popIn 0.6s ease-out',
               animationFillMode: 'both'
             }}>
               <h1 
-                className="text-8xl font-black text-white tracking-wider"
+                className="text-5xl md:text-8xl font-black text-white tracking-wider"
                 style={{
                   textShadow: '0 0 30px rgba(59, 130, 246, 0.8), 0 0 60px rgba(59, 130, 246, 0.4), 4px 4px 8px rgba(0, 0, 0, 0.6)',
                   WebkitTextStroke: '2px rgba(30, 64, 175, 0.8)'
