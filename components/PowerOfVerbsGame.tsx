@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { ChevronLeft, ChevronRight, Info, X, Pause, Play, Send } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Info, X, Pause, Play, Send, Delete } from 'lucide-react';
 import { getAvailableTenses, getFilteredVerbs, getFilteredVerbsSRS, recordVerbCorrect, recordVerbIncorrect } from '../services/powerVerbsService';
 import { PowerVerb, GameDifficulty, GameMode, BattleMode } from '../types';
 import { hablarConPanda } from '../services/geminiService';
@@ -278,6 +278,102 @@ interface Boss extends Entity {
   defeated: boolean;
   speed: number;
 }
+
+// ── WhatsApp-style Mobile Keyboard for PowerOfVerbs ───────────────────────
+const POV_ROWS = [
+  ['á', 'é', 'í', 'ó', 'ú'],
+  ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
+  ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'Ñ'],
+  ['SEND', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', 'DEL'],
+];
+
+interface PovMobileKeyboardProps {
+  onKeyPress: (key: string) => void;
+  onDelete: () => void;
+  onSubmit: () => void;
+}
+
+const PovMobileKeyboard: React.FC<PovMobileKeyboardProps> = ({ onKeyPress, onDelete, onSubmit }) => {
+  const [popupKey, setPopupKey] = useState<{ char: string; rect: DOMRect } | null>(null);
+
+  const handleTouchStart = useCallback((char: string, e: React.TouchEvent<HTMLButtonElement>) => {
+    if (char === 'SEND' || char === 'DEL') return;
+    const rect = (e.currentTarget as HTMLButtonElement).getBoundingClientRect();
+    setPopupKey({ char, rect });
+  }, []);
+
+  const handleTouchEnd = useCallback(() => {
+    setPopupKey(null);
+  }, []);
+
+  const handleKeyAction = useCallback((key: string) => {
+    if (key === 'SEND') {
+      onSubmit();
+    } else if (key === 'DEL') {
+      onDelete();
+    } else {
+      const isAccent = ['á', 'é', 'í', 'ó', 'ú'].includes(key);
+      onKeyPress(isAccent ? key : key.toLowerCase());
+    }
+  }, [onKeyPress, onDelete, onSubmit]);
+
+  return (
+    <div style={{ width: '100vw', marginLeft: 'calc(-50vw + 50%)', padding: '0 3px 6px 3px', position: 'relative' }}>
+      {popupKey && (
+        <div
+          style={{
+            position: 'fixed',
+            left: popupKey.rect.left + popupKey.rect.width / 2 - 24,
+            top: popupKey.rect.top - 52,
+            width: 48, height: 48,
+            backgroundColor: '#fff', borderRadius: 8,
+            boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: '24px', fontWeight: 700, color: '#003D5B',
+            zIndex: 9999, pointerEvents: 'none',
+          }}
+        >
+          {popupKey.char}
+        </div>
+      )}
+      {POV_ROWS.map((row, rowIdx) => (
+        <div key={rowIdx} style={{ display: 'flex', gap: '6px', justifyContent: 'center', marginBottom: rowIdx < POV_ROWS.length - 1 ? '10px' : 0, padding: '0 3px' }}>
+          {row.map((key) => {
+            const isSend = key === 'SEND';
+            const isDel = key === 'DEL';
+            const isAccent = ['á', 'é', 'í', 'ó', 'ú'].includes(key);
+            const isSpecial = isSend || isDel;
+            let bg = '#fff'; let color = '#1a1a1a';
+            if (isSend) { bg = '#1D4ED8'; color = '#fff'; }
+            if (isDel) { bg = '#F87171'; color = '#fff'; }
+            if (isAccent) { bg = '#DBEAFE'; color = '#1E40AF'; }
+            return (
+              <button
+                key={key}
+                onClick={() => handleKeyAction(key)}
+                onTouchStart={(e) => handleTouchStart(key, e)}
+                onTouchEnd={handleTouchEnd}
+                style={{
+                  flex: isSpecial ? 1.5 : 1, height: 46,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  borderRadius: 8, backgroundColor: bg, color, fontWeight: 700,
+                  fontSize: isSpecial ? 14 : 16,
+                  boxShadow: `0 3px 0 rgba(0,0,0,${isSpecial ? 0.2 : 0.15})`,
+                  border: 'none', WebkitTapHighlightColor: 'transparent',
+                  touchAction: 'manipulation', userSelect: 'none',
+                  transition: 'transform 0.05s',
+                }}
+                className="active:translate-y-[2px] active:shadow-none"
+              >
+                {isSend ? <Send size={20} /> : isDel ? <Delete size={20} /> : key}
+              </button>
+            );
+          })}
+        </div>
+      ))}
+    </div>
+  );
+};
 
 // --- COMPONENT ---
 const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible = true, soundEnabled = true }) => {
@@ -3017,6 +3113,42 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
           </div>
 
           {/* Question & Input/Choices */}
+          {isMobile && selectedMode === 'write' ? (
+            /* Mobile Write Mode: no white container, verb+pronoun in white, virtual keyboard */
+            <div>
+              {currentVerb ? (
+                <div>
+                  <h2 className="text-center font-bold text-white text-xl mb-3" style={{ textShadow: '0 2px 4px rgba(0,0,0,0.3)' }}>
+                    {currentVerb.verb}, {currentVerb.pronoun}
+                  </h2>
+                  {/* Mobile input bar */}
+                  <div className="px-2 mb-3">
+                    <input
+                      type="text"
+                      value={userInput}
+                      readOnly
+                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-lg text-center bg-white"
+                    />
+                  </div>
+                  {/* Virtual Keyboard - WhatsApp style */}
+                  <PovMobileKeyboard
+                    onKeyPress={(key: string) => setUserInput(prev => prev + key)}
+                    onDelete={() => setUserInput(prev => prev.slice(0, -1))}
+                    onSubmit={() => handleAnswer(userInput)}
+                  />
+                  <div className="mt-2 h-8 flex items-center justify-center">
+                    {feedbackMsg.text && (
+                      <p className={`text-lg font-bold ${feedbackMsg.type === 'success' ? 'text-green-600' : 'text-red-600'}`} style={{ textShadow: '0 1px 3px rgba(0,0,0,0.2)' }}>
+                        {feedbackMsg.text}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              ) : (
+                <p className="text-center text-white">Cargando...</p>
+              )}
+            </div>
+          ) : (
           <div className={`bg-white shadow-2xl ${isMobile && isLandscape ? 'rounded-xl p-3' : 'rounded-2xl p-8'}`}>
             {currentVerb ? (
               <div>
@@ -3122,6 +3254,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
               <p className="text-center text-gray-500">Cargando...</p>
             )}
           </div>
+          )}
         </div>
 
         {/* Instructions Modal */}

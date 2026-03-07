@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { RotateCcw, Calendar, Lightbulb, ChevronLeft, ChevronRight, X, Send, Delete } from 'lucide-react';
 import { getWordOfDay } from '../services/vocabularyService';
 import { isValidWord, getHintsForAttempt, normalizeAccents } from '../services/wordleService';
@@ -158,6 +158,29 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack, cobiVisible = true, sou
   const [isLoadingPanda, setIsLoadingPanda] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
   const [revealingGuess, setRevealingGuess] = useState<string | null>(null);
+
+  // Mobile detection for popup/lupa keyboard effect
+  const [isMobile, setIsMobile] = useState(false);
+  const [popupKey, setPopupKey] = useState<{ char: string; rect: DOMRect } | null>(null);
+  const popupTimerRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
+
+  const handleKeyTouchStart = useCallback((char: string, e: React.TouchEvent<HTMLButtonElement>) => {
+    if (!isMobile) return;
+    const rect = (e.currentTarget as HTMLButtonElement).getBoundingClientRect();
+    setPopupKey({ char, rect });
+  }, [isMobile]);
+
+  const handleKeyTouchEnd = useCallback(() => {
+    if (popupTimerRef.current) clearTimeout(popupTimerRef.current);
+    setPopupKey(null);
+  }, []);
 
   const DIFFICULTIES = [
     { value: 'a1', label: 'A1 - Principiante' },
@@ -1103,7 +1126,32 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack, cobiVisible = true, sou
       )}
 
       {/* Keyboard */}
-      <div className="mb-6 max-w-xl mx-auto">
+      <div className="mb-6 max-w-xl mx-auto" style={{ position: 'relative' }}>
+        {/* Pop-up preview (mobile only) */}
+        {popupKey && (
+          <div
+            style={{
+              position: 'fixed',
+              left: popupKey.rect.left + popupKey.rect.width / 2 - 24,
+              top: popupKey.rect.top - 52,
+              width: 48,
+              height: 48,
+              backgroundColor: '#fff',
+              borderRadius: 8,
+              boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '24px',
+              fontWeight: 700,
+              color: '#003D5B',
+              zIndex: 9999,
+              pointerEvents: 'none' as const,
+            }}
+          >
+            {popupKey.char}
+          </div>
+        )}
         {/* Row 1 */}
         <div className="flex gap-1.5 justify-center mb-2">
           {['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'].map(key => (
@@ -1115,6 +1163,8 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack, cobiVisible = true, sou
                   playSound('present');
                 }
               }}
+              onTouchStart={(e) => handleKeyTouchStart(key, e)}
+              onTouchEnd={handleKeyTouchEnd}
               className={`w-8 h-14 sm:w-10 sm:h-14 flex items-center justify-center rounded-lg font-bold text-base transition-all active:translate-y-0.5 ${getKeyColor(key)}`}
               style={{ boxShadow: '0 3px 0 rgba(0,0,0,0.15)' }}
               disabled={status !== 'PLAYING' || isAnimating}
@@ -1134,6 +1184,8 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack, cobiVisible = true, sou
                   playSound('present');
                 }
               }}
+              onTouchStart={(e) => handleKeyTouchStart(key, e)}
+              onTouchEnd={handleKeyTouchEnd}
               className={`w-8 h-14 sm:w-10 sm:h-14 flex items-center justify-center rounded-lg font-bold text-base transition-all active:translate-y-0.5 ${getKeyColor(key)}`}
               style={{ boxShadow: '0 3px 0 rgba(0,0,0,0.15)' }}
               disabled={status !== 'PLAYING' || isAnimating}
@@ -1166,6 +1218,8 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack, cobiVisible = true, sou
                   playSound('present');
                 }
               }}
+              onTouchStart={(e) => handleKeyTouchStart(key, e)}
+              onTouchEnd={handleKeyTouchEnd}
               className={`w-8 h-14 sm:w-10 sm:h-14 flex items-center justify-center rounded-lg font-bold text-base transition-all active:translate-y-0.5 ${getKeyColor(key)}`}
               style={{ boxShadow: '0 3px 0 rgba(0,0,0,0.15)' }}
               disabled={status !== 'PLAYING' || isAnimating}
