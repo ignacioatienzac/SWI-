@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { ChevronLeft, ChevronRight, Play, Pause } from 'lucide-react';
 import { Send, Delete } from 'lucide-react';
 import { hablarConPanda } from '../services/geminiService';
@@ -146,6 +146,135 @@ interface Bubble {
   isShrinking: boolean; // Is shrinking during level transition?
   shrinkStartTime: number; // When shrink animation started
 }
+
+// ── WhatsApp-style Mobile Keyboard with pop-up effect ─────────────────────
+const VM_ROWS = [
+  ['á', 'é', 'í', 'ó', 'ú'],
+  ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
+  ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'Ñ'],
+  ['SEND', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', 'DEL'],
+];
+
+interface VmMobileKeyboardProps {
+  onKeyPress: (key: string) => void;
+  onDelete: () => void;
+  onSubmit: () => void;
+}
+
+const VmMobileKeyboard: React.FC<VmMobileKeyboardProps> = ({ onKeyPress, onDelete, onSubmit }) => {
+  const [popupKey, setPopupKey] = useState<{ char: string; rect: DOMRect } | null>(null);
+  const popupTimerRef = useRef<number | null>(null);
+
+  const handleTouchStart = useCallback((char: string, e: React.TouchEvent<HTMLButtonElement>) => {
+    if (char === 'SEND' || char === 'DEL') return;
+    const rect = (e.currentTarget as HTMLButtonElement).getBoundingClientRect();
+    setPopupKey({ char: char.toLowerCase() === char ? char : char, rect });
+  }, []);
+
+  const handleTouchEnd = useCallback(() => {
+    // Clear immediately
+    if (popupTimerRef.current) clearTimeout(popupTimerRef.current);
+    setPopupKey(null);
+  }, []);
+
+  const handleKeyAction = useCallback((key: string) => {
+    if (key === 'SEND') {
+      onSubmit();
+    } else if (key === 'DEL') {
+      onDelete();
+    } else {
+      // Accented vowels stay lowercase, letters go lowercase
+      const isAccent = ['á', 'é', 'í', 'ó', 'ú'].includes(key);
+      onKeyPress(isAccent ? key : key.toLowerCase());
+    }
+  }, [onKeyPress, onDelete, onSubmit]);
+
+  return (
+    <div className="md:hidden" style={{ width: '100vw', marginLeft: 'calc(-50vw + 50%)', padding: '0 3px 6px 3px', position: 'relative' }}>
+      {/* Pop-up preview */}
+      {popupKey && (
+        <div
+          style={{
+            position: 'fixed',
+            left: popupKey.rect.left + popupKey.rect.width / 2 - 24,
+            top: popupKey.rect.top - 52,
+            width: 48,
+            height: 48,
+            backgroundColor: '#fff',
+            borderRadius: 8,
+            boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '24px',
+            fontWeight: 700,
+            color: '#003D5B',
+            zIndex: 9999,
+            pointerEvents: 'none',
+          }}
+        >
+          {popupKey.char}
+        </div>
+      )}
+
+      {VM_ROWS.map((row, rowIdx) => (
+        <div
+          key={rowIdx}
+          style={{
+            display: 'flex',
+            gap: '6px',
+            justifyContent: 'center',
+            marginBottom: rowIdx < VM_ROWS.length - 1 ? '10px' : 0,
+            padding: '0 3px',
+          }}
+        >
+          {row.map((key) => {
+            const isSend = key === 'SEND';
+            const isDel = key === 'DEL';
+            const isAccent = ['á', 'é', 'í', 'ó', 'ú'].includes(key);
+            const isSpecial = isSend || isDel;
+
+            let bg = '#fff';
+            let color = '#1a1a1a';
+            if (isSend) { bg = '#1D4ED8'; color = '#fff'; }
+            if (isDel) { bg = '#F87171'; color = '#fff'; }
+            if (isAccent) { bg = '#DBEAFE'; color = '#1E40AF'; }
+
+            return (
+              <button
+                key={key}
+                onClick={() => handleKeyAction(key)}
+                onTouchStart={(e) => handleTouchStart(key, e)}
+                onTouchEnd={handleTouchEnd}
+                style={{
+                  flex: isSpecial ? 1.5 : 1,
+                  height: 46,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  borderRadius: 8,
+                  backgroundColor: bg,
+                  color,
+                  fontWeight: 700,
+                  fontSize: isSpecial ? 14 : 16,
+                  boxShadow: `0 3px 0 rgba(0,0,0,${isSpecial ? 0.2 : 0.15})`,
+                  border: 'none',
+                  WebkitTapHighlightColor: 'transparent',
+                  touchAction: 'manipulation',
+                  userSelect: 'none',
+                  transition: 'transform 0.05s',
+                }}
+                className="active:translate-y-[2px] active:shadow-none"
+              >
+                {isSend ? <Send size={20} /> : isDel ? <Delete size={20} /> : key}
+              </button>
+            );
+          })}
+        </div>
+      ))}
+    </div>
+  );
+};
 
 const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = true, soundEnabled = true }) => {
   // Game configuration
@@ -342,6 +471,9 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
     playTone(800, 0.12, 'square');
   };
 
+  // Mobile bubble scale factor: 1.5x bigger on mobile
+  const mobileBubbleFactor = isMobile ? 1.5 : 1;
+
   // Calculate fall speed based on level settings and canvas dimensions
   const calculateFallSpeed = (level: number): number => {
     // Clamp level between 1 and MAX_LEVEL
@@ -352,8 +484,10 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
     const fallDistance = canvasHeight + 60; // Extra padding for radius
     
     // Assuming 60 FPS, calculate pixels per frame
+    // On mobile, slow down proportionally to bubble scale to keep difficulty the same
     const FPS = 60;
-    const totalFrames = levelConfig.fallDuration * FPS;
+    const adjustedFallDuration = levelConfig.fallDuration * mobileBubbleFactor;
+    const totalFrames = adjustedFallDuration * FPS;
     const speed = fallDistance / totalFrames;
     
     return speed;
@@ -472,7 +606,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
       const challenge = generateChallenge(verbs, 'conjugate');
       if (!challenge) return;
       
-      const radius = 40 + Math.random() * 20;
+      const radius = (40 + Math.random() * 20) * mobileBubbleFactor;
       
       // Try to find a position that doesn't overlap with existing bubbles
       let x = 0;
@@ -1038,7 +1172,8 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
         
         // Draw text with enhanced legibility
         ctx.fillStyle = '#003D5B';
-        ctx.font = 'bold 18px Arial';
+        const bubbleFontSize = Math.round(18 * mobileBubbleFactor);
+        ctx.font = `bold ${bubbleFontSize}px Arial`;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         
@@ -1051,10 +1186,11 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
         const text = bubble.challenge.displayText;
         const maxWidth = bubble.radius * 1.6;
         const words = text.split(' ');
+        const lineOffset = Math.round(8 * mobileBubbleFactor);
         
         if (words.length > 1 && ctx.measureText(text).width > maxWidth) {
-          ctx.fillText(words[0], bubble.x, bubble.y - 8);
-          ctx.fillText(words.slice(1).join(' '), bubble.x, bubble.y + 8);
+          ctx.fillText(words[0], bubble.x, bubble.y - lineOffset);
+          ctx.fillText(words.slice(1).join(' '), bubble.x, bubble.y + lineOffset);
         } else {
           ctx.fillText(text, bubble.x, bubble.y);
         }
@@ -1820,77 +1956,12 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
               />
             </div>
             
-            {/* Virtual Keyboard - Mobile only (Wordle 3D style, full-width) */}
-            <div className="md:hidden w-screen -mx-[50vw] relative left-1/2 right-1/2 px-1.5 pb-2" style={{ marginLeft: '-50vw', marginRight: '-50vw', width: '100vw', left: '50%', position: 'relative' }}>
-              {/* Row 0 - Accented vowels */}
-              <div className="flex gap-[3px] justify-center mb-[3px] px-[2px]">
-                {['á', 'é', 'í', 'ó', 'ú'].map(key => (
-                  <button
-                    key={key}
-                    onClick={() => setUserInput(prev => prev + key)}
-                    className="flex-1 max-w-[4.5rem] h-12 flex items-center justify-center rounded-[10px] font-bold text-base bg-blue-100 text-blue-800 transition-all active:translate-y-0.5"
-                    style={{ boxShadow: '0 3px 0 rgba(0,0,0,0.15)' }}
-                  >
-                    {key}
-                  </button>
-                ))}
-              </div>
-              {/* Row 1 */}
-              <div className="flex gap-[3px] justify-center mb-[3px] px-[2px]">
-                {['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'].map(key => (
-                  <button
-                    key={key}
-                    onClick={() => setUserInput(prev => prev + key.toLowerCase())}
-                    className="flex-1 h-12 flex items-center justify-center rounded-[10px] font-bold text-base bg-white transition-all active:translate-y-0.5"
-                    style={{ boxShadow: '0 3px 0 rgba(0,0,0,0.15)' }}
-                  >
-                    {key}
-                  </button>
-                ))}
-              </div>
-              {/* Row 2 */}
-              <div className="flex gap-[3px] justify-center mb-[3px] px-[2px]">
-                {['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'Ñ'].map(key => (
-                  <button
-                    key={key}
-                    onClick={() => setUserInput(prev => prev + key.toLowerCase())}
-                    className="flex-1 h-12 flex items-center justify-center rounded-[10px] font-bold text-base bg-white transition-all active:translate-y-0.5"
-                    style={{ boxShadow: '0 3px 0 rgba(0,0,0,0.15)' }}
-                  >
-                    {key}
-                  </button>
-                ))}
-              </div>
-              {/* Row 3 - Send + letters + Delete */}
-              <div className="flex gap-[3px] justify-center px-[2px]">
-                <button
-                  onClick={handleSubmit}
-                  className="flex-[1.5] h-12 flex items-center justify-center rounded-[10px] font-bold text-sm bg-deep-blue text-white transition-all active:translate-y-0.5"
-                  style={{ boxShadow: '0 3px 0 rgba(0,0,0,0.2)' }}
-                  title="Enviar"
-                >
-                  <Send size={20} />
-                </button>
-                {['Z', 'X', 'C', 'V', 'B', 'N', 'M'].map(key => (
-                  <button
-                    key={key}
-                    onClick={() => setUserInput(prev => prev + key.toLowerCase())}
-                    className="flex-1 h-12 flex items-center justify-center rounded-[10px] font-bold text-base bg-white transition-all active:translate-y-0.5"
-                    style={{ boxShadow: '0 3px 0 rgba(0,0,0,0.15)' }}
-                  >
-                    {key}
-                  </button>
-                ))}
-                <button
-                  onClick={() => setUserInput(prev => prev.slice(0, -1))}
-                  className="flex-[1.5] h-12 flex items-center justify-center rounded-[10px] font-bold text-base transition-all active:translate-y-0.5"
-                  style={{ backgroundColor: '#F87171', color: 'white', boxShadow: '0 3px 0 rgba(0,0,0,0.2)' }}
-                  title="Borrar"
-                >
-                  <Delete size={20} />
-                </button>
-              </div>
-            </div>
+            {/* Virtual Keyboard - Mobile only (WhatsApp-style, full-width) */}
+            <VmMobileKeyboard
+              onKeyPress={(key: string) => setUserInput(prev => prev + key)}
+              onDelete={() => setUserInput(prev => prev.slice(0, -1))}
+              onSubmit={handleSubmit}
+            />
             
             {feedback && (
               <p className={`mt-3 text-center font-bold ${
