@@ -1,0 +1,562 @@
+[
+  {
+    "id": 1,
+    "frase_objetivo": "Esta semana he tenido que trabajar muchas horas en la oficina.",
+    "trampas": ["teniendo", "el"],
+    "variaciones_validas": [
+      "Esta semana he tenido que trabajar en la oficina muchas horas."
+    ],
+    "pistas": {
+      "tema": "Trabajo (Perfecto)",
+      "descripcion_en": "Describe a busy week at work.",
+      "traduccion_en": "This week I have had to work many hours in the office."
+    }
+  },
+  {
+    "id": 2,
+    "frase_objetivo": "Ayer me encontré una cartera tirada en el suelo.",
+    "trampas": ["se", "de"],
+    "pistas": {
+      "tema": "Anécdotas (Indefinido)",
+      "descripcion_en": "Tell a story about finding something on the street.",
+      "traduccion_en": "Yesterday I found a wallet lying on the ground."
+    }
+  },
+  {
+    "id": 3,
+    "frase_objetivo": "Cuando era estudiante siempre compartía mis apuntes con mis mejores amigos.",
+    "trampas": ["compartió", "el"],
+    "variaciones_validas": [
+      "Cuando era estudiante compartía siempre mis apuntes con mis mejores amigos.", "Cuando era estudiante compartía mis apuntes siempre con mis mejores amigos.", "Cuando era estudiante compartía mis apuntes con mis mejores amigos siempre.", "Cuando era estudiante siempre compartía con mis mejores amigos mis apuntes.", "Cuando era estudiante compartía siempre con mis mejores amigos mis apuntes.", "Cuando era estudiante compartía con mis mejores amigos siempre mis apuntes.", "Cuando era estudiante compartía con mis mejores amigos mis apuntes siempre."
+    ],
+    "pistas": {
+      "tema": "Estudios (Imperfecto)",
+      "descripcion_en": "Talk about a generous habit during student years.",
+      "traduccion_en": "When I was a student I always shared my notes with my best friends."
+    }
+  },
+  {
+    "id": 4,
+    "frase_objetivo": "Todavía no he visto la película de ese director tan famoso.",
+    "trampas": ["vido", "eso"],
+    "pistas": {
+      "tema": "Cine (Perfecto)",
+      "descripcion_en": "State that you haven't seen a specific movie yet.",
+      "traduccion_en": "I haven't seen the movie by that famous director yet."
+    }
+  },
+  {
+    "id": 5,
+    "frase_objetivo": "La película es muy larga, pero la veré mañana contigo.",
+    "trampas": ["lo", "largo"],
+    "variaciones_validas": [
+      "La película es muy larga, pero mañana la veré contigo.", "La película es muy larga, pero la veré contigo mañana."
+    ],
+    "pistas": {
+      "tema": "Ocio (Objeto Directo)",
+      "descripcion_en": "Refer to a movie using a pronoun.",
+      "traduccion_en": "The movie is very long but I will watch it tomorrow with you."
+    }
+  },
+  {
+    "id": 6,
+    "frase_objetivo": "El año pasado celebramos mi cumpleaños en un barco por el río.",
+    "trampas": ["hace", "la"],
+    "variaciones_validas": [
+      "El año pasado en un barco por el río celebramos mi cumpleaños.", "El año pasado celebramos mi cumpleaños por el río en un barco."
+    ],
+    "pistas": {
+      "tema": "Celebraciones (Indefinido)",
+      "descripcion_en": "Describe a past birthday celebration.",
+      "traduccion_en": "Last year we celebrated my birthday on a boat on the river."
+    }
+  },
+  {
+    "id": 7,
+    "frase_objetivo": "Mi madre a menudo me decía que tenía que comer más fruta.",
+    "trampas": ["tuve", "fruto"],
+    "variaciones_validas": [
+      "Mi madre me decía a menudo que tenía que comer más fruta.", "Mi madre me decía que tenía que comer más fruta a menudo."
+    ],
+    "pistas": {
+      "tema": "Familia (Imperfecto)",
+      "descripcion_en": "Recall a piece of advice your mother used to give.",
+      "traduccion_en": "My mother often told me that I had to eat more fruit."
+    }
+  },
+  {
+    "id": 8,
+    "frase_objetivo": "¿Has probado ya los pasteles que compramos ayer?",
+    "trampas": ["todavía", "la"],
+    "pistas": {
+      "tema": "Gastronomía (Perfecto / Indefinido)",
+      "descripcion_en": "Ask if someone has tasted something recently bought.",
+      "traduccion_en": "Have you already tried the cakes we bought yesterday?"
+    }
+  },
+  {
+    "id": 9,
+    "frase_objetivo": "No me gusta este móvil porque se agota la batería rápido.",
+    "trampas": ["gustan", "un"],
+    "variaciones_validas": [
+      "No me gusta este móvil porque la batería se agota rápido."
+    ],
+    "pistas": {
+      "tema": "Tecnología (Presente)",
+      "descripcion_en": "Complain about a new phone's battery life.",
+      "traduccion_en": "I don't like this phone because the battery runs out quickly."
+    }
+  },
+  {
+    "id": 10,
+    "frase_objetivo": "Aquel invierno nevaba tanto que no podíamos salir de casa.",
+    "trampas": ["Aquello", "la"],
+    "variaciones_validas": [
+      "No podíamos salir de nuestra casa porque nevaba tanto aquel invierno."
+    ],
+    "pistas": {
+      "tema": "El tiempo (Imperfecto)",
+      "descripcion_en": "Describe severe weather conditions in the past.",
+      "traduccion_en": "That winter it snowed so much that we couldn't leave our house."
+    }
+  },
+  {
+    "id": 11,
+    "frase_objetivo": "He enviado el paquete por correo urgente.",
+    "trampas": ["Envié", "de"],
+    "variaciones_validas": [
+      "He enviado por correo urgente el paquete."
+    ],
+    "pistas": {
+      "tema": "Servicios (Perfecto)",
+      "descripcion_en": "Explain how you sent a package.",
+      "traduccion_en": "I have sent the package by express mail."
+    }
+  },
+  {
+    "id": 12,
+    "frase_objetivo": "Lo envié ayer, pero el empleado me dijo que tardaría un poco.",
+    "trampas": ["la", "por"],
+    "variaciones_validas": [
+      "Lo envié ayer, pero me dijo el empleado que tardaría un poco."
+    ],
+    "pistas": {
+      "tema": "Servicios (Objeto Directo / Indefinido)",
+      "descripcion_en": "Refer to the package using a pronoun.",
+      "traduccion_en": "I sent it yesterday, but the employee told me it would take a bit."
+    }
+  },
+  {
+    "id": 13,
+    "frase_objetivo": "Anoche me dolía mucho la espalda después de hacer ejercicio.",
+    "trampas": ["duelió", "el"],
+    "variaciones_validas": [
+      "Anoche me dolía la espalda mucho después de hacer ejercicio."
+    ],
+    "pistas": {
+      "tema": "Salud (Imperfecto)",
+      "descripcion_en": "Describe a physical feeling after a workout.",
+      "traduccion_en": "Last night my back hurt a lot after doing exercise."
+    }
+  },
+  {
+    "id": 14,
+    "frase_objetivo": "Mis abuelos vivían en un pueblo donde no había internet ni televisión.",
+    "trampas": ["y", "la"],
+    "variaciones_validas": [
+      "Mis abuelos vivían en un pueblo donde no había televisión ni internet."
+    ],
+    "pistas": {
+      "tema": "Biografía (Imperfecto)",
+      "descripcion_en": "Describe the simple life of grandparents.",
+      "traduccion_en": "My grandparents lived in a village where there was no internet or television."
+    }
+  },
+  {
+    "id": 15,
+    "frase_objetivo": "He perdido las llaves del coche y no sé dónde las puse.",
+    "trampas": ["puesto", "bicicleta"],
+    "pistas": {
+      "tema": "Objetos (Objeto Directo / Indefinido)",
+      "descripcion_en": "Express distress about losing car keys.",
+      "traduccion_en": "I have lost the car keys and I don't know where I put them."
+    }
+  },
+  {
+    "id": 16,
+    "frase_objetivo": "Ayer fuimos a un concierto de jazz y lo pasamos genial.",
+    "trampas": ["ido", "una"],
+    "pistas": {
+      "tema": "Ocio (Indefinido)",
+      "descripcion_en": "Talk about a concert experience.",
+      "traduccion_en": "Yesterday we went to a jazz concert and had a great time."
+    }
+  },
+  {
+    "id": 17,
+    "frase_objetivo": "Cuando era pequeño me gustaba mucho ir a pescar.",
+    "trampas": ["estaba", "pescado"],
+    "pistas": {
+      "tema": "Infancia (Imperfecto)",
+      "descripcion_en": "Mention a childhood hobby.",
+      "traduccion_en": "When I was little I liked going fishing very much."
+    }
+  },
+  {
+    "id": 18,
+    "frase_objetivo": "Esta mañana me he levantado tarde porque no ha sonado el despertador.",
+    "trampas": ["Este", "alarma"],
+    "variaciones_validas": [
+      "Esta mañana me he levantado tarde porque el despertador no ha sonado."
+    ],
+    "pistas": {
+      "tema": "Rutina (Perfecto)",
+      "descripcion_en": "Explain why you woke up late today.",
+      "traduccion_en": "This morning I woke up late because the alarm clock didn't go off."
+    }
+  },
+  {
+    "id": 19,
+    "frase_objetivo": "Antes leía un libro por semana, pero ahora no tengo tiempo.",
+    "trampas": ["suelo", "tenía"],
+    "pistas": {
+      "tema": "Hábitos (Imperfecto / Presente)",
+      "descripcion_en": "Contrast past reading habits with current life.",
+      "traduccion_en": "I read one book a week before but now I don't have time."
+    }
+  },
+  {
+    "id": 20,
+    "frase_objetivo": "Ayer compramos una tarta de chocolate y nos la comimos entera.",
+    "trampas": ["comprábamos", "lo"],
+    "pistas": {
+      "tema": "Gastronomía (Objeto Directo / Indefinido)",
+      "descripcion_en": "Describe eating a whole cake with friends.",
+      "traduccion_en": "Yesterday we bought a chocolate cake and we ate it all."
+    }
+  },
+  {
+    "id": 21,
+    "frase_objetivo": "El profesor nos dio deberes para el lunes próximo.",
+    "trampas": ["dió", "viene"],
+    "variaciones_validas": [
+      "El profesor nos dio deberes para el próximo lunes."
+    ],
+    "pistas": {
+      "tema": "Estudios (Indefinido)",
+      "descripcion_en": "Report a teacher's assignment.",
+      "traduccion_en": "The teacher gave homework for next Monday."
+    }
+  },
+  {
+    "id": 22,
+    "frase_objetivo": "Siempre iba a visitar a mis primos que vivían en las montañas.",
+    "trampas": ["primeros", "los"],
+    "pistas": {
+      "tema": "Familia (Imperfecto)",
+      "descripcion_en": "Talk about regular visits to relatives in the past.",
+      "traduccion_en": "I always used to go visit my cousins who lived in the mountains."
+    }
+  },
+  {
+    "id": 23,
+    "frase_objetivo": "Esta tarde he ido a la peluquería para cortarme el pelo.",
+    "trampas": ["fui", "un"],
+    "pistas": {
+      "tema": "Imagen personal (Perfecto)",
+      "descripcion_en": "Mention a trip to the hair salon today.",
+      "traduccion_en": "This afternoon I have gone to the hair salon to get a haircut."
+    }
+  },
+  {
+    "id": 24,
+    "frase_objetivo": "Ayer me encontré con Luis y estuvimos charlando durante horas.",
+    "trampas": ["busqué", "para"],
+    "pistas": {
+      "tema": "Relaciones (Indefinido)",
+      "descripcion_en": "Describe a long conversation with a friend.",
+      "traduccion_en": "Yesterday I met up with Luis and we were chatting for two hours."
+    }
+  },
+  {
+    "id": 25,
+    "frase_objetivo": "Cuando tenía diez años mis padres me regalaron una bicicleta roja.",
+    "trampas": ["tuve", "coche"],
+    "pistas": {
+      "tema": "Infancia (Imperfecto / Indefinido)",
+      "descripcion_en": "Remember a specific gift from childhood.",
+      "traduccion_en": "When I was ten years old my parents gave me a red bicycle."
+    }
+  },
+  {
+    "id": 26,
+    "frase_objetivo": "Todavía no he terminado de limpiar la cocina porque es muy grande.",
+    "trampas": ["ya", "mucho"],
+    "pistas": {
+      "tema": "La casa (Perfecto)",
+      "descripcion_en": "Explain why a chore is taking so long.",
+      "traduccion_en": "I haven't finished cleaning the kitchen yet because it is very large."
+    }
+  },
+  {
+    "id": 27,
+    "frase_objetivo": "Me gustaría mucho viajar a Japón, pero los vuelos son carísimos.",
+    "trampas": ["gustan", "porque"],
+    "pistas": {
+      "tema": "Viajes (Presente)",
+      "descripcion_en": "Express a desire to travel and a constraint.",
+      "traduccion_en": "I would really like to travel to Japan but the flights are very expensive."
+    }
+  },
+  {
+    "id": 28,
+    "frase_objetivo": "Ayer vi a tu hermano, pero él no me vio.",
+    "trampas": ["porque", "viste"],
+    "pistas": {
+      "tema": "Social (Indefinido)",
+      "descripcion_en": "Tell someone you saw their brother by chance.",
+      "traduccion_en": "Yesterday I saw your brother, but he didn't see me."
+    }
+  },
+  {
+    "id": 29,
+    "frase_objetivo": "Normalmente ceno una ensalada suave porque no quiero acostarme muy lleno.",
+    "trampas": ["cené", "para"],
+    "pistas": {
+      "tema": "Salud (Presente)",
+      "descripcion_en": "Describe your dinner habits for better sleep.",
+      "traduccion_en": "Normally I have a light salad for dinner because I don't want to go to bed too full."
+    }
+  },
+  {
+    "id": 30,
+    "frase_objetivo": "El domingo pasado dimos un paseo por el centro histórico.",
+    "trampas": ["para", "una"],
+    "pistas": {
+      "tema": "Turismo (Indefinido)",
+      "descripcion_en": "Mention a walk through the city center.",
+      "traduccion_en": "Last Sunday we took a walk through the historic center."
+    }
+  },
+  {
+    "id": 31,
+    "frase_objetivo": "He comprado unas flores preciosas y las he puesto en un jarrón.",
+    "trampas": ["comprando", "lo"],
+    "pistas": {
+      "tema": "La casa (Objeto Directo / Perfecto)",
+      "descripcion_en": "Talk about buying and placing flowers.",
+      "traduccion_en": "I have bought some beautiful flowers and I have put them in a vase."
+    }
+  },
+  {
+    "id": 32,
+    "frase_objetivo": "Cuando vivía en la playa siempre me bañaba en el mar al amanecer.",
+    "trampas": ["vivió", "bañó"],
+    "variaciones_validas": [
+      "Cuando vivía en la playa me bañaba siempre en el mar al amanecer.", "Cuando vivía en la playa me bañaba en el mar siempre al amanecer.", "Cuando vivía en la playa me bañaba en el mar al amanecer siempre."
+    ],
+    "pistas": {
+      "tema": "Hábitos (Imperfecto)",
+      "descripcion_en": "Describe a nostalgic routine by the sea.",
+      "traduccion_en": "When I lived at the beach I always used to swim in the sea at sunrise."
+    }
+  },
+  {
+    "id": 33,
+    "frase_objetivo": "Esta mañana he llamado a mi abuela para felicitarla por su cumpleaños.",
+    "trampas": ["abuelo", "para"],
+    "pistas": {
+      "tema": "Familia (Perfecto / Objeto Directo)",
+      "descripcion_en": "Mention a phone call to a relative.",
+      "traduccion_en": "This morning I have called my grandmother to congratulate her on her birthday."
+    }
+  },
+  {
+    "id": 34,
+    "frase_objetivo": "No pude terminar el informe porque el ordenador se rompió de repente.",
+    "trampas": ["puedía", "lo"],
+    "variaciones_validas": [
+      "No pude terminar el informe porque el ordenador de repente se rompió.", "No pude terminar el informe porque de repente el ordenador se rompió.", "No pude terminar el informe porque de repente se rompió el ordenador.", "No pude terminar el informe porque se rompió de repente el ordenador.", "No pude terminar el informe porque se rompió el ordenador de repente."
+    ],
+    "pistas": {
+      "tema": "Trabajo (Indefinido)",
+      "descripcion_en": "Explain a technical problem at work.",
+      "traduccion_en": "I couldn't finish the report because the computer broke suddenly."
+    }
+  },
+  {
+    "id": 35,
+    "frase_objetivo": "Antes no me gustaba el café, pero ahora lo tomo todas las mañanas.",
+    "trampas": ["gustó", "la"],
+    "variaciones_validas": [
+      "Antes no me gustaba el café, pero ahora todas las mañanas lo tomo."
+    ],
+    "pistas": {
+      "tema": "Gustos (Objeto Directo / Imperfecto)",
+      "descripcion_en": "Compare past and current tastes in drinks.",
+      "traduccion_en": "I didn't use to like coffee before but now I drink it every morning."
+    }
+  },
+  {
+    "id": 36,
+    "frase_objetivo": "Este fin de semana hemos organizado una excursión con los estudiantes.",
+    "trampas": ["organicé", "la"],
+    "variaciones_validas": [
+      "Este fin de semana hemos organizado con los estudiantes una excursión."
+    ],
+    "pistas": {
+      "tema": "Ocio (Perfecto)",
+      "descripcion_en": "Mention a group trip organized recently.",
+      "traduccion_en": "This weekend we have organized an excursion with all the students."
+    }
+  },
+  {
+    "id": 37,
+    "frase_objetivo": "Como tenía una entrevista de trabajo, me puse una chaqueta elegante.",
+    "trampas": ["Porque", "ponía"],
+    "pistas": {
+      "tema": "Ropa / Trabajo (Indefinido / Imperfecto)",
+      "descripcion_en": "Describe what you wore for a job interview.",
+      "traduccion_en": "Since I had a job interview, I put on an elegant jacket."
+    }
+  },
+  {
+    "id": 38,
+    "frase_objetivo": "Mi tía nos trajo un regalo de su viaje por España.",
+    "trampas": ["la", "para"],
+    "pistas": {
+      "tema": "Viajes (Indefinido)",
+      "descripcion_en": "Talk about a souvenir from a relative.",
+      "traduccion_en": "My aunt brought us a gift from her trip through Spain."
+    }
+  },
+  {
+    "id": 39,
+    "frase_objetivo": "Todavía no he probado el postre, pero dicen que está riquísimo.",
+    "trampas": ["la", "hablan"],
+    "pistas": {
+      "tema": "Gastronomía (Perfecto)",
+      "descripcion_en": "Comment on a dessert you haven't tried yet.",
+      "traduccion_en": "I haven't tried the dessert yet but they say it's delicious."
+    }
+  },
+  {
+    "id": 40,
+    "frase_objetivo": "Cuando era pequeño mi postre favorito era el flan con nata.",
+    "trampas": ["fue", "favorita"],
+    "variaciones_validas": [
+      "Cuando era pequeño el flan con nata era mi postre favorito."
+    ],
+    "pistas": {
+      "tema": "Infancia (Imperfecto)",
+      "descripcion_en": "Describe your favorite dessert from childhood.",
+      "traduccion_en": "When I was little my favorite dessert was flan with cream."
+    }
+  },
+  {
+    "id": 41,
+    "frase_objetivo": "Ayer perdí mi paraguas en el metro y hoy está lloviendo mucho.",
+    "trampas": ["perdía", "llueviendo"],
+    "variaciones_validas": [
+      "Ayer perdí en el metro mi paraguas y hoy está lloviendo mucho."
+    ],
+    "pistas": {
+      "tema": "El tiempo / Transporte (Indefinido)",
+      "descripcion_en": "Describe an unfortunate event related to the weather.",
+      "traduccion_en": "Yesterday I lost my umbrella on the subway and today it is raining a lot."
+    }
+  },
+  {
+    "id": 42,
+    "frase_objetivo": "He buscado mi paraguas, pero no lo encuentro por ninguna parte.",
+    "trampas": ["paragua", "la"],
+    "pistas": {
+      "tema": "Objetos (Objeto Directo / Perfecto)",
+      "descripcion_en": "State that you looked for something and failed to find it.",
+      "traduccion_en": "I have looked for my umbrella but I can't find it anywhere."
+    }
+  },
+  {
+    "id": 43,
+    "frase_objetivo": "Aquella mañana nos despertamos con el sonido de los pájaros.",
+    "trampas": ["Hace", "de"],
+    "pistas": {
+      "tema": "Naturaleza (Indefinido)",
+      "descripcion_en": "Describe a peaceful awakening in the past.",
+      "traduccion_en": "That morning we woke up to the sound of birds."
+    }
+  },
+  {
+    "id": 44,
+    "frase_objetivo": "Siempre íbamos a ese restaurante porque los camareros eran muy simpáticos.",
+    "trampas": ["fuimos", "fue"],
+    "variaciones_validas": [
+      "Siempre íbamos a ese restaurante porque eran muy simpáticos los camareros."
+    ],
+    "pistas": {
+      "tema": "Ocio (Imperfecto)",
+      "descripcion_en": "Explain why you frequently visited a place.",
+      "traduccion_en": "We always used to go to that restaurant because the waiters were very friendly."
+    }
+  },
+  {
+    "id": 45,
+    "frase_objetivo": "¿Estás leyendo el periódico o puedo llevármelo ya?",
+    "trampas": ["leído", "todavía"],
+    "pistas": {
+      "tema": "Hogar (Perfecto / Objeto Directo)",
+      "descripcion_en": "Ask to take a newspaper once the other person finishes.",
+      "traduccion_en": "Are you reading the newspaper or can I take it already?"
+    }
+  },
+  {
+    "id": 46,
+    "frase_objetivo": "Ayer compré unas manzanas, pero las he dejado en la bolsa.",
+    "trampas": ["compraba", "lo"],
+    "pistas": {
+      "tema": "Compras (Objeto Directo / Indefinido)",
+      "descripcion_en": "Mention where you left some fruit you bought.",
+      "traduccion_en": "Yesterday I bought some apples but I have left them in the bag."
+    }
+  },
+  {
+    "id": 47,
+    "frase_objetivo": "Cuando era estudiante no tenía mucho dinero para salir de fiesta.",
+    "trampas": ["tuve", "el"],
+    "pistas": {
+      "tema": "Estudios (Imperfecto)",
+      "descripcion_en": "Describe financial constraints in your youth.",
+      "traduccion_en": "When I was a student I didn't have much money to go out partying."
+    }
+  },
+  {
+    "id": 48,
+    "frase_objetivo": "Esta semana he visitado a mis padres y hemos comido juntos.",
+    "trampas": ["vistado", "hamos"],
+    "pistas": {
+      "tema": "Familia (Perfecto)",
+      "descripcion_en": "Mention a recent visit to parents.",
+      "traduccion_en": "This week I have visited my parents and we have eaten together."
+    }
+  },
+  {
+    "id": 49,
+    "frase_objetivo": "Ayer me llamó un amigo para invitarme a su boda.",
+    "trampas": ["llamaba", "un"],
+    "pistas": {
+      "tema": "Relaciones (Indefinido)",
+      "descripcion_en": "Talk about a wedding invitation.",
+      "traduccion_en": "Yesterday a friend called me to invite me to his wedding in June."
+    }
+  },
+  {
+    "id": 50,
+    "frase_objetivo": "Aunque mi primer trabajo fue bastante aburrido, aprendí muchísimas cosas nuevas.",
+    "trampas": ["Pero", "aprendía"],
+    "pistas": {
+      "tema": "Trabajo (Imperfecto / Indefinido)",
+      "descripcion_en": "Describe a first job and what you learned.",
+      "traduccion_en": "Although my first job was quite boring, I learned many new things."
+    }
+  }
+]

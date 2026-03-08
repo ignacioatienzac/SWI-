@@ -3,6 +3,7 @@
     "id": 1,
     "frase_objetivo": "Estudio español cada mañana.",
     "trampas": ["Estudiar", "mañanas"],
+    "variaciones_validas": ["Estudio cada mañana español."],
     "pistas": {
       "tema": "Rutina diaria",
       "descripcion_en": "I study Spanish every morning.",
@@ -113,6 +114,7 @@
     "id": 12,
     "frase_objetivo": "Fuimos a la playa el sábado.",
     "trampas": ["Ido", "en"],
+    "variaciones_validas": ["Fuimos el sábado a la playa."],
     "pistas": {
       "tema": "Viajes (Indefinido)",
       "descripcion_en": "We went to the beach on Saturday.",
@@ -123,6 +125,7 @@
     "id": 13,
     "frase_objetivo": "¿Viste la película anoche?",
     "trampas": ["Vistes", "el"],
+    "variaciones_validas": ["¿Viste anoche la película?"],
     "pistas": {
       "tema": "Cine (Indefinido)",
       "descripcion_en": "Did you see the movie last night?",
@@ -163,6 +166,7 @@
     "id": 17,
     "frase_objetivo": "Compré este libro ayer.",
     "trampas": ["esta", "Comprado"],
+    "variaciones_validas": ["Compré ayer este libro."],
     "pistas": {
       "tema": "Compras (Indefinido)",
       "descripcion_en": "I bought this book yesterday.",
@@ -293,6 +297,7 @@
     "id": 30,
     "frase_objetivo": "Íbamos a la montaña siempre.",
     "trampas": ["en", "Fuimos"],
+    "variaciones_validas": ["Íbamos siempre a la montaña."],
     "pistas": {
       "tema": "Ocio (Imperfecto)",
       "descripcion_en": "We used to go to the mountains all the time.",
@@ -353,6 +358,7 @@
     "id": 36,
     "frase_objetivo": "Llegamos tarde a la reunión.",
     "trampas": ["el", "llegábamos"],
+    "variaciones_validas": ["Llegamos a la reunión tarde."],
     "pistas": {
       "tema": "Trabajo (Indefinido)",
       "descripcion_en": "We arrived late to the meeting.",
@@ -373,6 +379,7 @@
     "id": 38,
     "frase_objetivo": "¿Has probado el gazpacho alguna vez?",
     "trampas": ["veces", "probaddo"],
+    "variaciones_validas": ["¿Has probado alguna vez el gazpacho?"],
     "pistas": {
       "tema": "Experiencias (Pretérito Perfecto)",
       "descripcion_en": "Have you ever tried gazpacho?",
@@ -423,6 +430,7 @@
     "id": 43,
     "frase_objetivo": "Hemos alquilado un coche pequeño.",
     "trampas": ["Hamos", "Alquilamos"],
+    "variaciones_validas": ["Hemos alquilado un pequeño coche."],
     "pistas": {
       "tema": "Viajes (Pretérito Perfecto)",
       "descripcion_en": "We have rented a small car.",

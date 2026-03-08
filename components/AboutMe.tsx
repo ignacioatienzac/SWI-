@@ -11,8 +11,8 @@ const AboutMe: React.FC = () => {
 
           {/* LEFT COLUMN (desktop) — 60% (3/5): Title + Text */}
           <div className="md:col-span-3 text-center md:text-left order-2 md:order-1">
-            <h2 className="text-3xl md:text-5xl font-extrabold text-deep-blue mb-6 leading-tight">
-              Sobre el creador de CobiSpanish
+            <h2 className="text-3xl md:text-5xl font-extrabold text-deep-blue mb-6 leading-tight text-center">
+              El creador de CobiSpanish
             </h2>
 
             <div className="space-y-5 text-gray-600 text-base sm:text-lg md:text-xl leading-relaxed font-light">
