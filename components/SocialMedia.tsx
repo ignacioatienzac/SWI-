@@ -1,70 +1,67 @@
 import React from 'react';
-import { Instagram, Youtube, Facebook, AtSign, ExternalLink } from 'lucide-react';
+import { Instagram, Youtube, Facebook, AtSign } from 'lucide-react';
 
 const SocialMedia: React.FC = () => {
   const socials = [
     {
       name: 'Instagram',
-      icon: <Instagram size={22} />,
+      icon: <Instagram size={18} />,
       link: 'https://www.instagram.com/spanishwithignacio/',
-      color: 'group-hover:text-pink-600',
-      bgColor: 'hover:bg-pink-50',
-      description: 'Tips diarios y stories'
+      hoverBg: '#fce7f3',
+      hoverText: '#db2777',
     },
     {
       name: 'YouTube',
-      icon: <Youtube size={22} />,
+      icon: <Youtube size={18} />,
       link: 'https://www.youtube.com/@SpanishwithIgnacio',
-      color: 'group-hover:text-red-600',
-      bgColor: 'hover:bg-red-50',
-      description: 'Clases completas y tutoriales'
+      hoverBg: '#fee2e2',
+      hoverText: '#dc2626',
     },
     {
       name: 'Facebook',
-      icon: <Facebook size={22} />,
+      icon: <Facebook size={18} />,
       link: 'https://www.facebook.com/profile.php?id=61560429119394',
-      color: 'group-hover:text-blue-600',
-      bgColor: 'hover:bg-blue-50',
-      description: 'Comunidad y eventos'
+      hoverBg: '#dbeafe',
+      hoverText: '#2563eb',
     },
     {
       name: 'Threads',
-      icon: <AtSign size={22} />, 
+      icon: <AtSign size={18} />,
       link: 'https://www.threads.net/@spanishwithignacio',
-      color: 'group-hover:text-black',
-      bgColor: 'hover:bg-gray-50',
-      description: 'Pensamientos rápidos'
+      hoverBg: '#f3f4f6',
+      hoverText: '#111827',
     }
   ];
 
   return (
-    <section className="pt-0 pb-20 bg-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <div className="mb-8">
-          <h2 className="text-2xl md:text-3xl font-extrabold text-deep-blue">
-            Sígueme en Redes
-          </h2>
-        </div>
+    <section style={{ backgroundColor: '#f8fafc' }} className="py-12">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 className="text-xl md:text-2xl font-extrabold text-deep-blue mb-6">
+          Sígueme en Redes
+        </h2>
 
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 max-w-3xl mx-auto">
+        <div className="flex flex-wrap items-center justify-center gap-3">
           {socials.map((social) => (
             <a
               key={social.name}
               href={social.link}
               target="_blank"
               rel="noopener noreferrer"
-              className={`group relative bg-white px-3 py-4 sm:px-4 sm:py-5 rounded-xl shadow-sm hover:shadow-lg border border-gray-100 transition-all duration-300 transform hover:-translate-y-1 flex flex-col items-center justify-center gap-2 ${social.bgColor}`}
+              className="group inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-gray-200 bg-white text-gray-600 font-semibold text-sm transition-all duration-300 hover:shadow-md hover:-translate-y-0.5"
+              style={{ ['--hover-bg' as string]: social.hoverBg, ['--hover-text' as string]: social.hoverText }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLElement).style.backgroundColor = social.hoverBg;
+                (e.currentTarget as HTMLElement).style.color = social.hoverText;
+                (e.currentTarget as HTMLElement).style.borderColor = social.hoverText + '40';
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLElement).style.backgroundColor = '#fff';
+                (e.currentTarget as HTMLElement).style.color = '#4b5563';
+                (e.currentTarget as HTMLElement).style.borderColor = '#e5e7eb';
+              }}
             >
-              <div className={`text-gray-400 transition-colors duration-300 ${social.color} bg-gray-50 p-2.5 rounded-full group-hover:bg-white shadow-inner`}>
-                {social.icon}
-              </div>
-              <div>
-                <h3 className={`font-bold text-gray-900 text-sm sm:text-base mb-0.5 transition-colors ${social.color}`}>{social.name}</h3>
-                <p className="text-xs text-gray-500 hidden sm:block">{social.description}</p>
-              </div>
-              <div className="opacity-0 group-hover:opacity-100 transition-opacity absolute top-2 right-2">
-                <ExternalLink size={12} className="text-gray-400" />
-              </div>
+              {social.icon}
+              {social.name}
             </a>
           ))}
         </div>

@@ -3,75 +3,63 @@ import avatarImage from '../public/data/images/avatar-ignacio.webp';
 
 const AboutMe: React.FC = () => {
   return (
-    <section className="bg-white py-20 overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Desktop: row-reverse (text left, image right). Mobile: column (image top, text bottom) */}
-        <div className="flex flex-col md:flex-row-reverse items-center gap-12 lg:gap-24">
-          
-          {/* Image Side (appears RIGHT on desktop, TOP on mobile) */}
-          <div className="w-full md:w-1/2 flex justify-center md:justify-start relative group">
-            {/* Background blobs */}
-            <div className="absolute top-0 left-0 w-64 h-64 bg-spanish-yellow/10 rounded-full blur-3xl transform -translate-x-8 -translate-y-8"></div>
-            <div className="absolute bottom-0 right-0 w-48 h-48 bg-spanish-red/8 rounded-full blur-2xl transform translate-x-4 translate-y-4"></div>
-            
-            {/* Profile Image Container — organic blob shape */}
-            <div className="relative w-72 h-72 md:w-80 md:h-80 transition-transform duration-500 ease-out group-hover:scale-105">
-               {/* Organic blob background */}
-               <div
-                 className="absolute inset-0 transition-transform duration-500 group-hover:scale-110"
-                 style={{
-                   backgroundColor: '#FFFDF5',
-                   borderRadius: '60% 40% 55% 45% / 50% 60% 40% 50%',
-                   transform: 'rotate(-3deg)',
-                 }}
-               ></div>
-               
-               {/* Image clipped as organic circle */}
-               <div
-                 className="relative w-full h-full overflow-hidden shadow-2xl"
-                 style={{
-                   borderRadius: '60% 40% 55% 45% / 50% 60% 40% 50%',
-                 }}
-               >
-                <img 
-                  src={avatarImage}
-                  alt="Ignacio - Creador de CobiSpanish" 
-                  className="w-full h-full object-cover"
-                  style={{ backgroundColor: '#FFFDF5' }}
-                />
-              </div>
+    <section className="bg-white py-16 md:py-24 overflow-hidden">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        {/* Asymmetric Grid: 60% text + stats / 40% image. Stacks on mobile (image first) */}
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-10 md:gap-16 items-center">
+
+          {/* IMAGE COLUMN — 40% (2/5) on desktop, shown first on mobile via order */}
+          <div className="md:col-span-2 flex justify-center order-1 md:order-2">
+            <div className="relative group">
+              {/* Subtle floating glow behind image */}
+              <div
+                className="absolute inset-0 rounded-full blur-3xl opacity-30 transition-opacity duration-500 group-hover:opacity-50"
+                style={{ background: 'radial-gradient(circle, #F1BF00 0%, transparent 70%)' }}
+              ></div>
+              {/* Illustration floats with transparent bg — no frame, no border */}
+              <img
+                src={avatarImage}
+                alt="Ignacio - Creador de CobiSpanish"
+                className="relative w-56 h-56 sm:w-64 sm:h-64 md:w-72 md:h-72 object-contain transition-transform duration-500 ease-out group-hover:scale-105 drop-shadow-lg"
+              />
             </div>
           </div>
 
-          {/* Content Side (appears LEFT on desktop, BOTTOM on mobile) */}
-          <div className="w-full md:w-1/2 text-center md:text-left z-10">
-            <div className="inline-block px-4 py-1.5 bg-red-50 text-spanish-red font-bold text-xs uppercase tracking-widest rounded-full mb-6">
+          {/* TEXT + STATS COLUMN — 60% (3/5) on desktop */}
+          <div className="md:col-span-3 text-center md:text-left order-2 md:order-1">
+            <span className="inline-block px-4 py-1.5 bg-red-50 text-spanish-red font-bold text-xs uppercase tracking-widest rounded-full mb-5">
               Sobre el creador de CobiSpanish
-            </div>
-            
-            <div className="space-y-6 text-gray-600 text-lg md:text-xl leading-relaxed font-light">
+            </span>
+
+            <div className="space-y-5 text-gray-600 text-base sm:text-lg md:text-xl leading-relaxed font-light">
               <p className="text-justify">
-                Ignacio es un profesor con <span className="font-bold text-deep-blue">más de 10 años de experiencia</span> guiando a estudiantes de todo el mundo en su camino hacia el español. Como apasionado de la tecnología y la innovación educativa, siempre creyó que aprender un idioma debería sentirse menos como una tarea y más como un descubrimiento.
+                Ignacio es un profesor con <span className="font-semibold text-deep-blue">más de 10 años de experiencia</span> guiando a estudiantes de todo el mundo en su camino hacia el español. Como apasionado de la tecnología y la innovación educativa, siempre creyó que aprender un idioma debería sentirse menos como una tarea y más como un descubrimiento.
               </p>
               <p className="text-justify">
-                Por eso comenzó a crear <span className="font-bold text-spanish-red">CobiSpanish</span>: un espacio donde sus dos pasiones se unen para ofrecerte recursos interactivos y juegos que rompen con lo tradicional. Su meta es que, con la ayuda de herramientas creativas (y de nuestro querido Cobi), logres la fluidez que buscas de una forma divertida, visual y realmente memorable.
+                Por eso comenzó a crear <span className="font-semibold text-spanish-red">CobiSpanish</span>: un espacio donde sus dos pasiones se unen para ofrecerte recursos interactivos y juegos que rompen con lo tradicional. Su meta es que, con la ayuda de herramientas creativas (y de nuestro querido Cobi), logres la fluidez que buscas de una forma divertida, visual y realmente memorable.
               </p>
             </div>
 
-            {/* Stats as mini cards */}
-            <div className="mt-8 pt-8 border-t border-gray-100 flex flex-col sm:flex-row items-center md:items-start justify-center md:justify-start gap-4">
-                <div className="bg-gray-50 border border-gray-200 rounded-xl px-6 py-4 text-center min-w-[120px] transition-shadow hover:shadow-md">
-                    <span className="block text-3xl font-bold text-deep-blue">10+</span>
-                    <span className="text-sm text-gray-500">Años enseñando</span>
+            {/* STATS — "Logros desbloqueados" row, no boxes */}
+            <div className="mt-8 pt-8 border-t border-gray-100">
+              <p className="text-xs uppercase tracking-widest text-gray-400 font-bold mb-4 flex items-center justify-center md:justify-start gap-2">
+                <span>🏆</span> Logros desbloqueados
+              </p>
+              <div className="flex items-start justify-center md:justify-start gap-10 sm:gap-14">
+                <div className="text-center">
+                  <span className="block text-3xl sm:text-4xl font-extrabold text-deep-blue leading-none">10+</span>
+                  <span className="text-xs sm:text-sm text-gray-400 mt-1 block">Años enseñando</span>
                 </div>
-                <div className="bg-gray-50 border border-gray-200 rounded-xl px-6 py-4 text-center min-w-[120px] transition-shadow hover:shadow-md">
-                    <span className="block text-3xl font-bold text-deep-blue">5k+</span>
-                    <span className="text-sm text-gray-500">Alumnos felices</span>
+                <div className="text-center">
+                  <span className="block text-3xl sm:text-4xl font-extrabold text-deep-blue leading-none">5k+</span>
+                  <span className="text-xs sm:text-sm text-gray-400 mt-1 block">Alumnos felices</span>
                 </div>
-                <div className="bg-gray-50 border border-gray-200 rounded-xl px-6 py-4 text-center min-w-[120px] transition-shadow hover:shadow-md">
-                    <span className="block text-3xl font-bold text-deep-blue">∞</span>
-                    <span className="text-sm text-gray-500">Recursos creados</span>
+                <div className="text-center">
+                  <span className="block text-3xl sm:text-4xl font-extrabold text-deep-blue leading-none">∞</span>
+                  <span className="text-xs sm:text-sm text-gray-400 mt-1 block">Recursos creados</span>
                 </div>
+              </div>
             </div>
           </div>
 
