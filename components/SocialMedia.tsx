@@ -5,7 +5,7 @@ const SocialMedia: React.FC = () => {
   const socials = [
     {
       name: 'Instagram',
-      icon: <Instagram size={32} />,
+      icon: <Instagram size={22} />,
       link: 'https://www.instagram.com/spanishwithignacio/',
       color: 'group-hover:text-pink-600',
       bgColor: 'hover:bg-pink-50',
@@ -13,7 +13,7 @@ const SocialMedia: React.FC = () => {
     },
     {
       name: 'YouTube',
-      icon: <Youtube size={32} />,
+      icon: <Youtube size={22} />,
       link: 'https://www.youtube.com/@SpanishwithIgnacio',
       color: 'group-hover:text-red-600',
       bgColor: 'hover:bg-red-50',
@@ -21,7 +21,7 @@ const SocialMedia: React.FC = () => {
     },
     {
       name: 'Facebook',
-      icon: <Facebook size={32} />,
+      icon: <Facebook size={22} />,
       link: 'https://www.facebook.com/profile.php?id=61560429119394',
       color: 'group-hover:text-blue-600',
       bgColor: 'hover:bg-blue-50',
@@ -29,7 +29,7 @@ const SocialMedia: React.FC = () => {
     },
     {
       name: 'Threads',
-      icon: <AtSign size={32} />, 
+      icon: <AtSign size={22} />, 
       link: 'https://www.threads.net/@spanishwithignacio',
       color: 'group-hover:text-black',
       bgColor: 'hover:bg-gray-50',
@@ -38,38 +38,32 @@ const SocialMedia: React.FC = () => {
   ];
 
   return (
-    <section className="py-20 bg-cream border-b border-gray-100">
+    <section className="pt-0 pb-20 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <div className="mb-12">
-          <span className="inline-block px-4 py-1.5 bg-spanish-yellow/20 text-deep-blue font-bold text-xs uppercase tracking-widest rounded-full mb-4">
-            Comunidad
-          </span>
-          <h2 className="text-3xl md:text-4xl font-extrabold text-deep-blue">
+        <div className="mb-8">
+          <h2 className="text-2xl md:text-3xl font-extrabold text-deep-blue">
             Sígueme en Redes
           </h2>
-          <p className="text-gray-600 mt-4 max-w-2xl mx-auto text-lg">
-            Únete a nuestra comunidad en línea. Comparte tu progreso, haz preguntas y no te pierdas ningún consejo.
-          </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 max-w-3xl mx-auto">
           {socials.map((social) => (
             <a
               key={social.name}
               href={social.link}
               target="_blank"
               rel="noopener noreferrer"
-              className={`group bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl border border-gray-100 transition-all duration-300 transform hover:-translate-y-1 flex flex-col items-center justify-center gap-4 ${social.bgColor}`}
+              className={`group relative bg-white px-3 py-4 sm:px-4 sm:py-5 rounded-xl shadow-sm hover:shadow-lg border border-gray-100 transition-all duration-300 transform hover:-translate-y-1 flex flex-col items-center justify-center gap-2 ${social.bgColor}`}
             >
-              <div className={`text-gray-400 transition-colors duration-300 ${social.color} bg-gray-50 p-4 rounded-full group-hover:bg-white shadow-inner`}>
+              <div className={`text-gray-400 transition-colors duration-300 ${social.color} bg-gray-50 p-2.5 rounded-full group-hover:bg-white shadow-inner`}>
                 {social.icon}
               </div>
               <div>
-                <h3 className={`font-bold text-gray-900 text-xl mb-1 transition-colors ${social.color}`}>{social.name}</h3>
-                <p className="text-sm text-gray-500">{social.description}</p>
+                <h3 className={`font-bold text-gray-900 text-sm sm:text-base mb-0.5 transition-colors ${social.color}`}>{social.name}</h3>
+                <p className="text-xs text-gray-500 hidden sm:block">{social.description}</p>
               </div>
-              <div className="opacity-0 group-hover:opacity-100 transition-opacity absolute top-4 right-4">
-                <ExternalLink size={16} className="text-gray-400" />
+              <div className="opacity-0 group-hover:opacity-100 transition-opacity absolute top-2 right-2">
+                <ExternalLink size={12} className="text-gray-400" />
               </div>
             </a>
           ))}
