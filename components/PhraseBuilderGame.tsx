@@ -308,6 +308,13 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
     }
   };
 
+  // Reset phrase length if switching to a level that doesn't support "long"
+  useEffect(() => {
+    if (selectedLevel === 'A2' && selectedPhraseLength === 'long') {
+      setSelectedPhraseLength('short');
+    }
+  }, [selectedLevel, selectedPhraseLength]);
+
   // Load phrases
   useEffect(() => {
     const loadPhrases = async () => {
@@ -651,7 +658,7 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
                 <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">1. Nivel de Español</h3>
                 <div className="flex flex-col gap-3">
                   {(['A1', 'A2', 'B1', 'B2'] as Level[]).map(level => {
-                    const isDisabled = level !== 'A1';
+                    const isDisabled = level !== 'A1' && level !== 'A2';
                     return (
                       <button
                         key={level}
@@ -688,16 +695,22 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
                     Frases Cortas
                     <span className="text-xs block font-normal opacity-80">3–5 palabras</span>
                   </button>
-                  <button
-                    onClick={() => setSelectedPhraseLength('long')}
-                    className={`w-full py-5 rounded-xl border-2 font-bold text-lg transition-all ${
-                      selectedPhraseLength === 'long' ? 'bg-amber-500 text-white border-amber-500' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
-                    }`}
-                  >
-                    <span className="text-2xl mb-1 block">🏗️</span>
-                    Frases Largas
-                    <span className="text-xs block font-normal opacity-80">6–10 palabras</span>
-                  </button>
+                  {(() => {
+                    const longDisabled = selectedLevel === 'A2';
+                    return (
+                      <button
+                        onClick={() => !longDisabled && setSelectedPhraseLength('long')}
+                        disabled={longDisabled}
+                        className={`w-full py-5 rounded-xl border-2 font-bold text-lg transition-all ${
+                          selectedPhraseLength === 'long' ? 'bg-amber-500 text-white border-amber-500' : longDisabled ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed opacity-50' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
+                        }`}
+                      >
+                        <span className="text-2xl mb-1 block">🏗️</span>
+                        Frases Largas
+                        <span className="text-xs block font-normal opacity-80">{longDisabled ? 'Próximamente' : '6–10 palabras'}</span>
+                      </button>
+                    );
+                  })()}
                 </div>
               </div>
             );
@@ -922,7 +935,7 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
               </label>
               <div className="grid grid-cols-4 gap-3">
                 {(['A1', 'A2', 'B1', 'B2'] as Level[]).map(level => {
-                  const isDisabled = level !== 'A1';
+                  const isDisabled = level !== 'A1' && level !== 'A2';
                   return (
                     <button
                       key={level}
@@ -962,18 +975,26 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
                   <span>Frases Cortas</span>
                   <span className="text-xs block font-normal opacity-80">3–5 palabras</span>
                 </button>
-                <button
-                  onClick={() => setSelectedPhraseLength('long')}
-                  className={`py-4 rounded-xl border-2 font-bold transition-all ${
-                    selectedPhraseLength === 'long'
-                      ? 'border-amber-500 bg-amber-500 text-white shadow-md'
-                      : 'border-gray-200 text-gray-600 hover:border-amber-300 hover:bg-amber-50'
-                  }`}
-                >
-                  <span className="text-2xl mb-1 block">🏗️</span>
-                  <span>Frases Largas</span>
-                  <span className="text-xs block font-normal opacity-80">6–10 palabras</span>
-                </button>
+                {(() => {
+                  const longDisabled = selectedLevel === 'A2';
+                  return (
+                    <button
+                      onClick={() => !longDisabled && setSelectedPhraseLength('long')}
+                      disabled={longDisabled}
+                      className={`py-4 rounded-xl border-2 font-bold transition-all ${
+                        selectedPhraseLength === 'long'
+                          ? 'border-amber-500 bg-amber-500 text-white shadow-md'
+                          : longDisabled
+                          ? 'border-gray-200 bg-gray-100 text-gray-400 cursor-not-allowed opacity-50'
+                          : 'border-gray-200 text-gray-600 hover:border-amber-300 hover:bg-amber-50'
+                      }`}
+                    >
+                      <span className="text-2xl mb-1 block">🏗️</span>
+                      <span>Frases Largas</span>
+                      <span className="text-xs block font-normal opacity-80">{longDisabled ? 'Próximamente' : '6–10 palabras'}</span>
+                    </button>
+                  );
+                })()}
               </div>
             </div>
 

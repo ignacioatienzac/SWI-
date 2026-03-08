@@ -1,0 +1,502 @@
+[
+  {
+    "id": 1,
+    "frase_objetivo": "Estudio español cada mañana.",
+    "trampas": ["Estudiar", "mañanas"],
+    "pistas": {
+      "tema": "Rutina diaria",
+      "descripcion_en": "I study Spanish every morning.",
+      "traduccion_en": "I study Spanish every morning."
+    }
+  },
+  {
+    "id": 2,
+    "frase_objetivo": "¿Te gusta la comida picante?",
+    "trampas": ["gustan", "el"],
+    "pistas": {
+      "tema": "Gastronomía",
+      "descripcion_en": "Do you like spicy food?",
+      "traduccion_en": "Do you like spicy food?"
+    }
+  },
+  {
+    "id": 3,
+    "frase_objetivo": "Hoy tengo mucho trabajo.",
+    "trampas": ["muy", "trabajar"],
+    "pistas": {
+      "tema": "Trabajo",
+      "descripcion_en": "Today I have a lot of work.",
+      "traduccion_en": "Today I have a lot of work."
+    }
+  },
+  {
+    "id": 4,
+    "frase_objetivo": "He desayunado un café solo.",
+    "trampas": ["una", "haber"],
+    "pistas": {
+      "tema": "Alimentación (Pretérito Perfecto)",
+      "descripcion_en": "I have had a black coffee for breakfast.",
+      "traduccion_en": "I have had a black coffee for breakfast."
+    }
+  },
+  {
+    "id": 5,
+    "frase_objetivo": "¿Has visto mi móvil?",
+    "trampas": ["la", "vido"],
+    "pistas": {
+      "tema": "Objetos personales (Pretérito Perfecto)",
+      "descripcion_en": "Have you seen my phone?",
+      "traduccion_en": "Have you seen my phone?"
+    }
+  },
+  {
+    "id": 6,
+    "frase_objetivo": "Hoy hemos caminado por el parque.",
+    "trampas": ["caminando", "hamos"],
+    "pistas": {
+      "tema": "Tiempo libre (Pretérito Perfecto)",
+      "descripcion_en": "Today we have walked through the park.",
+      "traduccion_en": "Today we have walked through the park."
+    }
+  },
+  {
+    "id": 7,
+    "frase_objetivo": "Todavía no he hecho los deberes.",
+    "trampas": ["hacido", "ya"],
+    "pistas": {
+      "tema": "Estudios (Pretérito Perfecto)",
+      "descripcion_en": "I haven't done my homework yet.",
+      "traduccion_en": "I haven't done my homework yet."
+    }
+  },
+  {
+    "id": 8,
+    "frase_objetivo": "Ya he comprado las entradas.",
+    "trampas": ["Todavía", "la"],
+    "pistas": {
+      "tema": "Ocio (Objeto Directo / Perfecto)",
+      "descripcion_en": "I have already bought the tickets.",
+      "traduccion_en": "I have already bought the tickets."
+    }
+  },
+  {
+    "id": 9,
+    "frase_objetivo": "Las he comprado esta mañana.",
+    "trampas": ["Él", "este"],
+    "pistas": {
+      "tema": "Compras (Objeto Directo / Perfecto)",
+      "descripcion_en": "I bought them this morning.",
+      "traduccion_en": "I bought them this morning."
+    }
+  },
+  {
+    "id": 10,
+    "frase_objetivo": "¿Dónde has puesto las llaves?",
+    "trampas": ["Donde", "ponido"],
+    "pistas": {
+      "tema": "La casa (Pretérito Perfecto)",
+      "descripcion_en": "Where have you put the keys?",
+      "traduccion_en": "Where have you put the keys?"
+    }
+  },
+  {
+    "id": 11,
+    "frase_objetivo": "Ayer comí con mi abuela.",
+    "trampas": ["de", "el"],
+    "pistas": {
+      "tema": "Familia (Indefinido)",
+      "descripcion_en": "Yesterday I ate with my grandmother.",
+      "traduccion_en": "Yesterday I ate with my grandmother."
+    }
+  },
+  {
+    "id": 12,
+    "frase_objetivo": "Fuimos a la playa el sábado.",
+    "trampas": ["Ido", "en"],
+    "pistas": {
+      "tema": "Viajes (Indefinido)",
+      "descripcion_en": "We went to the beach on Saturday.",
+      "traduccion_en": "We went to the beach on Saturday."
+    }
+  },
+  {
+    "id": 13,
+    "frase_objetivo": "¿Viste la película anoche?",
+    "trampas": ["Vistes", "el"],
+    "pistas": {
+      "tema": "Cine (Indefinido)",
+      "descripcion_en": "Did you see the movie last night?",
+      "traduccion_en": "Did you see the movie last night?"
+    }
+  },
+  {
+    "id": 14,
+    "frase_objetivo": "La vi con mis amigos.",
+    "trampas": ["en", "mi"],
+    "pistas": {
+      "tema": "Cine (Objeto Directo / Indefinido)",
+      "descripcion_en": "I saw it with my friends.",
+      "traduccion_en": "I saw it with my friends."
+    }
+  },
+  {
+    "id": 15,
+    "frase_objetivo": "Conocí a Pedro en Madrid.",
+    "trampas": ["de", "el"],
+    "pistas": {
+      "tema": "Biografía (Indefinido)",
+      "descripcion_en": "I met Pedro in Madrid.",
+      "traduccion_en": "I met Pedro in Madrid."
+    }
+  },
+  {
+    "id": 16,
+    "frase_objetivo": "El año pasado viajé a Italia.",
+    "trampas": ["la", "Año"],
+    "pistas": {
+      "tema": "Viajes (Indefinido)",
+      "descripcion_en": "Last year I traveled to Italy.",
+      "traduccion_en": "Last year I traveled to Italy."
+    }
+  },
+  {
+    "id": 17,
+    "frase_objetivo": "Compré este libro ayer.",
+    "trampas": ["esta", "Comprado"],
+    "pistas": {
+      "tema": "Compras (Indefinido)",
+      "descripcion_en": "I bought this book yesterday.",
+      "traduccion_en": "I bought this book yesterday."
+    }
+  },
+  {
+    "id": 18,
+    "frase_objetivo": "Lo compré en las rebajas.",
+    "trampas": ["los", "he"],
+    "pistas": {
+      "tema": "Compras (Objeto Directo / Indefinido)",
+      "descripcion_en": "I bought it at the sales.",
+      "traduccion_en": "I bought it at the sales."
+    }
+  },
+  {
+    "id": 19,
+    "frase_objetivo": "No dormí bien anoche.",
+    "trampas": ["bueno", "noche"],
+    "pistas": {
+      "tema": "Salud (Indefinido)",
+      "descripcion_en": "I didn't sleep well last night.",
+      "traduccion_en": "I didn't sleep well last night."
+    }
+  },
+  {
+    "id": 20,
+    "frase_objetivo": "Ella nació en un pueblo pequeño.",
+    "trampas": ["a", "nacido"],
+    "pistas": {
+      "tema": "Biografía (Indefinido)",
+      "descripcion_en": "She was born in a small village.",
+      "traduccion_en": "She was born in a small village."
+    }
+  },
+  {
+    "id": 21,
+    "frase_objetivo": "De niño jugaba al fútbol.",
+    "trampas": ["el", "Como"],
+    "pistas": {
+      "tema": "Infancia (Imperfecto)",
+      "descripcion_en": "As a child I used to play football.",
+      "traduccion_en": "As a child I used to play football."
+    }
+  },
+  {
+    "id": 22,
+    "frase_objetivo": "Mi abuelo era muy alto.",
+    "trampas": ["La", "ser"],
+    "pistas": {
+      "tema": "Descripciones (Imperfecto)",
+      "descripcion_en": "My grandfather was very tall.",
+      "traduccion_en": "My grandfather was very tall."
+    }
+  },
+  {
+    "id": 23,
+    "frase_objetivo": "Vivíamos en una casa grande.",
+    "trampas": ["el", "vivieron"],
+    "pistas": {
+      "tema": "Vivienda (Imperfecto)",
+      "descripcion_en": "We lived in a large house.",
+      "traduccion_en": "We lived in a large house."
+    }
+  },
+  {
+    "id": 24,
+    "frase_objetivo": "Antes no tenía perro.",
+    "trampas": ["tuve", "todavía"],
+    "pistas": {
+      "tema": "Hábitos pasados (Imperfecto)",
+      "descripcion_en": "I didn't have a dog before.",
+      "traduccion_en": "I didn't have a dog before."
+    }
+  },
+  {
+    "id": 25,
+    "frase_objetivo": "Siempre leíamos antes de dormir.",
+    "trampas": ["después", "leímos"],
+    "pistas": {
+      "tema": "Rutina pasada (Imperfecto)",
+      "descripcion_en": "We always read before sleeping.",
+      "traduccion_en": "We always read before sleeping."
+    }
+  },
+  {
+    "id": 26,
+    "frase_objetivo": "Aquel invierno hizo mucho frío.",
+    "trampas": ["Este", "hice"],
+    "pistas": {
+      "tema": "El tiempo (Imperfecto)",
+      "descripcion_en": "It was very cold that winter.",
+      "traduccion_en": "It was very cold that winter."
+    }
+  },
+  {
+    "id": 27,
+    "frase_objetivo": "Ella llevaba un vestido rojo.",
+    "trampas": ["falda", "amarilla"],
+    "pistas": {
+      "tema": "Ropa (Imperfecto)",
+      "descripcion_en": "She was wearing a red dress.",
+      "traduccion_en": "She was wearing a red dress."
+    }
+  },
+  {
+    "id": 28,
+    "frase_objetivo": "Mi escuela estaba muy lejos.",
+    "trampas": ["estuvo", "era"],
+    "pistas": {
+      "tema": "Lugares (Imperfecto)",
+      "descripcion_en": "My school was very far away.",
+      "traduccion_en": "My school was very far away."
+    }
+  },
+  {
+    "id": 29,
+    "frase_objetivo": "De niño no me gustaban las verduras.",
+    "trampas": ["gustaron", "gustó"],
+    "pistas": {
+      "tema": "Comida (Imperfecto)",
+      "descripcion_en": "I didn't like vegetables.",
+      "traduccion_en": "I didn't like vegetables."
+    }
+  },
+  {
+    "id": 30,
+    "frase_objetivo": "Íbamos a la montaña siempre.",
+    "trampas": ["en", "Fuimos"],
+    "pistas": {
+      "tema": "Ocio (Imperfecto)",
+      "descripcion_en": "We used to go to the mountains all the time.",
+      "traduccion_en": "We used to go to the mountains all the time."
+    }
+  },
+  {
+    "id": 31,
+    "frase_objetivo": "¿Qué hiciste el fin de semana?",
+    "trampas": ["la", "final"],
+    "pistas": {
+      "tema": "Tiempo libre (Indefinido)",
+      "descripcion_en": "What did you do over the weekend?",
+      "traduccion_en": "What did you do over the weekend?"
+    }
+  },
+  {
+    "id": 32,
+    "frase_objetivo": "Salimos de fiesta con amigos.",
+    "trampas": ["en", "a"],
+    "pistas": {
+      "tema": "Social (Indefinido)",
+      "descripcion_en": "We went out partying with friends.",
+      "traduccion_en": "We went out partying with friends."
+    }
+  },
+  {
+    "id": 33,
+    "frase_objetivo": "Perdí el autobús de las ocho.",
+    "trampas": ["Perdía", "la"],
+    "pistas": {
+      "tema": "Transporte (Indefinido)",
+      "descripcion_en": "I missed the eight o'clock bus.",
+      "traduccion_en": "I missed the eight o'clock bus."
+    }
+  },
+  {
+    "id": 34,
+    "frase_objetivo": "Lo perdí por salir tarde.",
+    "trampas": ["El", "para"],
+    "pistas": {
+      "tema": "Transporte (Objeto Directo / Indefinido)",
+      "descripcion_en": "I missed it because I left late.",
+      "traduccion_en": "I missed it because I left late."
+    }
+  },
+  {
+    "id": 35,
+    "frase_objetivo": "Me dio un regalo increíble.",
+    "trampas": ["la", "daba"],
+    "pistas": {
+      "tema": "Social (Indefinido)",
+      "descripcion_en": "He/she gave me an amazing gift.",
+      "traduccion_en": "He/she gave me an amazing gift."
+    }
+  },
+  {
+    "id": 36,
+    "frase_objetivo": "Llegamos tarde a la reunión.",
+    "trampas": ["el", "llegábamos"],
+    "pistas": {
+      "tema": "Trabajo (Indefinido)",
+      "descripcion_en": "We arrived late to the meeting.",
+      "traduccion_en": "We arrived late to the meeting."
+    }
+  },
+  {
+    "id": 37,
+    "frase_objetivo": "Esta semana he ido al cine.",
+    "trampas": ["fui", "Este"],
+    "pistas": {
+      "tema": "Ocio (Pretérito Perfecto)",
+      "descripcion_en": "This week I have gone to the cinema.",
+      "traduccion_en": "This week I have gone to the cinema."
+    }
+  },
+  {
+    "id": 38,
+    "frase_objetivo": "¿Has probado el gazpacho alguna vez?",
+    "trampas": ["veces", "probaddo"],
+    "pistas": {
+      "tema": "Experiencias (Pretérito Perfecto)",
+      "descripcion_en": "Have you ever tried gazpacho?",
+      "traduccion_en": "Have you ever tried gazpacho?"
+    }
+  },
+  {
+    "id": 39,
+    "frase_objetivo": "Mis amigos han llegado tarde.",
+    "trampas": ["Mi", "llegaron"],
+    "pistas": {
+      "tema": "Social (Pretérito Perfecto)",
+      "descripcion_en": "My friends have arrived late.",
+      "traduccion_en": "My friends have arrived late."
+    }
+  },
+  {
+    "id": 40,
+    "frase_objetivo": "He hablado con mi jefe.",
+    "trampas": ["la", "hablando"],
+    "pistas": {
+      "tema": "Trabajo (Pretérito Perfecto)",
+      "descripcion_en": "I have spoken with my boss.",
+      "traduccion_en": "I have spoken with my boss."
+    }
+  },
+  {
+    "id": 41,
+    "frase_objetivo": "Lo he visto esta mañana.",
+    "trampas": ["El", "veído"],
+    "pistas": {
+      "tema": "Trabajo (Objeto Directo / Perfecto)",
+      "descripcion_en": "I have seen him this morning.",
+      "traduccion_en": "I have seen him this morning."
+    }
+  },
+  {
+    "id": 42,
+    "frase_objetivo": "Nunca he estado en Argentina.",
+    "trampas": ["fui", "sido"],
+    "pistas": {
+      "tema": "Viajes (Pretérito Perfecto)",
+      "descripcion_en": "I have never been to Argentina.",
+      "traduccion_en": "I have never been to Argentina."
+    }
+  },
+  {
+    "id": 43,
+    "frase_objetivo": "Hemos alquilado un coche pequeño.",
+    "trampas": ["Hamos", "Alquilamos"],
+    "pistas": {
+      "tema": "Viajes (Pretérito Perfecto)",
+      "descripcion_en": "We have rented a small car.",
+      "traduccion_en": "We have rented a small car."
+    }
+  },
+  {
+    "id": 44,
+    "frase_objetivo": "Tenía el pelo muy largo.",
+    "trampas": ["Era", "mucho"],
+    "pistas": {
+      "tema": "Descripciones (Imperfecto)",
+      "descripcion_en": "I had very long hair.",
+      "traduccion_en": "I had very long hair."
+    }
+  },
+  {
+    "id": 45,
+    "frase_objetivo": "Era una ciudad muy tranquila.",
+    "trampas": ["Estaba", "un"],
+    "pistas": {
+      "tema": "Lugares (Imperfecto)",
+      "descripcion_en": "It was a very quiet city.",
+      "traduccion_en": "It was a very quiet city."
+    }
+  },
+  {
+    "id": 46,
+    "frase_objetivo": "Solía estudiar en la biblioteca.",
+    "trampas": ["Solí", "el"],
+    "pistas": {
+      "tema": "Hábitos (Imperfecto)",
+      "descripcion_en": "I used to study in the library.",
+      "traduccion_en": "I used to study in the library."
+    }
+  },
+  {
+    "id": 47,
+    "frase_objetivo": "Las verduras estaban muy frescas.",
+    "trampas": ["vegetales", "mucho"],
+    "pistas": {
+      "tema": "Compras (Imperfecto)",
+      "descripcion_en": "The vegetables were very fresh.",
+      "traduccion_en": "The vegetables were very fresh."
+    }
+  },
+  {
+    "id": 48,
+    "frase_objetivo": "¿Dónde vivías cuando eras joven?",
+    "trampas": ["estabas", "estuviste"],
+    "pistas": {
+      "tema": "Biografía (Imperfecto)",
+      "descripcion_en": "Where did you live when you were young?",
+      "traduccion_en": "Where did you live when you were young?"
+    }
+  },
+  {
+    "id": 49,
+    "frase_objetivo": "Ayer vi a María.",
+    "trampas": ["la", "visto"],
+    "pistas": {
+      "tema": "Social (Indefinido)",
+      "descripcion_en": "Yesterday I saw Maria.",
+      "traduccion_en": "Yesterday I saw Maria."
+    }
+  },
+  {
+    "id": 50,
+    "frase_objetivo": "La vi en el mercado.",
+    "trampas": ["la", "estaba"],
+    "pistas": {
+      "tema": "Social (Objeto Directo / Indefinido)",
+      "descripcion_en": "I saw her at the market.",
+      "traduccion_en": "I saw her at the market."
+    }
+  }
+]
