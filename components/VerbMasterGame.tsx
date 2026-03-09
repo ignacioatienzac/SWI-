@@ -408,10 +408,6 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
       ) || null;
     };
   }, [verbPool]);
-  
-  const canvasWidth = 800;
-  const canvasHeight = 600;
-  const groundY = canvasHeight - 50;
 
   // Mobile detection for progressive revelation
   const [isMobile, setIsMobile] = useState(false);
@@ -423,6 +419,10 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
+  
+  const canvasWidth = 800;
+  const canvasHeight = 600;
+  const groundY = isMobile ? canvasHeight - 50 : canvasHeight - 25;
 
   // Audio functions
   const soundEnabledRef = useRef(soundEnabled);
@@ -1236,7 +1236,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
         cancelAnimationFrame(animationFrameRef.current);
       }
     };
-  }, [gameState, verbPool, score, showLevelTitle, countdown, backgroundColor]);
+  }, [gameState, verbPool, score, showLevelTitle, countdown, backgroundColor, isMobile]);
 
   // Handle answer submission
   const handleSubmit = () => {
@@ -1865,62 +1865,62 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
   // --- PLAYING STATE ---
   if (gameState === 'PLAYING') {
     return (
-      <div className="min-h-screen md:h-screen bg-gray-50 p-4 md:p-2 relative md:overflow-hidden">
+      <div className="min-h-screen md:h-[calc(100vh-5rem)] bg-gray-50 p-4 md:p-1 relative md:overflow-hidden">
         <div className="max-w-4xl mx-auto md:flex md:flex-col md:h-full">
           {/* Header */}
-          <div className="flex justify-between items-center mb-4 md:mb-1 bg-white rounded-2xl p-4 md:py-2 md:px-4 shadow-md md:flex-shrink-0">
+          <div className="flex justify-between items-center mb-4 md:mb-0.5 bg-white rounded-2xl p-4 md:py-1 md:px-3 shadow-md md:flex-shrink-0">
             <button
               onClick={() => setGameState('LEVEL_SELECT')}
-              className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+              className="p-2 md:p-1 hover:bg-gray-100 rounded-full transition-colors"
             >
-              <ChevronLeft size={24} />
+              <ChevronLeft size={24} className="md:w-5 md:h-5" />
             </button>
-            <div className="flex gap-4 md:gap-6 text-center">
+            <div className="flex gap-4 md:gap-5 text-center">
               <div>
-                <p className="text-xs text-gray-500 font-medium">PUNTOS</p>
-                <p className="text-lg md:text-xl font-black text-deep-blue">{score}</p>
+                <p className="text-xs md:text-[10px] text-gray-500 font-medium md:leading-tight">PUNTOS</p>
+                <p className="text-lg md:text-base font-black text-deep-blue md:leading-tight">{score}</p>
               </div>
               <div>
-                <p className="text-xs text-gray-500 font-medium">NIVEL</p>
-                <p className="text-lg md:text-xl font-black text-green-600">{gameLevel}</p>
+                <p className="text-xs md:text-[10px] text-gray-500 font-medium md:leading-tight">NIVEL</p>
+                <p className="text-lg md:text-base font-black text-green-600 md:leading-tight">{gameLevel}</p>
               </div>
               <div>
-                <p className="text-xs text-gray-500 font-medium">RACHA</p>
-                <p className="text-lg md:text-xl font-black text-orange-500">{streak}</p>
+                <p className="text-xs md:text-[10px] text-gray-500 font-medium md:leading-tight">RACHA</p>
+                <p className="text-lg md:text-base font-black text-orange-500 md:leading-tight">{streak}</p>
               </div>
               <div>
-                <p className="text-xs text-gray-500 font-medium">VIDAS</p>
-                <p className="text-lg md:text-xl font-black text-red-500">
-                  <span className="hidden md:inline md:text-base">{'❤️'.repeat(lives)}</span>
+                <p className="text-xs md:text-[10px] text-gray-500 font-medium md:leading-tight">VIDAS</p>
+                <p className="text-lg md:text-sm font-black text-red-500 md:leading-tight">
+                  <span className="hidden md:inline">{'❤️'.repeat(lives)}</span>
                   <span className="md:hidden">❤️ x {lives}</span>
                 </p>
               </div>
             </div>
             <button
               onClick={() => setGameState('PAUSED')}
-              className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+              className="p-2 md:p-1 hover:bg-gray-100 rounded-full transition-colors"
             >
-              <Pause size={24} />
+              <Pause size={24} className="md:w-5 md:h-5" />
             </button>
           </div>
 
           {/* Canvas */}
           <div 
-            className="rounded-2xl overflow-hidden shadow-xl mb-4 md:mb-1 md:flex-1 md:min-h-0 transition-colors duration-[2000ms] ease-in-out"
+            className="rounded-2xl overflow-hidden shadow-xl mb-4 md:mb-0.5 md:flex-1 md:min-h-0 transition-colors duration-[2000ms] ease-in-out"
             style={{ backgroundColor }}
           >
             <canvas
               ref={canvasRef}
               width={canvasWidth}
               height={canvasHeight}
-              className="w-full md:h-full md:object-contain"
+              className="w-full md:w-full md:h-full block"
             />
           </div>
 
           {/* Input */}
-          <div className="md:bg-white md:rounded-2xl md:p-3 md:shadow-xl md:flex-shrink-0">
+          <div className="md:bg-white md:rounded-xl md:py-1.5 md:px-3 md:shadow-lg md:flex-shrink-0">
             {/* Desktop input with button */}
-            <div className="hidden md:flex gap-3">
+            <div className="hidden md:flex gap-2">
               <input
                 type="text"
                 value={userInput}
@@ -1935,12 +1935,12 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
                   if (e.key === '5') { e.preventDefault(); setUserInput(prev => prev + 'ú'); }
                 }}
                 placeholder="Escribe tu respuesta..."
-                className="flex-1 px-4 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-deep-blue text-base"
+                className="flex-1 px-3 py-1.5 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-deep-blue text-sm"
                 autoFocus
               />
               <button
                 onClick={handleSubmit}
-                className="px-8 py-2 bg-deep-blue hover:bg-blue-700 text-white font-bold rounded-lg transition-colors"
+                className="px-6 py-1.5 bg-deep-blue hover:bg-blue-700 text-white font-bold rounded-lg transition-colors text-sm"
               >
                 Enviar
               </button>
@@ -1964,13 +1964,13 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
             />
             
             {feedback && (
-              <p className={`mt-3 md:mt-1 text-center font-bold ${
+              <p className={`mt-3 md:mt-0.5 text-center font-bold md:text-sm ${
                 feedback.type === 'success' ? 'text-green-600' : 'text-red-600'
               }`}>
                 {feedback.text}
               </p>
             )}
-            <p className="hidden md:block mt-1 text-[11px] text-gray-500 text-center">
+            <p className="hidden md:block mt-0.5 text-[10px] text-gray-400 text-center leading-tight">
               Usa las teclas 1-5 para vocales con tilde (á é í ó ú)
             </p>
           </div>
