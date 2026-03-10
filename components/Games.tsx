@@ -8,6 +8,7 @@ import PhraseBuilderGame from './PhraseBuilderGame';
 import { Send, X } from 'lucide-react';
 import { hablarConPanda } from '../services/geminiService';
 import DraggableCobi from './DraggableCobi';
+import { useI18n } from '../services/i18n';
 
 // Banco de Mensajes de Cobi (incluye datos curiosos y recomendaciones de juegos)
 const mensajesCobi = [
@@ -41,6 +42,7 @@ interface Message {
 }
 
 const Games: React.FC<GamesProps> = ({ activeGameId, setActiveGameId, cobiVisible, soundEnabled }) => {
+  const { t } = useI18n();
   // Estado del chat
   const [showChatWindow, setShowChatWindow] = useState(false);
   const [chatMessages, setChatMessages] = useState<Message[]>([]);
@@ -100,36 +102,36 @@ const Games: React.FC<GamesProps> = ({ activeGameId, setActiveGameId, cobiVisibl
   const games: GameDefinition[] = [
     {
       id: 'power-verbs',
-      title: 'El Poder de los Verbos',
-      description: '¡Defiende el castillo! Responde correctamente para potenciar a tu héroe y derrotar a los monstruos.',
+      title: t('games.powerVerbs.title'),
+      description: t('gamesPage.powerVerbs'),
       iconName: 'Sword',
       isAiPowered: false
     },
     {
       id: 'wordle-game',
-      title: 'Adivina la Palabra',
-      description: 'El clásico juego de palabras. Tienes 6 intentos para descubrir la palabra oculta.',
+      title: t('games.wordle.title'),
+      description: t('gamesPage.wordle'),
       iconName: 'Grid3X3',
       isAiPowered: false
     },
     {
       id: 'letter-wheel',
-      title: 'La Rueda de Letras',
-      description: 'Forma palabras usando las letras de la rueda para completar el crucigrama del día.',
+      title: t('games.letterWheel.title'),
+      description: t('gamesPage.letterWheel'),
       iconName: 'Layers',
       isAiPowered: false
     },
     {
       id: 'verb-master',
-      title: 'Maestro de Verbos',
-      description: '¡Explota las burbujas antes de que lleguen al suelo! Practica conjugaciones en un juego estilo Tetris.',
+      title: t('games.verbMaster.title'),
+      description: t('gamesPage.verbMaster'),
       iconName: 'Zap',
       isAiPowered: false
     },
     {
       id: 'phrase-builder',
-      title: 'Constructor de Frases',
-      description: 'Ordena las palabras para formar oraciones gramaticalmente correctas.',
+      title: t('games.phraseBuilder.title'),
+      description: t('gamesPage.phraseBuilder'),
       iconName: 'Hammer',
       isAiPowered: false
     }
@@ -183,12 +185,12 @@ const Games: React.FC<GamesProps> = ({ activeGameId, setActiveGameId, cobiVisibl
           onClick={() => setActiveGameId(null)}
           className="mb-6 text-gray-500 hover:text-deep-blue font-medium flex items-center gap-2 mx-auto"
         >
-          ← Volver a Juegos
+          ← {t('gamesPage.backToGames').slice(2)}
         </button>
          <div className="bg-white p-12 rounded-2xl shadow-sm border border-gray-100">
            <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6 text-4xl">🚧</div>
-           <h2 className="text-2xl font-bold text-gray-800 mb-2">En Construcción</h2>
-           <p className="text-gray-600">Este juego estará disponible pronto.</p>
+           <h2 className="text-2xl font-bold text-gray-800 mb-2">{t('gamesPage.underConstruction')}</h2>
+           <p className="text-gray-600">{t('gamesPage.comingSoon')}</p>
          </div>
        </div>
      );
@@ -198,10 +200,10 @@ const Games: React.FC<GamesProps> = ({ activeGameId, setActiveGameId, cobiVisibl
     <div className="max-w-7xl mx-auto px-4 py-12 relative">
       <div className="text-center mb-16">
         <h1 className="text-4xl md:text-5xl font-extrabold text-deep-blue mb-4 tracking-tight">
-          Aprende Jugando
+          {t('gamesPage.heading')}
         </h1>
         <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-          Mejora tu español con nuestros juegos interactivos.
+          {t('gamesPage.subtitle')}
         </p>
       </div>
 
@@ -269,7 +271,7 @@ const Games: React.FC<GamesProps> = ({ activeGameId, setActiveGameId, cobiVisibl
 
             <div className="flex items-center justify-end mt-auto">
               <span className="text-deep-blue font-semibold group-hover:translate-x-1 transition-transform inline-flex items-center">
-                Jugar ahora →
+                {t('gamesPage.playNow')}
               </span>
             </div>
           </div>

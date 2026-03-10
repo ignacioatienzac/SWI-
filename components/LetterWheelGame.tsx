@@ -134,6 +134,23 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
   const [chatHistory, setChatHistory] = useState<Array<{role: 'user' | 'cobi', text: string}>>([]);
   const [isLoadingResponse, setIsLoadingResponse] = useState(false);
 
+  // Mobile detection
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // Prevent page scroll on desktop while playing
+  useEffect(() => {
+    if (gameStatus === 'PLAYING' && !isMobile) {
+      document.body.style.overflow = 'hidden';
+      return () => { document.body.style.overflow = ''; };
+    }
+  }, [gameStatus, isMobile]);
+
   const audioCtxRef = useRef<AudioContext | null>(null);
   const lastAddedIndexRef = useRef<number | null>(null);
 

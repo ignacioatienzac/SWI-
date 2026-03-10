@@ -107,6 +107,19 @@ const es = flatten({
   social: {
     title: 'Sígueme en Redes',
   },
+  gamesPage: {
+    heading: 'Aprende Jugando',
+    subtitle: 'Mejora tu español con nuestros juegos interactivos.',
+    playNow: 'Jugar ahora →',
+    backToGames: '← Volver a Juegos',
+    underConstruction: 'En Construcción',
+    comingSoon: 'Este juego estará disponible pronto.',
+    powerVerbs: '¡Defiende el castillo! Responde correctamente para potenciar a tu héroe y derrotar a los monstruos.',
+    wordle: 'El clásico juego de palabras. Tienes 6 intentos para descubrir la palabra oculta.',
+    letterWheel: 'Forma palabras usando las letras de la rueda para completar el crucigrama del día.',
+    verbMaster: '¡Explota las burbujas antes de que lleguen al suelo! Practica conjugaciones en un juego estilo Tetris.',
+    phraseBuilder: 'Ordena las palabras para formar oraciones gramaticalmente correctas.',
+  },
   footer: {
     copyright: '© 2024 Todos los derechos reservados.',
     contact: 'Contacto',
@@ -184,6 +197,19 @@ const en = flatten({
   },
   social: {
     title: 'Follow Me',
+  },
+  gamesPage: {
+    heading: 'Learn by Playing',
+    subtitle: 'Improve your Spanish with our interactive games.',
+    playNow: 'Play now →',
+    backToGames: '← Back to Games',
+    underConstruction: 'Under Construction',
+    comingSoon: 'This game will be available soon.',
+    powerVerbs: 'Defend the castle! Answer correctly to power up your hero and defeat the monsters.',
+    wordle: 'The classic word game. You have 6 attempts to discover the hidden word.',
+    letterWheel: 'Form words using the letters on the wheel to complete the daily crossword.',
+    verbMaster: 'Pop the bubbles before they reach the ground! Practice conjugations in a Tetris-style game.',
+    phraseBuilder: 'Arrange the words to form grammatically correct sentences.',
   },
   footer: {
     copyright: '© 2024 All rights reserved.',

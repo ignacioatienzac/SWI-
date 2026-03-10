@@ -2196,6 +2196,14 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
     // Calculate deltaTime normalized to 120fps (8.33ms per frame)
     // At 120fps: dt ≈ 1.0 (no change), at 60fps: dt ≈ 2.0 (moves 2x per frame to compensate)
     const elapsed = time - lastTimeRef.current;
+    // If elapsed > 500ms the tab was likely backgrounded — skip this frame to avoid burst
+    if (elapsed > 500) {
+      lastTimeRef.current = time;
+      nextSpawnTimeRef.current = time + 500;
+      lastShotRef.current = performance.now();
+      requestRef.current = requestAnimationFrame(gameLoop);
+      return;
+    }
     deltaTimeRef.current = Math.min(elapsed / (1000 / 120), 3); // Cap at 3x to prevent teleporting
     lastTimeRef.current = time;
     
@@ -3448,7 +3456,13 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
           <p className="text-lg text-gray-600 mb-6">Puntuación actual: {score}</p>
           <div className="space-y-3">
             <button
-              onClick={() => setGameState('PLAYING')}
+              onClick={() => {
+                // Reset timing refs to prevent burst of spawns/shots after pause
+                lastTimeRef.current = 0;
+                lastShotRef.current = performance.now();
+                nextSpawnTimeRef.current = performance.now() + 500;
+                setGameState('PLAYING');
+              }}
               className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 rounded-lg flex items-center justify-center gap-2"
             >
               <Play size={24} />

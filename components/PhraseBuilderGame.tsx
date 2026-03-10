@@ -101,6 +101,14 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
+
+  // Prevent page scroll on desktop while playing
+  useEffect(() => {
+    if (gameState === 'PLAYING' && !isMobile) {
+      document.body.style.overflow = 'hidden';
+      return () => { document.body.style.overflow = ''; };
+    }
+  }, [gameState, isMobile]);
   
   // Cobi avatar image URLs - centralized for easy scalability
   const COBI_AVATARS = {

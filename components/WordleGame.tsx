@@ -171,6 +171,14 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack, cobiVisible = true, sou
     return () => window.removeEventListener('resize', check);
   }, []);
 
+  // Prevent page scroll on desktop while playing
+  useEffect(() => {
+    if (status === 'PLAYING' && !isMobile) {
+      document.body.style.overflow = 'hidden';
+      return () => { document.body.style.overflow = ''; };
+    }
+  }, [status, isMobile]);
+
   const handleKeyTouchStart = useCallback((char: string, e: React.TouchEvent<HTMLButtonElement>) => {
     if (!isMobile) return;
     const rect = (e.currentTarget as HTMLButtonElement).getBoundingClientRect();
