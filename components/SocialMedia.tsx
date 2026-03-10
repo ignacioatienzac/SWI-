@@ -1,7 +1,9 @@
 import React from 'react';
 import { Instagram, Youtube, Facebook, AtSign } from 'lucide-react';
+import { useI18n } from '../services/i18n';
 
 const SocialMedia: React.FC = () => {
+  const { t } = useI18n();
   const socials = [
     {
       name: 'Instagram',
@@ -37,7 +39,7 @@ const SocialMedia: React.FC = () => {
     <section style={{ backgroundColor: '#f8fafc' }} className="py-12">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <h2 className="text-xl md:text-2xl font-extrabold text-deep-blue mb-6">
-          Sígueme en Redes
+          {t('social.title')}
         </h2>
 
         <div className="flex flex-wrap items-center justify-center gap-3">

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View } from '../types';
-import { Menu, X, Volume2, VolumeX } from 'lucide-react';
+import { Menu, X, Volume2, VolumeX, Globe } from 'lucide-react';
+import { useI18n } from '../services/i18n';
 
 interface HeaderProps {
   currentView: View;
@@ -13,17 +14,20 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ currentView, onChangeView, cobiVisible, onToggleCobi, soundEnabled, onToggleSound }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { lang, setLang, t } = useI18n();
 
   const navItems = [
-    { label: 'Inicio', value: View.HOME },
-    { label: 'Recursos', value: View.RESOURCES },
-    { label: 'Juegos', value: View.GAMES },
+    { label: t('header.home'), value: View.HOME },
+    { label: t('header.resources'), value: View.RESOURCES },
+    { label: t('header.games'), value: View.GAMES },
   ];
 
   const handleNavClick = (value: View) => {
     onChangeView(value);
     setIsMobileMenuOpen(false);
   };
+
+  const toggleLang = () => setLang(lang === 'es' ? 'en' : 'es');
 
   return (
     <>
@@ -45,7 +49,7 @@ const Header: React.FC<HeaderProps> = ({ currentView, onChangeView, cobiVisible,
             </div>
 
             {/* Desktop Navigation */}
-            <nav className="hidden md:flex space-x-8">
+            <nav className="hidden md:flex items-center space-x-8">
               {navItems.map((item) => (
                 <button
                   key={item.value}
@@ -60,10 +64,20 @@ const Header: React.FC<HeaderProps> = ({ currentView, onChangeView, cobiVisible,
                 </button>
               ))}
 
+              {/* Language Toggle */}
+              <button
+                onClick={toggleLang}
+                title={lang === 'es' ? 'Switch to English' : 'Cambiar a Español'}
+                className="flex items-center gap-1.5 px-2.5 py-2 rounded-md transition-colors duration-200 hover:bg-gray-50 text-gray-500 hover:text-spanish-red text-sm font-semibold"
+              >
+                <Globe size={18} />
+                <span className="uppercase">{lang === 'es' ? 'EN' : 'ES'}</span>
+              </button>
+
               {/* Sound Toggle */}
               <button
                 onClick={onToggleSound}
-                title={soundEnabled ? 'Silenciar sonido' : 'Activar sonido'}
+                title={soundEnabled ? t('header.muteSound') : t('header.enableSound')}
                 className="flex items-center px-2 py-2 rounded-md transition-colors duration-200 hover:bg-gray-50 text-gray-500 hover:text-spanish-red"
               >
                 {soundEnabled ? <Volume2 size={20} /> : <VolumeX size={20} className="text-gray-400" />}
@@ -72,7 +86,7 @@ const Header: React.FC<HeaderProps> = ({ currentView, onChangeView, cobiVisible,
               {/* Cobi Toggle */}
               <button
                 onClick={onToggleCobi}
-                title={cobiVisible ? 'Ocultar a Cobi' : 'Mostrar a Cobi'}
+                title={cobiVisible ? t('header.hideCobi') : t('header.showCobi')}
                 className="flex items-center px-1 py-2 rounded-md transition-colors duration-200 hover:bg-gray-50"
               >
                 <div className={`relative w-12 h-[24px] rounded-full transition-colors duration-300 ${cobiVisible ? 'bg-spanish-red' : 'bg-gray-300'}`}>
@@ -124,7 +138,7 @@ const Header: React.FC<HeaderProps> = ({ currentView, onChangeView, cobiVisible,
               <span className="text-white font-bold text-lg">Ñ</span>
             </div>
             <span className="ml-3 text-xl font-bold text-deep-blue">
-              Menú
+              {t('header.menu')}
             </span>
           </div>
           <button
@@ -155,6 +169,17 @@ const Header: React.FC<HeaderProps> = ({ currentView, onChangeView, cobiVisible,
           {/* Divider */}
           <div className="border-t border-gray-100 my-3"></div>
 
+          {/* Language Toggle */}
+          <button
+            onClick={toggleLang}
+            className="flex items-center gap-3 w-full py-3 px-5 rounded-xl transition-all hover:bg-gray-50 min-h-[48px]"
+          >
+            <Globe size={22} className="text-gray-600 flex-shrink-0" />
+            <span className="text-base font-semibold text-gray-600">
+              {lang === 'es' ? 'English' : 'Español'}
+            </span>
+          </button>
+
           {/* Sound Toggle */}
           <button
             onClick={onToggleSound}
@@ -166,7 +191,7 @@ const Header: React.FC<HeaderProps> = ({ currentView, onChangeView, cobiVisible,
               <VolumeX size={22} className="text-gray-400 flex-shrink-0" />
             )}
             <span className={`text-base font-semibold ${soundEnabled ? 'text-gray-600' : 'text-gray-400'}`}>
-              {soundEnabled ? 'Sonido activado' : 'Sonido desactivado'}
+              {soundEnabled ? t('header.soundOn') : t('header.soundOff')}
             </span>
           </button>
 
@@ -190,14 +215,14 @@ const Header: React.FC<HeaderProps> = ({ currentView, onChangeView, cobiVisible,
               </div>
             </div>
             <span className={`text-base font-semibold ${cobiVisible ? 'text-gray-600' : 'text-gray-400'}`}>
-              {cobiVisible ? 'Cobi activo' : 'Cobi oculto'}
+              {cobiVisible ? t('header.cobiActive') : t('header.cobiHidden')}
             </span>
           </button>
         </div>
 
         {/* Footer */}
         <div className="p-5 text-center text-gray-400 text-xs border-t border-gray-100">
-          <p>© CobiSpanish</p>
+          <p>{t('header.copyright')}</p>
         </div>
       </div>
     </>

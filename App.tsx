@@ -11,6 +11,7 @@ import SocialMedia from './components/SocialMedia';
 import DraggableCobi from './components/DraggableCobi';
 import { View } from './types';
 import { hablarConPanda } from './services/geminiService';
+import { useI18n } from './services/i18n';
 
 // Mensajes de bienvenida para Cobi en la página principal
 const mensajesBienvenidaCobi = [
@@ -70,6 +71,7 @@ function parseHash(): { view: View; gameId: string | null } {
 // ────────────────────────────────────────────────────────────────────────────
 
 const App: React.FC = () => {
+  const { t } = useI18n();
   // Inicializar estado desde la URL (hash routing)
   const [currentView, setCurrentView] = useState<View>(() => parseHash().view);
   const [activeGameId, setActiveGameId] = useState<string | null>(() => parseHash().gameId);
@@ -197,7 +199,7 @@ const App: React.FC = () => {
       case View.HOME:
         return (
           <>
-            <Hero onStart={() => setCurrentView(View.GAMES)} />
+            <Hero onStart={() => setCurrentView(View.GAMES)} onResources={() => setCurrentView(View.RESOURCES)} />
             <MeetCobi />
             <GamesExplainer />
             <AboutMe />
@@ -211,7 +213,7 @@ const App: React.FC = () => {
       default:
         return (
           <>
-            <Hero onStart={() => setCurrentView(View.GAMES)} />
+            <Hero onStart={() => setCurrentView(View.GAMES)} onResources={() => setCurrentView(View.RESOURCES)} />
             <MeetCobi />
             <GamesExplainer />
             <AboutMe />
@@ -371,12 +373,12 @@ const App: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center">
           <div className="mb-4 md:mb-0">
             <span className="font-bold text-xl">CobiSpanish</span>
-            <p className="text-gray-400 text-sm mt-2">© 2024 Todos los derechos reservados.</p>
+            <p className="text-gray-400 text-sm mt-2">{t('footer.copyright')}</p>
           </div>
           <div className="flex space-x-6 text-sm text-gray-300">
             <a href="https://www.instagram.com/spanishwithignacio/" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Instagram</a>
             <a href="https://www.youtube.com/@SpanishwithIgnacio" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">YouTube</a>
-            <a href="#" className="hover:text-white transition-colors">Contacto</a>
+            <a href="#" className="hover:text-white transition-colors">{t('footer.contact')}</a>
           </div>
         </div>
       </footer>

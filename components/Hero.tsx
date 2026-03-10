@@ -1,10 +1,13 @@
 import React from 'react';
+import { useI18n } from '../services/i18n';
 
 interface HeroProps {
   onStart: () => void;
+  onResources: () => void;
 }
 
-const Hero: React.FC<HeroProps> = ({ onStart }) => {
+const Hero: React.FC<HeroProps> = ({ onStart, onResources }) => {
+  const { t } = useI18n();
   return (
     <div className="relative overflow-hidden bg-cream">
         
@@ -15,14 +18,14 @@ const Hero: React.FC<HeroProps> = ({ onStart }) => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-32 relative z-10">
         <div className="text-center max-w-3xl mx-auto">
           <h1 className="text-5xl md:text-7xl font-extrabold text-deep-blue mb-8 tracking-tight leading-tight">
-            ¡Aprende español <br />
+            {t('hero.titleLine1')} <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-spanish-red to-orange-600">
-              divirtiéndote!
+              {t('hero.titleLine2')}
             </span>
           </h1>
           
           <p className="text-xl md:text-2xl text-gray-600 mb-10 leading-relaxed">
-            Elige uno de nuestros juegos y completa desafíos junto a Cobi, tu compañero en tu aventura para aprender español
+            {t('hero.subtitle')}
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -30,10 +33,13 @@ const Hero: React.FC<HeroProps> = ({ onStart }) => {
               onClick={onStart}
               className="px-8 py-4 bg-spanish-red text-white text-lg font-bold rounded-full shadow-lg hover:bg-red-700 hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
             >
-              Empezar a Jugar
+              {t('hero.cta')}
             </button>
-            <button className="px-8 py-4 bg-white text-deep-blue border-2 border-deep-blue/10 text-lg font-bold rounded-full hover:border-deep-blue hover:bg-blue-50 transition-all duration-300">
-              Ver Recursos
+            <button 
+              onClick={onResources}
+              className="px-8 py-4 bg-white text-deep-blue border-2 border-deep-blue/10 text-lg font-bold rounded-full hover:border-deep-blue hover:bg-blue-50 transition-all duration-300"
+            >
+              {t('hero.secondary')}
             </button>
           </div>
         </div>

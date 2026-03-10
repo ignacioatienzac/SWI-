@@ -1,7 +1,9 @@
 import React from 'react';
 import avatarImage from '../public/data/images/avatar-ignacio.webp';
+import { useI18n } from '../services/i18n';
 
 const AboutMe: React.FC = () => {
+  const { t } = useI18n();
   return (
     <section className="bg-white py-16 md:py-24 overflow-hidden">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -12,16 +14,12 @@ const AboutMe: React.FC = () => {
           {/* LEFT COLUMN (desktop) — 60% (3/5): Title + Text */}
           <div className="md:col-span-3 text-center md:text-left order-2 md:order-1">
             <h2 className="text-3xl md:text-5xl font-extrabold text-deep-blue mb-6 leading-tight text-center">
-              El creador de CobiSpanish
+              {t('aboutMe.title')}
             </h2>
 
             <div className="space-y-5 text-gray-600 text-base sm:text-lg md:text-xl leading-relaxed font-light">
-              <p className="text-justify">
-                Ignacio es un profesor con <span className="font-semibold text-deep-blue">más de 10 años de experiencia</span> guiando a estudiantes de todo el mundo en su camino hacia el español. Como apasionado de la tecnología y la innovación educativa, siempre creyó que aprender un idioma debería sentirse menos como una tarea y más como un descubrimiento.
-              </p>
-              <p className="text-justify">
-                Por eso comenzó a crear <span className="font-semibold text-spanish-red">CobiSpanish</span>: un espacio donde sus dos pasiones se unen para ofrecerte recursos interactivos y juegos que rompen con lo tradicional. Su meta es que, con la ayuda de herramientas creativas (y de nuestro querido Cobi), logres la fluidez que buscas de una forma divertida, visual y realmente memorable.
-              </p>
+              <p className="text-justify" dangerouslySetInnerHTML={{ __html: t('aboutMe.paragraph1') }} />
+              <p className="text-justify" dangerouslySetInnerHTML={{ __html: t('aboutMe.paragraph2') }} />
             </div>
 
             {/* STATS — visible only on MOBILE (below text) */}
@@ -29,15 +27,15 @@ const AboutMe: React.FC = () => {
               <div className="flex items-start justify-center gap-10 sm:gap-14">
                 <div className="text-center">
                   <span className="block text-3xl sm:text-4xl font-extrabold text-deep-blue leading-none">10+</span>
-                  <span className="text-xs sm:text-sm text-gray-400 mt-1 block">Años enseñando</span>
+                  <span className="text-xs sm:text-sm text-gray-400 mt-1 block">{t('aboutMe.statYears')}</span>
                 </div>
                 <div className="text-center">
                   <span className="block text-3xl sm:text-4xl font-extrabold text-deep-blue leading-none">5k+</span>
-                  <span className="text-xs sm:text-sm text-gray-400 mt-1 block">Alumnos felices</span>
+                  <span className="text-xs sm:text-sm text-gray-400 mt-1 block">{t('aboutMe.statStudents')}</span>
                 </div>
                 <div className="text-center">
                   <span className="block text-3xl sm:text-4xl font-extrabold text-deep-blue leading-none">∞</span>
-                  <span className="text-xs sm:text-sm text-gray-400 mt-1 block">Recursos creados</span>
+                  <span className="text-xs sm:text-sm text-gray-400 mt-1 block">{t('aboutMe.statResources')}</span>
                 </div>
               </div>
             </div>
@@ -63,15 +61,15 @@ const AboutMe: React.FC = () => {
               <div className="flex items-start justify-center gap-10">
                 <div className="text-center">
                   <span className="block text-3xl font-extrabold text-deep-blue leading-none">10+</span>
-                  <span className="text-xs text-gray-400 mt-1 block">Años enseñando</span>
+                  <span className="text-xs text-gray-400 mt-1 block">{t('aboutMe.statYears')}</span>
                 </div>
                 <div className="text-center">
                   <span className="block text-3xl font-extrabold text-deep-blue leading-none">5k+</span>
-                  <span className="text-xs text-gray-400 mt-1 block">Alumnos felices</span>
+                  <span className="text-xs text-gray-400 mt-1 block">{t('aboutMe.statStudents')}</span>
                 </div>
                 <div className="text-center">
                   <span className="block text-3xl font-extrabold text-deep-blue leading-none">∞</span>
-                  <span className="text-xs text-gray-400 mt-1 block">Recursos creados</span>
+                  <span className="text-xs text-gray-400 mt-1 block">{t('aboutMe.statResources')}</span>
                 </div>
               </div>
             </div>

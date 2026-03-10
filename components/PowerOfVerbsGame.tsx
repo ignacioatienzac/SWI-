@@ -3009,7 +3009,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
           </div>
 
           {/* Canvas with Boss Preparation Overlay */}
-          <div className={`relative bg-white shadow-2xl ${isMobile && isLandscape ? 'rounded-xl mb-2' : isMobile ? 'rounded-2xl mb-6' : 'rounded-2xl mb-[15px] flex-1 min-h-0'}`}>
+          <div className={`relative bg-white shadow-2xl ${isMobile && isLandscape ? 'rounded-xl mb-2' : isMobile ? 'rounded-2xl mb-6' : 'rounded-2xl mb-[15px]'}`}>
             <canvas
               ref={canvasRef}
               width={canvasDims.w}

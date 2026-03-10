@@ -1,58 +1,55 @@
 [
   {
     "id": 1,
-    "frase_objetivo": "Si mañana hace buen tiempo, iremos a la montaña.",
+    "frase_objetivo": "Si hace buen tiempo, iremos a la montaña.",
     "trampas": ["haga", "fuimos"],
     "variaciones_validas": [
-      "Si hace buen tiempo mañana, iremos a la montaña."
+      "Si hace buen tiempo, iremos a la montaña."
     ],
     "pistas": {
       "tema": "Condicional Real (Si + Presente + Futuro)",
       "descripcion_en": "Talk about plans dependent on the weather.",
-      "traduccion_en": "If it's good weather tomorrow, we will go to the mountains."
+      "traduccion_en": "If the weather is good, we will go to the mountains."
     }
   },
   {
     "id": 2,
-    "frase_objetivo": "Espero que tengas mucha suerte en tu examen.",
+    "frase_objetivo": "Espero que tengas suerte en tu examen.",
     "trampas": ["tienes", "la"],
     "pistas": {
       "tema": "Subjuntivo (Deseos)",
       "descripcion_en": "Express a wish for someone taking an exam.",
-      "traduccion_en": "I hope you have a lot of luck in your exam."
+      "traduccion_en": "I hope you have luck in your exam."
     }
   },
   {
     "id": 3,
-    "frase_objetivo": "Cuando llegué a la fiesta, ellos ya se habían ido.",
+    "frase_objetivo": "Cuando llegué, ellos ya se habían ido.",
     "trampas": ["fueron", "estaba"],
     "pistas": {
       "tema": "Pluscuamperfecto",
       "descripcion_en": "Describe an action completed before another past action.",
-      "traduccion_en": "When I arrived at the party, they had already left."
+      "traduccion_en": "When I arrived, they had already left."
     }
   },
   {
     "id": 4,
-    "frase_objetivo": "No se lo he dicho todavía porque quiero darle una sorpresa.",
+    "frase_objetivo": "No se lo he dicho todavía.",
     "trampas": ["le", "la"],
     "pistas": {
       "tema": "Pronombres OD e OI (se lo)",
       "descripcion_en": "Explain why you haven't shared news yet.",
-      "traduccion_en": "I haven't told him/her yet because I want to give a surprise."
+      "traduccion_en": "I haven't told him/her yet."
     }
   },
   {
     "id": 5,
-    "frase_objetivo": "En cuanto a los deberes, los terminaré antes de cenar.",
+    "frase_objetivo": "Los deberes los terminaré antes de cenar.",
     "trampas": ["Relación", "cena"],
-    "variaciones_validas": [
-      "En cuanto a los deberes, antes de cenar los terminaré."
-    ],
     "pistas": {
-      "tema": "Conector (En cuanto a) + Futuro",
-      "descripcion_en": "Use a formal connector to introduce a topic.",
-      "traduccion_en": "As for the homework, I will finish it before dinner."
+      "tema": "Pronombre OD",
+      "descripcion_en": "Use direct object to refer to the homework.",
+      "traduccion_en": "I will finish it before dinner."
     }
   },
   {

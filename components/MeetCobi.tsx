@@ -1,8 +1,10 @@
 import React from 'react';
+import { useI18n } from '../services/i18n';
 
 const cobiImage = `${import.meta.env.BASE_URL}data/images/favicon-cobi.png`;
 
 const MeetCobi: React.FC = () => {
+  const { t } = useI18n();
   return (
     <section className="bg-white py-20 border-b border-gray-100 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -32,16 +34,16 @@ const MeetCobi: React.FC = () => {
           {/* Content Side */}
           <div className="w-full md:w-1/2 text-center md:text-left z-10">
             <div className="inline-block px-4 py-1.5 bg-red-50 text-spanish-red font-bold text-xs uppercase tracking-widest rounded-full mb-6">
-              Conoce a Cobi
+              {t('meetCobi.badge')}
             </div>
             
             <h3 className="text-3xl md:text-5xl font-extrabold text-deep-blue mb-6 leading-tight">
-              ¡Hola! Soy Cobi 🐾
+              {t('meetCobi.title')}
             </h3>
             
             <div className="space-y-6 text-gray-600 text-lg md:text-xl leading-relaxed font-light">
               <p className="text-justify">
-                ¡Hola! Soy Cobi, un panda rojo apasionado por los idiomas y seré tu compañero en esta aventura. Durante los juegos, te daré pistas para que nada te detenga. Si tienes dudas, haz clic en el botón de mi patita para hablar conmigo. <span className="font-bold text-spanish-red">¡Soy un experto en lengua y cultura hispana y estoy aquí para ayudarte!</span>
+                {t('meetCobi.paragraph')} <span className="font-bold text-spanish-red">{t('meetCobi.highlight')}</span>
               </p>
             </div>
           </div>
