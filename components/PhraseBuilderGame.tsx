@@ -536,7 +536,7 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
   // Calculate color hints for selected words
   const calculateColorHints = () => {
     const currentPhrase = phrases[currentPhraseIndex];
-    const normalize = (str: string) => str.toLowerCase().replace(/[.,]/g, '').replace(/\s+/g, ' ').trim();
+    const normalize = (str: string) => str.toLowerCase().replace(/[.,:;]/g, '').replace(/\s+/g, ' ').trim();
     
     // Get the correct answer (including commas as separate blocks, excluding periods)
     const correctWords = currentPhrase.frase_objetivo.match(/[\w\u00C0-\u024F]+|[,!?¡¿]/g)?.filter(w => w !== '.') || [];
@@ -577,8 +577,8 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
     const currentPhrase = phrases[currentPhraseIndex];
     const userAnswer = joinWords(selectedWords);
     
-    // Normalize for comparison - remove periods, commas, normalize whitespace and case
-    const normalize = (str: string) => str.toLowerCase().replace(/[.,]/g, '').replace(/\s+/g, ' ').trim();
+    // Normalize for comparison - remove periods, commas, colons, semicolons, normalize whitespace and case
+    const normalize = (str: string) => str.toLowerCase().replace(/[.,:;]/g, '').replace(/\s+/g, ' ').trim();
     
     let isCorrect = false;
     

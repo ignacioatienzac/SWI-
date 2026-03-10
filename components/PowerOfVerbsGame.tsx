@@ -664,6 +664,14 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
   // Mobile detection & responsive canvas
   const [isMobile, setIsMobile] = useState(false);
   const [isLandscape, setIsLandscape] = useState(false);
+
+  // Prevent page scroll on desktop while playing
+  useEffect(() => {
+    if (gameState === 'PLAYING' && !isMobile) {
+      document.body.style.overflow = 'hidden';
+      return () => { document.body.style.overflow = ''; };
+    }
+  }, [gameState, isMobile]);
   const [canvasDims, setCanvasDims] = useState({ w: 872, h: 396 });
 
   useEffect(() => {
@@ -2973,10 +2981,10 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
   if (gameState === 'PLAYING') {
     // Both modes use the same canvas-based UI
     return (
-      <div className={`min-h-screen bg-deep-blue flex flex-col items-center justify-start ${isMobile && isLandscape ? 'p-1 pt-1' : 'p-4 pt-8'}`}>
-        <div className={`w-full max-w-4xl ${screenShake ? 'animate-[screenShake_0.5s_ease-in-out]' : ''}`}>
+      <div className={`bg-deep-blue flex flex-col items-center justify-start ${isMobile && isLandscape ? 'min-h-screen p-1 pt-1' : isMobile ? 'min-h-screen p-4 pt-8' : 'h-[calc(100vh-5rem)] p-[15px] overflow-hidden'}`}>
+        <div className={`w-full max-w-4xl ${!isMobile ? 'flex flex-col h-full' : ''} ${screenShake ? 'animate-[screenShake_0.5s_ease-in-out]' : ''}`}>
           {/* Header - minimal on mobile landscape */}
-          <div className={`flex justify-between items-center text-white ${isMobile && isLandscape ? 'mb-1 px-2' : 'mb-4'}`}>
+          <div className={`flex justify-between items-center text-white flex-shrink-0 ${isMobile && isLandscape ? 'mb-1 px-2' : isMobile ? 'mb-4' : 'mb-[15px]'}`}>
             <button onClick={() => setGameState('SELECTION')} className="p-1 md:p-2 hover:bg-white/10 rounded-full">
               <ChevronLeft size={isMobile && isLandscape ? 20 : 32} />
             </button>
@@ -3001,7 +3009,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
           </div>
 
           {/* Canvas with Boss Preparation Overlay */}
-          <div className={`relative bg-white shadow-2xl ${isMobile && isLandscape ? 'rounded-xl mb-2' : 'rounded-2xl mb-6'}`}>
+          <div className={`relative bg-white shadow-2xl ${isMobile && isLandscape ? 'rounded-xl mb-2' : isMobile ? 'rounded-2xl mb-6' : 'rounded-2xl mb-[15px] flex-1 min-h-0'}`}>
             <canvas
               ref={canvasRef}
               width={canvasDims.w}
@@ -3149,21 +3157,21 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
               )}
             </div>
           ) : (
-          <div className={`bg-white shadow-2xl ${isMobile && isLandscape ? 'rounded-xl p-3' : 'rounded-2xl p-8'}`}>
+          <div className={`bg-white shadow-2xl flex-shrink-0 ${isMobile && isLandscape ? 'rounded-xl p-3' : isMobile ? 'rounded-2xl p-8' : 'rounded-2xl py-3 px-6'}`}>
             {currentVerb ? (
               <div>
                 {/* Nuevo layout: verbo,pronombre a la izquierda, tiempo verbal en rectángulo azul a la derecha */}
-                <div className={`flex justify-between items-center ${isMobile && isLandscape ? 'mb-2' : 'mb-6'}`}>
-                  <h2 className={`font-bold text-deep-blue ${isMobile && isLandscape ? 'text-base' : 'text-2xl'}`}>
+                <div className={`flex justify-between items-center ${isMobile && isLandscape ? 'mb-2' : isMobile ? 'mb-6' : 'mb-2'}`}>
+                  <h2 className={`font-bold text-deep-blue ${isMobile && isLandscape ? 'text-base' : isMobile ? 'text-2xl' : 'text-lg'}`}>
                     {currentVerb.verb}, {currentVerb.pronoun}
                   </h2>
-                  <div className={`bg-deep-blue text-white rounded-lg font-bold ${isMobile && isLandscape ? 'px-3 py-1 text-xs' : 'px-6 py-2'}`}>
+                  <div className={`bg-deep-blue text-white rounded-lg font-bold ${isMobile && isLandscape ? 'px-3 py-1 text-xs' : isMobile ? 'px-6 py-2' : 'px-4 py-1 text-sm'}`}>
                     {currentVerb.tense}
                   </div>
                 </div>
 
                 {selectedMode === 'write' ? (
-                  <div className="space-y-4">
+                  <div className={isMobile ? 'space-y-4' : 'flex gap-2'}>
                     <input
                       id="verb-input"
                       type="text"
@@ -3219,22 +3227,22 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
                         }
                       }}
                       placeholder="Escribe tu respuesta..."
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-deep-blue text-lg"
+                      className={`px-4 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-deep-blue ${isMobile ? 'w-full py-3 text-lg' : 'flex-1 py-1.5 text-sm'}`}
                     />
                     <button
                       onClick={() => handleAnswer(userInput)}
-                      className="w-full bg-deep-blue hover:bg-blue-900 text-white font-bold py-3 rounded-lg transition-colors"
+                      className={`bg-deep-blue hover:bg-blue-900 text-white font-bold rounded-lg transition-colors ${isMobile ? 'w-full py-3' : 'px-6 py-1.5 text-sm'}`}
                     >
                       Verificar Respuesta
                     </button>
                   </div>
                 ) : (
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className={`grid grid-cols-2 ${isMobile ? 'gap-3' : 'gap-2'}`}>
                     {choiceOptions.map((option, idx) => (
                       <button
                         key={idx}
                         onClick={() => handleAnswer(option)}
-                        className="p-4 bg-gray-100 hover:bg-deep-blue hover:text-white font-bold rounded-lg transition-colors text-lg"
+                        className={`bg-gray-100 hover:bg-deep-blue hover:text-white font-bold rounded-lg transition-colors ${isMobile ? 'p-4 text-lg' : 'p-2 text-sm'}`}
                       >
                         {option}
                       </button>
@@ -3242,13 +3250,18 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
                   </div>
                 )}
 
-                <div className="mt-4 h-8 flex items-center justify-center">
-                  {feedbackMsg.text && (
-                    <p className={`text-lg font-bold ${feedbackMsg.type === 'success' ? 'text-green-600' : 'text-red-600'}`}>
-                      {feedbackMsg.text}
-                    </p>
-                  )}
-                </div>
+                {isMobile && (
+                  <div className="mt-4 h-8 flex items-center justify-center">
+                    {feedbackMsg.text && (
+                      <p className={`text-lg font-bold ${feedbackMsg.type === 'success' ? 'text-green-600' : 'text-red-600'}`}>
+                        {feedbackMsg.text}
+                      </p>
+                    )}
+                  </div>
+                )}
+                {!isMobile && (
+                  <p className="mt-1 text-[10px] text-gray-400 text-center leading-tight">Usa las teclas 1-5 para vocales con tilde (á é í ó ú)</p>
+                )}
               </div>
             ) : (
               <p className="text-center text-gray-500">Cargando...</p>
