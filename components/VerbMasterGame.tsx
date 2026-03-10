@@ -424,6 +424,14 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
+
+  // Prevent page scroll on desktop while playing
+  useEffect(() => {
+    if (gameState === 'PLAYING' && !isMobile) {
+      document.body.style.overflow = 'hidden';
+      return () => { document.body.style.overflow = ''; };
+    }
+  }, [gameState, isMobile]);
   
   // --- Dynamic canvas dimensions ---
   // Base reference: 800×600.  On desktop, ResizeObserver sets real pixel size.
@@ -1922,7 +1930,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
   // --- PLAYING STATE ---
   if (gameState === 'PLAYING') {
     return (
-      <div className="min-h-screen md:h-[calc(100vh-5rem)] bg-gray-50 p-4 md:p-[10px] relative md:overflow-hidden">
+      <div className="min-h-screen md:min-h-0 md:h-[calc(100vh-5rem)] bg-gray-50 p-4 md:p-[10px] relative md:overflow-hidden">
         <div className="max-w-4xl mx-auto md:flex md:flex-col md:h-full md:gap-[10px]">
           {/* Header */}
           <div className="flex justify-between items-center mb-4 md:mb-0 bg-white rounded-2xl p-4 md:py-1 md:px-3 shadow-md md:flex-shrink-0">

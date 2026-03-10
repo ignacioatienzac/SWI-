@@ -1,0 +1,581 @@
+[
+  {
+    "id": 1,
+    "frase_objetivo": "Si mañana hace buen tiempo, iremos a la montaña.",
+    "trampas": ["haga", "fuimos"],
+    "variaciones_validas": [
+      "Si hace buen tiempo mañana, iremos a la montaña."
+    ],
+    "pistas": {
+      "tema": "Condicional Real (Si + Presente + Futuro)",
+      "descripcion_en": "Talk about plans dependent on the weather.",
+      "traduccion_en": "If it's good weather tomorrow, we will go to the mountains."
+    }
+  },
+  {
+    "id": 2,
+    "frase_objetivo": "Espero que tengas mucha suerte en tu examen.",
+    "trampas": ["tienes", "la"],
+    "pistas": {
+      "tema": "Subjuntivo (Deseos)",
+      "descripcion_en": "Express a wish for someone taking an exam.",
+      "traduccion_en": "I hope you have a lot of luck in your exam."
+    }
+  },
+  {
+    "id": 3,
+    "frase_objetivo": "Cuando llegué a la fiesta, ellos ya se habían ido.",
+    "trampas": ["fueron", "estaba"],
+    "pistas": {
+      "tema": "Pluscuamperfecto",
+      "descripcion_en": "Describe an action completed before another past action.",
+      "traduccion_en": "When I arrived at the party, they had already left."
+    }
+  },
+  {
+    "id": 4,
+    "frase_objetivo": "No se lo he dicho todavía porque quiero darle una sorpresa.",
+    "trampas": ["le", "la"],
+    "pistas": {
+      "tema": "Pronombres OD e OI (se lo)",
+      "descripcion_en": "Explain why you haven't shared news yet.",
+      "traduccion_en": "I haven't told him/her yet because I want to give a surprise."
+    }
+  },
+  {
+    "id": 5,
+    "frase_objetivo": "En cuanto a los deberes, los terminaré antes de cenar.",
+    "trampas": ["Relación", "cena"],
+    "variaciones_validas": [
+      "En cuanto a los deberes, antes de cenar los terminaré."
+    ],
+    "pistas": {
+      "tema": "Conector (En cuanto a) + Futuro",
+      "descripcion_en": "Use a formal connector to introduce a topic.",
+      "traduccion_en": "As for the homework, I will finish it before dinner."
+    }
+  },
+  {
+    "id": 6,
+    "frase_objetivo": "Dudo que ellos sepan la verdad sobre el accidente.",
+    "trampas": ["saben", "la"],
+    "pistas": {
+      "tema": "Subjuntivo (Duda)",
+      "descripcion_en": "Express doubt about people knowing the truth.",
+      "traduccion_en": "I doubt that they know the truth about the accident."
+    }
+  },
+  {
+    "id": 7,
+    "frase_objetivo": "Te lo enviaré por correo electrónico mañana sin falta.",
+    "trampas": ["Le", "envío"],
+    "variaciones_validas": [
+      "Te lo enviaré mañana sin falta por correo electrónico."
+    ],
+    "pistas": {
+      "tema": "Futuro + Pronombres",
+      "descripcion_en": "Promise to send something by email.",
+      "traduccion_en": "I will send it to you by email tomorrow without fail."
+    }
+  },
+  {
+    "id": 8,
+    "frase_objetivo": "Es necesario que reciclemos más plástico para proteger el planeta.",
+    "trampas": ["reciclamos", "protegemos"],
+    "pistas": {
+      "tema": "Subjuntivo (Impersonal)",
+      "descripcion_en": "Express necessity about recycling.",
+      "traduccion_en": "It is necessary for us to recycle more plastic to protect the planet."
+    }
+  },
+  {
+    "id": 9,
+    "frase_objetivo": "Si estudias un poco más, aprobarás el nivel B1.",
+    "trampas": ["estudies", "aprobaste"],
+    "pistas": {
+      "tema": "Condicional Real",
+      "descripcion_en": "Predict a result based on study habits.",
+      "traduccion_en": "If you study a bit more, you will pass the B1 level."
+    }
+  },
+  {
+    "id": 10,
+    "frase_objetivo": "Me dijo que nunca antes había estado en Madrid.",
+    "trampas": ["estaba", "estuvo"],
+    "variaciones_validas": [
+      "Me dijo que nunca había estado en Madrid antes."
+    ],
+    "pistas": {
+      "tema": "Pluscuamperfecto",
+      "descripcion_en": "Report what someone said about their past experience.",
+      "traduccion_en": "He/she told me that he/she had never been to Madrid before."
+    }
+  },
+  {
+    "id": 11,
+    "frase_objetivo": "No creo que haga frío este fin de semana.",
+    "trampas": ["hace", "quiero"],
+    "variaciones_validas": [
+      "No creo que este fin de semana haga frío."
+    ],
+    "pistas": {
+      "tema": "Subjuntivo (Opinión negativa)",
+      "descripcion_en": "Give an opinion about the upcoming weather.",
+      "traduccion_en": "I don't think it will be cold this weekend."
+    }
+  },
+  {
+    "id": 12,
+    "frase_objetivo": "Sobre todo, me gusta viajar y conocer gente nueva.",
+    "trampas": ["todos", "conozco"],
+    "variaciones_validas": [
+      "Sobre todo, me gusta conocer gente nueva y viajar."
+    ],
+    "pistas": {
+      "tema": "Conector (Sobre todo)",
+      "descripcion_en": "Emphasize your favorite activities.",
+      "traduccion_en": "Above all, I like traveling and meeting new people."
+    }
+  },
+  {
+    "id": 13,
+    "frase_objetivo": "Cuando tenga tiempo, te ayudaré con el proyecto.",
+    "trampas": ["tengo", "ayude"],
+    "pistas": {
+      "tema": "Subjuntivo (Futuro con 'cuando')",
+      "descripcion_en": "Promise future help dependent on time.",
+      "traduccion_en": "When I have time, I will help you with the project."
+    }
+  },
+  {
+    "id": 14,
+    "frase_objetivo": "Se lo compraré a mi hermana por su graduación.",
+    "trampas": ["le", "para"],
+    "variaciones_validas": [
+      "Se lo compraré por su graduación a mi hermana."
+    ],
+    "pistas": {
+      "tema": "Pronombres (se lo) + Futuro",
+      "descripcion_en": "Discuss a gift for a sister's graduation.",
+      "traduccion_en": "I will buy it for my sister for her graduation."
+    }
+  },
+  {
+    "id": 15,
+    "frase_objetivo": "Por lo tanto, hemos decidido cancelar el viaje a Italia.",
+    "trampas": ["cancelando", "Para"],
+    "pistas": {
+      "tema": "Conector (Por lo tanto)",
+      "descripcion_en": "Express a consequence of a previous situation.",
+      "traduccion_en": "Therefore, we have decided to cancel the trip to Italy."
+    }
+  },
+  {
+    "id": 16,
+    "frase_objetivo": "Busco un hotel que sea barato y esté céntrico.",
+    "trampas": ["es", "está"],
+    "variaciones_validas": [
+      "Busco un hotel que esté céntrico y sea barato."
+    ],
+    "pistas": {
+      "tema": "Subjuntivo (Antecedente desconocido)",
+      "descripcion_en": "Describe the characteristics of a hotel you are looking for.",
+      "traduccion_en": "I am looking for a hotel that is cheap and centrally located."
+    }
+  },
+  {
+    "id": 17,
+    "frase_objetivo": "Si no llegamos tarde, podremos ver el inicio del partido.",
+    "trampas": ["lleguemos", "podamos"],
+    "pistas": {
+      "tema": "Condicional Real",
+      "descripcion_en": "Talk about being on time for a game.",
+      "traduccion_en": "If we don't arrive late, we will be able to see the start of the match."
+    }
+  },
+  {
+    "id": 18,
+    "frase_objetivo": "Ella ya se había acostado cuando tú la llamaste.",
+    "trampas": ["acostaba", "le"],
+    "variaciones_validas": [
+      "Ella ya se había acostado cuando la llamaste tú."
+    ],
+    "pistas": {
+      "tema": "Pluscuamperfecto",
+      "descripcion_en": "Contrast an earlier past action with a later one.",
+      "traduccion_en": "She had already gone to bed when you called her."
+    }
+  },
+  {
+    "id": 19,
+    "frase_objetivo": "No me importa que ellos vengan a cenar hoy.",
+    "trampas": ["vienen"],
+    "variaciones_validas": [
+      "No me importa que vengan a cenar ellos hoy.", "No me importa que vengan a cenar hoy ellos."
+    ],
+    "pistas": {
+      "tema": "Subjuntivo (Sentimiento)",
+      "descripcion_en": "Express indifference about guests coming over.",
+      "traduccion_en": "I don't mind them coming for dinner today."
+    }
+  },
+  {
+    "id": 20,
+    "frase_objetivo": "Se lo presentaré a mis padres el próximo domingo.",
+    "trampas": ["Te", "viene"],
+    "variaciones_validas": [
+      "Se lo presentaré el próximo domingo a mis padres."
+    ],
+    "pistas": {
+      "tema": "Pronombres + Futuro",
+      "descripcion_en": "Plan an introduction to parents.",
+      "traduccion_en": "I will introduce him/it to my parents next Sunday."
+    }
+  },
+  {
+    "id": 21,
+    "frase_objetivo": "Es posible que vayamos a vivir al extranjero pronto.",
+    "trampas": ["vamos", "el"],
+    "variaciones_validas": [
+      "Es posible que vayamos pronto a vivir al extranjero.", "Es posible que vayamos a vivir pronto al extranjero.", "Es posible que pronto vayamos a vivir al extranjero."
+    ],
+    "pistas": {
+      "tema": "Subjuntivo (Probabilidad)",
+      "descripcion_en": "Discuss the possibility of moving abroad.",
+      "traduccion_en": "It is possible that we will go to live abroad soon."
+    }
+  },
+  {
+    "id": 22,
+    "frase_objetivo": "En cuanto termine el curso, viajaré por toda Europa.",
+    "trampas": ["terminaré", "viaje"],
+    "pistas": {
+      "tema": "Subjuntivo (Temporal futuro)",
+      "descripcion_en": "Express plans for right after the course ends.",
+      "traduccion_en": "As soon as I finish the course, I will travel across Europe."
+    }
+  },
+  {
+    "id": 23,
+    "frase_objetivo": "Dile que se lo explicaré todo cuando nos veamos.",
+    "trampas": ["la", "vemos"],
+    "variaciones_validas": [
+      "Dile que cuando nos veamos se lo explicaré todo."
+    ],
+    "pistas": {
+      "tema": "Combinación de tiempos y pronombres",
+      "descripcion_en": "Instruct someone to pass on a message about a future explanation.",
+      "traduccion_en": "Tell him/her that I will explain everything when we see each other."
+    }
+  },
+  {
+    "id": 24,
+    "frase_objetivo": "Nunca me habían tratado tan bien en una tienda.",
+    "trampas": ["trataron", "hubieron"],
+    "variaciones_validas": [
+      "Nunca me habían tratado en una tienda tan bien."
+    ],
+    "pistas": {
+      "tema": "Pluscuamperfecto (Experiencia)",
+      "descripcion_en": "Describe an unprecedented good experience.",
+      "traduccion_en": "I had never been treated so well in a store."
+    }
+  },
+  {
+    "id": 25,
+    "frase_objetivo": "Si quieres, te lo puedo prestar durante unos días.",
+    "trampas": ["quieras", "presentar"],
+    "pistas": {
+      "tema": "Condicional / Pronombres",
+      "descripcion_en": "Offer to lend something to a friend.",
+      "traduccion_en": "If you want, I can lend it to you for a few days."
+    }
+  },
+  {
+    "id": 26,
+    "frase_objetivo": "Te aconsejo que hables con tu jefe lo antes posible.",
+    "trampas": ["hablas", "la"],
+    "variaciones_validas": [
+      "Te aconsejo que hables lo antes posible con tu jefe."
+    ],
+    "pistas": {
+      "tema": "Subjuntivo (Consejo)",
+      "descripcion_en": "Give advice about talking to a boss.",
+      "traduccion_en": "I advise you to talk to your boss as soon as possible."
+    }
+  },
+  {
+    "id": 27,
+    "frase_objetivo": "Mañana habrá una huelga de transportes en toda la ciudad.",
+    "trampas": ["haya", "la"],
+    "variaciones_validas": [
+      "Mañana en toda la ciudad habrá una huelga de transportes."
+    ],
+    "pistas": {
+      "tema": "Futuro (Habrá)",
+      "descripcion_en": "Announce an upcoming transport strike.",
+      "traduccion_en": "Tomorrow there will be a transport strike in the whole city."
+    }
+  },
+  {
+    "id": 28,
+    "frase_objetivo": "Quiero que vengas a mi fiesta el viernes.",
+    "trampas": ["vienes", "vendrás"],
+    "variaciones_validas": [
+      "Quiero que vengas el viernes a mi fiesta."
+    ],
+    "pistas": {
+      "tema": "Subjuntivo (Deseo cortés)",
+      "descripcion_en": "Invite someone to a party politely.",
+      "traduccion_en": "I want you to come to my party on Friday."
+    }
+  },
+  {
+    "id": 29,
+    "frase_objetivo": "He guardado el documento, pero no sé dónde se guardó.",
+    "trampas": ["guardé", "lo"],
+    "pistas": {
+      "tema": "Pasiva refleja / Perfecto",
+      "descripcion_en": "Complain about a lost saved file.",
+      "traduccion_en": "I have saved the document but I don't know where it was saved."
+    }
+  },
+  {
+    "id": 30,
+    "frase_objetivo": "En cuanto a los precios, son demasiado caros para nosotros.",
+    "trampas": ["sean", "cuando"],
+    "pistas": {
+      "tema": "Conector (En cuanto a)",
+      "descripcion_en": "Complain about the price of something.",
+      "traduccion_en": "As for the prices, they are too expensive for us."
+    }
+  },
+  {
+    "id": 31,
+    "frase_objetivo": "No creo que él sepa conducir un coche manual.",
+    "trampas": ["sabe", "sepas"],
+    "pistas": {
+      "tema": "Subjuntivo (Opinión)",
+      "descripcion_en": "Doubt someone's driving skills.",
+      "traduccion_en": "I don't think he knows how to drive a manual car."
+    }
+  },
+  {
+    "id": 32,
+    "frase_objetivo": "Te lo prometo: no se lo diré a nadie.",
+    "trampas": ["la", "diga"],
+    "pistas": {
+      "tema": "Futuro + Pronombres",
+      "descripcion_en": "Make a promise to keep a secret.",
+      "traduccion_en": "I promise you: I won't tell anyone."
+    }
+  },
+  {
+    "id": 33,
+    "frase_objetivo": "Busco a alguien que hable japonés y viva en Barcelona.",
+    "trampas": ["algún", "la"],
+    "variaciones_validas": [
+      "Busco a alguien que viva en Barcelona y hable japonés."
+    ],
+    "pistas": {
+      "tema": "Subjuntivo (Antecedente inexistente)",
+      "descripcion_en": "Describe a person you are looking for.",
+      "traduccion_en": "I am looking for someone who speaks Japanese and lives in Barcelona."
+    }
+  },
+  {
+    "id": 34,
+    "frase_objetivo": "Si no llueve pronto, las plantas se secarán este verano.",
+    "trampas": ["llueva", "sequen"],
+    "variaciones_validas": [
+      "Si no llueve pronto, las plantas este verano se secarán."
+    ],
+    "pistas": {
+      "tema": "Condicional Real",
+      "descripcion_en": "Predict a consequence of a drought.",
+      "traduccion_en": "If it doesn't rain soon, the plants will dry out this summer."
+    }
+  },
+  {
+    "id": 35,
+    "frase_objetivo": "Mis padres ya se habían marchado cuando llegamos nosotros.",
+    "trampas": ["cuándo", "habíamos"],
+    "pistas": {
+      "tema": "Pluscuamperfecto",
+      "descripcion_en": "Describe missing someone because they left early.",
+      "traduccion_en": "My parents had already left when we arrived."
+    }
+  },
+  {
+    "id": 36,
+    "frase_objetivo": "Es una pena que no puedas venir al cine.",
+    "trampas": ["puedes", "la"],
+    "pistas": {
+      "tema": "Subjuntivo (Sentimiento)",
+      "descripcion_en": "Express regret that a friend cannot come.",
+      "traduccion_en": "It's a pity that you can't come to the cinema."
+    }
+  },
+  {
+    "id": 37,
+    "frase_objetivo": "Dile que se lo daré mañana por la mañana.",
+    "trampas": ["le", "para"],
+    "variaciones_validas": [
+      "Dile que mañana por la mañana se lo daré."
+    ],
+    "pistas": {
+      "tema": "Pronombres + Futuro",
+      "descripcion_en": "Send a message about giving something back.",
+      "traduccion_en": "Tell him/her I will give it to him/her tomorrow morning."
+    }
+  },
+  {
+    "id": 38,
+    "frase_objetivo": "Por lo tanto, no creo que podamos ir de vacaciones.",
+    "trampas": ["podemos", "podremos"],
+    "pistas": {
+      "tema": "Conector + Subjuntivo",
+      "descripcion_en": "State a logical negative conclusion.",
+      "traduccion_en": "Therefore, I don't think we can go on vacation."
+    }
+  },
+  {
+    "id": 39,
+    "frase_objetivo": "Cuando seas mayor, comprenderás por qué te lo digo.",
+    "trampas": ["eres", "comprendes"],
+    "pistas": {
+      "tema": "Subjuntivo (Temporal futuro)",
+      "descripcion_en": "Tell someone they will understand things in the future.",
+      "traduccion_en": "When you are older, you will understand why I am telling you."
+    }
+  },
+  {
+    "id": 40,
+    "frase_objetivo": "Me sorprende que no me llames más.",
+    "trampas": ["has", "habías"],
+    "pistas": {
+      "tema": "Pluscuamperfecto Subjuntivo",
+      "descripcion_en": "Express surprise about a past lack of action.",
+      "traduccion_en": "It surprises me that you don't call me more."
+    }
+  },
+  {
+    "id": 41,
+    "frase_objetivo": "Te lo juro, yo no sabía nada de esto.",
+    "trampas": ["la", "supo"],
+    "pistas": {
+      "tema": "Imperfecto / Pronombres",
+      "descripcion_en": "Swear that you were unaware of a situation.",
+      "traduccion_en": "I swear to you, I didn't know anything about this."
+    }
+  },
+  {
+    "id": 42,
+    "frase_objetivo": "Ojalá que mañana haga sol y podamos ir fuera.",
+    "trampas": ["hace", "podremos"],
+    "variaciones_validas": [
+      "Ojalá que haga sol mañana y podamos ir fuera."
+    ],
+    "pistas": {
+      "tema": "Subjuntivo (Ojalá)",
+      "descripcion_en": "Express a strong hope for good weather.",
+      "traduccion_en": "Hopefully it will be sunny tomorrow and we can go outside."
+    }
+  },
+  {
+    "id": 43,
+    "frase_objetivo": "Él me dijo que se lo había pasado muy bien.",
+    "trampas": ["pasaba", "le"],
+    "pistas": {
+      "tema": "Pluscuamperfecto / Pronombres",
+      "descripcion_en": "Report that someone had a good time.",
+      "traduccion_en": "He told me that he had had a great time."
+    }
+  },
+  {
+    "id": 44,
+    "frase_objetivo": "Si no estudias para el examen, no aprobarás nunca.",
+    "trampas": ["estudies", "apruebas"],
+    "pistas": {
+      "tema": "Condicional Real",
+      "descripcion_en": "Warn someone about the consequences of not studying.",
+      "traduccion_en": "If you don't study for the exam, you will never pass."
+    }
+  },
+  {
+    "id": 45,
+    "frase_objetivo": "Sobre todo, ten cuidado con el tráfico en esta calle.",
+    "trampas": ["tienes", "un"],
+    "variaciones_validas": [
+      "Sobre todo, ten cuidado en esta calle con el tráfico."
+    ],
+    "pistas": {
+      "tema": "Imperativo / Conector",
+      "descripcion_en": "Give a specific warning about traffic.",
+      "traduccion_en": "Above all, be careful with the traffic on this street."
+    }
+  },
+  {
+    "id": 46,
+    "frase_objetivo": "Me molesta que la gente hable tan alto por teléfono.",
+    "trampas": ["hablas", "en"],
+    "variaciones_validas": [
+      "Me molesta que la gente hable por teléfono tan alto."
+    ],
+    "pistas": {
+      "tema": "Subjuntivo (Molestia)",
+      "descripcion_en": "Express a common annoyance about loud callers.",
+      "traduccion_en": "It bothers me that people talk so loudly on the phone."
+    }
+  },
+  {
+    "id": 47,
+    "frase_objetivo": "En cuanto a tu propuesta, la estudiaremos la semana próxima.",
+    "trampas": ["estudiaremos", "estudiamos"],
+    "variaciones_validas": [
+      "En cuanto a tu propuesta, la semana próxima la estudiaremos ."
+    ],
+    "pistas": {
+      "tema": "Conector + Futuro",
+      "descripcion_en": "Respond to a proposal with a future timeline.",
+      "traduccion_en": "As for your proposal, we will study it next week."
+    }
+  },
+  {
+    "id": 48,
+    "frase_objetivo": "Se lo pedí ayer, pero todavía no me ha respondido.",
+    "trampas": ["te", "ya"],
+    "variaciones_validas": [
+      "Se lo pedí ayer, pero no me ha respondido todavía."
+    ],
+    "pistas": {
+      "tema": "Pronombres + Perfecto",
+      "descripcion_en": "Describe a request that hasn't been answered yet.",
+      "traduccion_en": "I asked him/her for it yesterday but he/she hasn't answered me yet."
+    }
+  },
+  {
+    "id": 49,
+    "frase_objetivo": "Si no nos damos prisa, perderemos el tren de las diez.",
+    "trampas": ["demos", "perdamos"],
+    "variaciones_validas": [
+      "Perderemos el tren de las diez si no nos damos prisa."
+    ],
+    "pistas": {
+      "tema": "Condicional Real",
+      "descripcion_en": "Express urgency about catching a train.",
+      "traduccion_en": "If we don't hurry, we will miss the ten o'clock train."
+    }
+  },
+  {
+    "id": 50,
+    "frase_objetivo": "Busco un trabajo que me permita viajar por el mundo.",
+    "trampas": ["permite", "la"],
+    "variaciones_validas": [],
+    "pistas": {
+      "tema": "Subjuntivo (Deseo)",
+      "descripcion_en": "Describe your ideal job requirements.",
+      "traduccion_en": "I am looking for a job that allows me to travel the world."
+    }
+  }
+]
