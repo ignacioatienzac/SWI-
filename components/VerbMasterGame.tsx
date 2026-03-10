@@ -100,18 +100,20 @@ const seleccionarMensajeSenseiRandom = (tipo: 'juego' | 'victoria' | 'fallo' | '
 type GameState = 'LEVEL_SELECT' | 'PLAYING' | 'PAUSED' | 'GAMEOVER' | 'LEVEL_TRANSITION' | 'VICTORY';
 
 // Level progression configuration (11 levels, level 11 is victory)
+// fallDuration = real seconds for a bubble to cross the full canvas (top to ground)
+// FPS in calculateFallSpeed is 120 to match the dt normalization base
 const LEVEL_SETTINGS = [
-  { level: 1, fallDuration: 60.0, pointsRequired: 0 },      // Starting level - Very slow
-  { level: 2, fallDuration: 57.5, pointsRequired: 100 },   // +100 = 100 total
-  { level: 3, fallDuration: 55.0, pointsRequired: 300 },   // +200 = 300 total
-  { level: 4, fallDuration: 50.0, pointsRequired: 600 },   // +300 = 600 total
-  { level: 5, fallDuration: 47.5, pointsRequired: 1000 },  // +400 = 1000 total
-  { level: 6, fallDuration: 42.5, pointsRequired: 1500 },  // +500 = 1500 total
-  { level: 7, fallDuration: 40.0, pointsRequired: 2100 },  // +600 = 2100 total
-  { level: 8, fallDuration: 37.5, pointsRequired: 2800 },  // +700 = 2800 total
-  { level: 9, fallDuration: 35.0, pointsRequired: 3600 },  // +800 = 3600 total
-  { level: 10, fallDuration: 30.0, pointsRequired: 4500 }, // +900 = 4500 total
-  { level: 11, fallDuration: 30.0, pointsRequired: 6000 }  // +1500 = 6000 total (VICTORY)
+  { level: 1, fallDuration: 30.0, pointsRequired: 0 },      // Starting level - Very slow (22 px/s)
+  { level: 2, fallDuration: 28.75, pointsRequired: 100 },   // +100 = 100 total (23 px/s)
+  { level: 3, fallDuration: 27.5, pointsRequired: 300 },    // +200 = 300 total (24 px/s)
+  { level: 4, fallDuration: 25.0, pointsRequired: 600 },    // +300 = 600 total (26.4 px/s)
+  { level: 5, fallDuration: 23.75, pointsRequired: 1000 },  // +400 = 1000 total (27.8 px/s)
+  { level: 6, fallDuration: 21.25, pointsRequired: 1500 },  // +500 = 1500 total (31.1 px/s)
+  { level: 7, fallDuration: 20.0, pointsRequired: 2100 },   // +600 = 2100 total (33 px/s)
+  { level: 8, fallDuration: 18.75, pointsRequired: 2800 },  // +700 = 2800 total (35.2 px/s)
+  { level: 9, fallDuration: 17.5, pointsRequired: 3600 },   // +800 = 3600 total (37.7 px/s)
+  { level: 10, fallDuration: 15.0, pointsRequired: 4500 },  // +900 = 4500 total (44 px/s)
+  { level: 11, fallDuration: 15.0, pointsRequired: 6000 }   // +1500 = 6000 total (VICTORY)
 ];
 
 // Background colors for each level
@@ -385,6 +387,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
   // Input state
   const [userInput, setUserInput] = useState('');
   const [feedback, setFeedback] = useState<{ text: string; type: 'success' | 'error' } | null>(null);
+  const [inputFeedback, setInputFeedback] = useState<'idle' | 'success' | 'error'>('idle');
   
   // Game data
   const [verbPool, setVerbPool] = useState<VerbData[]>([]);
@@ -484,9 +487,10 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
     // Distance bubble needs to travel (from top to ground)
     const fallDistance = canvasHeight + 60; // Extra padding for radius
     
-    // Assuming 60 FPS, calculate pixels per frame
-    // On mobile, slow down proportionally to bubble scale to keep difficulty the same
-    const FPS = 60;
+    // 120 FPS matches the dt normalization base (see game loop: dt = elapsed / (1000/120))
+    // Firefox runs at 120fps (dt≈1.0), Chrome/Edge/Safari at 60fps (dt≈2.0)
+    // The dt multiplier ensures identical real-world speed across all browsers
+    const FPS = 120;
     const adjustedFallDuration = levelConfig.fallDuration * mobileBubbleFactor;
     const totalFrames = adjustedFallDuration * FPS;
     const speed = fallDistance / totalFrames;
@@ -1277,6 +1281,8 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
         setStreak(prev => prev + 1);
         setFeedback({ text: `¡Correcto! +${points}`, type: 'success' });
         setTimeout(() => setFeedback(null), 1000);
+        setInputFeedback('success');
+        setTimeout(() => setInputFeedback('idle'), 1000);
       }
     });
     
@@ -1284,6 +1290,8 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
       setStreak(0);
       setFeedback({ text: 'Intenta con otra burbuja', type: 'error' });
       setTimeout(() => setFeedback(null), 1000);
+      setInputFeedback('error');
+      setTimeout(() => setInputFeedback('idle'), 1000);
     }
     
     setUserInput('');
@@ -1923,7 +1931,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
               ref={canvasRef}
               width={canvasWidth}
               height={canvasHeight}
-              className="w-full md:w-full md:h-full block"
+              className="w-full block"
             />
           </div>
 
@@ -1945,7 +1953,12 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
                   if (e.key === '5') { e.preventDefault(); setUserInput(prev => prev + 'ú'); }
                 }}
                 placeholder=""
-                className="flex-1 px-3 py-1.5 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-deep-blue text-sm"
+                className={`flex-1 px-3 py-1.5 border-2 rounded-lg focus:outline-none text-sm transition-colors duration-200 ${
+                  inputFeedback === 'success' ? 'border-green-500 text-green-600 font-bold' :
+                  inputFeedback === 'error' ? 'border-red-500 text-red-600 font-bold' :
+                  'border-gray-200 focus:border-deep-blue'
+                }`}
+                style={inputFeedback === 'error' ? { animation: 'vmShake 0.4s ease-in-out' } : undefined}
                 autoFocus
                 ref={desktopInputRef}
               />
@@ -1974,8 +1987,9 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
               onSubmit={handleSubmit}
             />
             
+            {/* Mobile-only feedback message */}
             {feedback && (
-              <p className={`mt-3 md:mt-0.5 text-center font-bold md:text-sm ${
+              <p className={`md:hidden mt-3 text-center font-bold ${
                 feedback.type === 'success' ? 'text-green-600' : 'text-red-600'
               }`}>
                 {feedback.text}
@@ -2052,6 +2066,14 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
               transform: scale(1);
               opacity: 1;
             }
+          }
+          
+          @keyframes vmShake {
+            0%, 100% { transform: translateX(0); }
+            20% { transform: translateX(-4px); }
+            40% { transform: translateX(4px); }
+            60% { transform: translateX(-3px); }
+            80% { transform: translateX(3px); }
           }
         `}} />
 
