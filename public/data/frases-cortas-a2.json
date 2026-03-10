@@ -196,6 +196,7 @@
   {
     "id": 20,
     "frase_objetivo": "Ella nació en un pueblo pequeño.",
+    "variaciones_validas": ["Ella nació en un pequeño pueblo."],
     "trampas": ["a", "nacido"],
     "pistas": {
       "tema": "Biografía (Indefinido)",

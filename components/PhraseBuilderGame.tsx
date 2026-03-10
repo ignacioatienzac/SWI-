@@ -50,6 +50,7 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
   const [selectedDifficulty, setSelectedDifficulty] = useState<Difficulty | null>(null);
   const [selectedMode, setSelectedMode] = useState<GameMode | null>(null);
   const [selectedPhraseLength, setSelectedPhraseLength] = useState<PhraseLength | null>(null);
+  const [practiceCount, setPracticeCount] = useState(10);
   
   // Game state
   const [gameState, setGameState] = useState<GameState>('MENU');
@@ -386,7 +387,11 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
     if (phrases.length === 0) return;
 
     // Re-shuffle every time so each game run has a different order
-    const reshuffled = shuffleArray(phrases);
+    let reshuffled = shuffleArray(phrases);
+    // In practice mode, limit to the selected phrase count
+    if (selectedMode === 'practice') {
+      reshuffled = reshuffled.slice(0, practiceCount);
+    }
     setPhrases(reshuffled);
 
     setScore(0);
@@ -743,6 +748,36 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
                     <span className="text-2xl mb-1 block">📖</span>
                     Práctica
                   </button>
+                  {selectedMode === 'practice' && (
+                    <div className="bg-amber-50 border-2 border-amber-200 rounded-xl p-3 mt-2">
+                      <p className="text-xs font-bold text-amber-700 text-center mb-2">¿Cuántas frases?</p>
+                      <div className="flex items-center justify-center gap-3">
+                        <button
+                          onClick={() => setPracticeCount(c => Math.max(5, c - 5))}
+                          className="w-9 h-9 rounded-full bg-amber-200 hover:bg-amber-300 text-amber-800 font-bold text-lg flex items-center justify-center transition-colors"
+                        >
+                          −
+                        </button>
+                        <input
+                          type="number"
+                          min={5}
+                          max={50}
+                          value={practiceCount}
+                          onChange={(e) => {
+                            const v = parseInt(e.target.value);
+                            if (!isNaN(v)) setPracticeCount(Math.max(5, Math.min(50, v)));
+                          }}
+                          className="w-14 text-center text-lg font-black text-amber-800 bg-white border-2 border-amber-300 rounded-lg py-1 focus:outline-none focus:border-amber-500"
+                        />
+                        <button
+                          onClick={() => setPracticeCount(c => Math.min(50, c + 5))}
+                          className="w-9 h-9 rounded-full bg-amber-200 hover:bg-amber-300 text-amber-800 font-bold text-lg flex items-center justify-center transition-colors"
+                        >
+                          +
+                        </button>
+                      </div>
+                    </div>
+                  )}
                   <button
                     onClick={() => setSelectedMode('timed')}
                     className={`w-full py-5 rounded-xl border-2 font-bold text-lg transition-all ${
@@ -1084,6 +1119,36 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
                   <span>Vidas</span>
                 </button>
               </div>
+              {selectedMode === 'practice' && (
+                <div className="bg-amber-50 border-2 border-amber-200 rounded-xl p-3 mt-3">
+                  <p className="text-xs font-bold text-amber-700 text-center mb-2">¿Cuántas frases?</p>
+                  <div className="flex items-center justify-center gap-3">
+                    <button
+                      onClick={() => setPracticeCount(c => Math.max(5, c - 5))}
+                      className="w-9 h-9 rounded-full bg-amber-200 hover:bg-amber-300 text-amber-800 font-bold text-lg flex items-center justify-center transition-colors"
+                    >
+                      −
+                    </button>
+                    <input
+                      type="number"
+                      min={5}
+                      max={50}
+                      value={practiceCount}
+                      onChange={(e) => {
+                        const v = parseInt(e.target.value);
+                        if (!isNaN(v)) setPracticeCount(Math.max(5, Math.min(50, v)));
+                      }}
+                      className="w-14 text-center text-lg font-black text-amber-800 bg-white border-2 border-amber-300 rounded-lg py-1 focus:outline-none focus:border-amber-500"
+                    />
+                    <button
+                      onClick={() => setPracticeCount(c => Math.min(50, c + 5))}
+                      className="w-9 h-9 rounded-full bg-amber-200 hover:bg-amber-300 text-amber-800 font-bold text-lg flex items-center justify-center transition-colors"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Start Button */}

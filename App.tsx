@@ -367,7 +367,7 @@ const App: React.FC = () => {
       )}
 
       {/* Footer: Hidden on mobile if a game is active, but visible on desktop or if no game is active */}
-      <footer className={`bg-deep-blue text-white py-12 ${activeGameId ? 'hidden md:block' : ''}`}>
+      <footer className={`bg-deep-blue text-white py-12 ${activeGameId ? 'hidden' : ''}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center">
           <div className="mb-4 md:mb-0">
             <span className="font-bold text-xl">CobiSpanish</span>

@@ -390,6 +390,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
   const [verbPool, setVerbPool] = useState<VerbData[]>([]);
   const bubblesRef = useRef<Bubble[]>([]);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const desktopInputRef = useRef<HTMLInputElement>(null);
   const animationFrameRef = useRef<number>(0);
   const lastSpawnRef = useRef<number>(0);
   const lastTimeRef = useRef<number>(0);
@@ -497,6 +498,13 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
   useEffect(() => {
     loadVerbData();
   }, []);
+
+  // Auto-focus desktop input when game enters PLAYING state
+  useEffect(() => {
+    if (gameState === 'PLAYING') {
+      setTimeout(() => desktopInputRef.current?.focus(), 100);
+    }
+  }, [gameState]);
 
   // Auto-pause when player switches tabs/windows
   useEffect(() => {
@@ -1279,6 +1287,8 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
     }
     
     setUserInput('');
+    // Re-focus desktop input so it's always ready to type
+    desktopInputRef.current?.focus();
   };
 
   // --- LEVEL SELECT STATE ---
@@ -1865,10 +1875,10 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
   // --- PLAYING STATE ---
   if (gameState === 'PLAYING') {
     return (
-      <div className="min-h-screen md:h-[calc(100vh-5rem)] bg-gray-50 p-4 md:p-1 relative md:overflow-hidden">
-        <div className="max-w-4xl mx-auto md:flex md:flex-col md:h-full">
+      <div className="min-h-screen md:h-[calc(100vh-5rem)] bg-gray-50 p-4 md:p-[10px] relative md:overflow-hidden">
+        <div className="max-w-4xl mx-auto md:flex md:flex-col md:h-full md:gap-[10px]">
           {/* Header */}
-          <div className="flex justify-between items-center mb-4 md:mb-0.5 bg-white rounded-2xl p-4 md:py-1 md:px-3 shadow-md md:flex-shrink-0">
+          <div className="flex justify-between items-center mb-4 md:mb-0 bg-white rounded-2xl p-4 md:py-1 md:px-3 shadow-md md:flex-shrink-0">
             <button
               onClick={() => setGameState('LEVEL_SELECT')}
               className="p-2 md:p-1 hover:bg-gray-100 rounded-full transition-colors"
@@ -1906,7 +1916,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
 
           {/* Canvas */}
           <div 
-            className="rounded-2xl overflow-hidden shadow-xl mb-4 md:mb-0.5 md:flex-1 md:min-h-0 transition-colors duration-[2000ms] ease-in-out"
+            className="rounded-2xl overflow-hidden shadow-xl mb-4 md:mb-0 md:flex-1 md:min-h-0 transition-colors duration-[2000ms] ease-in-out"
             style={{ backgroundColor }}
           >
             <canvas
@@ -1934,9 +1944,10 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
                   if (e.key === '4') { e.preventDefault(); setUserInput(prev => prev + 'ó'); }
                   if (e.key === '5') { e.preventDefault(); setUserInput(prev => prev + 'ú'); }
                 }}
-                placeholder="Escribe tu respuesta..."
+                placeholder=""
                 className="flex-1 px-3 py-1.5 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-deep-blue text-sm"
                 autoFocus
+                ref={desktopInputRef}
               />
               <button
                 onClick={handleSubmit}
