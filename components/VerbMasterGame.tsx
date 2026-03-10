@@ -1931,7 +1931,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
               ref={canvasRef}
               width={canvasWidth}
               height={canvasHeight}
-              className="w-full block"
+              className="w-full md:h-full block"
             />
           </div>
 
