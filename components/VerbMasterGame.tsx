@@ -393,6 +393,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
   const [verbPool, setVerbPool] = useState<VerbData[]>([]);
   const bubblesRef = useRef<Bubble[]>([]);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const canvasContainerRef = useRef<HTMLDivElement>(null);
   const desktopInputRef = useRef<HTMLInputElement>(null);
   const animationFrameRef = useRef<number>(0);
   const lastSpawnRef = useRef<number>(0);
@@ -424,9 +425,47 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
   
-  const canvasWidth = 800;
-  const canvasHeight = 600;
-  const groundY = isMobile ? canvasHeight - 50 : canvasHeight - 25;
+  // --- Dynamic canvas dimensions ---
+  // Base reference: 800×600.  On desktop, ResizeObserver sets real pixel size.
+  const BASE_W = 800;
+  const BASE_H = 600;
+  const [canvasWidth, setCanvasWidth] = useState(BASE_W);
+  const [canvasHeight, setCanvasHeight] = useState(BASE_H);
+
+  // Scale factor: how the current canvas relates to the 800-wide reference
+  const canvasScale = canvasWidth / BASE_W;
+
+  // Ground strip: always proportional, pinned to bottom
+  const groundY = isMobile
+    ? canvasHeight - Math.round(50 * canvasScale)
+    : canvasHeight - Math.round(25 * canvasScale);
+
+  // ResizeObserver: on desktop, sync canvas logical size to the container's CSS size
+  useEffect(() => {
+    if (isMobile) {
+      // Mobile keeps fixed 800×600
+      setCanvasWidth(BASE_W);
+      setCanvasHeight(BASE_H);
+      return;
+    }
+    const container = canvasContainerRef.current;
+    if (!container) return;
+
+    const updateSize = () => {
+      const rect = container.getBoundingClientRect();
+      const w = Math.round(rect.width);
+      const h = Math.round(rect.height);
+      if (w > 0 && h > 0) {
+        setCanvasWidth(w);
+        setCanvasHeight(h);
+      }
+    };
+
+    const ro = new ResizeObserver(updateSize);
+    ro.observe(container);
+    updateSize(); // initial measurement
+    return () => ro.disconnect();
+  }, [isMobile]);
 
   // Audio functions
   const soundEnabledRef = useRef(soundEnabled);
@@ -485,7 +524,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
     const levelConfig = LEVEL_SETTINGS[clampedLevel - 1];
     
     // Distance bubble needs to travel (from top to ground)
-    const fallDistance = canvasHeight + 60; // Extra padding for radius
+    const fallDistance = canvasHeight + Math.round(60 * canvasScale); // Extra padding for radius (scaled)
     
     // 120 FPS matches the dt normalization base (see game loop: dt = elapsed / (1000/120))
     // Firefox runs at 120fps (dt≈1.0), Chrome/Edge/Safari at 60fps (dt≈2.0)
@@ -618,7 +657,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
       const challenge = generateChallenge(verbs, 'conjugate');
       if (!challenge) return;
       
-      const radius = (40 + Math.random() * 20) * mobileBubbleFactor;
+      const radius = (40 + Math.random() * 20) * canvasScale * mobileBubbleFactor;
       
       // Try to find a position that doesn't overlap with existing bubbles
       let x = 0;
@@ -638,7 +677,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
           const dx = x - bubble.x;
           
           // If too close horizontally and existing bubble is near top, reject position
-          if (Math.abs(dx) < minDistance && bubble.y < 150) {
+          if (Math.abs(dx) < minDistance && bubble.y < 150 * canvasScale) {
             validPosition = false;
             break;
           }
@@ -1184,21 +1223,21 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
         
         // Draw text with enhanced legibility
         ctx.fillStyle = '#003D5B';
-        const bubbleFontSize = Math.round(18 * mobileBubbleFactor);
+        const bubbleFontSize = Math.round(18 * canvasScale * mobileBubbleFactor);
         ctx.font = `bold ${bubbleFontSize}px Arial`;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         
         // Add subtle shadow for text separation from complex background
         ctx.shadowColor = 'rgba(255, 255, 255, 0.8)';
-        ctx.shadowBlur = 4;
+        ctx.shadowBlur = Math.round(4 * canvasScale);
         ctx.shadowOffsetX = 0;
         ctx.shadowOffsetY = 0;
         
         const text = bubble.challenge.displayText;
         const maxWidth = bubble.radius * 1.6;
         const words = text.split(' ');
-        const lineOffset = Math.round(8 * mobileBubbleFactor);
+        const lineOffset = Math.round(8 * canvasScale * mobileBubbleFactor);
         
         if (words.length > 1 && ctx.measureText(text).width > maxWidth) {
           ctx.fillText(words[0], bubble.x, bubble.y - lineOffset);
@@ -1248,7 +1287,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
         cancelAnimationFrame(animationFrameRef.current);
       }
     };
-  }, [gameState, verbPool, score, showLevelTitle, countdown, backgroundColor, isMobile]);
+  }, [gameState, verbPool, score, showLevelTitle, countdown, backgroundColor, isMobile, canvasWidth, canvasHeight]);
 
   // Handle answer submission
   const handleSubmit = () => {
@@ -1924,6 +1963,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
 
           {/* Canvas */}
           <div 
+            ref={canvasContainerRef}
             className="rounded-2xl overflow-hidden shadow-xl mb-4 md:mb-0 md:flex-1 md:min-h-0 transition-colors duration-[2000ms] ease-in-out"
             style={{ backgroundColor }}
           >
@@ -1931,7 +1971,8 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
               ref={canvasRef}
               width={canvasWidth}
               height={canvasHeight}
-              className="w-full md:h-full block"
+              className="w-full block"
+              style={!isMobile ? { width: '100%', height: '100%' } : undefined}
             />
           </div>
 
