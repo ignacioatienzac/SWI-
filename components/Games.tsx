@@ -43,6 +43,14 @@ interface Message {
 
 const Games: React.FC<GamesProps> = ({ activeGameId, setActiveGameId, cobiVisible, soundEnabled }) => {
   const { t } = useI18n();
+
+  // Scroll to top whenever a game is activated so the view starts from the top
+  useEffect(() => {
+    if (activeGameId) {
+      window.scrollTo(0, 0);
+    }
+  }, [activeGameId]);
+
   // Estado del chat
   const [showChatWindow, setShowChatWindow] = useState(false);
   const [chatMessages, setChatMessages] = useState<Message[]>([]);

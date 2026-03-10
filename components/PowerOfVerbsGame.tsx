@@ -389,6 +389,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
   const [instructionsOpen, setInstructionsOpen] = useState(false);
   const [mobileMenuPage, setMobileMenuPage] = useState(1); // Pages 1-7 for mobile wizard
   const [desktopMenuPage, setDesktopMenuPage] = useState(1); // Pages 1-7 for desktop wizard
+  const [desktopSlideDir, setDesktopSlideDir] = useState<'left' | 'right' | null>(null); // For carousel animation
   const [accentSensitive, setAccentSensitive] = useState(true); // Tildes sensitivity
   const [inputFeedback, setInputFeedback] = useState<'idle' | 'success' | 'error'>('idle');
 
@@ -2929,8 +2930,25 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
       }
     };
 
+    const goDesktopPage = (target: number) => {
+      if (target === desktopMenuPage || target < 1 || target > totalDesktopPages) return;
+      setDesktopSlideDir(target > desktopMenuPage ? 'left' : 'right');
+      setDesktopMenuPage(target);
+    };
+
     return (
       <div className="h-screen bg-deep-blue p-4 flex items-center justify-center">
+        {/* Carousel CSS */}
+        <style>{`
+          @keyframes pvCarouselSlideLeft {
+            0% { transform: translateX(40px); opacity: 0; }
+            100% { transform: translateX(0); opacity: 1; }
+          }
+          @keyframes pvCarouselSlideRight {
+            0% { transform: translateX(-40px); opacity: 0; }
+            100% { transform: translateX(0); opacity: 1; }
+          }
+        `}</style>
         <div className="bg-white rounded-3xl p-8 max-w-2xl w-full shadow-2xl flex flex-col" style={{ maxHeight: '90vh' }}>
           <div className="flex items-center gap-4 mb-6 border-b border-gray-100 pb-4">
             <button onClick={onBack} className="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-500">
@@ -2948,19 +2966,60 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
                 className={`w-2.5 h-2.5 rounded-full transition-all duration-300 cursor-pointer ${
                   p === desktopMenuPage ? 'bg-spanish-red w-8' : p < desktopMenuPage ? 'bg-deep-blue' : 'bg-gray-300'
                 }`}
-                onClick={() => setDesktopMenuPage(p)}
+                onClick={() => goDesktopPage(p)}
               />
             ))}
           </div>
 
-          {/* Step content with slide animation */}
-          <div className="flex-1 flex flex-col justify-center overflow-hidden relative min-h-[220px]">
-            <div
-              key={desktopMenuPage}
-              className="animate-fade-in"
-              style={{ animation: 'pvSlideIn 0.3s ease-out' }}
-            >
-              {renderDesktopPage()}
+          {/* Carousel: prev | current | next */}
+          <div className="flex-1 overflow-hidden relative min-h-[250px]">
+            <div className="flex items-stretch h-full gap-3">
+              {/* Previous step peek (left edge) */}
+              {desktopMenuPage > 1 ? (
+                <div
+                  className="w-[40px] flex-shrink-0 rounded-xl bg-gray-50 border border-gray-200 overflow-hidden cursor-pointer relative"
+                  onClick={() => goDesktopPage(desktopMenuPage - 1)}
+                  style={{ opacity: 0.85 }}
+                  title="Paso anterior"
+                >
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <ChevronLeft size={20} className="text-gray-400" />
+                  </div>
+                </div>
+              ) : (
+                <div className="w-[40px] flex-shrink-0" />
+              )}
+
+              {/* Current step (center) */}
+              <div
+                key={desktopMenuPage}
+                className="flex-1 flex flex-col justify-center min-w-0 rounded-xl border-2 border-gray-100 bg-white p-6"
+                style={{
+                  animation: desktopSlideDir === 'left'
+                    ? 'pvCarouselSlideLeft 0.35s ease-out'
+                    : desktopSlideDir === 'right'
+                    ? 'pvCarouselSlideRight 0.35s ease-out'
+                    : undefined
+                }}
+              >
+                {renderDesktopPage()}
+              </div>
+
+              {/* Next step peek (right edge) */}
+              {desktopMenuPage < totalDesktopPages ? (
+                <div
+                  className="w-[40px] flex-shrink-0 rounded-xl bg-gray-50 border border-gray-200 overflow-hidden cursor-pointer relative"
+                  onClick={() => goDesktopPage(desktopMenuPage + 1)}
+                  style={{ opacity: 0.85 }}
+                  title="Siguiente paso"
+                >
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <ChevronRight size={20} className="text-gray-400" />
+                  </div>
+                </div>
+              ) : (
+                <div className="w-[40px] flex-shrink-0" />
+              )}
             </div>
           </div>
 
@@ -2968,7 +3027,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
           <div className="flex items-center justify-between pt-6 border-t border-gray-100 mt-6">
             {canDesktopGoBack ? (
               <button
-                onClick={() => setDesktopMenuPage(p => p - 1)}
+                onClick={() => goDesktopPage(desktopMenuPage - 1)}
                 className="w-12 h-12 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-all active:scale-95 text-gray-600"
               >
                 <ChevronLeft size={24} />
@@ -2991,7 +3050,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
 
             {canDesktopGoNext ? (
               <button
-                onClick={() => setDesktopMenuPage(p => p + 1)}
+                onClick={() => goDesktopPage(desktopMenuPage + 1)}
                 className="w-12 h-12 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-all active:scale-95 text-gray-600"
               >
                 <ChevronRight size={24} />
@@ -3312,7 +3371,12 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
                       type="text"
                       value={userInput}
                       readOnly
-                      className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-lg text-center bg-white"
+                      className={`w-full px-4 py-2 border-2 rounded-lg text-lg text-center bg-white transition-colors duration-200 ${
+                        inputFeedback === 'success' ? 'border-green-500 text-green-600 font-bold' :
+                        inputFeedback === 'error' ? 'border-red-500 text-red-600 font-bold' :
+                        'border-gray-200'
+                      }`}
+                      style={inputFeedback === 'error' ? { animation: 'pvShake 0.4s ease-in-out' } : undefined}
                     />
                   </div>
                   {/* Virtual Keyboard - WhatsApp style */}
@@ -3321,13 +3385,6 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
                     onDelete={() => setUserInput(prev => prev.slice(0, -1))}
                     onSubmit={() => handleAnswer(userInput)}
                   />
-                  <div className="mt-2 h-8 flex items-center justify-center">
-                    {feedbackMsg.text && (
-                      <p className={`text-lg font-bold ${feedbackMsg.type === 'success' ? 'text-green-600' : 'text-red-600'}`} style={{ textShadow: '0 1px 3px rgba(0,0,0,0.2)' }}>
-                        {feedbackMsg.text}
-                      </p>
-                    )}
-                  </div>
                 </div>
               ) : (
                 <p className="text-center text-white">Cargando...</p>

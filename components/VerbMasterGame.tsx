@@ -2025,7 +2025,12 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
                 type="text"
                 value={userInput}
                 readOnly
-                className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-lg text-center bg-white"
+                className={`w-full px-4 py-2 border-2 rounded-lg text-lg text-center bg-white transition-colors duration-200 ${
+                  inputFeedback === 'success' ? 'border-green-500 text-green-600 font-bold' :
+                  inputFeedback === 'error' ? 'border-red-500 text-red-600 font-bold' :
+                  'border-gray-200'
+                }`}
+                style={inputFeedback === 'error' ? { animation: 'vmShake 0.4s ease-in-out' } : undefined}
               />
             </div>
             
