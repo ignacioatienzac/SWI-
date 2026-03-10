@@ -102,9 +102,15 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // Prevent page scroll on desktop while playing
+  // Scroll to top on mount so the game always starts at the top
   useEffect(() => {
-    if (gameState === 'PLAYING' && !isMobile) {
+    window.scrollTo(0, 0);
+    document.documentElement.scrollTop = 0;
+  }, []);
+
+  // Prevent page scroll on desktop while in menu or playing
+  useEffect(() => {
+    if ((gameState === 'PLAYING' || gameState === 'MENU') && !isMobile) {
       document.body.style.overflow = 'hidden';
       return () => { document.body.style.overflow = ''; };
     }

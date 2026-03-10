@@ -389,7 +389,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
   const [instructionsOpen, setInstructionsOpen] = useState(false);
   const [mobileMenuPage, setMobileMenuPage] = useState(1); // Pages 1-7 for mobile wizard
   const [desktopMenuPage, setDesktopMenuPage] = useState(1); // Pages 1-7 for desktop wizard
-  const [desktopSlideDir, setDesktopSlideDir] = useState<'left' | 'right' | null>(null); // For carousel animation
+  const [, setDesktopSlideDir] = useState<'left' | 'right' | null>(null); // For carousel animation
   const [accentSensitive, setAccentSensitive] = useState(true); // Tildes sensitivity
   const [inputFeedback, setInputFeedback] = useState<'idle' | 'success' | 'error'>('idle');
 
@@ -2744,8 +2744,8 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
     const canDesktopGoNext = desktopMenuPage < totalDesktopPages;
     const canDesktopGoBack = desktopMenuPage > 1;
 
-    const renderDesktopPage = () => {
-      switch (desktopMenuPage) {
+    const renderDesktopPage = (page: number) => {
+      switch (page) {
         case 1:
           return (
             <div>
@@ -2936,129 +2936,112 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
       setDesktopMenuPage(target);
     };
 
+    // Carousel geometry: each card takes 80% of the container width, leaving room for peeks
+    const CARD_WIDTH_PCT = 80; // % of container
+    const GAP_PCT = 2; // % gap between cards
+    const TOTAL_STEP_PCT = CARD_WIDTH_PCT + GAP_PCT; // 82% per card step
+    // Offset to center the active card: (100% - 80%) / 2 = 10%
+    const CENTER_OFFSET_PCT = (100 - CARD_WIDTH_PCT) / 2;
+    const translatePct = CENTER_OFFSET_PCT - (desktopMenuPage - 1) * TOTAL_STEP_PCT;
+
     return (
-      <div className="h-screen bg-deep-blue p-4 flex items-center justify-center">
-        {/* Carousel CSS */}
-        <style>{`
-          @keyframes pvCarouselSlideLeft {
-            0% { transform: translateX(40px); opacity: 0; }
-            100% { transform: translateX(0); opacity: 1; }
-          }
-          @keyframes pvCarouselSlideRight {
-            0% { transform: translateX(-40px); opacity: 0; }
-            100% { transform: translateX(0); opacity: 1; }
-          }
-        `}</style>
-        <div className="bg-white rounded-3xl p-8 max-w-2xl w-full shadow-2xl flex flex-col" style={{ maxHeight: '90vh' }}>
-          <div className="flex items-center gap-4 mb-6 border-b border-gray-100 pb-4">
+      <div className="h-screen bg-deep-blue p-4 flex flex-col items-center justify-center">
+        {/* Header bar above the carousel */}
+        <div className="max-w-3xl w-full mb-4">
+          <div className="bg-white rounded-2xl px-6 py-4 shadow-xl flex items-center gap-4">
             <button onClick={onBack} className="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-500">
               <ChevronLeft />
             </button>
-            <h1 className="text-3xl font-black text-deep-blue flex-1 text-center">Configura tu Batalla</h1>
+            <h1 className="text-2xl font-black text-deep-blue flex-1 text-center">Configura tu Batalla</h1>
             <div className="w-10"></div>
           </div>
+        </div>
 
-          {/* Page indicator dots */}
-          <div className="flex justify-center gap-2 mb-6">
-            {[1, 2, 3, 4, 5, 6, 7].map(p => (
-              <div
-                key={p}
-                className={`w-2.5 h-2.5 rounded-full transition-all duration-300 cursor-pointer ${
-                  p === desktopMenuPage ? 'bg-spanish-red w-8' : p < desktopMenuPage ? 'bg-deep-blue' : 'bg-gray-300'
-                }`}
-                onClick={() => goDesktopPage(p)}
-              />
-            ))}
-          </div>
+        {/* Page indicator dots */}
+        <div className="flex justify-center gap-2 mb-4">
+          {[1, 2, 3, 4, 5, 6, 7].map(p => (
+            <div
+              key={p}
+              className={`w-2.5 h-2.5 rounded-full transition-all duration-300 cursor-pointer ${
+                p === desktopMenuPage ? 'bg-spanish-red w-8' : p < desktopMenuPage ? 'bg-white' : 'bg-white/30'
+              }`}
+              onClick={() => goDesktopPage(p)}
+            />
+          ))}
+        </div>
 
-          {/* Carousel: prev | current | next */}
-          <div className="flex-1 overflow-hidden relative min-h-[250px]">
-            <div className="flex items-stretch h-full gap-3">
-              {/* Previous step peek (left edge) */}
-              {desktopMenuPage > 1 ? (
+        {/* Carousel viewport */}
+        <div className="max-w-3xl w-full flex-1 overflow-hidden relative" style={{ minHeight: '320px', maxHeight: '50vh' }}>
+          {/* Cards track — all 7 cards in a row, slid via translateX */}
+          <div
+            className="flex items-stretch h-full"
+            style={{
+              gap: `${GAP_PCT}%`,
+              transition: 'transform 0.45s cubic-bezier(0.4, 0, 0.2, 1)',
+              transform: `translateX(${translatePct}%)`,
+            }}
+          >
+            {[1, 2, 3, 4, 5, 6, 7].map(page => {
+              const isActive = page === desktopMenuPage;
+              const distance = Math.abs(page - desktopMenuPage);
+              const cardOpacity = isActive ? 1 : distance === 1 ? 0.15 : 0;
+
+              return (
                 <div
-                  className="w-[40px] flex-shrink-0 rounded-xl bg-gray-50 border border-gray-200 overflow-hidden cursor-pointer relative"
-                  onClick={() => goDesktopPage(desktopMenuPage - 1)}
-                  style={{ opacity: 0.85 }}
-                  title="Paso anterior"
+                  key={page}
+                  className="rounded-2xl bg-white shadow-xl border border-gray-100 flex flex-col justify-center p-6 flex-shrink-0 overflow-hidden"
+                  style={{
+                    width: `${CARD_WIDTH_PCT}%`,
+                    minWidth: `${CARD_WIDTH_PCT}%`,
+                    opacity: cardOpacity,
+                    transition: 'opacity 0.45s cubic-bezier(0.4, 0, 0.2, 1)',
+                    pointerEvents: isActive ? 'auto' : 'none',
+                  }}
+                  onClick={() => { if (!isActive) goDesktopPage(page); }}
                 >
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <ChevronLeft size={20} className="text-gray-400" />
-                  </div>
+                  {/* Render all pages — only active is interactive */}
+                  {renderDesktopPage(page)}
                 </div>
-              ) : (
-                <div className="w-[40px] flex-shrink-0" />
-              )}
-
-              {/* Current step (center) */}
-              <div
-                key={desktopMenuPage}
-                className="flex-1 flex flex-col justify-center min-w-0 rounded-xl border-2 border-gray-100 bg-white p-6"
-                style={{
-                  animation: desktopSlideDir === 'left'
-                    ? 'pvCarouselSlideLeft 0.35s ease-out'
-                    : desktopSlideDir === 'right'
-                    ? 'pvCarouselSlideRight 0.35s ease-out'
-                    : undefined
-                }}
-              >
-                {renderDesktopPage()}
-              </div>
-
-              {/* Next step peek (right edge) */}
-              {desktopMenuPage < totalDesktopPages ? (
-                <div
-                  className="w-[40px] flex-shrink-0 rounded-xl bg-gray-50 border border-gray-200 overflow-hidden cursor-pointer relative"
-                  onClick={() => goDesktopPage(desktopMenuPage + 1)}
-                  style={{ opacity: 0.85 }}
-                  title="Siguiente paso"
-                >
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <ChevronRight size={20} className="text-gray-400" />
-                  </div>
-                </div>
-              ) : (
-                <div className="w-[40px] flex-shrink-0" />
-              )}
-            </div>
+              );
+            })}
           </div>
+        </div>
 
-          {/* Navigation arrows & start button */}
-          <div className="flex items-center justify-between pt-6 border-t border-gray-100 mt-6">
-            {canDesktopGoBack ? (
-              <button
-                onClick={() => goDesktopPage(desktopMenuPage - 1)}
-                className="w-12 h-12 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-all active:scale-95 text-gray-600"
-              >
-                <ChevronLeft size={24} />
-              </button>
-            ) : (
-              <div className="w-12" />
-            )}
+        {/* Navigation arrows & start button */}
+        <div className="max-w-3xl w-full flex items-center justify-between mt-4">
+          {canDesktopGoBack ? (
+            <button
+              onClick={() => goDesktopPage(desktopMenuPage - 1)}
+              className="w-12 h-12 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center transition-all active:scale-95 text-white"
+            >
+              <ChevronLeft size={24} />
+            </button>
+          ) : (
+            <div className="w-12" />
+          )}
 
-            {desktopMenuPage === totalDesktopPages ? (
-              <button
-                onClick={handleStartGame}
-                disabled={!selectedGrammar || !selectedTense || !selectedVerbType || !selectedBattleMode || !selectedMode || !selectedDifficulty}
-                className="flex-1 mx-4 py-4 bg-gradient-to-r from-spanish-red to-spanish-red hover:from-red-700 hover:to-red-700 disabled:from-gray-300 disabled:to-gray-300 text-white font-bold text-xl rounded-xl transition-all shadow-lg"
-              >
-                Iniciar Batalla
-              </button>
-            ) : (
-              <div className="flex-1" />
-            )}
+          {desktopMenuPage === totalDesktopPages ? (
+            <button
+              onClick={handleStartGame}
+              disabled={!selectedGrammar || !selectedTense || !selectedVerbType || !selectedBattleMode || !selectedMode || !selectedDifficulty}
+              className="flex-1 mx-4 py-4 bg-gradient-to-r from-spanish-red to-spanish-red hover:from-red-700 hover:to-red-700 disabled:from-gray-300 disabled:to-gray-300 text-white font-bold text-xl rounded-xl transition-all shadow-lg"
+            >
+              Iniciar Batalla
+            </button>
+          ) : (
+            <div className="flex-1" />
+          )}
 
-            {canDesktopGoNext ? (
-              <button
-                onClick={() => goDesktopPage(desktopMenuPage + 1)}
-                className="w-12 h-12 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-all active:scale-95 text-gray-600"
-              >
-                <ChevronRight size={24} />
-              </button>
-            ) : (
-              <div className="w-12" />
-            )}
-          </div>
+          {canDesktopGoNext ? (
+            <button
+              onClick={() => goDesktopPage(desktopMenuPage + 1)}
+              className="w-12 h-12 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center transition-all active:scale-95 text-white"
+            >
+              <ChevronRight size={24} />
+            </button>
+          ) : (
+            <div className="w-12" />
+          )}
         </div>
 
         {/* Cobi Mago Menú (solo desktop) */}
