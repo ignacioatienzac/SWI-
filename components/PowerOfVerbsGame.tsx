@@ -387,7 +387,10 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
   const [selectedDifficulty, setSelectedDifficulty] = useState<GameDifficulty | null>(null);
   const [feedbackMsg, setFeedbackMsg] = useState<{ text: string; type: 'success' | 'error' | '' }>({ text: '', type: '' });
   const [instructionsOpen, setInstructionsOpen] = useState(false);
-  const [mobileMenuPage, setMobileMenuPage] = useState(1); // Pages 1-6 for mobile wizard
+  const [mobileMenuPage, setMobileMenuPage] = useState(1); // Pages 1-7 for mobile wizard
+  const [desktopMenuPage, setDesktopMenuPage] = useState(1); // Pages 1-7 for desktop wizard
+  const [accentSensitive, setAccentSensitive] = useState(true); // Tildes sensitivity
+  const [inputFeedback, setInputFeedback] = useState<'idle' | 'success' | 'error'>('idle');
 
   // Game Logic State
   const [currentVerb, setCurrentVerb] = useState<PowerVerb | null>(null);
@@ -665,9 +668,9 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
   const [isMobile, setIsMobile] = useState(false);
   const [isLandscape, setIsLandscape] = useState(false);
 
-  // Prevent page scroll on desktop while playing
+  // Prevent page scroll on desktop while playing or in selection menu
   useEffect(() => {
-    if (gameState === 'PLAYING' && !isMobile) {
+    if ((gameState === 'PLAYING' || gameState === 'SELECTION') && !isMobile) {
       document.body.style.overflow = 'hidden';
       return () => { document.body.style.overflow = ''; };
     }
@@ -2336,12 +2339,19 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
     // SRS: Calculate response time
     const responseTime = Date.now() - responseStartTimeRef.current;
     
+    // Helper to strip accents for tilde-insensitive comparison
+    const stripAccents = (s: string) => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    
     // Normalize valid answers to array
     const validAnswers = Array.isArray(currentVerb.answer) 
         ? currentVerb.answer 
         : [currentVerb.answer];
 
-    const isCorrect = validAnswers.some(a => a.toLowerCase() === answer.toLowerCase().trim());
+    const isCorrect = validAnswers.some(a => {
+      const normalA = accentSensitive ? a.toLowerCase() : stripAccents(a.toLowerCase());
+      const normalInput = accentSensitive ? answer.toLowerCase().trim() : stripAccents(answer.toLowerCase().trim());
+      return normalA === normalInput;
+    });
     
     // SRS: Record the result for spaced repetition
     if (isCorrect) {
@@ -2354,6 +2364,8 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
     if (selectedBattleMode === 'contrarreloj') {
       if (isCorrect) {
         playSuccess();
+        setInputFeedback('success');
+        setTimeout(() => setInputFeedback('idle'), 1000);
         const newStreak = damageStreak + 1;
         const newDamage = 10 + newStreak * 2;
         setDamageStreak(newStreak);
@@ -2363,9 +2375,12 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
         playPowerUp(); // Crystal chime for power increase
         setCobiMagoMessage(seleccionarMensajeMagoRandom('acierto'));
         setFeedbackMsg({ text: `¡Correcto! Daño: ${newDamage} (Racha: ${newStreak})`, type: 'success' });
+        setUserInput('');
         setTimeout(() => pickNewVerb(verbsPool), 600);
       } else {
         playError();
+        setInputFeedback('error');
+        setTimeout(() => setInputFeedback('idle'), 1000);
         const newFailureCount = consecutiveFailures + 1;
         setConsecutiveFailures(newFailureCount);
         // Reset streak but keep base damage at 10
@@ -2387,13 +2402,18 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
       // Jefe mode uses original power system
       if (isCorrect) {
         playSuccess();
+        setInputFeedback('success');
+        setTimeout(() => setInputFeedback('idle'), 1000);
         setAttackPower(prev => prev + 1); // No limit
         playPowerUp(); // Crystal chime for power increase
         setCobiMagoMessage(seleccionarMensajeMagoRandom('acierto'));
         setFeedbackMsg({ text: '¡Correcto! +Poder', type: 'success' });
+        setUserInput('');
         setTimeout(() => pickNewVerb(verbsPool), 600);
       } else {
         playError();
+        setInputFeedback('error');
+        setTimeout(() => setInputFeedback('idle'), 1000);
         const newFailureCount = consecutiveFailures + 1;
         setConsecutiveFailures(newFailureCount);
         // Only penalize attackPower in dificil mode
@@ -2417,7 +2437,8 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
 
     // --- MOBILE: Paginated Wizard Menu ---
     if (isMobile) {
-      const canGoNext = mobileMenuPage < 6;
+      const totalMobilePages = selectedMode === 'write' ? 7 : 7;
+      const canGoNext = mobileMenuPage < totalMobilePages;
       const canGoBack = mobileMenuPage > 1;
 
       // Render mobile page content
@@ -2426,7 +2447,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
           case 1:
             return (
               <div>
-                <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">1. Modo Gramatical</h3>
+                <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">1. Modo Verbal</h3>
                 <div className="flex flex-col gap-3">
                   {['indicativo', 'subjuntivo', 'imperativo'].map(g => (
                     <button
@@ -2530,7 +2551,38 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
           case 6:
             return (
               <div>
-                <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">6. Dificultad</h3>
+                <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">6. Tildes</h3>
+                {selectedMode === 'write' ? (
+                  <div className="flex flex-col gap-4">
+                    <p className="text-sm text-gray-500 leading-relaxed">¿Quieres que las tildes cuenten en tus respuestas? Si desactivas, "habló" y "hablo" se aceptarán igual.</p>
+                    <div className="flex flex-col gap-3">
+                      <button
+                        onClick={() => setAccentSensitive(true)}
+                        className={`w-full py-4 rounded-xl border-2 font-bold text-lg transition-all ${
+                          accentSensitive ? 'bg-deep-blue text-white border-deep-blue' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
+                        }`}
+                      >
+                        🎯 Tildes Estrictas
+                      </button>
+                      <button
+                        onClick={() => setAccentSensitive(false)}
+                        className={`w-full py-4 rounded-xl border-2 font-bold text-lg transition-all ${
+                          !accentSensitive ? 'bg-deep-blue text-white border-deep-blue' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
+                        }`}
+                      >
+                        😌 Tildes Relajadas
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <p className="text-sm text-gray-400 italic">Esta opción solo aplica en modo Escribir.</p>
+                )}
+              </div>
+            );
+          case 7:
+            return (
+              <div>
+                <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">7. Dificultad</h3>
                 <div className="flex flex-col gap-3">
                   {(Object.keys(DIFFICULTY_SETTINGS) as GameDifficulty[]).map(d => (
                     <button
@@ -2565,7 +2617,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
 
             {/* Page indicator dots */}
             <div className="flex justify-center gap-2 my-2">
-              {[1, 2, 3, 4, 5, 6].map(p => (
+              {[1, 2, 3, 4, 5, 6, 7].map(p => (
                 <div
                   key={p}
                   className={`w-2 h-2 rounded-full transition-all duration-300 ${
@@ -2593,7 +2645,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
                 <div className="w-11" />
               )}
 
-              {mobileMenuPage === 6 ? (
+              {mobileMenuPage === 7 ? (
                 <button
                   onClick={handleStartGame}
                   disabled={!selectedGrammar || !selectedTense || !selectedVerbType || !selectedBattleMode || !selectedMode || !selectedDifficulty}
@@ -2686,169 +2738,267 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
       );
     }
 
-    // --- DESKTOP: Original full menu (unchanged) ---
+    // --- DESKTOP: Step-by-step Wizard Menu with slide animations ---
+    const totalDesktopPages = 7;
+    const canDesktopGoNext = desktopMenuPage < totalDesktopPages;
+    const canDesktopGoBack = desktopMenuPage > 1;
+
+    const renderDesktopPage = () => {
+      switch (desktopMenuPage) {
+        case 1:
+          return (
+            <div>
+              <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">1. Modo Verbal</h3>
+              <div className="flex gap-4">
+                {['indicativo', 'subjuntivo', 'imperativo'].map(g => (
+                  <button
+                    key={g}
+                    onClick={() => setSelectedGrammar(g)}
+                    className={`flex-1 py-4 rounded-xl border-2 font-bold text-lg capitalize transition-all ${
+                      selectedGrammar === g ? 'bg-deep-blue text-white border-deep-blue' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
+                    }`}
+                  >
+                    {g}
+                  </button>
+                ))}
+              </div>
+            </div>
+          );
+        case 2:
+          return (
+            <div>
+              <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">2. Tiempo Verbal</h3>
+              {availableTenses.length > 0 ? (
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                  {availableTenses.map(t => (
+                    <button
+                      key={t}
+                      onClick={() => setSelectedTense(t)}
+                      className={`py-4 px-4 rounded-xl border-2 font-bold text-base transition-all ${
+                        selectedTense === t ? 'bg-deep-blue text-white border-deep-blue' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
+                      }`}
+                    >
+                      {formatTenseName(t)}
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-gray-400 italic">No hay tiempos disponibles para este modo.</p>
+              )}
+            </div>
+          );
+        case 3:
+          return (
+            <div>
+              <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">3. Tipo de Verbos</h3>
+              <div className="flex gap-4">
+                {['regular', 'irregular', 'mixed'].map(t => (
+                  <button
+                    key={t}
+                    onClick={() => setSelectedVerbType(t)}
+                    className={`flex-1 py-4 rounded-xl border-2 font-bold text-lg capitalize transition-all ${
+                      selectedVerbType === t ? 'bg-deep-blue text-white border-deep-blue' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
+                    }`}
+                  >
+                    {t === 'mixed' ? 'Todos' : t}
+                  </button>
+                ))}
+              </div>
+            </div>
+          );
+        case 4:
+          return (
+            <div>
+              <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">4. Modo de Batalla</h3>
+              <div className="grid grid-cols-2 gap-6">
+                <button
+                  onClick={() => setSelectedBattleMode('contrarreloj')}
+                  className={`p-8 rounded-xl border-2 text-center transition-all relative ${selectedBattleMode === 'contrarreloj' ? 'border-spanish-red bg-red-50 ring-2 ring-red-200' : 'border-gray-200 hover:bg-gray-50'}`}
+                >
+                  <button
+                    onMouseEnter={() => setShowTooltip('contrarreloj')}
+                    onMouseLeave={() => setShowTooltip(null)}
+                    onClick={(e) => { e.stopPropagation(); setShowTooltip(showTooltip === 'contrarreloj' ? null : 'contrarreloj'); }}
+                    className="absolute top-2 left-2 w-5 h-5 rounded-full bg-gray-200 hover:bg-gray-300 text-xs flex items-center justify-center transition-colors"
+                  >
+                    ?
+                  </button>
+                  {showTooltip === 'contrarreloj' && (
+                    <div className="absolute -top-12 left-0 right-0 bg-gray-800 text-white text-xs px-3 py-2 rounded-lg z-10">
+                      Derrota 30 enemigos antes de que se acabe el tiempo
+                    </div>
+                  )}
+                  <div className="text-5xl mb-3">⏱️</div>
+                  <span className="block font-bold text-lg text-deep-blue">Contrarreloj</span>
+                </button>
+                <button
+                  onClick={() => setSelectedBattleMode('jefe')}
+                  className={`p-8 rounded-xl border-2 text-center transition-all relative ${selectedBattleMode === 'jefe' ? 'border-spanish-red bg-red-50 ring-2 ring-red-200' : 'border-gray-200 hover:bg-gray-50'}`}
+                >
+                  <button
+                    onMouseEnter={() => setShowTooltip('jefe')}
+                    onMouseLeave={() => setShowTooltip(null)}
+                    onClick={(e) => { e.stopPropagation(); setShowTooltip(showTooltip === 'jefe' ? null : 'jefe'); }}
+                    className="absolute top-2 left-2 w-5 h-5 rounded-full bg-gray-200 hover:bg-gray-300 text-xs flex items-center justify-center transition-colors"
+                  >
+                    ?
+                  </button>
+                  {showTooltip === 'jefe' && (
+                    <div className="absolute -top-12 left-0 right-0 bg-gray-800 text-white text-xs px-3 py-2 rounded-lg z-10">
+                      Derrota al dragón
+                    </div>
+                  )}
+                  <div className="text-5xl mb-3">🐉</div>
+                  <span className="block font-bold text-lg text-deep-blue">Modo Jefe</span>
+                </button>
+              </div>
+            </div>
+          );
+        case 5:
+          return (
+            <div>
+              <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">5. Modo de Respuesta</h3>
+              <div className="flex gap-4">
+                <button
+                  onClick={() => setSelectedMode('write')}
+                  className={`flex-1 py-4 rounded-xl border-2 text-center transition-all font-bold text-lg ${selectedMode === 'write' ? 'bg-deep-blue text-white border-deep-blue' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'}`}
+                >
+                  ✍️ Escribir
+                </button>
+                <button
+                  onClick={() => setSelectedMode('choice')}
+                  className={`flex-1 py-4 rounded-xl border-2 text-center transition-all font-bold text-lg ${selectedMode === 'choice' ? 'bg-deep-blue text-white border-deep-blue' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'}`}
+                >
+                  🎯 Selección
+                </button>
+              </div>
+            </div>
+          );
+        case 6:
+          return (
+            <div>
+              <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">6. Tildes</h3>
+              {selectedMode === 'write' ? (
+                <div className="space-y-4">
+                  <p className="text-sm text-gray-500 leading-relaxed">¿Quieres que las tildes cuenten en tus respuestas? Si desactivas, "habló" y "hablo" se aceptarán igual.</p>
+                  <div className="flex gap-4">
+                    <button
+                      onClick={() => setAccentSensitive(true)}
+                      className={`flex-1 py-4 rounded-xl border-2 font-bold text-lg transition-all ${
+                        accentSensitive ? 'bg-deep-blue text-white border-deep-blue' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
+                      }`}
+                    >
+                      🎯 Tildes Estrictas
+                    </button>
+                    <button
+                      onClick={() => setAccentSensitive(false)}
+                      className={`flex-1 py-4 rounded-xl border-2 font-bold text-lg transition-all ${
+                        !accentSensitive ? 'bg-deep-blue text-white border-deep-blue' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
+                      }`}
+                    >
+                      😌 Tildes Relajadas
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <p className="text-sm text-gray-400 italic">Esta opción solo aplica en modo Escribir. Puedes pasar al siguiente paso.</p>
+              )}
+            </div>
+          );
+        case 7:
+          return (
+            <div>
+              <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">7. Dificultad</h3>
+              <div className="flex gap-4">
+                {(Object.keys(DIFFICULTY_SETTINGS) as GameDifficulty[]).map(d => (
+                  <button
+                    key={d}
+                    onClick={() => setSelectedDifficulty(d)}
+                    className={`flex-1 py-4 rounded-xl border-2 font-bold text-lg capitalize transition-all ${
+                      selectedDifficulty === d ? 'bg-deep-blue text-white border-deep-blue' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
+                    }`}
+                  >
+                    {DIFFICULTY_SETTINGS[d].label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          );
+        default:
+          return null;
+      }
+    };
+
     return (
-      <div className="min-h-screen bg-deep-blue p-4 flex items-center justify-center">
-        <div className="bg-white rounded-3xl p-8 max-w-4xl w-full shadow-2xl overflow-y-auto max-h-[90vh]">
-          <div className="flex items-center gap-4 mb-8 border-b border-gray-100 pb-4">
+      <div className="h-screen bg-deep-blue p-4 flex items-center justify-center">
+        <div className="bg-white rounded-3xl p-8 max-w-2xl w-full shadow-2xl flex flex-col" style={{ maxHeight: '90vh' }}>
+          <div className="flex items-center gap-4 mb-6 border-b border-gray-100 pb-4">
             <button onClick={onBack} className="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-500">
-               <ChevronLeft />
+              <ChevronLeft />
             </button>
             <h1 className="text-3xl font-black text-deep-blue flex-1 text-center">Configura tu Batalla</h1>
             <div className="w-10"></div>
           </div>
 
-          <div className="space-y-8">
-            {/* Step 1: Grammar Mode */}
-            <div>
-               <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-3">1. Modo Gramatical</h3>
-               <div className="flex gap-4">
-                 {['indicativo', 'subjuntivo', 'imperativo'].map(g => (
-                    <button
-                        key={g}
-                        onClick={() => setSelectedGrammar(g)}
-                        className={`flex-1 py-3 rounded-lg border font-bold text-base capitalize transition-all ${
-                            selectedGrammar === g ? 'bg-deep-blue text-white border-deep-blue' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
-                        }`}
-                    >
-                        {g}
-                    </button>
-                 ))}
-               </div>
-            </div>
+          {/* Page indicator dots */}
+          <div className="flex justify-center gap-2 mb-6">
+            {[1, 2, 3, 4, 5, 6, 7].map(p => (
+              <div
+                key={p}
+                className={`w-2.5 h-2.5 rounded-full transition-all duration-300 cursor-pointer ${
+                  p === desktopMenuPage ? 'bg-spanish-red w-8' : p < desktopMenuPage ? 'bg-deep-blue' : 'bg-gray-300'
+                }`}
+                onClick={() => setDesktopMenuPage(p)}
+              />
+            ))}
+          </div>
 
-            {/* Step 2: Tense (Dynamic) */}
-            <div>
-               <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-3">2. Tiempo Verbal</h3>
-               {availableTenses.length > 0 ? (
-                   <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                     {availableTenses.map(t => (
-                        <button
-                            key={t}
-                            onClick={() => setSelectedTense(t)}
-                            className={`py-3 px-4 rounded-lg border font-bold text-sm md:text-base transition-all ${
-                                selectedTense === t ? 'bg-deep-blue text-white border-deep-blue' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
-                            }`}
-                        >
-                            {formatTenseName(t)}
-                        </button>
-                     ))}
-                   </div>
-               ) : (
-                   <p className="text-sm text-gray-400 italic">No hay tiempos disponibles para este modo.</p>
-               )}
-            </div>
-
-            {/* Step 3: Type */}
-             <div>
-               <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-3">3. Tipo de Verbos</h3>
-               <div className="flex gap-3">
-                 {['regular', 'irregular', 'mixed'].map(t => (
-                    <button
-                        key={t}
-                        onClick={() => setSelectedVerbType(t)}
-                        className={`flex-1 py-3 rounded-lg border font-bold text-base capitalize transition-all ${
-                            selectedVerbType === t ? 'bg-deep-blue text-white border-deep-blue' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
-                        }`}
-                    >
-                        {t === 'mixed' ? 'Todos' : t}
-                    </button>
-                 ))}
-               </div>
-            </div>
-
-            {/* Step 4: Battle Mode */}
-            <div>
-               <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-3">4. Modo de Batalla</h3>
-               <div className="grid grid-cols-2 gap-4">
-                  <button 
-                    onClick={() => setSelectedBattleMode('contrarreloj')}
-                    className={`p-6 rounded-xl border-2 text-center transition-all relative ${selectedBattleMode === 'contrarreloj' ? 'border-spanish-red bg-red-50 ring-2 ring-red-200' : 'border-gray-200 hover:bg-gray-50'}`}
-                  >
-                      <button
-                        onMouseEnter={() => setShowTooltip('contrarreloj')}
-                        onMouseLeave={() => setShowTooltip(null)}
-                        onClick={(e) => { e.stopPropagation(); setShowTooltip(showTooltip === 'contrarreloj' ? null : 'contrarreloj'); }}
-                        className="absolute top-2 left-2 w-5 h-5 rounded-full bg-gray-200 hover:bg-gray-300 text-xs flex items-center justify-center transition-colors"
-                      >
-                        ?
-                      </button>
-                      {showTooltip === 'contrarreloj' && (
-                        <div className="absolute -top-12 left-0 right-0 bg-gray-800 text-white text-xs px-3 py-2 rounded-lg z-10">
-                          Derrota 30 enemigos antes de que se acabe el tiempo
-                        </div>
-                      )}
-                      <div className="text-5xl mb-2">⏱️</div>
-                      <span className="block font-bold text-base text-deep-blue">Contrarreloj</span>
-                  </button>
-                  <button 
-                    onClick={() => setSelectedBattleMode('jefe')}
-                    className={`p-6 rounded-xl border-2 text-center transition-all relative ${selectedBattleMode === 'jefe' ? 'border-spanish-red bg-red-50 ring-2 ring-red-200' : 'border-gray-200 hover:bg-gray-50'}`}
-                  >
-                      <button
-                        onMouseEnter={() => setShowTooltip('jefe')}
-                        onMouseLeave={() => setShowTooltip(null)}
-                        onClick={(e) => { e.stopPropagation(); setShowTooltip(showTooltip === 'jefe' ? null : 'jefe'); }}
-                        className="absolute top-2 left-2 w-5 h-5 rounded-full bg-gray-200 hover:bg-gray-300 text-xs flex items-center justify-center transition-colors"
-                      >
-                        ?
-                      </button>
-                      {showTooltip === 'jefe' && (
-                        <div className="absolute -top-12 left-0 right-0 bg-gray-800 text-white text-xs px-3 py-2 rounded-lg z-10">
-                          Derrota al dragón
-                        </div>
-                      )}
-                      <div className="text-5xl mb-2">🐉</div>
-                      <span className="block font-bold text-base text-deep-blue">Modo Jefe</span>
-                  </button>
-               </div>
-            </div>
-
-            {/* Step 5: Mode */}
-            <div>
-               <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-3">5. Modo de Respuesta</h3>
-               <div className="flex gap-4">
-                  <button 
-                    onClick={() => setSelectedMode('write')}
-                    className={`flex-1 py-3 rounded-lg border text-center transition-all font-bold text-base ${selectedMode === 'write' ? 'bg-deep-blue text-white border-deep-blue' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'}`}
-                  >
-                      Escribir
-                  </button>
-                  <button 
-                    onClick={() => setSelectedMode('choice')}
-                    className={`flex-1 py-3 rounded-lg border text-center transition-all font-bold text-base ${selectedMode === 'choice' ? 'bg-deep-blue text-white border-deep-blue' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'}`}
-                  >
-                      Selección
-                  </button>
-               </div>
-            </div>
-
-             {/* Step 6: Difficulty */}
-             <div>
-               <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-3">6. Dificultad</h3>
-               <div className="flex gap-3">
-                 {(Object.keys(DIFFICULTY_SETTINGS) as GameDifficulty[]).map(d => (
-                    <button
-                        key={d}
-                        onClick={() => setSelectedDifficulty(d)}
-                        className={`flex-1 py-3 rounded-lg border font-bold text-base capitalize transition-all ${
-                            selectedDifficulty === d ? 'bg-deep-blue text-white border-deep-blue' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
-                        }`}
-                    >
-                        {DIFFICULTY_SETTINGS[d].label}
-                    </button>
-                 ))}
-               </div>
-            </div>
-
-            {/* Start Button */}
-            <button
-              onClick={handleStartGame}
-              disabled={!selectedGrammar || !selectedTense || !selectedVerbType || !selectedBattleMode || !selectedMode || !selectedDifficulty}
-              className="w-full py-4 bg-gradient-to-r from-spanish-red to-spanish-red hover:from-red-700 hover:to-red-700 disabled:from-gray-300 disabled:to-gray-300 text-white font-bold text-xl rounded-xl transition-all shadow-lg"
+          {/* Step content with slide animation */}
+          <div className="flex-1 flex flex-col justify-center overflow-hidden relative min-h-[220px]">
+            <div
+              key={desktopMenuPage}
+              className="animate-fade-in"
+              style={{ animation: 'pvSlideIn 0.3s ease-out' }}
             >
-              Iniciar Batalla
-            </button>
+              {renderDesktopPage()}
+            </div>
+          </div>
+
+          {/* Navigation arrows & start button */}
+          <div className="flex items-center justify-between pt-6 border-t border-gray-100 mt-6">
+            {canDesktopGoBack ? (
+              <button
+                onClick={() => setDesktopMenuPage(p => p - 1)}
+                className="w-12 h-12 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-all active:scale-95 text-gray-600"
+              >
+                <ChevronLeft size={24} />
+              </button>
+            ) : (
+              <div className="w-12" />
+            )}
+
+            {desktopMenuPage === totalDesktopPages ? (
+              <button
+                onClick={handleStartGame}
+                disabled={!selectedGrammar || !selectedTense || !selectedVerbType || !selectedBattleMode || !selectedMode || !selectedDifficulty}
+                className="flex-1 mx-4 py-4 bg-gradient-to-r from-spanish-red to-spanish-red hover:from-red-700 hover:to-red-700 disabled:from-gray-300 disabled:to-gray-300 text-white font-bold text-xl rounded-xl transition-all shadow-lg"
+              >
+                Iniciar Batalla
+              </button>
+            ) : (
+              <div className="flex-1" />
+            )}
+
+            {canDesktopGoNext ? (
+              <button
+                onClick={() => setDesktopMenuPage(p => p + 1)}
+                className="w-12 h-12 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-all active:scale-95 text-gray-600"
+              >
+                <ChevronRight size={24} />
+              </button>
+            ) : (
+              <div className="w-12" />
+            )}
           </div>
         </div>
 
@@ -3125,6 +3275,25 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
                   transform: translate(10px, 0);
                 }
               }
+              
+              @keyframes pvSlideIn {
+                0% {
+                  opacity: 0;
+                  transform: translateX(30px);
+                }
+                100% {
+                  opacity: 1;
+                  transform: translateX(0);
+                }
+              }
+              
+              @keyframes pvShake {
+                0%, 100% { transform: translateX(0); }
+                20% { transform: translateX(-4px); }
+                40% { transform: translateX(4px); }
+                60% { transform: translateX(-3px); }
+                80% { transform: translateX(3px); }
+              }
             `}</style>
           </div>
 
@@ -3235,7 +3404,12 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
                         }
                       }}
                       placeholder="Escribe tu respuesta..."
-                      className={`px-4 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-deep-blue ${isMobile ? 'w-full py-3 text-lg' : 'flex-1 py-1.5 text-sm'}`}
+                      className={`px-4 border-2 rounded-lg focus:outline-none transition-colors ${
+                        inputFeedback === 'success' ? 'border-green-500 text-green-600 font-bold' :
+                        inputFeedback === 'error' ? 'border-red-500 text-red-600 font-bold' :
+                        'border-gray-200 focus:border-deep-blue'
+                      } ${isMobile ? 'w-full py-3 text-lg' : 'flex-1 py-1.5 text-sm'}`}
+                      style={inputFeedback === 'error' ? { animation: 'pvShake 0.4s ease-in-out' } : undefined}
                     />
                     <button
                       onClick={() => handleAnswer(userInput)}
@@ -3267,8 +3441,10 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
                     )}
                   </div>
                 )}
-                {!isMobile && (
-                  <p className="mt-1 text-[10px] text-gray-400 text-center leading-tight">Usa las teclas 1-5 para vocales con tilde (á é í ó ú)</p>
+                {!isMobile && selectedMode === 'write' && (
+                  <p className="mt-1 text-[10px] text-gray-400 text-center leading-tight">
+                    {accentSensitive ? 'Usa las teclas 1-5 para vocales con tilde (á é í ó ú)' : '😌 Tildes relajadas activadas — las tildes no afectan tu respuesta'}
+                  </p>
                 )}
               </div>
             ) : (

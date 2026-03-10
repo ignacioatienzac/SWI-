@@ -469,7 +469,7 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
     loadPhraseData(phrases, index);
   };
 
-  // Select a word from available
+  // Select a word from available (click mode: append to end)
   const selectWord = (word: string, index: number) => {
     playPlace();
     const newAvailable = [...availableWords];
@@ -487,32 +487,95 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
     setAvailableWords([...availableWords, word]);
   };
 
-  // Drag and drop handlers for reordering
-  const handleDragStart = (index: number) => {
-    setDraggedIndex(index);
+  // --- Hybrid Drag & Drop System ---
+  const [dragSource, setDragSource] = useState<'available' | 'construction' | null>(null);
+  const [dragWord, setDragWord] = useState<string>('');
+  const [dragSourceIndex, setDragSourceIndex] = useState<number>(-1);
+  const [dropTargetIndex, setDropTargetIndex] = useState<number>(-1);
+
+  // Start dragging from available words
+  const handleAvailableDragStart = (e: React.DragEvent, word: string, index: number) => {
+    setDragSource('available');
+    setDragWord(word);
+    setDragSourceIndex(index);
+    setDraggedIndex(null);
+    e.dataTransfer.effectAllowed = 'move';
+    // Set transparent drag image
+    const ghost = document.createElement('div');
+    ghost.textContent = word;
+    ghost.style.cssText = 'position:absolute;top:-9999px;padding:8px 16px;background:#f59e0b;color:white;border-radius:8px;font-weight:bold;font-size:14px;';
+    document.body.appendChild(ghost);
+    e.dataTransfer.setDragImage(ghost, 0, 0);
+    setTimeout(() => document.body.removeChild(ghost), 0);
   };
 
-  const handleDragOver = (e: React.DragEvent, index: number) => {
-    e.preventDefault();
-    
-    if (draggedIndex === null || draggedIndex === index) return;
-    
-    // Reorder array
-    const newWords = [...selectedWords];
-    const draggedWord = newWords[draggedIndex];
-    
-    // Remove from old position
-    newWords.splice(draggedIndex, 1);
-    
-    // Insert at new position
-    newWords.splice(index, 0, draggedWord);
-    
-    setSelectedWords(newWords);
+  // Start dragging from construction zone (reorder)
+  const handleConstructionDragStart = (e: React.DragEvent, index: number) => {
+    setDragSource('construction');
+    setDragWord(selectedWords[index]);
+    setDragSourceIndex(index);
     setDraggedIndex(index);
+    setDropTargetIndex(-1);
+    e.dataTransfer.effectAllowed = 'move';
+  };
+
+  // Drag over construction zone items (for reorder or insert)
+  const handleConstructionDragOver = (e: React.DragEvent, index: number) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+
+    if (dragSource === 'construction') {
+      // Reorder within construction zone
+      if (draggedIndex === null || draggedIndex === index) return;
+      const newWords = [...selectedWords];
+      const draggedW = newWords[draggedIndex];
+      newWords.splice(draggedIndex, 1);
+      newWords.splice(index, 0, draggedW);
+      setSelectedWords(newWords);
+      setDraggedIndex(index);
+    } else if (dragSource === 'available') {
+      // Show ghost preview at this position
+      setDropTargetIndex(index);
+    }
+  };
+
+  // Drag over the construction zone container itself (for appending)
+  const handleZoneDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    if (dragSource === 'available') {
+      // Set drop target to end
+      setDropTargetIndex(selectedWords.length);
+    }
+  };
+
+  // Drop on construction zone
+  const handleZoneDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    if (dragSource === 'available' && dragWord) {
+      playPlace();
+      const newAvailable = [...availableWords];
+      newAvailable.splice(dragSourceIndex, 1);
+      setAvailableWords(newAvailable);
+
+      const insertAt = dropTargetIndex >= 0 ? dropTargetIndex : selectedWords.length;
+      const newSelected = [...selectedWords];
+      newSelected.splice(insertAt, 0, dragWord);
+      setSelectedWords(newSelected);
+    }
+    resetDragState();
   };
 
   const handleDragEnd = () => {
+    resetDragState();
+  };
+
+  const resetDragState = () => {
+    setDragSource(null);
+    setDragWord('');
+    setDragSourceIndex(-1);
     setDraggedIndex(null);
+    setDropTargetIndex(-1);
   };
 
   // Join words properly without spaces around punctuation
@@ -1439,6 +1502,17 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
       </div>
 
       <div className="max-w-3xl mx-auto relative z-10">
+        {/* PhraseBuilder Animations */}
+        <style>{`
+          @keyframes pbFadeIn {
+            0% { opacity: 0; transform: scale(0.9); }
+            100% { opacity: 1; transform: scale(1); }
+          }
+          @keyframes pbCascade {
+            0% { opacity: 0; transform: translateY(8px); }
+            100% { opacity: 1; transform: translateY(0); }
+          }
+        `}</style>
         {/* Header */}
         <div className="flex justify-between items-center mb-4 bg-white/90 backdrop-blur rounded-2xl p-4 shadow-md border-2 border-amber-200">
           <button
@@ -1559,44 +1633,67 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
           </div>
         )}
         {/* Construction Zone - Selected Words */}
-        <div className="bg-white/90 backdrop-blur rounded-2xl p-6 shadow-lg mb-4 border-4 border-dashed border-amber-300 min-h-[120px]">
+        <div
+          className={`bg-white/90 backdrop-blur rounded-2xl p-6 shadow-lg mb-4 border-4 border-dashed min-h-[120px] transition-colors ${
+            dragSource === 'available' ? 'border-amber-500 bg-amber-50/50' : 'border-amber-300'
+          }`}
+          onDragOver={handleZoneDragOver}
+          onDrop={handleZoneDrop}
+          onDragLeave={() => { if (dragSource === 'available') setDropTargetIndex(-1); }}
+        >
           <div className="flex items-center gap-2 mb-3">
             <Hammer size={20} className="text-amber-600" />
             <span className="text-sm font-bold text-amber-700">ZONA DE CONSTRUCCIÓN</span>
           </div>
           
           <div className="flex flex-wrap gap-2 min-h-[50px]">
-            {selectedWords.length === 0 ? (
-              <p className="text-gray-400 italic">Arrastra las palabras aquí para construir la frase...</p>
+            {selectedWords.length === 0 && dropTargetIndex < 0 ? (
+              <p className="text-gray-400 italic">{dragSource === 'available' ? '¡Suelta aquí!' : 'Arrastra o haz clic en las palabras para construir la frase...'}</p>
             ) : (
-              selectedWords.map((word, index) => {
-                const getBorderColor = () => {
-                  if (!showColorHints || !wordColors[index]) return '';
-                  if (wordColors[index] === 'green') return 'border-4 border-green-500';
-                  if (wordColors[index] === 'blue') return 'border-4 border-blue-500';
-                  if (wordColors[index] === 'red') return 'border-4 border-red-500';
-                  return '';
-                };
-                
-                return (
-                  <button
-                    key={`selected-${index}`}
-                    draggable
-                    onDragStart={() => handleDragStart(index)}
-                    onDragOver={(e) => handleDragOver(e, index)}
-                    onDragEnd={handleDragEnd}
-                    onClick={() => deselectWord(word, index)}
-                    className={`px-4 py-2 bg-gradient-to-b from-amber-400 to-amber-500 text-white font-bold rounded-lg shadow-md hover:from-amber-500 hover:to-amber-600 transition-all transform hover:scale-105 active:scale-95 cursor-move ${
-                      draggedIndex === index ? 'opacity-50 scale-95' : ''
-                    } ${getBorderColor()}`}
-                    style={{
-                      boxShadow: '0 4px 0 0 rgba(180, 83, 9, 0.5), 0 6px 10px rgba(0,0,0,0.15)'
-                    }}
-                  >
-                    {word}
-                  </button>
-                );
-              })
+              <>
+                {selectedWords.map((word, index) => {
+                  const getBorderColor = () => {
+                    if (!showColorHints || !wordColors[index]) return '';
+                    if (wordColors[index] === 'green') return 'border-4 border-green-500';
+                    if (wordColors[index] === 'blue') return 'border-4 border-blue-500';
+                    if (wordColors[index] === 'red') return 'border-4 border-red-500';
+                    return '';
+                  };
+
+                  return (
+                    <React.Fragment key={`selected-${index}`}>
+                      {/* Ghost preview before this position */}
+                      {dragSource === 'available' && dropTargetIndex === index && (
+                        <div className="px-5 py-2.5 bg-amber-200/60 text-amber-600 font-bold rounded-lg border-2 border-dashed border-amber-400 pointer-events-none" style={{ animation: 'pbFadeIn 0.15s ease-out' }}>
+                          {dragWord}
+                        </div>
+                      )}
+                      <button
+                        draggable
+                        onDragStart={(e) => handleConstructionDragStart(e, index)}
+                        onDragOver={(e) => handleConstructionDragOver(e, index)}
+                        onDragEnd={handleDragEnd}
+                        onClick={() => deselectWord(word, index)}
+                        className={`px-5 py-2.5 bg-gradient-to-b from-amber-400 to-amber-500 text-white font-bold rounded-lg shadow-md hover:from-amber-500 hover:to-amber-600 active:scale-95 cursor-move ${
+                          draggedIndex === index ? 'opacity-50 scale-95' : ''
+                        } ${getBorderColor()}`}
+                        style={{
+                          boxShadow: '0 4px 0 0 rgba(180, 83, 9, 0.5), 0 6px 10px rgba(0,0,0,0.15)',
+                          transition: 'transform 0.2s ease, opacity 0.2s ease, margin 0.2s ease'
+                        }}
+                      >
+                        {word}
+                      </button>
+                    </React.Fragment>
+                  );
+                })}
+                {/* Ghost preview at end of list */}
+                {dragSource === 'available' && dropTargetIndex === selectedWords.length && (
+                  <div className="px-5 py-2.5 bg-amber-200/60 text-amber-600 font-bold rounded-lg border-2 border-dashed border-amber-400 pointer-events-none" style={{ animation: 'pbFadeIn 0.15s ease-out' }}>
+                    {dragWord}
+                  </div>
+                )}
+              </>
             )}
           </div>
           
@@ -1631,14 +1728,21 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
             <span className="text-sm font-bold text-gray-600">MATERIALES DISPONIBLES</span>
           </div>
           
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-2.5">
             {availableWords.map((word, index) => (
               <button
                 key={`available-${index}`}
+                draggable
+                onDragStart={(e) => handleAvailableDragStart(e, word, index)}
+                onDragEnd={handleDragEnd}
                 onClick={() => selectWord(word, index)}
-                className="px-4 py-2 bg-gradient-to-b from-gray-100 to-gray-200 text-gray-700 font-bold rounded-lg shadow hover:from-amber-100 hover:to-amber-200 hover:text-amber-800 transition-all transform hover:scale-105 active:scale-95 border-2 border-gray-300 hover:border-amber-400"
+                className={`px-5 py-2.5 bg-gradient-to-b from-gray-100 to-gray-200 text-gray-700 font-bold rounded-lg shadow hover:from-amber-100 hover:to-amber-200 hover:text-amber-800 active:scale-95 border-2 border-gray-300 hover:border-amber-400 cursor-grab active:cursor-grabbing ${
+                  dragSource === 'available' && dragSourceIndex === index ? 'opacity-40 scale-95' : ''
+                }`}
                 style={{
-                  boxShadow: '0 3px 0 0 rgba(0, 0, 0, 0.1), 0 4px 8px rgba(0,0,0,0.1)'
+                  boxShadow: '0 3px 0 0 rgba(0, 0, 0, 0.1), 0 4px 8px rgba(0,0,0,0.1)',
+                  transition: 'transform 0.2s ease, opacity 0.2s ease',
+                  animation: `pbCascade 0.25s ease-out ${index * 0.03}s both`
                 }}
               >
                 {word}
