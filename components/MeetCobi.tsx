@@ -6,7 +6,7 @@ const cobiImage = `${import.meta.env.BASE_URL}data/images/favicon-cobi.png`;
 const MeetCobi: React.FC = () => {
   const { t } = useI18n();
   return (
-    <section className="bg-white py-20 border-b border-gray-100 overflow-hidden">
+    <section className="bg-white py-10 md:py-20 border-b border-gray-100 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row items-center gap-12 lg:gap-24">
           

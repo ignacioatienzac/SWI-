@@ -10,25 +10,6 @@ import { hablarConPanda } from '../services/geminiService';
 import DraggableCobi from './DraggableCobi';
 import { useI18n } from '../services/i18n';
 
-// Banco de Mensajes de Cobi (incluye datos curiosos y recomendaciones de juegos)
-const mensajesCobi = [
-  "¡Datito curioso! 🐾 El español es el idioma más rápido del mundo: ¡7,82 sílabas por segundo! 💨",
-  "¡Datito curioso! ✨ La letra 'Ñ' nació porque unos monjes querían gastar menos pergamino. ¡Ingenioso! 📜",
-  "¡Datito curioso! 🍃 Somos los únicos que usamos los signos de apertura (¡ ¿). ¡Sorpresa! 🎉",
-  "¡Datito curioso! 🧀 ¡El primer texto en español fue una lista de la compra de quesos hace 1000 años! 📝",
-  "🔍 Si buscas vocabulario nuevo, Adivina la Palabra es una gran opción 🐾",
-  "🏗️ ¿Practicamos el orden de las palabras en el Constructor de Frases? ✨",
-  "🥋 ¡Explota burbujas y entrena verbos en Maestro de Verbos! 🫧",
-  "🪄 Refuerza tus verbos y defiende el castillo en El Poder de los Verbos. ✨",
-  "¿No sabes por dónde empezar? 🐾 ¡Habla conmigo y te ayudo!",
-];
-
-// Función para seleccionar un mensaje aleatorio
-const seleccionarMensajeRandom = (): string => {
-  const indiceAleatorio = Math.floor(Math.random() * mensajesCobi.length);
-  return mensajesCobi[indiceAleatorio];
-};
-
 interface GamesProps {
   activeGameId: string | null;
   setActiveGameId: (id: string | null) => void;
@@ -42,7 +23,7 @@ interface Message {
 }
 
 const Games: React.FC<GamesProps> = ({ activeGameId, setActiveGameId, cobiVisible, soundEnabled }) => {
-  const { t } = useI18n();
+  const { t, tArray } = useI18n();
 
   // Scroll to top whenever a game is activated so the view starts from the top
   useEffect(() => {
@@ -71,7 +52,10 @@ const Games: React.FC<GamesProps> = ({ activeGameId, setActiveGameId, cobiVisibl
 
   // Seleccionar un mensaje aleatorio al cargar el componente
   useEffect(() => {
-    setMensajeCobi(seleccionarMensajeRandom());
+    const msgs = tArray('cobi.lobby.messages');
+    if (msgs.length > 0) {
+      setMensajeCobi(msgs[Math.floor(Math.random() * msgs.length)]);
+    }
   }, []);
 
   // Función para enviar mensaje a Cobi del Lobby
@@ -100,7 +84,7 @@ const Games: React.FC<GamesProps> = ({ activeGameId, setActiveGameId, cobiVisibl
       console.error('Error al hablar con Cobi:', error);
       setChatMessages(prev => [...prev, { 
         sender: 'cobi', 
-        text: '🐾 ¡Ups! Algo salió mal. Inténtalo de nuevo.' 
+        text: t('cobi.lobby.chatError')
       }]);
     } finally {
       setIsLoadingResponse(false);
@@ -292,7 +276,7 @@ const Games: React.FC<GamesProps> = ({ activeGameId, setActiveGameId, cobiVisibl
           {/* Bocadillo de diálogo con mensaje aleatorio - A la derecha de Cobi, debajo del bocadillo de pensamiento */}
           <div style={{ position: 'absolute', left: '-200px', bottom: '80px', zIndex: 5, maxWidth: '220px' }} className="bg-white/95 backdrop-blur-sm rounded-2xl px-4 py-2 shadow-lg border-2 border-gray-200 pointer-events-auto">
             <p className="text-gray-700 font-semibold text-sm text-center leading-snug">
-              {mensajeCobi || "¿Qué juego pruebo hoy?"}
+              {mensajeCobi || t('cobi.lobby.fallback')}
             </p>
             {/* Pico del bocadillo apuntando hacia Cobi */}
             <div className="absolute top-1/2 -translate-y-1/2 -right-3 w-4 h-4 bg-white border-r-2 border-b-2 border-gray-200 transform rotate-[315deg]"></div>
@@ -368,8 +352,8 @@ const Games: React.FC<GamesProps> = ({ activeGameId, setActiveGameId, cobiVisibl
             {chatMessages.length === 0 ? (
               <div className="text-center text-gray-500 mt-8">
                 <p className="text-3xl mb-2">🐾</p>
-                <p className="text-sm">¡Hola! Soy Cobi, tu anfitrión.</p>
-                <p className="text-xs mt-1">¿Qué juego quieres explorar hoy?</p>
+                <p className="text-sm">{t('cobi.lobby.chatWelcome')}</p>
+                <p className="text-xs mt-1">{t('cobi.lobby.chatWelcomeSub')}</p>
               </div>
             ) : (
               chatMessages.map((msg, idx) => (
@@ -393,7 +377,7 @@ const Games: React.FC<GamesProps> = ({ activeGameId, setActiveGameId, cobiVisibl
               <div className="flex justify-start">
                 <div className="bg-white text-gray-800 border-2 border-gray-200 rounded-2xl rounded-bl-sm px-4 py-2">
                   <p className="text-sm">
-                    <span className="inline-block animate-bounce">🐾</span> Pensando...
+                    <span className="inline-block animate-bounce">🐾</span> {t('cobi.lobby.chatLoading')}
                   </p>
                 </div>
               </div>
@@ -408,7 +392,7 @@ const Games: React.FC<GamesProps> = ({ activeGameId, setActiveGameId, cobiVisibl
                 value={currentMessage}
                 onChange={(e) => setCurrentMessage(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && sendMessageToCobi()}
-                placeholder="Escribe tu mensaje..."
+                placeholder={t('cobi.lobby.chatPlaceholder')}
                 disabled={isLoadingResponse}
                 className="flex-1 px-4 py-2 border-2 border-gray-200 rounded-full focus:outline-none focus:border-blue-400 disabled:bg-gray-100 disabled:cursor-not-allowed text-sm"
               />

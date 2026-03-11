@@ -14,11 +14,11 @@ const gameStyles = [
 const GamesExplainer: React.FC = () => {
   const { t } = useI18n();
   return (
-    <section className="bg-gradient-to-b from-cream to-white py-20 border-b border-gray-100">
+    <section className="bg-gradient-to-b from-cream to-white py-10 md:py-20 border-b border-gray-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Section Header */}
-        <div className="text-center mb-16">
+        <div className="text-center mb-8 md:mb-16">
           <div className="inline-block px-4 py-1.5 bg-red-50 text-spanish-red font-bold text-xs uppercase tracking-widest rounded-full mb-6">
             {t('games.badge')}
           </div>

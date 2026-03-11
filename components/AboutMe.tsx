@@ -5,7 +5,7 @@ import { useI18n } from '../services/i18n';
 const AboutMe: React.FC = () => {
   const { t } = useI18n();
   return (
-    <section className="bg-white py-16 md:py-24 overflow-hidden">
+    <section className="bg-white py-10 md:py-24 overflow-hidden">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Mobile only: Title above image */}

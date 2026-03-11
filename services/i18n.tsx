@@ -5,34 +5,42 @@ export type Language = 'es' | 'en';
 
 // ── Translation keys (flat dot-notation inferred at runtime) ─────────────────
 // We use a plain Record so components just call t('section.key').
-type Translations = Record<string, string>;
 
 interface I18nContextType {
   lang: Language;
   setLang: (l: Language) => void;
   t: (key: string) => string;
+  tArray: (key: string) => string[];
 }
 
 const I18nContext = createContext<I18nContextType>({
   lang: 'es',
   setLang: () => {},
   t: (k) => k,
+  tArray: () => [],
 });
 
 export const useI18n = () => useContext(I18nContext);
 
 // ── Flatten nested object into dot-notation keys ─────────────────────────────
-function flatten(obj: Record<string, any>, prefix = ''): Translations {
-  const result: Translations = {};
+type TranslationStore = { strings: Record<string, string>; arrays: Record<string, string[]> };
+
+function flatten(obj: Record<string, any>, prefix = ''): TranslationStore {
+  const strings: Record<string, string> = {};
+  const arrays: Record<string, string[]> = {};
   for (const key of Object.keys(obj)) {
     const fullKey = prefix ? `${prefix}.${key}` : key;
-    if (typeof obj[key] === 'object' && obj[key] !== null && !Array.isArray(obj[key])) {
-      Object.assign(result, flatten(obj[key], fullKey));
+    if (Array.isArray(obj[key])) {
+      arrays[fullKey] = obj[key].map(String);
+    } else if (typeof obj[key] === 'object' && obj[key] !== null) {
+      const child = flatten(obj[key], fullKey);
+      Object.assign(strings, child.strings);
+      Object.assign(arrays, child.arrays);
     } else {
-      result[fullKey] = String(obj[key]);
+      strings[fullKey] = String(obj[key]);
     }
   }
-  return result;
+  return { strings, arrays };
 }
 
 // ── Spanish (default) ────────────────────────────────────────────────────────
@@ -123,6 +131,43 @@ const es = flatten({
   footer: {
     copyright: '© 2024 Todos los derechos reservados.',
     contact: 'Contacto',
+  },
+  // ── Cobi message arrays ──────────────────────────────────────────────────
+  cobi: {
+    home: {
+      welcome: [
+        '¡Bienvenido, compawñero! 🐾 ¿Estás preparado para practicar?',
+        '¡Hola! 🎉 Aquí encontrarás todo lo que necesitas para aprender español. 🐾',
+        '¡Qué alegría verte! 📚 ¿Listo para mejorar tu español? 🐾',
+        '¡Bienvenido a tu espacio de aprendizaje! 🌟 ¡Vamos a aprender juntos! 🐾',
+        '¡Hola, estudiante! 🥋 El español te espera. ¿Empezamos? 🐾',
+        '¡Encantado de verte! ✨ Explora los juegos y recursos disponibles. 🐾',
+      ],
+      chatWelcome: '¡Hola! Soy Cobi, tu compañero de aprendizaje.',
+      chatWelcomeSub: 'Pregúntame lo que quieras sobre español. ✨',
+      chatError: '¡Ups! Tuve un problema. 🐾 Inténtalo de nuevo.',
+      chatLoading: 'Cobi está pensando... 🐾',
+      chatPlaceholder: 'Escribe tu pregunta...',
+    },
+    lobby: {
+      messages: [
+        '¡Datito curioso! 🐾 El español es el idioma más rápido del mundo: ¡7,82 sílabas por segundo! 💨',
+        '¡Datito curioso! ✨ La letra \'Ñ\' nació porque unos monjes querían gastar menos pergamino. ¡Ingenioso! 📜',
+        '¡Datito curioso! 🍃 Somos los únicos que usamos los signos de apertura (¡ ¿). ¡Sorpresa! 🎉',
+        '¡Datito curioso! 🧀 ¡El primer texto en español fue una lista de la compra de quesos hace 1000 años! 📝',
+        '🔍 Si buscas vocabulario nuevo, Adivina la Palabra es una gran opción 🐾',
+        '🏗️ ¿Practicamos el orden de las palabras en el Constructor de Frases? ✨',
+        '🥋 ¡Explota burbujas y entrena verbos en Maestro de Verbos! 🫧',
+        '🪄 Refuerza tus verbos y defiende el castillo en El Poder de los Verbos. ✨',
+        '¿No sabes por dónde empezar? 🐾 ¡Habla conmigo y te ayudo!',
+      ],
+      fallback: '¿Qué juego pruebo hoy?',
+      chatWelcome: '¡Hola! Soy Cobi, tu anfitrión.',
+      chatWelcomeSub: '¿Qué juego quieres explorar hoy?',
+      chatError: '🐾 ¡Ups! Algo salió mal. Inténtalo de nuevo.',
+      chatLoading: 'Pensando...',
+      chatPlaceholder: 'Escribe tu mensaje...',
+    },
   },
 });
 
@@ -215,9 +260,46 @@ const en = flatten({
     copyright: '© 2024 All rights reserved.',
     contact: 'Contact',
   },
+  // ── Cobi message arrays ──────────────────────────────────────────────────
+  cobi: {
+    home: {
+      welcome: [
+        'Welcome, com-paw-nion! 🐾 Ready to practice?',
+        'Hi there! 🎉 Everything you need to learn Spanish is right here. 🐾',
+        'So good to see you! 📚 Ready to level up your Spanish? 🐾',
+        'Welcome to your learning space! 🌟 Let\'s learn together! 🐾',
+        'Hello, student! 🥋 Spanish is waiting for you. Shall we begin? 🐾',
+        'Great to see you! ✨ Explore the games and resources available. 🐾',
+      ],
+      chatWelcome: 'Hi! I\'m Cobi, your learning com-paw-nion.',
+      chatWelcomeSub: 'Ask me anything about Spanish. ✨',
+      chatError: 'Oops! I hit a snag. 🐾 Give it another go.',
+      chatLoading: 'Cobi is thinking... 🐾',
+      chatPlaceholder: 'Type your question...',
+    },
+    lobby: {
+      messages: [
+        'Fun fact! 🐾 Spanish is the fastest language in the world: 7.82 syllables per second! 💨',
+        'Fun fact! ✨ The letter \'Ñ\' was born because some monks wanted to save parchment. Clever! 📜',
+        'Fun fact! 🍃 We\'re the only ones who use opening marks (¡ ¿). Surprise! 🎉',
+        'Fun fact! 🧀 The first Spanish text was a cheese shopping list from 1000 years ago! 📝',
+        '🔍 Looking for new vocab? Guess the Word is a great choice 🐾',
+        '🏗️ Let\'s practice word order in the Phrase Builder! ✨',
+        '🥋 Pop bubbles and train your verbs in Verb Master! 🫧',
+        '🪄 Power up your verbs and defend the castle in The Power of Verbs. ✨',
+        'Don\'t know where to start? 🐾 Talk to me and I\'ll help you out!',
+      ],
+      fallback: 'Which game shall I try today?',
+      chatWelcome: 'Hi! I\'m Cobi, your host.',
+      chatWelcomeSub: 'What game would you like to explore today?',
+      chatError: '🐾 Oops! Something went wrong. Try again.',
+      chatLoading: 'Thinking...',
+      chatPlaceholder: 'Type your message...',
+    },
+  },
 });
 
-const dictionaries: Record<Language, Translations> = { es, en };
+const dictionaries: Record<Language, TranslationStore> = { es, en };
 
 // ── Provider ─────────────────────────────────────────────────────────────────
 export const I18nProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
@@ -235,10 +317,11 @@ export const I18nProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     document.documentElement.lang = lang;
   }, [lang]);
 
-  const t = (key: string): string => dictionaries[lang][key] ?? dictionaries['es'][key] ?? key;
+  const t = (key: string): string => dictionaries[lang].strings[key] ?? dictionaries['es'].strings[key] ?? key;
+  const tArray = (key: string): string[] => dictionaries[lang].arrays[key] ?? dictionaries['es'].arrays[key] ?? [];
 
   return (
-    <I18nContext.Provider value={{ lang, setLang, t }}>
+    <I18nContext.Provider value={{ lang, setLang, t, tArray }}>
       {children}
     </I18nContext.Provider>
   );

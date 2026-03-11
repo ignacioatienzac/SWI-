@@ -547,6 +547,7 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
       setDraggedIndex(index);
     } else if (dragSource === 'available') {
       // Show ghost preview at this position
+      e.stopPropagation(); // Prevent container's handleZoneDragOver from overriding
       setDropTargetIndex(index);
     }
   };
@@ -589,6 +590,139 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
     setDraggedIndex(null);
     setDropTargetIndex(-1);
   };
+
+  // --- Mobile Touch Drag & Drop System ---
+  const touchStartRef = useRef<{
+    word: string;
+    source: 'available' | 'construction';
+    sourceIndex: number;
+    startX: number;
+    startY: number;
+  } | null>(null);
+  const [touchDragging, setTouchDragging] = useState(false);
+  const [touchPos, setTouchPos] = useState({ x: 0, y: 0 });
+  const [touchDragWord, setTouchDragWord] = useState('');
+  const ghostRef = useRef<HTMLDivElement>(null);
+  const TOUCH_THRESHOLD = 10;
+
+  // Keep refs current for use in document event listeners
+  const selectedWordsRef = useRef(selectedWords);
+  selectedWordsRef.current = selectedWords;
+  const availableWordsRef = useRef(availableWords);
+  availableWordsRef.current = availableWords;
+  const dragSourceRef = useRef(dragSource);
+  dragSourceRef.current = dragSource;
+  const dragWordRef = useRef(dragWord);
+  dragWordRef.current = dragWord;
+  const dragSourceIndexRef = useRef(dragSourceIndex);
+  dragSourceIndexRef.current = dragSourceIndex;
+  const draggedIndexRef = useRef(draggedIndex);
+  draggedIndexRef.current = draggedIndex;
+  const dropTargetIndexRef = useRef(dropTargetIndex);
+  dropTargetIndexRef.current = dropTargetIndex;
+  const touchDraggingRef = useRef(touchDragging);
+  touchDraggingRef.current = touchDragging;
+
+  const handleWordTouchStart = (source: 'available' | 'construction', word: string, sourceIndex: number) => (e: React.TouchEvent) => {
+    const touch = e.touches[0];
+    touchStartRef.current = { word, source, sourceIndex, startX: touch.clientX, startY: touch.clientY };
+  };
+
+  useEffect(() => {
+    if (!isMobile) return;
+
+    const handleTouchMove = (e: TouchEvent) => {
+      if (!touchStartRef.current) return;
+      const touch = e.touches[0];
+      const { startX, startY, word, source, sourceIndex } = touchStartRef.current;
+      const dx = touch.clientX - startX;
+      const dy = touch.clientY - startY;
+
+      if (!touchDraggingRef.current && Math.sqrt(dx * dx + dy * dy) > TOUCH_THRESHOLD) {
+        // Enter drag mode
+        setTouchDragging(true);
+        setTouchDragWord(word);
+        setDragSource(source);
+        setDragWord(word);
+        setDragSourceIndex(sourceIndex);
+        if (source === 'construction') {
+          setDraggedIndex(sourceIndex);
+        }
+      }
+
+      if (touchDraggingRef.current || Math.sqrt(dx * dx + dy * dy) > TOUCH_THRESHOLD) {
+        e.preventDefault();
+        setTouchPos({ x: touch.clientX, y: touch.clientY });
+
+        // Hide ghost momentarily for elementFromPoint
+        const ghostEl = ghostRef.current;
+        if (ghostEl) ghostEl.style.display = 'none';
+        const el = document.elementFromPoint(touch.clientX, touch.clientY);
+        if (ghostEl) ghostEl.style.display = '';
+
+        if (el) {
+          const constructionEl = el.closest('[data-construction-index]');
+          const zoneEl = el.closest('[data-construction-zone]');
+          const currentSource = touchStartRef.current?.source || dragSourceRef.current;
+
+          if (currentSource === 'construction' && constructionEl) {
+            const targetIdx = parseInt(constructionEl.getAttribute('data-construction-index')!);
+            const currentDragged = draggedIndexRef.current;
+            if (currentDragged !== null && currentDragged !== targetIdx) {
+              const newWords = [...selectedWordsRef.current];
+              const draggedW = newWords[currentDragged];
+              newWords.splice(currentDragged, 1);
+              newWords.splice(targetIdx, 0, draggedW);
+              setSelectedWords(newWords);
+              setDraggedIndex(targetIdx);
+            }
+          } else if (currentSource === 'available') {
+            if (constructionEl) {
+              const idx = parseInt(constructionEl.getAttribute('data-construction-index')!);
+              setDropTargetIndex(idx);
+            } else if (zoneEl) {
+              setDropTargetIndex(selectedWordsRef.current.length);
+            } else {
+              setDropTargetIndex(-1);
+            }
+          }
+        }
+      }
+    };
+
+    const handleTouchEnd = () => {
+      if (touchDraggingRef.current) {
+        const src = dragSourceRef.current;
+        const word = dragWordRef.current;
+        const srcIdx = dragSourceIndexRef.current;
+        const dropIdx = dropTargetIndexRef.current;
+
+        if (src === 'available' && word && dropIdx >= 0) {
+          playPlace();
+          const newAvailable = [...availableWordsRef.current];
+          newAvailable.splice(srcIdx, 1);
+          setAvailableWords(newAvailable);
+          const newSelected = [...selectedWordsRef.current];
+          newSelected.splice(dropIdx, 0, word);
+          setSelectedWords(newSelected);
+        }
+        // Construction reorder already handled in touchmove
+      }
+
+      touchStartRef.current = null;
+      setTouchDragging(false);
+      setTouchDragWord('');
+      setTouchPos({ x: 0, y: 0 });
+      resetDragState();
+    };
+
+    document.addEventListener('touchmove', handleTouchMove, { passive: false });
+    document.addEventListener('touchend', handleTouchEnd);
+    return () => {
+      document.removeEventListener('touchmove', handleTouchMove);
+      document.removeEventListener('touchend', handleTouchEnd);
+    };
+  }, [isMobile]);
 
   // Join words properly without spaces around punctuation
   const joinWords = (words: string[]): string => {
@@ -1646,6 +1780,7 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
         )}
         {/* Construction Zone - Selected Words */}
         <div
+          data-construction-zone
           className={`bg-white/90 backdrop-blur rounded-2xl p-6 shadow-lg mb-4 border-4 border-dashed min-h-[120px] transition-colors ${
             dragSource === 'available' ? 'border-amber-500 bg-amber-50/50' : 'border-amber-300'
           }`}
@@ -1681,11 +1816,13 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
                         </div>
                       )}
                       <button
+                        data-construction-index={index}
                         draggable
                         onDragStart={(e) => handleConstructionDragStart(e, index)}
                         onDragOver={(e) => handleConstructionDragOver(e, index)}
                         onDragEnd={handleDragEnd}
-                        onClick={() => deselectWord(word, index)}
+                        onTouchStart={handleWordTouchStart('construction', word, index)}
+                        onClick={() => !touchDragging && deselectWord(word, index)}
                         className={`px-5 py-2.5 bg-gradient-to-b from-amber-400 to-amber-500 text-white font-bold rounded-lg shadow-md hover:from-amber-500 hover:to-amber-600 active:scale-95 cursor-move ${
                           draggedIndex === index ? 'opacity-50 scale-95' : ''
                         } ${getBorderColor()}`}
@@ -1744,12 +1881,14 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
             {availableWords.map((word, index) => (
               <button
                 key={`available-${index}`}
+                data-available-index={index}
                 draggable
                 onDragStart={(e) => handleAvailableDragStart(e, word, index)}
                 onDragEnd={handleDragEnd}
-                onClick={() => selectWord(word, index)}
+                onTouchStart={handleWordTouchStart('available', word, index)}
+                onClick={() => !touchDragging && selectWord(word, index)}
                 className={`px-5 py-2.5 bg-gradient-to-b from-gray-100 to-gray-200 text-gray-700 font-bold rounded-lg shadow hover:from-amber-100 hover:to-amber-200 hover:text-amber-800 active:scale-95 border-2 border-gray-300 hover:border-amber-400 cursor-grab active:cursor-grabbing ${
-                  dragSource === 'available' && dragSourceIndex === index ? 'opacity-40 scale-95' : ''
+                  (dragSource === 'available' && dragSourceIndex === index) ? 'opacity-40 scale-95' : ''
                 }`}
                 style={{
                   boxShadow: '0 3px 0 0 rgba(0, 0, 0, 0.1), 0 4px 8px rgba(0,0,0,0.1)',
@@ -1782,6 +1921,22 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
           </button>
         </div>
       </div>
+
+      {/* Touch drag ghost element */}
+      {touchDragging && touchDragWord && (
+        <div
+          ref={ghostRef}
+          className="fixed z-[9999] pointer-events-none px-5 py-2.5 bg-gradient-to-b from-amber-400 to-amber-500 text-white font-bold rounded-lg shadow-xl"
+          style={{
+            left: touchPos.x - 40,
+            top: touchPos.y - 24,
+            transform: 'scale(1.08)',
+            boxShadow: '0 8px 24px rgba(0,0,0,0.25)',
+          }}
+        >
+          {touchDragWord}
+        </div>
+      )}
 
       {/* Cobi Avatar - Asomándose desde la esquina inferior derecha */}
       {gameState === 'PLAYING' && (

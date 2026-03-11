@@ -36,7 +36,7 @@ const SocialMedia: React.FC = () => {
   ];
 
   return (
-    <section style={{ backgroundColor: '#f8fafc' }} className="py-12">
+    <section style={{ backgroundColor: '#f8fafc' }} className="py-8 md:py-12">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <h2 className="text-xl md:text-2xl font-extrabold text-deep-blue mb-6">
           {t('social.title')}

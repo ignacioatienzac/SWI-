@@ -13,21 +13,6 @@ import { View } from './types';
 import { hablarConPanda } from './services/geminiService';
 import { useI18n } from './services/i18n';
 
-// Mensajes de bienvenida para Cobi en la página principal
-const mensajesBienvenidaCobi = [
-  "¡Bienvenido, compawñero! 🐾 ¿Estás preparado para practicar?",
-  "¡Hola! 🎉 Aquí encontrarás todo lo que necesitas para aprender español. 🐾",
-  "¡Qué alegría verte! 📚 ¿Listo para mejorar tu español? 🐾",
-  "¡Bienvenido a tu espacio de aprendizaje! 🌟 ¡Vamos a aprender juntos! 🐾",
-  "¡Hola, estudiante! 🥋 El español te espera. ¿Empezamos? 🐾",
-  "¡Encantado de verte! ✨ Explora los juegos y recursos disponibles. 🐾"
-];
-
-const seleccionarMensajeCobiRandom = (): string => {
-  const indice = Math.floor(Math.random() * mensajesBienvenidaCobi.length);
-  return mensajesBienvenidaCobi[indice];
-};
-
 // ── Hash-based routing ──────────────────────────────────────────────────────
 const VIEW_TO_HASH: Record<View, string> = {
   [View.HOME]: '/',
@@ -71,7 +56,7 @@ function parseHash(): { view: View; gameId: string | null } {
 // ────────────────────────────────────────────────────────────────────────────
 
 const App: React.FC = () => {
-  const { t } = useI18n();
+  const { t, tArray } = useI18n();
   // Inicializar estado desde la URL (hash routing)
   const [currentView, setCurrentView] = useState<View>(() => parseHash().view);
   const [activeGameId, setActiveGameId] = useState<string | null>(() => parseHash().gameId);
@@ -104,8 +89,12 @@ const App: React.FC = () => {
     });
   };
 
-  // Estado para mensaje de Cobi
-  const [cobiMessage] = useState<string>(seleccionarMensajeCobiRandom());
+  // Estado para mensaje de Cobi (selected once on mount from i18n)
+  const welcomeMessages = tArray('cobi.home.welcome');
+  const [cobiMessage] = useState<string>(() => {
+    if (welcomeMessages.length === 0) return '';
+    return welcomeMessages[Math.floor(Math.random() * welcomeMessages.length)];
+  });
   
   // Estados de chat
   const [showChatWindow, setShowChatWindow] = useState(false);
@@ -145,7 +134,7 @@ const App: React.FC = () => {
       console.error('Error al comunicarse con Cobi:', error);
       setChatHistory(prev => [
         ...prev,
-        { role: 'cobi', text: '¡Ups! Tuve un problema. 🐾 Inténtalo de nuevo.' }
+        { role: 'cobi', text: t('cobi.home.chatError') }
       ]);
     } finally {
       setIsLoadingResponse(false);
@@ -309,8 +298,8 @@ const App: React.FC = () => {
             {chatHistory.length === 0 ? (
               <div className="text-center text-gray-500 text-sm mt-8">
                 <p className="mb-2">🐾</p>
-                <p>¡Hola! Soy Cobi, tu compañero de aprendizaje.</p>
-                <p className="text-xs mt-2">Pregúntame lo que quieras sobre español. ✨</p>
+                <p>{t('cobi.home.chatWelcome')}</p>
+                <p className="text-xs mt-2">{t('cobi.home.chatWelcomeSub')}</p>
               </div>
             ) : (
               chatHistory.map((msg, idx) => (
@@ -336,7 +325,7 @@ const App: React.FC = () => {
               <div className="flex justify-start">
                 <div className="bg-white border-2 border-blue-gray-200 rounded-2xl px-4 py-3">
                   <p className="text-sm text-gray-600">
-                    Cobi está pensando... 🐾
+                    {t('cobi.home.chatLoading')}
                   </p>
                 </div>
               </div>
@@ -351,7 +340,7 @@ const App: React.FC = () => {
                 value={chatInput}
                 onChange={(e) => setChatInput(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && sendMessageToCobi()}
-                placeholder="Escribe tu pregunta..."
+                placeholder={t('cobi.home.chatPlaceholder')}
                 disabled={isLoadingResponse}
                 className="flex-1 px-4 py-2 border-2 border-gray-200 rounded-full focus:outline-none focus:border-blue-gray-400 transition text-sm disabled:bg-gray-100"
               />
