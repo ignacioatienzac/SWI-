@@ -108,13 +108,19 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
     document.documentElement.scrollTop = 0;
   }, []);
 
-  // Prevent page scroll on desktop while in menu or playing
+  // Scroll to top whenever gameState changes (entering menu or playing)
   useEffect(() => {
-    if ((gameState === 'PLAYING' || gameState === 'MENU') && !isMobile) {
+    window.scrollTo(0, 0);
+    document.documentElement.scrollTop = 0;
+  }, [gameState]);
+
+  // Prevent page scroll while playing (desktop & mobile)
+  useEffect(() => {
+    if (gameState === 'PLAYING') {
       document.body.style.overflow = 'hidden';
       return () => { document.body.style.overflow = ''; };
     }
-  }, [gameState, isMobile]);
+  }, [gameState]);
   
   // Cobi avatar image URLs - centralized for easy scalability
   const COBI_AVATARS = {
@@ -1491,7 +1497,7 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
   }
   
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 p-4 relative overflow-hidden">
+    <div className={`bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 relative overflow-hidden ${isMobile ? 'fixed inset-0 z-40 p-3 flex flex-col' : 'min-h-screen p-4'}`}>
       {/* Construction background elements */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         {/* Bricks pattern */}
@@ -1507,7 +1513,7 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
         <div className="absolute top-1/2 right-10 text-4xl opacity-20">🧱</div>
       </div>
 
-      <div className="max-w-3xl mx-auto relative z-10">
+      <div className={`max-w-3xl mx-auto relative z-10 ${isMobile ? 'flex-1 flex flex-col min-h-0 overflow-hidden' : ''}`}>
         {/* PhraseBuilder Animations */}
         <style>{`
           @keyframes pbFadeIn {

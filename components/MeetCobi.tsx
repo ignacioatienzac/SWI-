@@ -10,6 +10,16 @@ const MeetCobi: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row items-center gap-12 lg:gap-24">
           
+          {/* Mobile only: Badge + Title above image */}
+          <div className="md:hidden w-full text-center">
+            <div className="inline-block px-4 py-1.5 bg-red-50 text-spanish-red font-bold text-xs uppercase tracking-widest rounded-full mb-4">
+              {t('meetCobi.badge')}
+            </div>
+            <h3 className="text-3xl font-extrabold text-deep-blue mb-2 leading-tight">
+              {t('meetCobi.title')}
+            </h3>
+          </div>
+
           {/* Image Side */}
           <div className="w-full md:w-1/2 flex justify-center md:justify-end relative group">
             {/* Background elements */}
@@ -33,11 +43,11 @@ const MeetCobi: React.FC = () => {
 
           {/* Content Side */}
           <div className="w-full md:w-1/2 text-center md:text-left z-10">
-            <div className="inline-block px-4 py-1.5 bg-red-50 text-spanish-red font-bold text-xs uppercase tracking-widest rounded-full mb-6">
+            <div className="hidden md:inline-block px-4 py-1.5 bg-red-50 text-spanish-red font-bold text-xs uppercase tracking-widest rounded-full mb-6">
               {t('meetCobi.badge')}
             </div>
             
-            <h3 className="text-3xl md:text-5xl font-extrabold text-deep-blue mb-6 leading-tight">
+            <h3 className="hidden md:block text-3xl md:text-5xl font-extrabold text-deep-blue mb-6 leading-tight">
               {t('meetCobi.title')}
             </h3>
             

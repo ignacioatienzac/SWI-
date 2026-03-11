@@ -8,12 +8,17 @@ const AboutMe: React.FC = () => {
     <section className="bg-white py-16 md:py-24 overflow-hidden">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
 
+        {/* Mobile only: Title above image */}
+        <h2 className="md:hidden text-3xl font-extrabold text-deep-blue mb-6 leading-tight text-center">
+          {t('aboutMe.title')}
+        </h2>
+
         {/* Asymmetric Grid: 60% title+text / 40% image+stats on DESKTOP. Stacks on mobile. */}
         <div className="grid grid-cols-1 md:grid-cols-5 gap-10 md:gap-16 items-start">
 
           {/* LEFT COLUMN (desktop) — 60% (3/5): Title + Text */}
           <div className="md:col-span-3 text-center md:text-left order-2 md:order-1">
-            <h2 className="text-3xl md:text-5xl font-extrabold text-deep-blue mb-6 leading-tight text-center">
+            <h2 className="hidden md:block text-3xl md:text-5xl font-extrabold text-deep-blue mb-6 leading-tight text-center">
               {t('aboutMe.title')}
             </h2>
 
