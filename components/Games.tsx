@@ -23,7 +23,7 @@ interface Message {
 }
 
 const Games: React.FC<GamesProps> = ({ activeGameId, setActiveGameId, cobiVisible, soundEnabled }) => {
-  const { t, tArray } = useI18n();
+  const { t, tArray, lang } = useI18n();
 
   // Scroll to top whenever a game is activated so the view starts from the top
   useEffect(() => {
@@ -50,13 +50,13 @@ const Games: React.FC<GamesProps> = ({ activeGameId, setActiveGameId, cobiVisibl
     img.src = COBI_AVATAR_LOBBY;
   }, []);
 
-  // Seleccionar un mensaje aleatorio al cargar el componente
+  // Seleccionar un mensaje aleatorio al cargar o cambiar idioma
   useEffect(() => {
     const msgs = tArray('cobi.lobby.messages');
     if (msgs.length > 0) {
       setMensajeCobi(msgs[Math.floor(Math.random() * msgs.length)]);
     }
-  }, []);
+  }, [lang]);
 
   // Función para enviar mensaje a Cobi del Lobby
   const sendMessageToCobi = async () => {

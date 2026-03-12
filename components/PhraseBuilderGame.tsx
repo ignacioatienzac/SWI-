@@ -724,6 +724,127 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
     };
   }, [isMobile]);
 
+  // --- Mobile Pointer Events Drag System (separate from desktop touch/drag) ---
+  const pointerStartRef = useRef<{
+    word: string;
+    source: 'available' | 'construction';
+    sourceIndex: number;
+    startX: number;
+    startY: number;
+    pointerId: number;
+  } | null>(null);
+  const [pointerDragging, setPointerDragging] = useState(false);
+  const [pointerPos, setPointerPos] = useState({ x: 0, y: 0 });
+  const [pointerDragWord, setPointerDragWord] = useState('');
+  const pointerGhostRef = useRef<HTMLDivElement>(null);
+  const POINTER_THRESHOLD = 10;
+
+  const pointerDraggingRef = useRef(pointerDragging);
+  pointerDraggingRef.current = pointerDragging;
+
+  const handleWordPointerDown = (source: 'available' | 'construction', word: string, sourceIndex: number) => (e: React.PointerEvent) => {
+    pointerStartRef.current = { word, source, sourceIndex, startX: e.clientX, startY: e.clientY, pointerId: e.pointerId };
+  };
+
+  useEffect(() => {
+    if (!isMobile) return;
+
+    const handlePointerMove = (e: PointerEvent) => {
+      if (!pointerStartRef.current) return;
+      if (e.pointerId !== pointerStartRef.current.pointerId) return;
+      const { startX, startY, word, source, sourceIndex } = pointerStartRef.current;
+      const dx = e.clientX - startX;
+      const dy = e.clientY - startY;
+
+      if (!pointerDraggingRef.current && Math.sqrt(dx * dx + dy * dy) > POINTER_THRESHOLD) {
+        setPointerDragging(true);
+        setPointerDragWord(word);
+        setDragSource(source);
+        setDragWord(word);
+        setDragSourceIndex(sourceIndex);
+        if (source === 'construction') {
+          setDraggedIndex(sourceIndex);
+        }
+      }
+
+      if (pointerDraggingRef.current || Math.sqrt(dx * dx + dy * dy) > POINTER_THRESHOLD) {
+        e.preventDefault();
+        setPointerPos({ x: e.clientX, y: e.clientY });
+
+        const ghostEl = pointerGhostRef.current;
+        if (ghostEl) ghostEl.style.display = 'none';
+        const el = document.elementFromPoint(e.clientX, e.clientY);
+        if (ghostEl) ghostEl.style.display = '';
+
+        if (el) {
+          const constructionEl = el.closest('[data-construction-index]');
+          const zoneEl = el.closest('[data-construction-zone]');
+          const currentSource = pointerStartRef.current?.source || dragSourceRef.current;
+
+          if (currentSource === 'construction' && constructionEl) {
+            const targetIdx = parseInt(constructionEl.getAttribute('data-construction-index')!);
+            const currentDragged = draggedIndexRef.current;
+            if (currentDragged !== null && currentDragged !== targetIdx) {
+              const newWords = [...selectedWordsRef.current];
+              const draggedW = newWords[currentDragged];
+              newWords.splice(currentDragged, 1);
+              newWords.splice(targetIdx, 0, draggedW);
+              setSelectedWords(newWords);
+              setDraggedIndex(targetIdx);
+            }
+          } else if (currentSource === 'available') {
+            if (constructionEl) {
+              const idx = parseInt(constructionEl.getAttribute('data-construction-index')!);
+              setDropTargetIndex(idx);
+            } else if (zoneEl) {
+              setDropTargetIndex(selectedWordsRef.current.length);
+            } else {
+              setDropTargetIndex(-1);
+            }
+          }
+        }
+      }
+    };
+
+    const handlePointerUp = (e: PointerEvent) => {
+      if (!pointerStartRef.current) return;
+      if (e.pointerId !== pointerStartRef.current.pointerId) return;
+
+      if (pointerDraggingRef.current) {
+        const src = dragSourceRef.current;
+        const word = dragWordRef.current;
+        const srcIdx = dragSourceIndexRef.current;
+        const dropIdx = dropTargetIndexRef.current;
+
+        if (src === 'available' && word && dropIdx >= 0) {
+          playPlace();
+          if (navigator.vibrate) navigator.vibrate(10);
+          const newAvailable = [...availableWordsRef.current];
+          newAvailable.splice(srcIdx, 1);
+          setAvailableWords(newAvailable);
+          const newSelected = [...selectedWordsRef.current];
+          newSelected.splice(dropIdx, 0, word);
+          setSelectedWords(newSelected);
+        }
+      }
+
+      pointerStartRef.current = null;
+      setPointerDragging(false);
+      setPointerDragWord('');
+      setPointerPos({ x: 0, y: 0 });
+      resetDragState();
+    };
+
+    document.addEventListener('pointermove', handlePointerMove);
+    document.addEventListener('pointerup', handlePointerUp);
+    document.addEventListener('pointercancel', handlePointerUp);
+    return () => {
+      document.removeEventListener('pointermove', handlePointerMove);
+      document.removeEventListener('pointerup', handlePointerUp);
+      document.removeEventListener('pointercancel', handlePointerUp);
+    };
+  }, [isMobile]);
+
   // Join words properly without spaces around punctuation
   const joinWords = (words: string[]): string => {
     let result = '';
@@ -1629,7 +1750,334 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
       </div>
     );
   }
-  
+
+  // ════════════════════════════════════════════════════════════════════════
+  // ═══  MOBILE PLAYING — Pointer Events, responsive CSS, haptic  ═══════
+  // ════════════════════════════════════════════════════════════════════════
+  if (isMobile) {
+    return (
+      <div className="bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 relative overflow-hidden fixed inset-0 z-40 p-2 flex flex-col">
+        {/* Background decoration */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-amber-200/30 to-transparent"></div>
+        </div>
+
+        <div className="w-[95%] mx-auto relative z-10 flex-1 flex flex-col min-h-0 overflow-auto" style={{ boxSizing: 'border-box' }}>
+          {/* Mobile animations */}
+          <style>{`
+            @keyframes pbFadeIn { 0% { opacity: 0; transform: scale(0.9); } 100% { opacity: 1; transform: scale(1); } }
+            @keyframes pbCascade { 0% { opacity: 0; transform: translateY(8px); } 100% { opacity: 1; transform: translateY(0); } }
+          `}</style>
+
+          {/* Header — compact for mobile */}
+          <div className="flex justify-between items-center mb-2 bg-white/90 backdrop-blur rounded-xl p-2 shadow-md border-2 border-amber-200">
+            <button onClick={() => setGameState('MENU')} className="p-1 hover:bg-gray-100 rounded-full transition-colors">
+              <ChevronLeft size={20} />
+            </button>
+            <div className="flex gap-3 text-center items-center">
+              <div>
+                <p className="text-[10px] text-gray-500 font-medium">PTS</p>
+                <p className="text-lg font-black text-amber-600">{score}</p>
+              </div>
+              <div>
+                <p className="text-[10px] text-gray-500 font-medium">RACHA</p>
+                <p className="text-lg font-black text-orange-500">🔥{streak}</p>
+              </div>
+              {selectedMode === 'timed' && (
+                <div>
+                  <p className="text-[10px] text-gray-500 font-medium">TIEMPO</p>
+                  <p className={`text-lg font-black ${timeLeft <= 10 ? 'text-red-500 animate-pulse' : 'text-blue-600'}`}>
+                    <Clock className="inline w-4 h-4 mr-0.5" />{timeLeft}s
+                  </p>
+                </div>
+              )}
+              {selectedMode === 'timed' && (
+                <button
+                  onClick={() => setIsPaused(!isPaused)}
+                  className={`p-1.5 rounded-full transition-colors ${isPaused ? 'bg-green-100 text-green-600' : 'bg-yellow-100 text-yellow-600'}`}
+                >
+                  {isPaused ? '▶️' : '⏸️'}
+                </button>
+              )}
+              {selectedMode === 'lives' && (
+                <div>
+                  <p className="text-[10px] text-gray-500 font-medium">VIDAS</p>
+                  <p className="text-lg font-black text-red-500">{'❤️'.repeat(lives)}{'🖤'.repeat(3 - lives)}</p>
+                </div>
+              )}
+              <button
+                onClick={() => setShowHint(!showHint)}
+                className={`p-1.5 rounded-full transition-colors ${showHint ? 'bg-amber-100 text-amber-600' : 'text-gray-400'}`}
+              >
+                <Lightbulb size={18} />
+              </button>
+              <button
+                onClick={() => setShowInstructions(!showInstructions)}
+                className={`p-1.5 rounded-full transition-colors ${showInstructions ? 'bg-purple-100 text-purple-600' : 'text-gray-400'}`}
+              >
+                <span className="text-sm font-bold">?</span>
+              </button>
+            </div>
+            <div className="text-right">
+              <p className="text-[10px] text-gray-500 font-medium">FRASE</p>
+              <p className="text-sm font-bold text-gray-700">{currentPhraseIndex + 1}/{phrases.length}</p>
+            </div>
+          </div>
+
+          {/* Hint display */}
+          {showHint && currentPhrase && (
+            <div className="bg-blue-100 rounded-xl p-3 mb-2 border-2 border-blue-300 shadow-md">
+              <p className="text-blue-800 text-center font-medium italic text-sm">
+                "{currentPhrase.pistas.traduccion_en}"
+              </p>
+            </div>
+          )}
+
+          {/* Instructions display */}
+          {showInstructions && (
+            <div className="bg-purple-100 rounded-xl p-3 mb-2 border-2 border-purple-300 shadow-md">
+              <h3 className="text-purple-800 font-bold mb-1 text-center text-sm">🎯 Instrucciones</h3>
+              {selectedDifficulty === 'easy' ? (
+                <div className="text-purple-800 text-xs space-y-1">
+                  <p>• <strong>Objetivo:</strong> Construye la frase usando TODAS las piezas</p>
+                  <p>• 🟢 Correcta &nbsp; 🔴 Incorrecta</p>
+                </div>
+              ) : (
+                <div className="text-purple-800 text-xs space-y-1">
+                  <p>• <strong>Objetivo:</strong> Construye frases con las piezas correctas</p>
+                  <p>• 🟢 Correcta &nbsp; 🔵 Mal ubicada &nbsp; 🔴 No pertenece</p>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Word count indicator for hard mode */}
+          {selectedDifficulty === 'hard' && currentPhrase && (
+            <div className="bg-amber-100 rounded-xl p-2 mb-2 border-2 border-amber-300">
+              <p className="text-xs text-amber-800 text-center font-bold">
+                🎯 Usa {currentPhrase.frase_objetivo.match(/[\w\u00C0-\u024F]+|[!?¡¿]/g)?.length || 0} piezas
+              </p>
+            </div>
+          )}
+
+          {/* Construction Zone — Mobile */}
+          <div
+            data-construction-zone
+            className={`bg-white/90 backdrop-blur rounded-xl p-3 shadow-lg mb-2 border-4 border-dashed min-h-[80px] transition-colors ${
+              dragSource === 'available' ? 'border-amber-500 bg-amber-50/50' : 'border-amber-300'
+            }`}
+            style={{ width: '100%', boxSizing: 'border-box' }}
+          >
+            <div className="flex items-center gap-1.5 mb-2">
+              <Hammer size={16} className="text-amber-600" />
+              <span className="text-xs font-bold text-amber-700">ZONA DE CONSTRUCCIÓN</span>
+            </div>
+            <div className="flex flex-wrap gap-1.5 min-h-[40px]">
+              {selectedWords.length === 0 && dropTargetIndex < 0 ? (
+                <p className="text-gray-400 italic text-xs">{dragSource === 'available' ? '¡Suelta aquí!' : 'Arrastra o toca las palabras...'}</p>
+              ) : (
+                <>
+                  {selectedWords.map((word, index) => {
+                    const getMobileBorderColor = () => {
+                      if (!showColorHints || !wordColors[index]) return '';
+                      if (wordColors[index] === 'green') return 'border-4 border-green-500';
+                      if (wordColors[index] === 'blue') return 'border-4 border-blue-500';
+                      if (wordColors[index] === 'red') return 'border-4 border-red-500';
+                      return '';
+                    };
+                    return (
+                      <React.Fragment key={`m-selected-${index}`}>
+                        {dragSource === 'available' && dropTargetIndex === index && (
+                          <div className="px-2.5 py-1 text-xs bg-amber-200/60 text-amber-600 font-bold rounded-lg border-2 border-dashed border-amber-400 pointer-events-none" style={{ animation: 'pbFadeIn 0.15s ease-out' }}>
+                            {dragWord}
+                          </div>
+                        )}
+                        <button
+                          data-construction-index={index}
+                          onPointerDown={handleWordPointerDown('construction', word, index)}
+                          onClick={() => !pointerDragging && deselectWord(word, index)}
+                          className={`px-2.5 py-1 bg-gradient-to-b from-amber-400 to-amber-500 text-white font-bold rounded-lg shadow-md active:scale-95 cursor-move ${
+                            draggedIndex === index ? 'opacity-50 scale-95' : ''
+                          } ${getMobileBorderColor()}`}
+                          style={{
+                            touchAction: 'none',
+                            fontSize: 'clamp(12px, 3vw, 16px)',
+                            boxShadow: '0 3px 0 0 rgba(180, 83, 9, 0.5), 0 4px 8px rgba(0,0,0,0.15)',
+                            transition: 'transform 0.2s ease, opacity 0.2s ease'
+                          }}
+                        >
+                          {word}
+                        </button>
+                      </React.Fragment>
+                    );
+                  })}
+                  {dragSource === 'available' && dropTargetIndex === selectedWords.length && (
+                    <div className="px-2.5 py-1 text-xs bg-amber-200/60 text-amber-600 font-bold rounded-lg border-2 border-dashed border-amber-400 pointer-events-none" style={{ animation: 'pbFadeIn 0.15s ease-out' }}>
+                      {dragWord}
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
+            {feedback && (
+              <div className={`mt-2 p-2 rounded-xl flex items-center gap-1.5 text-sm ${
+                feedback.type === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+              }`}>
+                {feedback.type === 'success' ? <Check size={16} /> : <X size={16} />}
+                <span className="font-bold">{feedback.message}</span>
+              </div>
+            )}
+            {feedback?.type === 'error' && selectedWords.length > 0 && (
+              <button
+                onClick={calculateColorHints}
+                className="mt-2 px-3 py-1.5 bg-blue-500 hover:bg-blue-600 text-white font-bold rounded-lg transition-colors flex items-center gap-1.5 text-xs"
+              >
+                <Lightbulb size={14} />
+                Ver posiciones
+              </button>
+            )}
+          </div>
+
+          {/* Available Words — Mobile */}
+          <div className="bg-white/90 backdrop-blur rounded-xl p-3 shadow-lg mb-2 border-2 border-amber-200" style={{ width: '100%', boxSizing: 'border-box' }}>
+            <div className="flex items-center gap-1.5 mb-2">
+              <span className="text-base">🧱</span>
+              <span className="text-xs font-bold text-gray-600">MATERIALES DISPONIBLES</span>
+            </div>
+            <div className="flex flex-wrap gap-1.5">
+              {availableWords.map((word, index) => (
+                <button
+                  key={`m-available-${index}`}
+                  data-available-index={index}
+                  onPointerDown={handleWordPointerDown('available', word, index)}
+                  onClick={() => !pointerDragging && selectWord(word, index)}
+                  className={`px-2.5 py-1 bg-gradient-to-b from-gray-100 to-gray-200 text-gray-700 font-bold rounded-lg shadow border-2 border-gray-300 active:scale-95 cursor-grab active:cursor-grabbing ${
+                    (dragSource === 'available' && dragSourceIndex === index) ? 'opacity-40 scale-95' : ''
+                  }`}
+                  style={{
+                    touchAction: 'none',
+                    fontSize: 'clamp(12px, 3vw, 16px)',
+                    boxShadow: '0 2px 0 0 rgba(0,0,0,0.1), 0 3px 6px rgba(0,0,0,0.1)',
+                    transition: 'transform 0.2s ease, opacity 0.2s ease',
+                    animation: `pbCascade 0.25s ease-out ${index * 0.03}s both`
+                  }}
+                >
+                  {word}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Action Buttons — Mobile (non-overlapping) */}
+          <div className="flex gap-2 mt-auto pb-1">
+            <button
+              onClick={resetPhrase}
+              className="flex-1 py-2.5 bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold rounded-xl transition-colors flex items-center justify-center gap-1 text-sm"
+            >
+              <RotateCcw size={16} />
+              Reiniciar
+            </button>
+            <button
+              onClick={checkAnswer}
+              disabled={selectedWords.length === 0}
+              className="flex-[2] py-2.5 px-4 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white font-bold rounded-xl shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-1 text-sm"
+            >
+              <Check size={16} />
+              Comprobar
+            </button>
+          </div>
+        </div>
+
+        {/* Pointer drag ghost element — Mobile */}
+        {pointerDragging && pointerDragWord && (
+          <div
+            ref={pointerGhostRef}
+            className="fixed z-[9999] pointer-events-none px-2.5 py-1 bg-gradient-to-b from-amber-400 to-amber-500 text-white font-bold rounded-lg shadow-xl"
+            style={{
+              left: pointerPos.x - 30,
+              top: pointerPos.y - 20,
+              fontSize: 'clamp(12px, 3vw, 16px)',
+              transform: 'scale(1.08)',
+              boxShadow: '0 8px 24px rgba(0,0,0,0.25)',
+            }}
+          >
+            {pointerDragWord}
+          </div>
+        )}
+
+        {/* Mobile Cobi + Chat */}
+        {gameState === 'PLAYING' && (
+          <>
+            <DraggableCobi onClick={() => setShowChatWindow(!showChatWindow)} icon="🔨" themeColor="#FF9F55" cobiVisible={cobiVisible} />
+            {showChatWindow && (
+              <div className={`cobi-container fixed bottom-24 right-6 z-50 w-80 max-w-[calc(100vw-3rem)] bg-white rounded-3xl shadow-2xl border-2 border-gray-200 overflow-hidden animate-fade-in${!cobiVisible ? ' cobi-hidden' : ''}`}>
+                <div className="bg-gradient-to-r from-amber-400 to-orange-500 p-4 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="text-2xl">🔨</span>
+                    <div>
+                      <h3 className="text-white font-bold text-sm">Cobi el Constructor</h3>
+                      <p className="text-white/80 text-xs">Tu asistente arquitecto</p>
+                    </div>
+                  </div>
+                  <button onClick={() => setShowChatWindow(false)} className="p-1 hover:bg-white/20 rounded-full transition">
+                    <X size={20} className="text-white" />
+                  </button>
+                </div>
+                <div className="h-64 overflow-y-auto p-4 space-y-3 bg-gradient-to-b from-amber-50/30 to-white">
+                  {chatHistory.length === 0 ? (
+                    <div className="text-center text-gray-500 text-sm mt-8">
+                      <p className="mb-2">👷‍♂️</p>
+                      <p>¡Hola! Soy Cobi, tu arquitecto personal.</p>
+                      <p className="text-xs mt-2">Pregúntame lo que necesites sobre esta frase.</p>
+                    </div>
+                  ) : (
+                    chatHistory.map((msg, idx) => (
+                      <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                        <div className={`max-w-[80%] rounded-2xl px-4 py-2 ${msg.role === 'user' ? 'bg-gradient-to-br from-blue-500 to-blue-600 text-white' : 'bg-white border-2 border-amber-200 text-gray-700'}`}>
+                          <p className="text-sm whitespace-pre-wrap">{msg.text}</p>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                  {isLoadingResponse && (
+                    <div className="flex justify-start">
+                      <div className="bg-white border-2 border-amber-200 rounded-2xl px-4 py-3">
+                        <p className="text-sm text-gray-600">El Panda está revisando los planos... 🐾</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+                <div className="p-3 bg-white border-t-2 border-gray-100">
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={chatInput}
+                      onChange={(e) => setChatInput(e.target.value)}
+                      onKeyPress={(e) => e.key === 'Enter' && sendMessageToCobi()}
+                      placeholder="Escribe tu pregunta..."
+                      disabled={isLoadingResponse}
+                      className="flex-1 px-4 py-2 border-2 border-gray-200 rounded-full focus:outline-none focus:border-amber-400 transition text-sm disabled:bg-gray-100"
+                    />
+                    <button
+                      onClick={sendMessageToCobi}
+                      disabled={isLoadingResponse || !chatInput.trim()}
+                      className="w-10 h-10 bg-gradient-to-br from-amber-400 to-orange-500 rounded-full flex items-center justify-center hover:shadow-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <Send size={18} className="text-white" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </>
+        )}
+      </div>
+    );
+  }
+
+  // ════════════════════════════════════════════════════════════════════════
+  // ═══  DESKTOP PLAYING — Original code, completely untouched  ══════════
+  // ════════════════════════════════════════════════════════════════════════
   return (
     <div className={`bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 relative overflow-hidden ${isMobile ? 'fixed inset-0 z-40 p-3 flex flex-col' : 'min-h-screen p-4'}`}>
       {/* Construction background elements */}

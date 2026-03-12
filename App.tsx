@@ -56,7 +56,7 @@ function parseHash(): { view: View; gameId: string | null } {
 // ────────────────────────────────────────────────────────────────────────────
 
 const App: React.FC = () => {
-  const { t, tArray } = useI18n();
+  const { t, tArray, lang } = useI18n();
   // Inicializar estado desde la URL (hash routing)
   const [currentView, setCurrentView] = useState<View>(() => parseHash().view);
   const [activeGameId, setActiveGameId] = useState<string | null>(() => parseHash().gameId);
@@ -89,12 +89,14 @@ const App: React.FC = () => {
     });
   };
 
-  // Estado para mensaje de Cobi (selected once on mount from i18n)
-  const welcomeMessages = tArray('cobi.home.welcome');
-  const [cobiMessage] = useState<string>(() => {
-    if (welcomeMessages.length === 0) return '';
-    return welcomeMessages[Math.floor(Math.random() * welcomeMessages.length)];
-  });
+  // Estado para mensaje de Cobi (re-picks on language change)
+  const [cobiMessage, setCobiMessage] = useState<string>('');
+  useEffect(() => {
+    const msgs = tArray('cobi.home.welcome');
+    if (msgs.length > 0) {
+      setCobiMessage(msgs[Math.floor(Math.random() * msgs.length)]);
+    }
+  }, [lang]);
   
   // Estados de chat
   const [showChatWindow, setShowChatWindow] = useState(false);
