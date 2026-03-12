@@ -5,6 +5,7 @@ import { PowerVerb, GameDifficulty, GameMode, BattleMode } from '../types';
 import { hablarConPanda } from '../services/geminiService';
 import DraggableCobi from './DraggableCobi';
 import { normalizePronoun } from '../services/srsService';
+import { useI18n } from '../services/i18n';
 
 interface PowerOfVerbsGameProps {
   onBack: () => void;
@@ -29,88 +30,8 @@ const formatTenseName = (tense: string): string => {
   return tenseMap[tense.toLowerCase()] || tense.charAt(0).toUpperCase() + tense.slice(1);
 };
 
-// Mensajes aleatorios para Cobi Mago durante el juego
-const mensajesMagoJuego = [
-  "¡Prepara tu varita! ✨",
-  "¡Que empiece la magia! 🔮",
-  "¡Abre el grimorio! 📖",
-  "¡Hora de conjurar! ⚡"
-];
-
-const mensajesMagoMenu = [
-  "¡Bienvenido, mago! ¿Listo para conjugar? ✨",
-  "Mi libro de hechizos está preparado. ¡Vamos! 📖",
-  "¿Qué varita usamos hoy? 🪄",
-  "¡Vamos a defender el castillo! 🏰"
-];
-
-const mensajesMagoAcierto = [
-  "¡Pretéritum Totalus! ⚡",
-  "¡Futurum Primus! ✨",
-  "¡Imperativus Maxima! 💥",
-  "¡Conjugatio Explosiva! 🔥",
-  "¡Verbum Rayo! ⚡",
-  "¡Participium Perfectum! 🌟",
-  "¡Avada Kedavra, monstruo! 🔥"
-];
-
-const mensajesMagoFallo = [
-  "¡Irregularis Chaos! 🌀",
-  "¡Conjugatio Incompleta! 💨",
-  "¡Tildus Absentia! 📉",
-  "¡Syntaxis Confusum! 🌫️",
-  "¡Verbum Fallidus! 🧨",
-  "¡Modus Incorrektus! 🌫️",
-  "¡Subjuntivum Dubia... 🌫️",
-  "¡Infinitivus Errorus! 💨",
-  "¡Gerundium Lento... 🐢"
-];
-
-const mensajesMagoPausa = [
-  "Recargando maná... 🧘‍♂️",
-  "Revisando hechizos 🪄",
-  "Meditando el próximo ataque. 🎋"
-];
-
-const mensajesMagoVictoria = [
-  "¡Conjugatum Victorium! 🏆",
-  "¡Lo logramos, mago supremo! 🌟",
-  "¡Así se hace, leyenda de la magia! 👑"
-];
-
-const mensajesMagoDerrota = [
-  "Se nos acabó la magia... ¿volvemos a intentarlo?🪄",
-  "¡Necesitamos más MP! 🧪",
-  "Quizás necesitamos estudiar más hechizos 📚"
-];
-
-const seleccionarMensajeMagoRandom = (tipo: 'juego' | 'acierto' | 'fallo' | 'pausa' | 'victoria' | 'derrota' | 'menu'): string => {
-  let mensajes;
-  switch(tipo) {
-    case 'acierto':
-      mensajes = mensajesMagoAcierto;
-      break;
-    case 'fallo':
-      mensajes = mensajesMagoFallo;
-      break;
-    case 'pausa':
-      mensajes = mensajesMagoPausa;
-      break;
-    case 'victoria':
-      mensajes = mensajesMagoVictoria;
-      break;
-    case 'derrota':
-      mensajes = mensajesMagoDerrota;
-      break;
-    case 'menu':
-      mensajes = mensajesMagoMenu;
-      break;
-    default:
-      mensajes = mensajesMagoJuego;
-  }
-  const indice = Math.floor(Math.random() * mensajes.length);
-  return mensajes[indice];
-};
+// Utility to pick a random element from an array
+const selectRandom = (arr: string[]): string => arr[Math.floor(Math.random() * arr.length)] || '';
 
 // --- GAME CONSTANTS & CONFIGURATION ---
 const DIFFICULTY_SETTINGS = {
@@ -377,6 +298,22 @@ const PovMobileKeyboard: React.FC<PovMobileKeyboardProps> = ({ onKeyPress, onDel
 
 // --- COMPONENT ---
 const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible = true, soundEnabled = true }) => {
+  const { tArray, lang } = useI18n();
+
+  // Helper to pick a random Cobi Mago message by type
+  const magoMsg = useCallback((tipo: 'juego' | 'acierto' | 'fallo' | 'pausa' | 'victoria' | 'derrota' | 'menu'): string => {
+    const keyMap: Record<string, string> = {
+      juego: 'cobi.powerVerbs.game',
+      acierto: 'cobi.powerVerbs.hit',
+      fallo: 'cobi.powerVerbs.miss',
+      pausa: 'cobi.powerVerbs.pause',
+      victoria: 'cobi.powerVerbs.victory',
+      derrota: 'cobi.powerVerbs.defeat',
+      menu: 'cobi.powerVerbs.menu',
+    };
+    return selectRandom(tArray(keyMap[tipo]));
+  }, [tArray]);
+
   // UI State
   const [gameState, setGameState] = useState<GameState>('SELECTION');
   const [selectedGrammar, setSelectedGrammar] = useState<string>('');
@@ -388,8 +325,6 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
   const [feedbackMsg, setFeedbackMsg] = useState<{ text: string; type: 'success' | 'error' | '' }>({ text: '', type: '' });
   const [instructionsOpen, setInstructionsOpen] = useState(false);
   const [mobileMenuPage, setMobileMenuPage] = useState(1); // Pages 1-7 for mobile wizard
-  const [desktopMenuPage, setDesktopMenuPage] = useState(1); // Pages 1-7 for desktop wizard
-  const [, setDesktopSlideDir] = useState<'left' | 'right' | null>(null); // For carousel animation
   const [accentSensitive, setAccentSensitive] = useState(true); // Tildes sensitivity
   const [inputFeedback, setInputFeedback] = useState<'idle' | 'success' | 'error'>('idle');
 
@@ -615,11 +550,20 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
   }, [bossPreparationActive, bossPreparationStartTime, selectedDifficulty, bossCurrentWave]);
   
   // Cobi Mago State
-  const [cobiMagoMessage, setCobiMagoMessage] = useState<string>(seleccionarMensajeMagoRandom('juego'));
-  const [cobiMagoMenuMessage] = useState<string>(seleccionarMensajeMagoRandom('menu'));
-  const [cobiMagoPausaMessage] = useState<string>(seleccionarMensajeMagoRandom('pausa'));
-  const [cobiMagoDerrotaMessage] = useState<string>(seleccionarMensajeMagoRandom('derrota'));
-  const [cobiMagoVictoriaMessage] = useState<string>(seleccionarMensajeMagoRandom('victoria'));
+  const [cobiMagoMessage, setCobiMagoMessage] = useState<string>('');
+  const [cobiMagoMenuMessage, setCobiMagoMenuMessage] = useState<string>('');
+  const [cobiMagoPausaMessage, setCobiMagoPausaMessage] = useState<string>('');
+  const [cobiMagoDerrotaMessage, setCobiMagoDerrotaMessage] = useState<string>('');
+  const [cobiMagoVictoriaMessage, setCobiMagoVictoriaMessage] = useState<string>('');
+
+  // Update Cobi messages when language changes
+  useEffect(() => {
+    setCobiMagoMessage(magoMsg('juego'));
+    setCobiMagoMenuMessage(magoMsg('menu'));
+    setCobiMagoPausaMessage(magoMsg('pausa'));
+    setCobiMagoDerrotaMessage(magoMsg('derrota'));
+    setCobiMagoVictoriaMessage(magoMsg('victoria'));
+  }, [lang, magoMsg]);
   
   // Chat State
   const [showChatWindow, setShowChatWindow] = useState(false);
@@ -1323,7 +1267,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
     }
     
     // Establecer mensaje inicial de Cobi Mago
-    setCobiMagoMessage(seleccionarMensajeMagoRandom('juego'));
+    setCobiMagoMessage(magoMsg('juego'));
     
     setGameState('PLAYING');
     // Ambient music is started/stopped via useEffect on gameState
@@ -2374,7 +2318,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
         // attackPower goes up +1 per correct (visual + aura), no limit
         setAttackPower(prev => prev + 1);
         playPowerUp(); // Crystal chime for power increase
-        setCobiMagoMessage(seleccionarMensajeMagoRandom('acierto'));
+        setCobiMagoMessage(magoMsg('acierto'));
         setFeedbackMsg({ text: `¡Correcto! Daño: ${newDamage} (Racha: ${newStreak})`, type: 'success' });
         setUserInput('');
         setTimeout(() => pickNewVerb(verbsPool), 600);
@@ -2391,7 +2335,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
         if (selectedDifficulty === 'dificil') {
           setAttackPower(prev => Math.max(1, prev - 1));
         }
-        setCobiMagoMessage(seleccionarMensajeMagoRandom('fallo'));
+        setCobiMagoMessage(magoMsg('fallo'));
         
         if (newFailureCount >= 3) {
           setFeedbackMsg({ text: `Incorrecto. La respuesta es: ${validAnswers[0]}`, type: 'error' });
@@ -2407,7 +2351,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
         setTimeout(() => setInputFeedback('idle'), 1000);
         setAttackPower(prev => prev + 1); // No limit
         playPowerUp(); // Crystal chime for power increase
-        setCobiMagoMessage(seleccionarMensajeMagoRandom('acierto'));
+        setCobiMagoMessage(magoMsg('acierto'));
         setFeedbackMsg({ text: '¡Correcto! +Poder', type: 'success' });
         setUserInput('');
         setTimeout(() => pickNewVerb(verbsPool), 600);
@@ -2421,7 +2365,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
         if (selectedDifficulty === 'dificil') {
           setAttackPower(prev => Math.max(1, prev - 1));
         }
-        setCobiMagoMessage(seleccionarMensajeMagoRandom('fallo'));
+        setCobiMagoMessage(magoMsg('fallo'));
         
         if (newFailureCount >= 3) {
           setFeedbackMsg({ text: `Incorrecto. La respuesta es: ${validAnswers[0]}`, type: 'error' });
@@ -2739,24 +2683,38 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
       );
     }
 
-    // --- DESKTOP: Step-by-step Wizard Menu with slide animations ---
-    const totalDesktopPages = 7;
-    const canDesktopGoNext = desktopMenuPage < totalDesktopPages;
-    const canDesktopGoBack = desktopMenuPage > 1;
+    // --- DESKTOP: VerbMaster-style stacked card menu ---
+    return (
+      <div className="min-h-screen bg-deep-blue p-4">
+        <div className="max-w-2xl mx-auto">
+          <button
+            onClick={onBack}
+            className="mb-6 text-gray-300 hover:text-white font-medium flex items-center gap-2 transition-colors"
+          >
+            <ChevronLeft size={20} />
+            Volver a Juegos
+          </button>
 
-    const renderDesktopPage = (page: number) => {
-      switch (page) {
-        case 1:
-          return (
-            <div>
-              <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">1. Modo Verbal</h3>
-              <div className="flex gap-4">
+          <div className="bg-white rounded-3xl p-8 shadow-xl">
+            <div className="text-center mb-8">
+              <h1 className="text-4xl font-black text-deep-blue mb-2">
+                🪄 El Poder de los Verbos
+              </h1>
+              <p className="text-gray-600">
+                ¡Defiende el castillo conjugando verbos!
+              </p>
+            </div>
+
+            {/* 1. Modo Verbal */}
+            <div className="mb-6">
+              <label className="block text-sm font-bold text-gray-700 mb-2">Modo Verbal</label>
+              <div className="grid grid-cols-3 gap-3">
                 {['indicativo', 'subjuntivo', 'imperativo'].map(g => (
                   <button
                     key={g}
                     onClick={() => setSelectedGrammar(g)}
-                    className={`flex-1 py-4 rounded-xl border-2 font-bold text-lg capitalize transition-all ${
-                      selectedGrammar === g ? 'bg-deep-blue text-white border-deep-blue' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
+                    className={`py-3 rounded-lg border-2 font-bold capitalize transition-all ${
+                      selectedGrammar === g ? 'border-deep-blue bg-deep-blue text-white' : 'border-gray-200 text-gray-600 hover:border-gray-300'
                     }`}
                   >
                     {g}
@@ -2764,415 +2722,276 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
                 ))}
               </div>
             </div>
-          );
-        case 2:
-          return (
-            <div>
-              <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">2. Tiempo Verbal</h3>
-              {availableTenses.length > 0 ? (
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                  {availableTenses.map(t => (
+
+            {/* 2. Tiempo Verbal */}
+            {selectedGrammar && (
+              <div className="mb-6">
+                <label className="block text-sm font-bold text-gray-700 mb-2">Tiempo Verbal</label>
+                {availableTenses.length > 0 ? (
+                  <div className="grid grid-cols-2 gap-3">
+                    {availableTenses.map(t => (
+                      <button
+                        key={t}
+                        onClick={() => setSelectedTense(t)}
+                        className={`py-3 rounded-lg border-2 font-bold transition-all ${
+                          selectedTense === t ? 'border-deep-blue bg-deep-blue text-white' : 'border-gray-200 text-gray-600 hover:border-gray-300'
+                        }`}
+                      >
+                        {formatTenseName(t)}
+                      </button>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-sm text-gray-400 italic">No hay tiempos disponibles para este modo.</p>
+                )}
+              </div>
+            )}
+
+            {/* 3. Tipo de Verbos */}
+            {selectedTense && (
+              <div className="mb-6">
+                <label className="block text-sm font-bold text-gray-700 mb-2">Tipo de Verbos</label>
+                <div className="grid grid-cols-3 gap-3">
+                  {['regular', 'irregular', 'mixed'].map(t => (
                     <button
                       key={t}
-                      onClick={() => setSelectedTense(t)}
-                      className={`py-4 px-4 rounded-xl border-2 font-bold text-base transition-all ${
-                        selectedTense === t ? 'bg-deep-blue text-white border-deep-blue' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
+                      onClick={() => setSelectedVerbType(t)}
+                      className={`py-3 rounded-lg border-2 font-bold capitalize transition-all ${
+                        selectedVerbType === t ? 'border-deep-blue bg-deep-blue text-white' : 'border-gray-200 text-gray-600 hover:border-gray-300'
                       }`}
                     >
-                      {formatTenseName(t)}
+                      {t === 'mixed' ? 'Todos' : t}
                     </button>
                   ))}
                 </div>
-              ) : (
-                <p className="text-sm text-gray-400 italic">No hay tiempos disponibles para este modo.</p>
-              )}
-            </div>
-          );
-        case 3:
-          return (
-            <div>
-              <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">3. Tipo de Verbos</h3>
-              <div className="flex gap-4">
-                {['regular', 'irregular', 'mixed'].map(t => (
-                  <button
-                    key={t}
-                    onClick={() => setSelectedVerbType(t)}
-                    className={`flex-1 py-4 rounded-xl border-2 font-bold text-lg capitalize transition-all ${
-                      selectedVerbType === t ? 'bg-deep-blue text-white border-deep-blue' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
-                    }`}
-                  >
-                    {t === 'mixed' ? 'Todos' : t}
-                  </button>
-                ))}
               </div>
-            </div>
-          );
-        case 4:
-          return (
-            <div>
-              <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">4. Modo de Batalla</h3>
-              <div className="grid grid-cols-2 gap-6">
-                <button
-                  onClick={() => setSelectedBattleMode('contrarreloj')}
-                  className={`p-8 rounded-xl border-2 text-center transition-all relative ${selectedBattleMode === 'contrarreloj' ? 'border-spanish-red bg-red-50 ring-2 ring-red-200' : 'border-gray-200 hover:bg-gray-50'}`}
-                >
+            )}
+
+            {/* 4. Modo de Batalla */}
+            {selectedVerbType && (
+              <div className="mb-6">
+                <label className="block text-sm font-bold text-gray-700 mb-2">Modo de Batalla</label>
+                <div className="grid grid-cols-2 gap-4">
                   <button
-                    onMouseEnter={() => setShowTooltip('contrarreloj')}
-                    onMouseLeave={() => setShowTooltip(null)}
-                    onClick={(e) => { e.stopPropagation(); setShowTooltip(showTooltip === 'contrarreloj' ? null : 'contrarreloj'); }}
-                    className="absolute top-2 left-2 w-5 h-5 rounded-full bg-gray-200 hover:bg-gray-300 text-xs flex items-center justify-center transition-colors"
+                    onClick={() => setSelectedBattleMode('contrarreloj')}
+                    className={`p-6 rounded-xl border-2 text-center transition-all relative ${selectedBattleMode === 'contrarreloj' ? 'border-spanish-red bg-red-50 ring-2 ring-red-200' : 'border-gray-200 hover:bg-gray-50'}`}
                   >
-                    ?
-                  </button>
-                  {showTooltip === 'contrarreloj' && (
-                    <div className="absolute -top-12 left-0 right-0 bg-gray-800 text-white text-xs px-3 py-2 rounded-lg z-10">
-                      Derrota 30 enemigos antes de que se acabe el tiempo
-                    </div>
-                  )}
-                  <div className="text-5xl mb-3">⏱️</div>
-                  <span className="block font-bold text-lg text-deep-blue">Contrarreloj</span>
-                </button>
-                <button
-                  onClick={() => setSelectedBattleMode('jefe')}
-                  className={`p-8 rounded-xl border-2 text-center transition-all relative ${selectedBattleMode === 'jefe' ? 'border-spanish-red bg-red-50 ring-2 ring-red-200' : 'border-gray-200 hover:bg-gray-50'}`}
-                >
-                  <button
-                    onMouseEnter={() => setShowTooltip('jefe')}
-                    onMouseLeave={() => setShowTooltip(null)}
-                    onClick={(e) => { e.stopPropagation(); setShowTooltip(showTooltip === 'jefe' ? null : 'jefe'); }}
-                    className="absolute top-2 left-2 w-5 h-5 rounded-full bg-gray-200 hover:bg-gray-300 text-xs flex items-center justify-center transition-colors"
-                  >
-                    ?
-                  </button>
-                  {showTooltip === 'jefe' && (
-                    <div className="absolute -top-12 left-0 right-0 bg-gray-800 text-white text-xs px-3 py-2 rounded-lg z-10">
-                      Derrota al dragón
-                    </div>
-                  )}
-                  <div className="text-5xl mb-3">🐉</div>
-                  <span className="block font-bold text-lg text-deep-blue">Modo Jefe</span>
-                </button>
-              </div>
-            </div>
-          );
-        case 5:
-          return (
-            <div>
-              <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">5. Modo de Respuesta</h3>
-              <div className="flex gap-4">
-                <button
-                  onClick={() => setSelectedMode('write')}
-                  className={`flex-1 py-4 rounded-xl border-2 text-center transition-all font-bold text-lg ${selectedMode === 'write' ? 'bg-deep-blue text-white border-deep-blue' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'}`}
-                >
-                  ✍️ Escribir
-                </button>
-                <button
-                  onClick={() => setSelectedMode('choice')}
-                  className={`flex-1 py-4 rounded-xl border-2 text-center transition-all font-bold text-lg ${selectedMode === 'choice' ? 'bg-deep-blue text-white border-deep-blue' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'}`}
-                >
-                  🎯 Selección
-                </button>
-              </div>
-            </div>
-          );
-        case 6:
-          return (
-            <div>
-              <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">6. Tildes</h3>
-              {selectedMode === 'write' ? (
-                <div className="space-y-4">
-                  <p className="text-sm text-gray-500 leading-relaxed">¿Quieres que las tildes cuenten en tus respuestas? Si desactivas, "habló" y "hablo" se aceptarán igual.</p>
-                  <div className="flex gap-4">
                     <button
-                      onClick={() => setAccentSensitive(true)}
-                      className={`flex-1 py-4 rounded-xl border-2 font-bold text-lg transition-all ${
-                        accentSensitive ? 'bg-deep-blue text-white border-deep-blue' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
+                      onMouseEnter={() => setShowTooltip('contrarreloj')}
+                      onMouseLeave={() => setShowTooltip(null)}
+                      onClick={(e) => { e.stopPropagation(); setShowTooltip(showTooltip === 'contrarreloj' ? null : 'contrarreloj'); }}
+                      className="absolute top-2 left-2 w-5 h-5 rounded-full bg-gray-200 hover:bg-gray-300 text-xs flex items-center justify-center transition-colors"
+                    >
+                      ?
+                    </button>
+                    {showTooltip === 'contrarreloj' && (
+                      <div className="absolute -top-12 left-0 right-0 bg-gray-800 text-white text-xs px-3 py-2 rounded-lg z-10">
+                        Derrota 30 enemigos antes de que se acabe el tiempo
+                      </div>
+                    )}
+                    <div className="text-4xl mb-2">⏱️</div>
+                    <span className="block font-bold text-deep-blue">Contrarreloj</span>
+                  </button>
+                  <button
+                    onClick={() => setSelectedBattleMode('jefe')}
+                    className={`p-6 rounded-xl border-2 text-center transition-all relative ${selectedBattleMode === 'jefe' ? 'border-spanish-red bg-red-50 ring-2 ring-red-200' : 'border-gray-200 hover:bg-gray-50'}`}
+                  >
+                    <button
+                      onMouseEnter={() => setShowTooltip('jefe')}
+                      onMouseLeave={() => setShowTooltip(null)}
+                      onClick={(e) => { e.stopPropagation(); setShowTooltip(showTooltip === 'jefe' ? null : 'jefe'); }}
+                      className="absolute top-2 left-2 w-5 h-5 rounded-full bg-gray-200 hover:bg-gray-300 text-xs flex items-center justify-center transition-colors"
+                    >
+                      ?
+                    </button>
+                    {showTooltip === 'jefe' && (
+                      <div className="absolute -top-12 left-0 right-0 bg-gray-800 text-white text-xs px-3 py-2 rounded-lg z-10">
+                        Derrota al dragón
+                      </div>
+                    )}
+                    <div className="text-4xl mb-2">🐉</div>
+                    <span className="block font-bold text-deep-blue">Modo Jefe</span>
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* 5. Modo de Respuesta */}
+            {selectedBattleMode && (
+              <div className="mb-6">
+                <label className="block text-sm font-bold text-gray-700 mb-2">Modo de Respuesta</label>
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    onClick={() => setSelectedMode('write')}
+                    className={`py-3 rounded-lg border-2 font-bold transition-all ${selectedMode === 'write' ? 'border-deep-blue bg-deep-blue text-white' : 'border-gray-200 text-gray-600 hover:border-gray-300'}`}
+                  >
+                    ✍️ Escribir
+                  </button>
+                  <button
+                    onClick={() => setSelectedMode('choice')}
+                    className={`py-3 rounded-lg border-2 font-bold transition-all ${selectedMode === 'choice' ? 'border-deep-blue bg-deep-blue text-white' : 'border-gray-200 text-gray-600 hover:border-gray-300'}`}
+                  >
+                    🎯 Selección
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* 6. Tildes */}
+            {selectedMode === 'write' && (
+              <div className="mb-6">
+                <label className="block text-sm font-bold text-gray-700 mb-2">Tildes</label>
+                <p className="text-sm text-gray-500 leading-relaxed mb-3">¿Quieres que las tildes cuenten en tus respuestas?</p>
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    onClick={() => setAccentSensitive(true)}
+                    className={`py-3 rounded-lg border-2 font-bold transition-all ${accentSensitive ? 'border-deep-blue bg-deep-blue text-white' : 'border-gray-200 text-gray-600 hover:border-gray-300'}`}
+                  >
+                    🎯 Estrictas
+                  </button>
+                  <button
+                    onClick={() => setAccentSensitive(false)}
+                    className={`py-3 rounded-lg border-2 font-bold transition-all ${!accentSensitive ? 'border-deep-blue bg-deep-blue text-white' : 'border-gray-200 text-gray-600 hover:border-gray-300'}`}
+                  >
+                    😌 Relajadas
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* 7. Dificultad */}
+            {(selectedMode === 'choice' || (selectedMode === 'write')) && selectedMode && (
+              <div className="mb-6">
+                <label className="block text-sm font-bold text-gray-700 mb-2">Dificultad</label>
+                <div className="grid grid-cols-3 gap-3">
+                  {(Object.keys(DIFFICULTY_SETTINGS) as GameDifficulty[]).map(d => (
+                    <button
+                      key={d}
+                      onClick={() => setSelectedDifficulty(d)}
+                      className={`py-3 rounded-lg border-2 font-bold capitalize transition-all ${
+                        selectedDifficulty === d ? 'border-deep-blue bg-deep-blue text-white' : 'border-gray-200 text-gray-600 hover:border-gray-300'
                       }`}
                     >
-                      🎯 Tildes Estrictas
+                      {DIFFICULTY_SETTINGS[d].label}
                     </button>
-                    <button
-                      onClick={() => setAccentSensitive(false)}
-                      className={`flex-1 py-4 rounded-xl border-2 font-bold text-lg transition-all ${
-                        !accentSensitive ? 'bg-deep-blue text-white border-deep-blue' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
-                      }`}
-                    >
-                      😌 Tildes Relajadas
-                    </button>
-                  </div>
+                  ))}
                 </div>
-              ) : (
-                <p className="text-sm text-gray-400 italic">Esta opción solo aplica en modo Escribir. Puedes pasar al siguiente paso.</p>
-              )}
-            </div>
-          );
-        case 7:
-          return (
-            <div>
-              <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">7. Dificultad</h3>
-              <div className="flex gap-4">
-                {(Object.keys(DIFFICULTY_SETTINGS) as GameDifficulty[]).map(d => (
-                  <button
-                    key={d}
-                    onClick={() => setSelectedDifficulty(d)}
-                    className={`flex-1 py-4 rounded-xl border-2 font-bold text-lg capitalize transition-all ${
-                      selectedDifficulty === d ? 'bg-deep-blue text-white border-deep-blue' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
-                    }`}
-                  >
-                    {DIFFICULTY_SETTINGS[d].label}
-                  </button>
-                ))}
               </div>
-            </div>
-          );
-        default:
-          return null;
-      }
-    };
+            )}
 
-    const goDesktopPage = (target: number) => {
-      if (target === desktopMenuPage || target < 1 || target > totalDesktopPages) return;
-      setDesktopSlideDir(target > desktopMenuPage ? 'left' : 'right');
-      setDesktopMenuPage(target);
-    };
-
-    // Carousel geometry: each card takes 80% of the container width, leaving room for peeks
-    const CARD_WIDTH_PCT = 80; // % of container
-    const GAP_PCT = 2; // % gap between cards
-    const TOTAL_STEP_PCT = CARD_WIDTH_PCT + GAP_PCT; // 82% per card step
-    // Offset to center the active card: (100% - 80%) / 2 = 10%
-    const CENTER_OFFSET_PCT = (100 - CARD_WIDTH_PCT) / 2;
-    const translatePct = CENTER_OFFSET_PCT - (desktopMenuPage - 1) * TOTAL_STEP_PCT;
-
-    return (
-      <div className="h-screen bg-deep-blue p-4 flex flex-col items-center justify-center">
-        {/* Header bar above the carousel */}
-        <div className="max-w-3xl w-full mb-4">
-          <div className="bg-white rounded-2xl px-6 py-4 shadow-xl flex items-center gap-4">
-            <button onClick={onBack} className="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-500">
-              <ChevronLeft />
-            </button>
-            <h1 className="text-2xl font-black text-deep-blue flex-1 text-center">Configura tu Batalla</h1>
-            <div className="w-10"></div>
-          </div>
-        </div>
-
-        {/* Page indicator dots */}
-        <div className="flex justify-center gap-2 mb-4">
-          {[1, 2, 3, 4, 5, 6, 7].map(p => (
-            <div
-              key={p}
-              className={`w-2.5 h-2.5 rounded-full transition-all duration-300 cursor-pointer ${
-                p === desktopMenuPage ? 'bg-spanish-red w-8' : p < desktopMenuPage ? 'bg-white' : 'bg-white/30'
-              }`}
-              onClick={() => goDesktopPage(p)}
-            />
-          ))}
-        </div>
-
-        {/* Carousel viewport */}
-        <div className="max-w-3xl w-full flex-1 overflow-hidden relative" style={{ minHeight: '320px', maxHeight: '50vh' }}>
-          {/* Cards track — all 7 cards in a row, slid via translateX */}
-          <div
-            className="flex items-stretch h-full"
-            style={{
-              gap: `${GAP_PCT}%`,
-              transition: 'transform 0.45s cubic-bezier(0.4, 0, 0.2, 1)',
-              transform: `translateX(${translatePct}%)`,
-            }}
-          >
-            {[1, 2, 3, 4, 5, 6, 7].map(page => {
-              const isActive = page === desktopMenuPage;
-              const distance = Math.abs(page - desktopMenuPage);
-              const cardOpacity = isActive ? 1 : distance === 1 ? 0.15 : 0;
-
-              return (
-                <div
-                  key={page}
-                  className="rounded-2xl bg-white shadow-xl border border-gray-100 flex flex-col justify-center p-6 flex-shrink-0 overflow-hidden"
-                  style={{
-                    width: `${CARD_WIDTH_PCT}%`,
-                    minWidth: `${CARD_WIDTH_PCT}%`,
-                    opacity: cardOpacity,
-                    transition: 'opacity 0.45s cubic-bezier(0.4, 0, 0.2, 1)',
-                    pointerEvents: isActive ? 'auto' : 'none',
-                  }}
-                  onClick={() => { if (!isActive) goDesktopPage(page); }}
-                >
-                  {/* Render all pages — only active is interactive */}
-                  {renderDesktopPage(page)}
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Navigation arrows & start button */}
-        <div className="max-w-3xl w-full flex items-center justify-between mt-4">
-          {canDesktopGoBack ? (
-            <button
-              onClick={() => goDesktopPage(desktopMenuPage - 1)}
-              className="w-12 h-12 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center transition-all active:scale-95 text-white"
-            >
-              <ChevronLeft size={24} />
-            </button>
-          ) : (
-            <div className="w-12" />
-          )}
-
-          {desktopMenuPage === totalDesktopPages ? (
+            {/* Iniciar Batalla */}
             <button
               onClick={handleStartGame}
               disabled={!selectedGrammar || !selectedTense || !selectedVerbType || !selectedBattleMode || !selectedMode || !selectedDifficulty}
-              className="flex-1 mx-4 py-4 bg-gradient-to-r from-spanish-red to-spanish-red hover:from-red-700 hover:to-red-700 disabled:from-gray-300 disabled:to-gray-300 text-white font-bold text-xl rounded-xl transition-all shadow-lg"
+              className="w-full py-4 bg-gradient-to-r from-spanish-red to-spanish-red hover:from-red-700 hover:to-red-700 disabled:from-gray-300 disabled:to-gray-300 text-white font-bold text-xl rounded-xl transition-all shadow-lg"
             >
               Iniciar Batalla
             </button>
-          ) : (
-            <div className="flex-1" />
-          )}
+          </div>
 
-          {canDesktopGoNext ? (
-            <button
-              onClick={() => goDesktopPage(desktopMenuPage + 1)}
-              className="w-12 h-12 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center transition-all active:scale-95 text-white"
-            >
-              <ChevronRight size={24} />
-            </button>
-          ) : (
-            <div className="w-12" />
-          )}
-        </div>
-
-        {/* Cobi Mago Menú (solo desktop) */}
-        <div className={`hidden lg:block fixed bottom-0 right-0 z-50 pointer-events-none overflow-visible cobi-container${!cobiVisible ? ' cobi-hidden' : ''}`} key="cobi-mago-menu">
-          <div className="relative animate-float">
-            {/* Bocadillo de diálogo con mensaje */}
-            <div style={{ position: 'absolute', left: '-200px', bottom: '80px', zIndex: 5, maxWidth: '220px' }} className="bg-white/95 backdrop-blur-sm rounded-2xl px-4 py-2 shadow-lg border-2 border-gray-200 pointer-events-auto">
-              <p className="text-gray-700 font-semibold text-sm text-center leading-snug">
-                {cobiMagoMenuMessage}
-              </p>
-              {/* Pico del bocadillo apuntando hacia Cobi */}
-              <div className="absolute top-1/2 -translate-y-1/2 -right-3 w-4 h-4 bg-white border-r-2 border-b-2 border-gray-200 transform rotate-[315deg]" style={{ zIndex: -1 }}></div>
-            </div>
-            
-            {/* Imagen de Cobi Mago Menú */}
-            <div className="relative -mb-16 -mr-8" style={{ zIndex: 10 }}>
-              <img 
-                src="./data/images/cobi-mago-menu.webp"
-                alt="Cobi Mago pensando" 
-                className="w-56 h-auto object-contain transition-opacity duration-300"
-                style={{
-                  filter: 'drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15)) drop-shadow(0 0 20px rgba(0, 0, 0, 0.08))'
-                }}
-              />
-            </div>
-            
-            {/* Botón CHATEAR dentro del animate-float */}
-            <div className="chat-button-wrapper">
-              <div
-                onClick={() => setShowChatWindow(!showChatWindow)}
-                className="cobi-chat-button-mago pointer-events-auto"
-              >
-                <svg viewBox="0 0 100 100" className="curved-text-svg">
-                  <path id="chatTextPathMagoMenu" d="M 20,50 A 30,30 0 1,1 80,50" fill="none" />
-                  <text>
-                    <textPath href="#chatTextPathMagoMenu" startOffset="50%" textAnchor="middle" className="curved-text-style-mago">
-                      CHATEAR
-                    </textPath>
-                  </text>
-                </svg>
-                <div className="paws-icon">🔮</div>
+          {/* Cobi Mago Menú (solo desktop) */}
+          <div className={`hidden lg:block fixed bottom-0 right-0 z-50 pointer-events-none overflow-visible cobi-container${!cobiVisible ? ' cobi-hidden' : ''}`} key="cobi-mago-menu">
+            <div className="relative animate-float">
+              <div style={{ position: 'absolute', left: '-200px', bottom: '80px', zIndex: 5, maxWidth: '220px' }} className="bg-white/95 backdrop-blur-sm rounded-2xl px-4 py-2 shadow-lg border-2 border-gray-200 pointer-events-auto">
+                <p className="text-gray-700 font-semibold text-sm text-center leading-snug">
+                  {cobiMagoMenuMessage}
+                </p>
+                <div className="absolute top-1/2 -translate-y-1/2 -right-3 w-4 h-4 bg-white border-r-2 border-b-2 border-gray-200 transform rotate-[315deg]" style={{ zIndex: -1 }}></div>
+              </div>
+              <div className="relative -mb-16 -mr-8" style={{ zIndex: 10 }}>
+                <img 
+                  src="./data/images/cobi-mago-menu.webp"
+                  alt="Cobi Mago pensando" 
+                  className="w-56 h-auto object-contain transition-opacity duration-300"
+                  style={{
+                    filter: 'drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15)) drop-shadow(0 0 20px rgba(0, 0, 0, 0.08))'
+                  }}
+                />
+              </div>
+              <div className="chat-button-wrapper">
+                <div
+                  onClick={() => setShowChatWindow(!showChatWindow)}
+                  className="cobi-chat-button-mago pointer-events-auto"
+                >
+                  <svg viewBox="0 0 100 100" className="curved-text-svg">
+                    <path id="chatTextPathMagoMenu" d="M 20,50 A 30,30 0 1,1 80,50" fill="none" />
+                    <text>
+                      <textPath href="#chatTextPathMagoMenu" startOffset="50%" textAnchor="middle" className="curved-text-style-mago">
+                        CHATEAR
+                      </textPath>
+                    </text>
+                  </svg>
+                  <div className="paws-icon">🔮</div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Botón Cobi móvil */}
-        <DraggableCobi onClick={() => setShowChatWindow(!showChatWindow)} icon="🔮" themeColor="#7C3AED" cobiVisible={cobiVisible} useWhiteBg />
+          {/* Botón Cobi móvil */}
+          <DraggableCobi onClick={() => setShowChatWindow(!showChatWindow)} icon="🔮" themeColor="#7C3AED" cobiVisible={cobiVisible} useWhiteBg />
 
-        {/* Chat Window del Menú */}
-        {showChatWindow && gameState === 'SELECTION' && (
-          <div className={`fixed bottom-24 right-6 lg:bottom-48 lg:right-6 z-50 w-80 max-w-[calc(100vw-3rem)] bg-white rounded-3xl shadow-2xl border-2 border-gray-200 overflow-hidden animate-fade-in cobi-container${!cobiVisible ? ' cobi-hidden' : ''}`}>
-            {/* Header */}
-            <div className="bg-gradient-to-r from-purple-600 to-indigo-600 p-4 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <span className="text-2xl">🪄</span>
-                <div>
-                  <h3 className="text-white font-bold text-sm">Cobi Mago</h3>
-                  <p className="text-xs text-purple-50">Experto en Gramática Española</p>
-                </div>
-              </div>
-              <button
-                onClick={() => setShowChatWindow(false)}
-                className="p-1 hover:bg-white/20 rounded-full transition"
-              >
-                <ChevronLeft size={20} className="text-white" />
-              </button>
-            </div>
-
-            {/* Chat History */}
-            <div className="h-64 overflow-y-auto p-4 space-y-3 bg-gradient-to-b from-purple-50/30 to-white">
-              {chatHistory.length === 0 ? (
-                <div className="text-center text-gray-500 text-sm mt-8">
-                  <p className="mb-2">🪄</p>
-                  <p>¡Bienvenido a mi estudio mágico! Soy Cobi Mago.</p>
-                  <p className="text-xs mt-2">Pregúntame sobre gramática o el juego. ✨</p>
-                </div>
-              ) : (
-                chatHistory.map((msg, idx) => (
-                  <div
-                    key={idx}
-                    className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
-                  >
-                    <div
-                      className={`max-w-[80%] rounded-2xl px-4 py-2 ${
-                        msg.role === 'user'
-                          ? 'bg-gradient-to-br from-blue-500 to-blue-600 text-white'
-                          : 'bg-white border-2 border-purple-200 text-gray-700'
-                      }`}
-                    >
-                      <p className="text-sm whitespace-pre-wrap">{msg.text}</p>
-                    </div>
-                  </div>
-                ))
-              )}
-              
-              {/* Loading state */}
-              {isLoadingResponse && (
-                <div className="flex justify-start">
-                  <div className="bg-white border-2 border-purple-200 rounded-2xl px-4 py-3">
-                    <p className="text-sm text-gray-600">
-                      El Mago consulta su grimorio... 📖✨
-                    </p>
+          {/* Chat Window del Menú */}
+          {showChatWindow && gameState === 'SELECTION' && (
+            <div className={`fixed bottom-24 right-6 lg:bottom-48 lg:right-6 z-50 w-80 max-w-[calc(100vw-3rem)] bg-white rounded-3xl shadow-2xl border-2 border-gray-200 overflow-hidden animate-fade-in cobi-container${!cobiVisible ? ' cobi-hidden' : ''}`}>
+              <div className="bg-gradient-to-r from-purple-600 to-indigo-600 p-4 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="text-2xl">🪄</span>
+                  <div>
+                    <h3 className="text-white font-bold text-sm">Cobi Mago</h3>
+                    <p className="text-xs text-purple-50">Experto en Gramática Española</p>
                   </div>
                 </div>
-              )}
-            </div>
-
-            {/* Input Area */}
-            <div className="p-3 bg-white border-t-2 border-gray-100">
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  value={chatInput}
-                  onChange={(e) => setChatInput(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && sendMessageToCobi()}
-                  placeholder="Escribe tu pregunta..."
-                  disabled={isLoadingResponse}
-                  className="flex-1 px-4 py-2 border-2 border-gray-200 rounded-full focus:outline-none focus:border-purple-400 transition text-sm disabled:bg-gray-100"
-                />
-                <button
-                  onClick={sendMessageToCobi}
-                  disabled={isLoadingResponse || !chatInput.trim()}
-                  className="p-2 bg-gradient-to-br from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 disabled:from-gray-300 disabled:to-gray-300 text-white rounded-full transition-all"
-                >
-                  <Send size={20} />
+                <button onClick={() => setShowChatWindow(false)} className="p-1 hover:bg-white/20 rounded-full transition">
+                  <ChevronLeft size={20} className="text-white" />
                 </button>
               </div>
+              <div className="h-64 overflow-y-auto p-4 space-y-3 bg-gradient-to-b from-purple-50/30 to-white">
+                {chatHistory.length === 0 ? (
+                  <div className="text-center text-gray-500 text-sm mt-8">
+                    <p className="mb-2">🪄</p>
+                    <p>¡Bienvenido a mi estudio mágico! Soy Cobi Mago.</p>
+                    <p className="text-xs mt-2">Pregúntame sobre gramática o el juego. ✨</p>
+                  </div>
+                ) : (
+                  chatHistory.map((msg, idx) => (
+                    <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                      <div className={`max-w-[80%] rounded-2xl px-4 py-2 ${msg.role === 'user' ? 'bg-gradient-to-br from-blue-500 to-blue-600 text-white' : 'bg-white border-2 border-purple-200 text-gray-700'}`}>
+                        <p className="text-sm whitespace-pre-wrap">{msg.text}</p>
+                      </div>
+                    </div>
+                  ))
+                )}
+                {isLoadingResponse && (
+                  <div className="flex justify-start">
+                    <div className="bg-white border-2 border-purple-200 rounded-2xl px-4 py-3">
+                      <p className="text-sm text-gray-600">El Mago consulta su grimorio... 📖✨</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+              <div className="p-3 bg-white border-t-2 border-gray-100">
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={chatInput}
+                    onChange={(e) => setChatInput(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && sendMessageToCobi()}
+                    placeholder="Escribe tu pregunta..."
+                    disabled={isLoadingResponse}
+                    className="flex-1 px-4 py-2 border-2 border-gray-200 rounded-full focus:outline-none focus:border-purple-400 transition text-sm disabled:bg-gray-100"
+                  />
+                  <button
+                    onClick={sendMessageToCobi}
+                    disabled={isLoadingResponse || !chatInput.trim()}
+                    className="p-2 bg-gradient-to-br from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 disabled:from-gray-300 disabled:to-gray-300 text-white rounded-full transition-all"
+                  >
+                    <Send size={20} />
+                  </button>
+                </div>
+              </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     );
   }
@@ -3181,10 +3000,10 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
   if (gameState === 'PLAYING') {
     // Both modes use the same canvas-based UI
     return (
-      <div className={`bg-deep-blue flex flex-col items-center justify-start ${isMobile && isLandscape ? 'min-h-screen p-1 pt-1' : isMobile ? 'min-h-screen p-4 pt-8' : 'h-[calc(100vh-5rem)] p-[15px] overflow-hidden'}`}>
+      <div className={`bg-deep-blue flex flex-col items-center justify-start ${isMobile && isLandscape ? 'fixed inset-0 z-40 overflow-hidden p-1 pt-1' : isMobile ? 'fixed inset-0 z-40 overflow-hidden p-4 pt-[10px]' : 'h-[calc(100vh-5rem)] p-[15px] overflow-hidden'}`}>
         <div className={`w-full max-w-4xl ${!isMobile ? 'flex flex-col h-full' : ''} ${screenShake ? 'animate-[screenShake_0.5s_ease-in-out]' : ''}`}>
           {/* Header - minimal on mobile landscape */}
-          <div className={`flex justify-between items-center text-white flex-shrink-0 ${isMobile && isLandscape ? 'mb-1 px-2' : isMobile ? 'mb-4' : 'mb-[15px]'}`}>
+          <div className={`flex justify-between items-center text-white flex-shrink-0 ${isMobile && isLandscape ? 'mb-1 px-2' : isMobile ? 'mb-[10px]' : 'mb-[15px]'}`}>
             <button onClick={() => setGameState('SELECTION')} className="p-1 md:p-2 hover:bg-white/10 rounded-full">
               <ChevronLeft size={isMobile && isLandscape ? 20 : 32} />
             </button>
@@ -3209,7 +3028,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
           </div>
 
           {/* Canvas with Boss Preparation Overlay */}
-          <div className={`relative bg-white shadow-2xl ${isMobile && isLandscape ? 'rounded-xl mb-2' : isMobile ? 'rounded-2xl mb-6' : 'rounded-2xl mb-[15px]'}`}>
+          <div className={`relative bg-white shadow-2xl ${isMobile && isLandscape ? 'rounded-xl mb-2' : isMobile ? 'rounded-2xl mb-[10px]' : 'rounded-2xl mb-[15px]'}`}>
             <canvas
               ref={canvasRef}
               width={canvasDims.w}

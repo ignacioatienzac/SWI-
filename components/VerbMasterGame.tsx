@@ -3,6 +3,7 @@ import { ChevronLeft, ChevronRight, Play, Pause } from 'lucide-react';
 import { Send, Delete } from 'lucide-react';
 import { hablarConPanda } from '../services/geminiService';
 import DraggableCobi from './DraggableCobi';
+import { useI18n } from '../services/i18n';
 import {
   loadVerbData,
   getFilteredVerbsSRS,
@@ -25,77 +26,8 @@ interface VerbMasterGameProps {
   soundEnabled?: boolean;
 }
 
-// Mensajes aleatorios para Cobi Sensei en el menú
-const mensajesSenseiMenu = [
-  "� ¡Bienvenido al Maestro de Verbos! Elige sabiamente tu desafío. 🐾",
-  "🎯 Regular o irregular... ¡Tú decides cómo conjugar! 🐾",
-  "📚 Cada burbuja es una oportunidad de aprendizaje. ¿Listo? 🐾",
-  "🥋 La práctica hace al maestro. ¡Configura tu entrenamiento! 🐾",
-  "✨ Las burbujas caen, pero tu conocimiento permanece. ¡Adelante! 🐾",
-  "🌟 Empieza con lo que sabes y conquista nuevos niveles. 🐾",
-  "🎓 El camino hacia la maestría comienza con una elección. 🐾"
-];
-
-const seleccionarMensajeSenseiMenuRandom = (): string => {
-  const indice = Math.floor(Math.random() * mensajesSenseiMenu.length);
-  return mensajesSenseiMenu[indice];
-};
-
-// Mensajes aleatorios para Cobi Sensei durante el juego
-const mensajesSenseiJuego = [
-  "🫧 ¡Explota las burbujas con precisión! Cada conjugación cuenta. 🐾",
-  "⚡ ¡Rápido pero certero! Las burbujas no esperan. 🐾",
-  "🎯 ¡Excelente racha! Mantén el ritmo, aprendiz. 🐾",
-  "📖 Respira, piensa y conjuga. ¡No dejes que caigan! 🐾",
-  "🌊 Las burbujas fluyen como el tiempo verbal. ¡Domínalas! 🐾",
-  "💫 Cada burbuja reventada es un paso hacia la maestría. 🐾"
-];
-
-const mensajesSenseiVictoria = [
-  "🏆 ¡Increíble! Has reventado todas las burbujas con maestría. 🐾✨",
-  "⭐ ¡Nivel superado! Tu dominio verbal es excepcional. 🐾",
-  "🎉 ¡Magnífico, aprendiz! Las burbujas no tienen nada que hacer contigo. 🐾🌟"
-];
-
-const mensajesSenseiAcierto = [
-  "🎊 ¡Nivel superado! Tu técnica mejora con cada burbuja. 🐾",
-  "⭐ ¡Excelente! Avanzas hacia la maestría verbal. 🐾",
-  "🥋 ¡Bien hecho, aprendiz! El siguiente nivel te espera. 🐾"
-];
-
-const mensajesSenseiFallo = [
-  "💪 Las burbujas ganaron esta vez, pero aprenderás de esto. 🐾",
-  "🔄 Incluso los maestros dejan caer burbujas. ¡Inténtalo de nuevo! 🐾",
-  "🎈 Cada burbuja que cae enseña una lección. ¡No te rindas! 🐾"
-];
-
-const mensajesSenseiPausa = [
-  "Inhala... exhala... 🎋 El descanso es parte del entrenamiento, pequeño saltamontes.",
-  "Un buen guerrero sabe cuándo parar para recuperar su energía. 🥋",
-  "Meditando... 🧘‍♂️ Estoy preparando mi mente para la próxima ola de verbos."
-];
-
-const seleccionarMensajeSenseiRandom = (tipo: 'juego' | 'victoria' | 'fallo' | 'pausa' | 'acierto'): string => {
-  let mensajes;
-  switch(tipo) {
-    case 'victoria':
-      mensajes = mensajesSenseiVictoria;
-      break;
-    case 'acierto':
-      mensajes = mensajesSenseiAcierto;
-      break;
-    case 'fallo':
-      mensajes = mensajesSenseiFallo;
-      break;
-    case 'pausa':
-      mensajes = mensajesSenseiPausa;
-      break;
-    default:
-      mensajes = mensajesSenseiJuego;
-  }
-  const indice = Math.floor(Math.random() * mensajes.length);
-  return mensajes[indice];
-};
+// Utility to pick a random element from an array
+const selectRandom = (arr: string[]): string => arr[Math.floor(Math.random() * arr.length)] || '';
 
 type GameState = 'LEVEL_SELECT' | 'PLAYING' | 'PAUSED' | 'GAMEOVER' | 'LEVEL_TRANSITION' | 'VICTORY';
 
@@ -279,6 +211,21 @@ const VmMobileKeyboard: React.FC<VmMobileKeyboardProps> = ({ onKeyPress, onDelet
 };
 
 const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = true, soundEnabled = true }) => {
+  const { tArray, lang } = useI18n();
+
+  // Helper to pick a random Cobi Sensei message by type
+  const senseiMsg = useCallback((tipo: 'juego' | 'victoria' | 'fallo' | 'pausa' | 'acierto' | 'menu'): string => {
+    const keyMap: Record<string, string> = {
+      juego: 'cobi.verbMaster.game',
+      victoria: 'cobi.verbMaster.victory',
+      fallo: 'cobi.verbMaster.miss',
+      pausa: 'cobi.verbMaster.pause',
+      acierto: 'cobi.verbMaster.hit',
+      menu: 'cobi.verbMaster.menu',
+    };
+    return selectRandom(tArray(keyMap[tipo]));
+  }, [tArray]);
+
   // Game configuration
   const [selectedVerbMode, setSelectedVerbMode] = useState<VerbMode>('indicativo');
   const [selectedVerbType, setSelectedVerbType] = useState<VerbType | null>(null);
@@ -286,9 +233,16 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
   const [selectedLevel] = useState<VerbLevel>('A1');
   
   // Cobi Sensei State
-  const [cobiSenseiMenuMessage] = useState<string>(seleccionarMensajeSenseiMenuRandom());
-  const [cobiSenseiMessage, setCobiSenseiMessage] = useState<string>(seleccionarMensajeSenseiRandom('juego'));
-  const [cobiSenseiPausaMessage] = useState<string>(seleccionarMensajeSenseiRandom('pausa'));
+  const [cobiSenseiMenuMessage, setCobiSenseiMenuMessage] = useState<string>('');
+  const [cobiSenseiMessage, setCobiSenseiMessage] = useState<string>('');
+  const [cobiSenseiPausaMessage, setCobiSenseiPausaMessage] = useState<string>('');
+
+  // Update Cobi messages when language changes
+  useEffect(() => {
+    setCobiSenseiMenuMessage(senseiMsg('menu'));
+    setCobiSenseiMessage(senseiMsg('juego'));
+    setCobiSenseiPausaMessage(senseiMsg('pausa'));
+  }, [lang, senseiMsg]);
   const [cobiSenseiAvatar, setCobiSenseiAvatar] = useState<string>('./data/images/cobi-sensei.webp');
   
   // Chat State
@@ -593,7 +547,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
     
     // Resetear avatar al estado normal del juego
     setCobiSenseiAvatar('./data/images/cobi-sensei.webp');
-    setCobiSenseiMessage(seleccionarMensajeSenseiRandom('juego'));
+    setCobiSenseiMessage(senseiMsg('juego'));
     
     setGameState('PLAYING');
   };
@@ -616,7 +570,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
     
     // Cambiar a Cobi Sensei de acierto (celebración)
     setCobiSenseiAvatar('./data/images/cobi-sensei-acierto.webp');
-    setCobiSenseiMessage(seleccionarMensajeSenseiRandom('acierto'));
+    setCobiSenseiMessage(senseiMsg('acierto'));
     
     // 3. Show level title after 500ms (shrink duration)
     setTimeout(() => {
@@ -640,7 +594,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
             setCountdown(0);
             // Volver a Cobi Sensei normal cuando comienza el siguiente nivel
             setCobiSenseiAvatar('./data/images/cobi-sensei.webp');
-            setCobiSenseiMessage(seleccionarMensajeSenseiRandom('juego'));
+            setCobiSenseiMessage(senseiMsg('juego'));
           }
         }, 1000);
       }, 2000);
@@ -2428,7 +2382,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
   // Cambiar avatar y mensaje al estado de victoria
   if (gameState === 'VICTORY' && cobiSenseiAvatar !== './data/images/cobi-sensei-acierto.webp') {
     setCobiSenseiAvatar('./data/images/cobi-sensei-acierto.webp');
-    setCobiSenseiMessage(seleccionarMensajeSenseiRandom('victoria'));
+    setCobiSenseiMessage(senseiMsg('victoria'));
   }
   
   if (gameState === 'VICTORY') {
@@ -2534,7 +2488,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
               onClick={() => {
                 setGameState('LEVEL_SELECT');
                 setCobiSenseiAvatar('./data/images/cobi-sensei.webp');
-                setCobiSenseiMessage(seleccionarMensajeSenseiRandom('juego'));
+                setCobiSenseiMessage(senseiMsg('juego'));
               }}
               className="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-3 rounded-lg"
             >
@@ -2681,7 +2635,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
   // Cambiar avatar y mensaje al estado de fallo
   if (cobiSenseiAvatar !== './data/images/cobi-sensei-fallo.webp') {
     setCobiSenseiAvatar('./data/images/cobi-sensei-fallo.webp');
-    setCobiSenseiMessage(seleccionarMensajeSenseiRandom('fallo'));
+    setCobiSenseiMessage(senseiMsg('fallo'));
   }
   
   return (
@@ -2704,7 +2658,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
               setGameState('LEVEL_SELECT');
               // Resetear avatar al estado normal
               setCobiSenseiAvatar('./data/images/cobi-sensei.webp');
-              setCobiSenseiMessage(seleccionarMensajeSenseiRandom('juego'));
+              setCobiSenseiMessage(senseiMsg('juego'));
             }}
             className="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-3 rounded-lg"
           >
