@@ -1324,6 +1324,7 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
             </div>
 
             {/* Phrase Length Selection */}
+            {selectedLevel && (
             <div className="mb-6">
               <label className="block text-sm font-bold text-gray-700 mb-2">
                 📏 Longitud de Frases
@@ -1356,8 +1357,10 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
                 </button>
               </div>
             </div>
+            )}
 
             {/* Difficulty Selection */}
+            {selectedPhraseLength && (
             <div className="mb-6">
               <label className="block text-sm font-bold text-gray-700 mb-2">
                 ⚙️ Dificultad
@@ -1415,8 +1418,10 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
                 </button>
               </div>
             </div>
+            )}
 
             {/* Mode Selection */}
+            {selectedDifficulty && (
             <div className="mb-8">
               <label className="block text-sm font-bold text-gray-700 mb-2">
                 🎮 Modo de Juego
@@ -1493,6 +1498,7 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
                 </div>
               )}
             </div>
+            )}
 
             {/* Start Button */}
             <button

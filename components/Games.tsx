@@ -189,14 +189,11 @@ const Games: React.FC<GamesProps> = ({ activeGameId, setActiveGameId, cobiVisibl
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-12 relative">
-      <div className="text-center mb-16">
-        <h1 className="text-4xl md:text-5xl font-extrabold text-deep-blue mb-4 tracking-tight">
+    <div className="max-w-7xl mx-auto px-4 relative" style={{ paddingTop: '20px' }}>
+      <div className="text-center" style={{ marginBottom: '20px' }}>
+        <h1 className="text-4xl md:text-5xl font-extrabold text-deep-blue tracking-tight">
           {t('gamesPage.heading')}
         </h1>
-        <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-          {t('gamesPage.subtitle')}
-        </p>
       </div>
 
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -206,7 +203,8 @@ const Games: React.FC<GamesProps> = ({ activeGameId, setActiveGameId, cobiVisibl
             onClick={() => setActiveGameId(game.id)}
             className="group bg-white rounded-2xl p-8 shadow-sm hover:shadow-xl border border-gray-100 hover:border-spanish-red/20 transition-all duration-300 cursor-pointer transform hover:-translate-y-1 relative overflow-hidden"
           >
-            <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-6 bg-cream shadow-md transition-all overflow-hidden">
+            <div className="flex items-center gap-4 mb-4">
+            <div className="w-14 h-14 rounded-xl flex items-center justify-center bg-cream shadow-md transition-all overflow-hidden flex-shrink-0">
               {game.id === 'power-verbs' && (
                 <img 
                   src="./data/images/sombrero.webp" 
@@ -254,9 +252,10 @@ const Games: React.FC<GamesProps> = ({ activeGameId, setActiveGameId, cobiVisibl
               )}
             </div>
 
-            <h3 className="text-2xl font-bold text-gray-900 mb-3 group-hover:text-spanish-red transition-colors">
+            <h3 className="text-2xl font-bold text-gray-900 group-hover:text-spanish-red transition-colors">
               {game.title}
             </h3>
+            </div>
             <p className="text-gray-600 mb-6 leading-relaxed">
               {game.description}
             </p>

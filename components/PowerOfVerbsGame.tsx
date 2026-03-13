@@ -2700,10 +2700,10 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
             </h1>
           </div>
 
-          <div className="bg-white rounded-3xl p-8 shadow-xl">
+          <div className="bg-white rounded-3xl px-8 pb-8 shadow-xl" style={{ paddingTop: '15px' }}>
 
             {/* 1. Modo Verbal */}
-            <div className="mb-6">
+            <div style={{ marginBottom: '15px' }}>
               <label className="block text-sm font-bold text-gray-700 mb-2">Modo Verbal</label>
               <div className="grid grid-cols-3 gap-3">
                 {['indicativo', 'subjuntivo', 'imperativo'].map(g => (
@@ -2722,10 +2722,10 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
 
             {/* 2. Tiempo Verbal */}
             {selectedGrammar && (
-              <div className="mb-6">
+              <div style={{ marginBottom: '15px' }}>
                 <label className="block text-sm font-bold text-gray-700 mb-2">Tiempo Verbal</label>
                 {availableTenses.length > 0 ? (
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-3 gap-3">
                     {availableTenses.map(t => (
                       <button
                         key={t}
@@ -2746,7 +2746,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
 
             {/* 3. Tipo de Verbos */}
             {selectedTense && (
-              <div className="mb-6">
+              <div style={{ marginBottom: '15px' }}>
                 <label className="block text-sm font-bold text-gray-700 mb-2">Tipo de Verbos</label>
                 <div className="grid grid-cols-3 gap-3">
                   {['regular', 'irregular', 'mixed'].map(t => (
@@ -2766,7 +2766,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
 
             {/* 4. Modo de Batalla */}
             {selectedVerbType && (
-              <div className="mb-6">
+              <div style={{ marginBottom: '15px' }}>
                 <label className="block text-sm font-bold text-gray-700 mb-2">Modo de Batalla</label>
                 <div className="grid grid-cols-2 gap-4">
                   <button
@@ -2815,7 +2815,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
 
             {/* 5. Modo de Respuesta */}
             {selectedBattleMode && (
-              <div className="mb-6">
+              <div style={{ marginBottom: '15px' }}>
                 <label className="block text-sm font-bold text-gray-700 mb-2">Modo de Respuesta</label>
                 <div className="grid grid-cols-2 gap-3">
                   <button
@@ -2836,7 +2836,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
 
             {/* 6. Tildes */}
             {selectedMode === 'write' && (
-              <div className="mb-6">
+              <div style={{ marginBottom: '15px' }}>
                 <label className="block text-sm font-bold text-gray-700 mb-2">Tildes</label>
                 <div className="grid grid-cols-2 gap-3">
                   <button
@@ -2857,7 +2857,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
 
             {/* 7. Dificultad */}
             {(selectedMode === 'choice' || (selectedMode === 'write')) && selectedMode && (
-              <div className="mb-6">
+              <div style={{ marginBottom: '15px' }}>
                 <label className="block text-sm font-bold text-gray-700 mb-2">Dificultad</label>
                 <div className="grid grid-cols-3 gap-3">
                   {(Object.keys(DIFFICULTY_SETTINGS) as GameDifficulty[]).map(d => (

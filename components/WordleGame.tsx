@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
-import { RotateCcw, Calendar, Lightbulb, ChevronLeft, ChevronRight, X, Send, Delete } from 'lucide-react';
+import { RotateCcw, Calendar, Lightbulb, ChevronLeft, ChevronRight, X, Send, Delete, HelpCircle } from 'lucide-react';
 import { getWordOfDay } from '../services/vocabularyService';
 import { isValidWord, getHintsForAttempt, normalizeAccents } from '../services/wordleService';
 import { hablarConPanda } from '../services/geminiService';
@@ -143,6 +143,7 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack, cobiVisible = true, sou
   const [selectedDate, setSelectedDate] = useState<string>(new Date().toISOString().split('T')[0]);
   const [showCalendar, setShowCalendar] = useState(false);
   const [showHint, setShowHint] = useState(false);
+  const [showInstructions, setShowInstructions] = useState(false);
   const [displayMonth, setDisplayMonth] = useState<Date>(new Date());
   const [hints, setHints] = useState<string[]>([]);
   const [showPandaChat, setShowPandaChat] = useState(false);
@@ -191,10 +192,10 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack, cobiVisible = true, sou
   }, []);
 
   const DIFFICULTIES = [
-    { value: 'a1', label: 'A1 - Principiante' },
-    { value: 'a2', label: 'A2 - Elemental' },
-    { value: 'b1', label: 'B1 - Intermedio' },
-    { value: 'b2', label: 'B2 - Intermedio-Alto' }
+    { value: 'a1', label: 'A1', desc: 'Principiante' },
+    { value: 'a2', label: 'A2', desc: 'Elemental' },
+    { value: 'b1', label: 'B1', desc: 'Intermedio' },
+    { value: 'b2', label: 'B2', desc: 'Intermedio-Alto' }
   ];
 
   const wordLength = useMemo(() => secretWord.length as 3 | 4 | 5 | 6, [secretWord]);
@@ -601,6 +602,11 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack, cobiVisible = true, sou
       <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50 p-4">
       <div className="max-w-2xl mx-auto">
         <div className="flex items-center justify-between mb-4">
+        {isMobile ? (
+          <button onClick={onBack} className="p-1 hover:bg-white/10 rounded-full">
+            <ChevronLeft size={28} className="text-gray-500" />
+          </button>
+        ) : (
         <button 
           onClick={onBack}
           className="text-gray-500 hover:text-green-800 font-medium flex items-center gap-2 transition-colors"
@@ -608,23 +614,21 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack, cobiVisible = true, sou
           <ChevronLeft size={20} />
           Volver a Juegos
         </button>
-        <h1 className="text-2xl font-black text-green-800">🔍 Adivina la Palabra</h1>
+        )}
+        <h1 className={`text-2xl font-black text-green-800 ${isMobile ? 'hidden' : ''}`}>🔍 Adivina la Palabra</h1>
         </div>
 
         <div className="bg-white rounded-3xl p-8 shadow-xl">
         <p className="text-center text-gray-600 mb-6">Selecciona tu nivel</p>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-4">
           {DIFFICULTIES.map(d => (
             <button
               key={d.value}
               onClick={() => startGame(d.value, new Date().toISOString().split('T')[0])}
-              className={`py-3 rounded-lg border-2 font-bold transition-all ${
-                difficulty === d.value 
-                  ? 'border-green-700 bg-green-700 text-white' 
-                  : 'border-gray-200 text-gray-600 hover:border-gray-300'
-              }`}
+              className="p-6 rounded-2xl border-2 border-green-700 bg-green-700 hover:bg-green-800 text-white transition-all hover:scale-105 shadow-lg font-bold"
             >
-              {d.label}
+              <div className="text-3xl font-black">{d.label}</div>
+              <div className="text-sm opacity-90">{d.desc}</div>
             </button>
           ))}
         </div>
@@ -781,6 +785,11 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack, cobiVisible = true, sou
     <div className="max-w-2xl mx-auto px-4 py-6">
       {/* Header with back button and controls */}
       <div className="flex items-center justify-between mb-6 gap-2 flex-wrap">
+        {isMobile ? (
+          <button onClick={onBack} className="p-1 hover:bg-white/10 rounded-full">
+            <ChevronLeft size={28} className="text-gray-500" />
+          </button>
+        ) : (
         <button 
           onClick={onBack}
           className="text-gray-500 hover:text-green-800 font-medium flex items-center gap-2 transition-colors"
@@ -788,11 +797,14 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack, cobiVisible = true, sou
           <ChevronLeft size={20} />
           Volver a Juegos
         </button>
+        )}
         
+        {!isMobile && (
         <div className="text-center flex-1 min-w-fit">
           <p className="text-xs text-gray-500 uppercase tracking-wide">Palabra del día</p>
           <p className="text-sm font-semibold text-gray-700">{selectedDate}</p>
         </div>
+        )}
 
         <div className="flex gap-2">
           {/* Hint Button */}
@@ -809,6 +821,15 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack, cobiVisible = true, sou
             <Lightbulb size={20} />
           </button>
 
+          {/* Instructions Button */}
+          <button
+            onClick={() => setShowInstructions(!showInstructions)}
+            className="p-2 bg-green-100 text-green-600 rounded-lg hover:bg-green-200 transition"
+            title="Instrucciones"
+          >
+            <HelpCircle size={20} />
+          </button>
+
           {/* Calendar Button */}
           <button
             onClick={() => setShowCalendar(!showCalendar)}
@@ -819,6 +840,19 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack, cobiVisible = true, sou
           </button>
         </div>
       </div>
+
+      {/* Instructions panel */}
+      {showInstructions && (
+        <div className="mb-4 p-4 bg-green-50 border-l-4 border-green-400 rounded text-sm text-green-800">
+          <p className="font-semibold mb-2">¿Cómo jugar?</p>
+          <ul className="list-disc list-inside space-y-1">
+            <li>Adivina la palabra oculta en 6 intentos.</li>
+            <li><span className="inline-block w-4 h-4 bg-green-500 rounded align-middle mr-1"></span> Verde: letra correcta y bien colocada.</li>
+            <li><span className="inline-block w-4 h-4 bg-yellow-500 rounded align-middle mr-1"></span> Amarillo: letra correcta pero mal colocada.</li>
+            <li><span className="inline-block w-4 h-4 bg-gray-400 rounded align-middle mr-1"></span> Gris: letra no está en la palabra.</li>
+          </ul>
+        </div>
+      )}
 
       {/* Hint display */}
       {showHint && (

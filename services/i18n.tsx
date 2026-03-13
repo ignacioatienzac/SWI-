@@ -116,7 +116,7 @@ const es = flatten({
     title: 'Sígueme en Redes',
   },
   gamesPage: {
-    heading: 'Aprende Jugando',
+    heading: 'Elige uno de nuestros juegos',
     subtitle: 'Mejora tu español con nuestros juegos interactivos.',
     playNow: 'Jugar ahora →',
     backToGames: '← Volver a Juegos',
@@ -332,7 +332,7 @@ const en = flatten({
     title: 'Follow Me',
   },
   gamesPage: {
-    heading: 'Learn by Playing',
+    heading: 'Choose one of our games',
     subtitle: 'Improve your Spanish with our interactive games.',
     playNow: 'Play now →',
     backToGames: '← Back to Games',

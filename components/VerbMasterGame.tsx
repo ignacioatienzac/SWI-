@@ -227,9 +227,9 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
   }, [tArray]);
 
   // Game configuration
-  const [selectedVerbMode, setSelectedVerbMode] = useState<VerbMode>('indicativo');
+  const [selectedVerbMode, setSelectedVerbMode] = useState<VerbMode | null>(null);
   const [selectedVerbType, setSelectedVerbType] = useState<VerbType | null>(null);
-  const [selectedTense, setSelectedTense] = useState<string>('presente');
+  const [selectedTense, setSelectedTense] = useState<string | null>(null);
   const [selectedLevel] = useState<VerbLevel>('A1');
   
   // Cobi Sensei State
@@ -317,13 +317,8 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
   // Update tense when verb mode changes
   const handleVerbModeChange = (mode: VerbMode) => {
     setSelectedVerbMode(mode);
-    if (mode === 'imperativo') {
-      setSelectedTense('afirmativo');
-    } else if (mode === 'indicativo') {
-      setSelectedTense('presente');
-    } else if (mode === 'subjuntivo') {
-      setSelectedTense('presente');
-    }
+    setSelectedTense(null);
+    setSelectedVerbType(null);
   };
   
   // Game state
@@ -528,7 +523,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
 
   // Start game
   const handleStartGame = async () => {
-    if (!selectedVerbType) return;
+    if (!selectedVerbType || !selectedTense || !selectedVerbMode) return;
     
     // Use SRS-based pool for intelligent conjugation selection
     const verbs = await getFilteredVerbsSRS(selectedLevel, selectedVerbType, selectedTense, selectedVerbMode);
@@ -1302,18 +1297,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
 
   // --- LEVEL SELECT STATE ---
   if (gameState === 'LEVEL_SELECT') {
-    // Progressive Revelation: determine visibility for mobile
-    const vmStep2Visible = !!selectedVerbMode;
-    const vmStep3Visible = !!selectedTense;
     const vmAllSelected = !!selectedVerbType;
-
-    const vmRevealStyle = (visible: boolean): React.CSSProperties =>
-      isMobile ? {
-        maxHeight: visible ? '500px' : '0px',
-        opacity: visible ? 1 : 0,
-        overflow: 'hidden',
-        transition: 'max-height 0.4s ease, opacity 0.3s ease',
-      } : {};
 
     // --- MOBILE: Paginated Wizard Menu ---
     if (isMobile) {
@@ -1614,7 +1598,8 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
             </div>
 
             {/* Tense Selection - revealed after mode selected */}
-            <div className="mb-6" style={vmRevealStyle(vmStep2Visible)}>
+            {selectedVerbMode && (
+            <div className="mb-6">
               <label className="block text-sm font-bold text-gray-700 mb-2">
                 Tiempo Verbal
               </label>
@@ -1687,9 +1672,11 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
                 </div>
               )}
             </div>
+            )}
 
             {/* Verb Type Selection - revealed after tense selected */}
-            <div className="mb-6" style={vmRevealStyle(vmStep3Visible)}>
+            {selectedTense && (
+            <div className="mb-6">
               <label className="block text-sm font-bold text-gray-700 mb-2">
                 Tipo de Verbos
               </label>
@@ -1713,6 +1700,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
                 ))}
               </div>
             </div>
+            )}
 
             {/* Start Button - sticky on mobile, normal on desktop */}
             {isMobile ? (
