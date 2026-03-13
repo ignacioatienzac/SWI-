@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { ChevronLeft, Info, X, Lightbulb, Calendar, ChevronRight, Send } from 'lucide-react';
+import { ChevronLeft, Info, X, Lightbulb, Calendar, ChevronRight, Send, Shuffle } from 'lucide-react';
 import { loadLetterWheelVocabulary, getRandomWordForDate, getRelatedWords } from '../services/letterWheelService';
 import { hablarConPanda } from '../services/geminiService';
 import DraggableCobi from './DraggableCobi';
@@ -148,6 +148,17 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
     if (gameStatus === 'PLAYING' && !isMobile) {
       document.body.style.overflow = 'hidden';
       return () => { document.body.style.overflow = ''; };
+    }
+  }, [gameStatus, isMobile]);
+
+  // Hide site header on mobile while playing
+  useEffect(() => {
+    if (gameStatus === 'PLAYING' && isMobile) {
+      const siteHeader = document.querySelector('header.sticky');
+      if (siteHeader) (siteHeader as HTMLElement).style.display = 'none';
+      return () => {
+        if (siteHeader) (siteHeader as HTMLElement).style.display = '';
+      };
     }
   }, [gameStatus, isMobile]);
 
@@ -552,6 +563,17 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
     setGameStatus('PLAYING');
   };
 
+  // Shuffle letter positions on the wheel
+  const shuffleLetterPositions = () => {
+    if (!gameState) return;
+    const positions = Array.from({ length: gameState.baseWordNormalized.length }, (_, i) => i);
+    for (let i = positions.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [positions[i], positions[j]] = [positions[j], positions[i]];
+    }
+    setLetterPositions(positions);
+  };
+
   // Letter selection with toggle (for click)
   const selectLetter = (index: number) => {
     if (!gameState) return;
@@ -767,19 +789,23 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
     return (
       <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-green-50 p-4">
         <div className="max-w-3xl mx-auto">
-          <div className="bg-white rounded-3xl shadow-2xl p-8">
-            <button onClick={onBack} className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-6">
+          <div className="flex items-center justify-between mb-4">
+            <button
+              onClick={onBack}
+              className="text-gray-500 hover:text-deep-blue font-medium flex items-center gap-2 transition-colors"
+            >
               <ChevronLeft size={20} />
-              Atrás
+              Volver a Juegos
             </button>
+            <h1 className="text-2xl font-black text-deep-blue">
+              🎯 La Rueda de Letras
+            </h1>
+          </div>
 
-            <div className="text-center mb-8">
-              <div className="text-6xl mb-4">🎯</div>
-              <h1 className="text-5xl font-black text-deep-blue mb-2">La Rueda de Letras</h1>
-              <p className="text-gray-600">Forma palabras con las letras de la palabra base</p>
-            </div>
+          <div className="bg-white rounded-3xl shadow-2xl p-8">
+            <p className="text-center text-gray-600 mb-6">Elige tu nivel</p>
 
-            <div className="grid grid-cols-2 gap-4 mb-8">
+            <div className="grid grid-cols-2 gap-4">
               {[
                 { value: 'a1' as const, label: 'A1', desc: 'Principiante' },
                 { value: 'a2' as const, label: 'A2', desc: 'Elemental' },
@@ -795,16 +821,6 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
                   <div className="text-sm opacity-90">{desc}</div>
                 </button>
               ))}
-            </div>
-
-            <div className="bg-blue-50 rounded-2xl p-6 border-2 border-blue-200">
-              <div className="flex gap-3">
-                <Info className="text-blue-600 flex-shrink-0" size={20} />
-                <div className="text-sm text-gray-700">
-                  <p className="font-bold mb-1">¿Cómo jugar?</p>
-                  <p>Forma palabras usando solo las letras de la palabra base. Recuerda: si la palabra base tiene 2 "A", no puedes usar más de 2 "A".</p>
-                </div>
-              </div>
             </div>
           </div>
         </div>
@@ -1150,15 +1166,15 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
           .lw-header-subtitle {
             display: none !important;
           }
-          .lw-progress-section .text-sm {
-            font-size: 0.65rem !important;
+          .lw-progress-section {
+            display: none !important;
           }
           .lw-progress-bar {
-            height: 0.375rem !important;
+            display: none !important;
           }
           .lw-main-content {
-            padding-top: 0.5rem !important;
-            padding-bottom: 0.5rem !important;
+            padding-top: 0.25rem !important;
+            padding-bottom: 0.25rem !important;
           }
           .lw-main-grid {
             gap: 0.5rem !important;
@@ -1175,40 +1191,38 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
             width: 100%;
           }
           .lw-wheel-card {
-            padding: 0.75rem !important;
-          }
-          .lw-input-display {
-            min-height: 2.5rem !important;
             padding: 0.5rem !important;
           }
+          .lw-input-display {
+            min-height: 1.75rem !important;
+            padding: 0.25rem 0.5rem !important;
+            margin-bottom: 0.25rem !important;
+          }
           .lw-input-text {
-            font-size: 1.5rem !important;
-          }
-          .lw-wheel-container {
-            transform: scale(0.7);
-            transform-origin: top center;
-            margin-bottom: -2.5rem !important;
-          }
-          .lw-wheel-bg {
-            width: 288px !important;
-            height: 288px !important;
-          }
-          .lw-wheel-svg {
-            width: 300px !important;
-            height: 300px !important;
-          }
-          .lw-letter-btn {
-            width: 3.5rem !important;
-            height: 3.5rem !important;
             font-size: 1.25rem !important;
           }
-          .lw-bottom-buttons {
-            gap: 0.25rem !important;
+          .lw-hint-text {
+            display: none !important;
           }
-          .lw-bottom-btn {
-            padding-top: 0.375rem !important;
-            padding-bottom: 0.375rem !important;
-            font-size: 0.8rem !important;
+          .lw-wheel-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.25rem;
+          }
+          .lw-wheel-container {
+            transform: scale(0.85);
+            transform-origin: center center;
+            margin-bottom: 0 !important;
+          }
+          .lw-shuffle-btn {
+            display: flex !important;
+          }
+          .lw-clear-btn {
+            display: flex !important;
+          }
+          .lw-bottom-buttons {
+            display: none !important;
           }
         }
       `}</style>
@@ -1537,18 +1551,38 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
           <div className="space-y-4">
             {/* Input Area */}
             <div className="lw-wheel-card bg-white rounded-2xl p-6 shadow-xl">
-              <div className="lw-input-display min-h-20 bg-gradient-to-r from-blue-50 to-purple-50 border-3 border-dashed border-blue-300 rounded-xl flex items-center justify-center mb-4">
+              <div 
+                className="lw-input-display min-h-20 bg-gradient-to-r from-blue-50 to-purple-50 border-3 border-dashed border-blue-300 rounded-xl flex items-center justify-center mb-4 relative cursor-pointer"
+                onClick={() => { if (isMobile && currentWord.length > 0) submitWord(); }}
+              >
+                {currentWord.length > 0 && (
+                  <button
+                    onClick={(e) => { e.stopPropagation(); clearWord(); }}
+                    className="lw-clear-btn absolute left-2 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-gray-300 hover:bg-gray-400 text-gray-700 flex items-center justify-center hidden"
+                  >
+                    <X size={14} />
+                  </button>
+                )}
                 <span className="lw-input-text text-3xl font-black text-blue-900 tracking-wider">
                   {currentWord.toUpperCase() || '...'}
                 </span>
               </div>
 
-              <p className="text-xs text-center text-gray-500 mb-4 hidden sm:block">
+              <p className="lw-hint-text text-xs text-center text-gray-500 mb-4 hidden sm:block">
                 💡 Haz clic en las letras o escribe con el teclado
               </p>
 
-              {/* Letter Wheel */}
-              <div className="lw-wheel-container relative mx-auto mb-4" style={{ width: '300px', height: '300px' }}>
+              {/* Letter Wheel with shuffle button wrapper */}
+              <div className="lw-wheel-wrapper">
+                <button
+                  onClick={shuffleLetterPositions}
+                  className="lw-shuffle-btn hidden items-center justify-center w-10 h-10 rounded-full bg-purple-100 hover:bg-purple-200 text-purple-600 transition-colors"
+                  title="Mezclar letras"
+                >
+                  <Shuffle size={20} />
+                </button>
+                {/* Letter Wheel */}
+                <div className="lw-wheel-container relative mx-auto mb-4" style={{ width: '300px', height: '300px' }}>
                 {/* Large background circle - covers all letter buttons */}
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div className="lw-wheel-bg w-72 h-72 bg-gradient-to-br from-purple-100 via-blue-100 to-purple-100 rounded-full shadow-lg opacity-40"></div>
@@ -1680,6 +1714,7 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
                   );
                 })}
               </div>
+              </div>{/* close lw-wheel-wrapper */}
 
               {/* Buttons */}
               <div className="lw-bottom-buttons grid grid-cols-3 gap-2">

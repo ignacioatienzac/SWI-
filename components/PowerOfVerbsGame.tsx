@@ -2771,7 +2771,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
                 <div className="grid grid-cols-2 gap-4">
                   <button
                     onClick={() => setSelectedBattleMode('contrarreloj')}
-                    className={`p-6 rounded-xl border-2 text-center transition-all relative ${selectedBattleMode === 'contrarreloj' ? 'border-spanish-red bg-red-50 ring-2 ring-red-200' : 'border-gray-200 hover:bg-gray-50'}`}
+                    className={`py-3 px-4 rounded-xl border-2 transition-all relative flex items-center justify-center gap-2 ${selectedBattleMode === 'contrarreloj' ? 'border-spanish-red bg-red-50 ring-2 ring-red-200' : 'border-gray-200 hover:bg-gray-50'}`}
                   >
                     <button
                       onMouseEnter={() => setShowTooltip('contrarreloj')}
@@ -2786,12 +2786,12 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
                         Derrota 30 enemigos antes de que se acabe el tiempo
                       </div>
                     )}
-                    <div className="text-4xl mb-2">⏱️</div>
-                    <span className="block font-bold text-deep-blue">Contrarreloj</span>
+                    <span className="text-2xl">⏱️</span>
+                    <span className="font-bold text-deep-blue">Contrarreloj</span>
                   </button>
                   <button
                     onClick={() => setSelectedBattleMode('jefe')}
-                    className={`p-6 rounded-xl border-2 text-center transition-all relative ${selectedBattleMode === 'jefe' ? 'border-spanish-red bg-red-50 ring-2 ring-red-200' : 'border-gray-200 hover:bg-gray-50'}`}
+                    className={`py-3 px-4 rounded-xl border-2 transition-all relative flex items-center justify-center gap-2 ${selectedBattleMode === 'jefe' ? 'border-spanish-red bg-red-50 ring-2 ring-red-200' : 'border-gray-200 hover:bg-gray-50'}`}
                   >
                     <button
                       onMouseEnter={() => setShowTooltip('jefe')}
@@ -2806,8 +2806,8 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
                         Derrota al dragón
                       </div>
                     )}
-                    <div className="text-4xl mb-2">🐉</div>
-                    <span className="block font-bold text-deep-blue">Modo Jefe</span>
+                    <span className="text-2xl">🐉</span>
+                    <span className="font-bold text-deep-blue">Modo Jefe</span>
                   </button>
                 </div>
               </div>
@@ -2838,19 +2838,18 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
             {selectedMode === 'write' && (
               <div className="mb-6">
                 <label className="block text-sm font-bold text-gray-700 mb-2">Tildes</label>
-                <p className="text-sm text-gray-500 leading-relaxed mb-3">¿Quieres que las tildes cuenten en tus respuestas?</p>
                 <div className="grid grid-cols-2 gap-3">
                   <button
                     onClick={() => setAccentSensitive(true)}
                     className={`py-3 rounded-lg border-2 font-bold transition-all ${accentSensitive ? 'border-deep-blue bg-deep-blue text-white' : 'border-gray-200 text-gray-600 hover:border-gray-300'}`}
                   >
-                    🎯 Estrictas
+                    🙂‍↕️ Con Tildes
                   </button>
                   <button
                     onClick={() => setAccentSensitive(false)}
                     className={`py-3 rounded-lg border-2 font-bold transition-all ${!accentSensitive ? 'border-deep-blue bg-deep-blue text-white' : 'border-gray-200 text-gray-600 hover:border-gray-300'}`}
                   >
-                    😌 Relajadas
+                    🙂‍↔️ Sin Tildes
                   </button>
                 </div>
               </div>

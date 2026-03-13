@@ -1331,20 +1331,19 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
               <div className="grid grid-cols-2 gap-3">
                 <button
                   onClick={() => setSelectedPhraseLength('short')}
-                  className={`py-4 rounded-xl border-2 font-bold transition-all ${
+                  className={`py-3 px-4 rounded-xl border-2 font-bold transition-all flex items-center justify-center gap-2 ${
                     selectedPhraseLength === 'short'
                       ? 'border-amber-500 bg-amber-500 text-white shadow-md'
                       : 'border-gray-200 text-gray-600 hover:border-amber-300 hover:bg-amber-50'
                   }`}
                 >
-                  <span className="text-2xl mb-1 block">🧱</span>
+                  <span className="text-xl">🧱</span>
                   <span>Frases Cortas</span>
-                  <span className="text-xs block font-normal opacity-80">3–5 palabras</span>
                 </button>
                 <button
                   onClick={() => !longDisabled && setSelectedPhraseLength('long')}
                   disabled={longDisabled}
-                  className={`py-4 rounded-xl border-2 font-bold transition-all ${
+                  className={`py-3 px-4 rounded-xl border-2 font-bold transition-all flex items-center justify-center gap-2 ${
                     longDisabled
                       ? 'border-gray-200 bg-gray-100 text-gray-400 cursor-not-allowed opacity-50'
                       : selectedPhraseLength === 'long'
@@ -1352,9 +1351,8 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
                       : 'border-gray-200 text-gray-600 hover:border-amber-300 hover:bg-amber-50'
                   }`}
                 >
-                  <span className="text-2xl mb-1 block">🏗️</span>
-                  <span>Frases Largas</span>
-                  <span className="text-xs block font-normal opacity-80">{longDisabled ? 'Próximamente para B1' : '6–10 palabras'}</span>
+                  <span className="text-xl">🏗️</span>
+                  <span>{longDisabled ? 'Frases Largas (Próximamente)' : 'Frases Largas'}</span>
                 </button>
               </div>
             </div>
@@ -1426,7 +1424,7 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
               <div className="grid grid-cols-3 gap-3">
                 <button
                   onClick={() => setSelectedMode('practice')}
-                  className={`py-4 rounded-xl border-2 font-bold transition-all ${
+                  className={`py-3 px-4 rounded-xl border-2 font-bold transition-all flex items-center justify-center gap-2 ${
                     selectedMode === 'practice'
                       ? 'border-amber-500 bg-amber-500 text-white shadow-md'
                       : selectedMode === null
@@ -1434,12 +1432,12 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
                       : 'border-gray-200 text-gray-600 hover:border-amber-300 hover:bg-amber-50'
                   }`}
                 >
-                  <span className="text-2xl mb-1 block">📖</span>
+                  <span className="text-xl">📖</span>
                   <span>Práctica</span>
                 </button>
                 <button
                   onClick={() => setSelectedMode('timed')}
-                  className={`py-4 rounded-xl border-2 font-bold transition-all ${
+                  className={`py-3 px-4 rounded-xl border-2 font-bold transition-all flex items-center justify-center gap-2 ${
                     selectedMode === 'timed'
                       ? 'border-amber-500 bg-amber-500 text-white shadow-md'
                       : selectedMode === null
@@ -1447,12 +1445,12 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
                       : 'border-gray-200 text-gray-600 hover:border-amber-300 hover:bg-amber-50'
                   }`}
                 >
-                  <span className="text-2xl mb-1 block">⏱️</span>
+                  <span className="text-xl">⏱️</span>
                   <span>Contrarreloj</span>
                 </button>
                 <button
                   onClick={() => setSelectedMode('lives')}
-                  className={`py-4 rounded-xl border-2 font-bold transition-all ${
+                  className={`py-3 px-4 rounded-xl border-2 font-bold transition-all flex items-center justify-center gap-2 ${
                     selectedMode === 'lives'
                       ? 'border-amber-500 bg-amber-500 text-white shadow-md'
                       : selectedMode === null
@@ -1460,7 +1458,7 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
                       : 'border-gray-200 text-gray-600 hover:border-amber-300 hover:bg-amber-50'
                   }`}
                 >
-                  <span className="text-2xl mb-1 block">❤️</span>
+                  <span className="text-xl">❤️</span>
                   <span>Vidas</span>
                 </button>
               </div>
