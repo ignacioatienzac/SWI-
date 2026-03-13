@@ -578,15 +578,17 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
   const selectLetter = (index: number) => {
     if (!gameState) return;
     
-    // If already selected, deselect it and all letters after it
+    // If already selected, only undo if it's the LAST letter used
     const existingIndex = usedIndices.indexOf(index);
     if (existingIndex !== -1) {
-      playPop();
-      const newIndices = usedIndices.slice(0, existingIndex);
-      const newWord = newIndices.map(i => gameState.baseWordNormalized[i]).join('');
-      setUsedIndices(newIndices);
-      setCurrentWord(newWord);
-      lastAddedIndexRef.current = newIndices.length > 0 ? newIndices[newIndices.length - 1] : null;
+      if (existingIndex === usedIndices.length - 1) {
+        playPop();
+        const newIndices = usedIndices.slice(0, -1);
+        const newWord = newIndices.map(i => gameState.baseWordNormalized[i]).join('');
+        setUsedIndices(newIndices);
+        setCurrentWord(newWord);
+        lastAddedIndexRef.current = newIndices.length > 0 ? newIndices[newIndices.length - 1] : null;
+      }
       return;
     }
     
@@ -607,16 +609,14 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
     const existingPosition = usedIndices.indexOf(index);
     
     if (existingPosition !== -1) {
-      // Letter already selected - implement deselection logic
-      // Remove all letters after this position (going back in the path)
-      if (existingPosition < usedIndices.length - 1) {
-        // Only deselect if it's not the last letter (going backwards)
+      // Only undo the LAST letter when dragging back to it
+      if (existingPosition === usedIndices.length - 1) {
         playPop();
-        const newUsedIndices = usedIndices.slice(0, existingPosition + 1);
+        const newUsedIndices = usedIndices.slice(0, -1);
         const newWord = newUsedIndices.map(idx => gameState.baseWordNormalized[idx]).join('');
         setUsedIndices(newUsedIndices);
         setCurrentWord(newWord);
-        lastAddedIndexRef.current = index;
+        lastAddedIndexRef.current = newUsedIndices.length > 0 ? newUsedIndices[newUsedIndices.length - 1] : null;
       }
       return;
     }
@@ -1164,6 +1164,8 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
             overflow: hidden;
             height: 100dvh;
             min-height: unset;
+            display: flex;
+            flex-direction: column;
           }
           .lw-header-inner {
             padding-top: 0.25rem !important;
@@ -1185,22 +1187,30 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
             display: none !important;
           }
           .lw-main-content {
-            padding-top: 0.25rem !important;
-            padding-bottom: 0.25rem !important;
-            padding-left: 10px !important;
-            padding-right: 10px !important;
+            flex: 1;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+            padding: 0.25rem 10px !important;
+            overflow: hidden;
           }
           .lw-main-grid {
-            gap: 0.5rem !important;
+            flex: 1;
+            min-height: 0;
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 0.25rem !important;
           }
           .lw-crucigrama-title {
             display: none !important;
           }
           .lw-crossword-card {
             padding: 0.5rem !important;
+            flex-shrink: 1;
+            min-height: 0;
           }
           .lw-crossword-scroll {
-            max-height: 35vh;
+            max-height: 30vh;
             overflow: auto;
             width: 100%;
           }
@@ -1224,10 +1234,17 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
             display: none !important;
           }
           .lw-wheel-card {
-            padding: 0.5rem !important;
+            padding: 0.25rem 0.5rem !important;
+            flex-shrink: 0;
+            max-height: 35vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow: hidden;
           }
           .lw-input-row {
-            margin-bottom: 10px !important;
+            margin-bottom: 0.25rem !important;
+            width: 100%;
           }
           .lw-input-display {
             min-height: 2rem !important;
@@ -1246,10 +1263,10 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
             display: flex !important;
           }
           .lw-wheel-container {
-            --lw-scale: calc((100vw - 40px) / 300);
-            transform: scale(var(--lw-scale));
-            transform-origin: top center;
-            margin-bottom: calc(-300px * (1 - var(--lw-scale))) !important;
+            width: min(80vw, 280px) !important;
+            height: min(80vw, 280px) !important;
+            flex-shrink: 0;
+            margin-bottom: 0 !important;
           }
           .lw-bottom-buttons {
             display: none !important;
@@ -1644,36 +1661,42 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
               </p>
 
               {/* Letter Wheel */}
-              <div className="lw-wheel-container relative mx-auto mb-4" style={{ width: '300px', height: '300px' }}>
-                {/* Large background circle - covers all letter buttons */}
+              {(() => {
+                const wheelSize = isMobile ? Math.min(window.innerWidth * 0.8, 280) : 300;
+                const letterCount = gameState.baseWordNormalized.length;
+                const btnSize = isMobile ? (letterCount > 8 ? 40 : 48) : 56;
+                const btnRadius = btnSize / 2;
+                const wheelRadius = (wheelSize / 2) - btnRadius - 4;
+                const bgCircleSize = wheelSize - 16;
+                const letterFontSize = isMobile ? (letterCount > 8 ? '0.85rem' : '1.1rem') : '1.25rem';
+                return (
+              <>
+              <div className="lw-wheel-container relative mx-auto mb-4" style={{ width: `${wheelSize}px`, height: `${wheelSize}px` }}>
+                {/* Large background circle */}
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="lw-wheel-bg w-72 h-72 bg-gradient-to-br from-purple-100 via-blue-100 to-purple-100 rounded-full shadow-lg opacity-40"></div>
+                  <div className="lw-wheel-bg bg-gradient-to-br from-purple-100 via-blue-100 to-purple-100 rounded-full shadow-lg opacity-40" style={{ width: `${bgCircleSize}px`, height: `${bgCircleSize}px` }}></div>
                 </div>
                 
                 {/* SVG for connecting lines */}
-                <svg className="lw-wheel-svg absolute inset-0 pointer-events-none z-10" width="300" height="300">
+                <svg className="lw-wheel-svg absolute inset-0 pointer-events-none z-10" width={wheelSize} height={wheelSize}>
                   {usedIndices.length >= 1 && usedIndices.map((currentIdx, i) => {
                     if (i === 0) return null;
                     const prevIdx = usedIndices[i - 1];
                     const actualPrevPos = letterPositions.indexOf(prevIdx);
                     const actualCurrentPos = letterPositions.indexOf(currentIdx);
                     
-                    // Safety check - skip if positions not found
                     if (actualPrevPos === -1 || actualCurrentPos === -1) return null;
                     
                     const total = gameState.baseWordNormalized.length;
                     const prevAngle = (actualPrevPos / total) * 2 * Math.PI - Math.PI / 2;
                     const currentAngle = (actualCurrentPos / total) * 2 * Math.PI - Math.PI / 2;
-                    // Radio ajustado para que los botones queden dentro del círculo de fondo
-                    // Mismo tamaño en todas las versiones: radio 108px para botones de 56px
-                    const radius = 108;
+                    const center = wheelSize / 2;
                     
-                    const x1 = 150 + radius * Math.cos(prevAngle);
-                    const y1 = 150 + radius * Math.sin(prevAngle);
-                    const x2 = 150 + radius * Math.cos(currentAngle);
-                    const y2 = 150 + radius * Math.sin(currentAngle);
+                    const x1 = center + wheelRadius * Math.cos(prevAngle);
+                    const y1 = center + wheelRadius * Math.sin(prevAngle);
+                    const x2 = center + wheelRadius * Math.cos(currentAngle);
+                    const y2 = center + wheelRadius * Math.sin(currentAngle);
                     
-                    // Create unique gradient ID for each line to ensure proper rendering
                     const gradientId = `lineGradient-${i}-${prevIdx}-${currentIdx}`;
                     
                     return (
@@ -1703,13 +1726,10 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
                   const letter = gameState.baseWordNormalized[originalIndex];
                   const total = gameState.baseWordNormalized.length;
                   const angle = (visualPosition / total) * 2 * Math.PI - Math.PI / 2;
-                  // Radio ajustado para que los botones queden dentro del círculo de fondo
-                  // Mismo tamaño en todas las versiones: botones 56px (w-14), radio 108px, offset 28px
-                  const radius = 108;
-                  const buttonOffset = 28;
+                  const center = wheelSize / 2;
                   
-                  const x = 150 + radius * Math.cos(angle);
-                  const y = 150 + radius * Math.sin(angle);
+                  const x = center + wheelRadius * Math.cos(angle);
+                  const y = center + wheelRadius * Math.sin(angle);
                   const used = usedIndices.includes(originalIndex);
                   const usedPosition = usedIndices.indexOf(originalIndex);
                   
@@ -1741,12 +1761,10 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
                         e.preventDefault();
                         e.stopPropagation();
                         const touch = e.touches[0];
-                        // Get position relative to viewport
                         const touchX = touch.clientX;
                         const touchY = touch.clientY;
                         const element = document.elementFromPoint(touchX, touchY) as HTMLElement;
                         
-                        // Check if we're over a letter button
                         if (element?.hasAttribute('data-letter-index')) {
                           const idx = parseInt(element.getAttribute('data-letter-index')!);
                           if (!isNaN(idx)) {
@@ -1755,14 +1773,17 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
                         }
                       }}
                       data-letter-index={originalIndex}
-                      className={`lw-letter-btn absolute w-14 h-14 rounded-full text-xl font-black transition-all ${
+                      className={`lw-letter-btn absolute rounded-full font-black transition-all ${
                         used
                           ? 'bg-gradient-to-br from-red-400 to-pink-500 text-white scale-90 shadow-lg'
                           : 'bg-gradient-to-br from-blue-500 to-purple-600 text-white hover:scale-110 shadow-md active:scale-95'
                       }`}
                       style={{
-                        left: `${x - buttonOffset}px`,
-                        top: `${y - buttonOffset}px`,
+                        width: `${btnSize}px`,
+                        height: `${btnSize}px`,
+                        fontSize: letterFontSize,
+                        left: `${x - btnRadius}px`,
+                        top: `${y - btnRadius}px`,
                         touchAction: 'none',
                       }}
                     >
@@ -1798,6 +1819,9 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
                   Enviar
                 </button>
               </div>
+              </>
+                );
+              })()}
             </div>
           </div>
         </div>

@@ -791,7 +791,6 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack, cobiVisible = true, sou
         </button>
         <div className="text-center flex-1">
           <h1 className="text-lg font-black text-green-800">Adivina la Palabra</h1>
-          <p className="text-xs text-gray-500">{selectedDate}</p>
         </div>
         <div className="flex gap-1">
           <button
@@ -830,8 +829,7 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack, cobiVisible = true, sou
         </button>
         
         <div className="text-center flex-1 min-w-fit">
-          <p className="text-xs text-gray-500 uppercase tracking-wide">Palabra del día</p>
-          <p className="text-sm font-semibold text-gray-700">{selectedDate}</p>
+          <h1 className="text-lg font-black text-green-800">Adivina la Palabra</h1>
         </div>
 
         <div className="flex gap-2">
