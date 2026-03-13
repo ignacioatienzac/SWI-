@@ -1869,44 +1869,45 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
   // --- PLAYING STATE ---
   if (gameState === 'PLAYING') {
     return (
-      <div className="min-h-screen md:min-h-0 md:h-[calc(100vh-5rem)] bg-gradient-to-br from-red-50 to-pink-50 p-4 md:p-[10px] relative md:overflow-hidden">
-        <div className="max-w-4xl mx-auto md:flex md:flex-col md:h-full md:gap-[10px]">
-          {/* Header */}
-          <div className="flex justify-between items-center mb-4 md:mb-0 bg-white rounded-2xl p-4 md:py-1 md:px-3 shadow-md md:flex-shrink-0">
+      <div className={`bg-gradient-to-br from-red-50 to-pink-50 relative ${isMobile ? 'fixed inset-0 z-40 overflow-hidden p-2' : 'h-[calc(100vh-5rem)] p-[10px] overflow-hidden'}`}>
+        <div className={`max-w-4xl mx-auto ${isMobile ? 'h-full flex flex-col' : 'flex flex-col h-full gap-[10px]'}`}>
+          {/* Header - hidden on mobile */}
+          {!isMobile && (
+          <div className="flex justify-between items-center bg-white rounded-2xl py-1 px-3 shadow-md flex-shrink-0">
             <button
               onClick={() => setGameState('LEVEL_SELECT')}
-              className="p-2 md:p-1 hover:bg-gray-100 rounded-full transition-colors"
+              className="p-1 hover:bg-gray-100 rounded-full transition-colors"
             >
-              <ChevronLeft size={24} className="md:w-5 md:h-5" />
+              <ChevronLeft size={20} />
             </button>
-            <div className="flex gap-4 md:gap-5 text-center">
+            <div className="flex gap-5 text-center">
               <div>
-                <p className="text-xs md:text-[10px] text-gray-500 font-medium md:leading-tight">PUNTOS</p>
-                <p className="text-lg md:text-base font-black text-red-800 md:leading-tight">{score}</p>
+                <p className="text-[10px] text-gray-500 font-medium leading-tight">PUNTOS</p>
+                <p className="text-base font-black text-red-800 leading-tight">{score}</p>
               </div>
               <div>
-                <p className="text-xs md:text-[10px] text-gray-500 font-medium md:leading-tight">NIVEL</p>
-                <p className="text-lg md:text-base font-black text-green-600 md:leading-tight">{gameLevel}</p>
+                <p className="text-[10px] text-gray-500 font-medium leading-tight">NIVEL</p>
+                <p className="text-base font-black text-green-600 leading-tight">{gameLevel}</p>
               </div>
               <div>
-                <p className="text-xs md:text-[10px] text-gray-500 font-medium md:leading-tight">RACHA</p>
-                <p className="text-lg md:text-base font-black text-orange-500 md:leading-tight">{streak}</p>
+                <p className="text-[10px] text-gray-500 font-medium leading-tight">RACHA</p>
+                <p className="text-base font-black text-orange-500 leading-tight">{streak}</p>
               </div>
               <div>
-                <p className="text-xs md:text-[10px] text-gray-500 font-medium md:leading-tight">VIDAS</p>
-                <p className="text-lg md:text-sm font-black text-red-500 md:leading-tight">
-                  <span className="hidden md:inline">{'❤️'.repeat(lives)}</span>
-                  <span className="md:hidden">❤️ x {lives}</span>
+                <p className="text-[10px] text-gray-500 font-medium leading-tight">VIDAS</p>
+                <p className="text-sm font-black text-red-500 leading-tight">
+                  {'❤️'.repeat(lives)}
                 </p>
               </div>
             </div>
             <button
               onClick={() => setGameState('PAUSED')}
-              className="p-2 md:p-1 hover:bg-gray-100 rounded-full transition-colors"
+              className="p-1 hover:bg-gray-100 rounded-full transition-colors"
             >
-              <Pause size={24} className="md:w-5 md:h-5" />
+              <Pause size={20} />
             </button>
           </div>
+          )}
 
           {/* Canvas */}
           <div 

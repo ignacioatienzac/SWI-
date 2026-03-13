@@ -2673,7 +2673,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
     // --- DESKTOP: Two-column compact layout ---
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 p-4">
-        <div className="max-w-3xl mx-auto">
+        <div className="w-full max-w-6xl mx-auto px-4">
           <div className="flex items-center justify-between mb-3">
             <button
               onClick={onBack}
@@ -2682,25 +2682,24 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
               <ChevronLeft size={20} />
               Volver a Juegos
             </button>
-            <h1 className="text-2xl font-black text-deep-blue">
+            <h1 className="text-3xl font-black text-deep-blue">
               🪄 El Poder de los Verbos
             </h1>
           </div>
 
-          <div className="bg-white rounded-3xl px-6 py-4 shadow-xl">
+          <div className="bg-white rounded-3xl px-8 py-6 shadow-xl">
+            <div className="grid grid-cols-2 gap-x-8 gap-y-4">
 
-            {/* Row 1: Modo Verbal + Tipo de Verbos */}
-            <div className="grid grid-cols-2 gap-4 mb-3">
-              {/* 1. Modo Verbal - always visible */}
+              {/* Row 1 Left: Modo Verbal */}
               <div>
-                <label className="block text-xs font-bold text-black mb-1">Modo Verbal</label>
-                <div className="grid grid-cols-3 gap-2">
+                <label className="block text-sm font-bold text-black mb-2">Modo Verbal</label>
+                <div className="grid grid-cols-3 gap-3">
                   {['indicativo', 'subjuntivo', 'imperativo'].map(g => (
                     <button
                       key={g}
                       onClick={() => setSelectedGrammar(g)}
-                      className={`py-2 rounded-lg border-2 font-bold capitalize transition-all text-sm ${
-                        selectedGrammar === g ? 'border-deep-blue bg-deep-blue text-white' : 'border-gray-200 text-gray-600 hover:border-gray-300'
+                      className={`py-3 rounded-lg border-2 font-bold capitalize transition-all text-base ${
+                        selectedGrammar === g ? 'border-deep-blue bg-deep-blue text-white shadow-md' : 'border-gray-200 text-gray-600 hover:border-gray-300'
                       }`}
                     >
                       {g}
@@ -2709,17 +2708,17 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
                 </div>
               </div>
 
-              {/* 3. Tipo de Verbos */}
+              {/* Row 1 Right: Tipo de Verbos */}
               {selectedTense ? (
                 <div>
-                  <label className="block text-xs font-bold text-black mb-1">Tipo de Verbos</label>
-                  <div className="grid grid-cols-3 gap-2">
+                  <label className="block text-sm font-bold text-black mb-2">Tipo de Verbos</label>
+                  <div className="grid grid-cols-3 gap-3">
                     {['regular', 'irregular', 'mixed'].map(t => (
                       <button
                         key={t}
                         onClick={() => setSelectedVerbType(t)}
-                        className={`py-2 rounded-lg border-2 font-bold capitalize transition-all text-sm ${
-                          selectedVerbType === t ? 'border-deep-blue bg-deep-blue text-white' : 'border-gray-200 text-gray-600 hover:border-gray-300'
+                        className={`py-3 rounded-lg border-2 font-bold capitalize transition-all text-base ${
+                          selectedVerbType === t ? 'border-deep-blue bg-deep-blue text-white shadow-md' : 'border-gray-200 text-gray-600 hover:border-gray-300'
                         }`}
                       >
                         {t === 'mixed' ? 'Todos' : t}
@@ -2728,23 +2727,21 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
                   </div>
                 </div>
               ) : <div />}
-            </div>
 
-            {/* Row 2: Tiempo Verbal + (Modo de Batalla + Dificultad) */}
-            {selectedGrammar && (
-              <div className="grid grid-cols-2 gap-4 mb-3">
-                {/* 2. Tiempo Verbal */}
+              {/* Row 2 Left: Tiempo Verbal */}
+              {selectedGrammar ? (
                 <div>
-                  <label className="block text-xs font-bold text-black mb-1">Tiempo Verbal</label>
+                  <label className="block text-sm font-bold text-black mb-2">Tiempo Verbal</label>
                   {availableTenses.length > 0 ? (
-                    <div className="grid grid-cols-3 gap-2">
+                    <div className="grid grid-cols-3 gap-3">
                       {availableTenses.map(t => (
                         <button
                           key={t}
                           onClick={() => setSelectedTense(t)}
-                          className={`py-2 rounded-lg border-2 font-bold transition-all text-sm ${
-                            selectedTense === t ? 'border-deep-blue bg-deep-blue text-white' : 'border-gray-200 text-gray-600 hover:border-gray-300'
+                          className={`py-3 px-2 rounded-lg border-2 font-bold transition-all text-base ${
+                            selectedTense === t ? 'border-deep-blue bg-deep-blue text-white shadow-md' : 'border-gray-200 text-gray-600 hover:border-gray-300'
                           }`}
+                          style={formatTenseName(t).length > 12 ? { fontSize: 'clamp(0.7rem, 1.5vw, 1rem)' } : undefined}
                         >
                           {formatTenseName(t)}
                         </button>
@@ -2754,124 +2751,131 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
                     <p className="text-sm text-gray-400 italic">No hay tiempos disponibles para este modo.</p>
                   )}
                 </div>
+              ) : <div />}
 
-                {/* 4. Modo de Batalla + 7. Dificultad */}
-                {selectedVerbType ? (
-                  <div className="space-y-3">
-                    <div>
-                      <label className="block text-xs font-bold text-black mb-1">Modo de Batalla</label>
-                      <div className="grid grid-cols-2 gap-3">
-                        <button
-                          onClick={() => setSelectedBattleMode('contrarreloj')}
-                          className={`py-2 px-3 rounded-xl border-2 transition-all relative flex items-center justify-center gap-2 ${selectedBattleMode === 'contrarreloj' ? 'border-spanish-red bg-red-50 ring-2 ring-red-200' : 'border-gray-200 hover:bg-gray-50'}`}
-                        >
-                          <button
-                            onMouseEnter={() => setShowTooltip('contrarreloj')}
-                            onMouseLeave={() => setShowTooltip(null)}
-                            onClick={(e) => { e.stopPropagation(); setShowTooltip(showTooltip === 'contrarreloj' ? null : 'contrarreloj'); }}
-                            className="absolute top-1 left-1 w-4 h-4 rounded-full bg-gray-200 hover:bg-gray-300 text-xs flex items-center justify-center transition-colors"
-                          >
-                            ?
-                          </button>
-                          {showTooltip === 'contrarreloj' && (
-                            <div className="absolute -top-10 left-0 right-0 bg-gray-800 text-white text-xs px-2 py-1 rounded-lg z-10">
-                              Derrota 30 enemigos antes de que se acabe el tiempo
-                            </div>
-                          )}
-                          <span className="text-xl">⏱️</span>
-                          <span className="font-bold text-deep-blue text-sm">Contrarreloj</span>
-                        </button>
-                        <button
-                          onClick={() => setSelectedBattleMode('jefe')}
-                          className={`py-2 px-3 rounded-xl border-2 transition-all relative flex items-center justify-center gap-2 ${selectedBattleMode === 'jefe' ? 'border-spanish-red bg-red-50 ring-2 ring-red-200' : 'border-gray-200 hover:bg-gray-50'}`}
-                        >
-                          <button
-                            onMouseEnter={() => setShowTooltip('jefe')}
-                            onMouseLeave={() => setShowTooltip(null)}
-                            onClick={(e) => { e.stopPropagation(); setShowTooltip(showTooltip === 'jefe' ? null : 'jefe'); }}
-                            className="absolute top-1 left-1 w-4 h-4 rounded-full bg-gray-200 hover:bg-gray-300 text-xs flex items-center justify-center transition-colors"
-                          >
-                            ?
-                          </button>
-                          {showTooltip === 'jefe' && (
-                            <div className="absolute -top-10 left-0 right-0 bg-gray-800 text-white text-xs px-2 py-1 rounded-lg z-10">
-                              Derrota al dragón
-                            </div>
-                          )}
-                          <span className="text-xl">🐉</span>
-                          <span className="font-bold text-deep-blue text-sm">Modo Jefe</span>
-                        </button>
-                      </div>
-                    </div>
-
-                    {/* 7. Dificultad (appears when mode selected) */}
-                    {(selectedMode === 'choice' || selectedMode === 'write') && (
-                      <div>
-                        <label className="block text-xs font-bold text-black mb-1">Dificultad</label>
-                        <div className="grid grid-cols-3 gap-2">
-                          {(Object.keys(DIFFICULTY_SETTINGS) as GameDifficulty[]).map(d => (
-                            <button
-                              key={d}
-                              onClick={() => setSelectedDifficulty(d)}
-                              className={`py-2 rounded-lg border-2 font-bold capitalize transition-all text-sm ${
-                                selectedDifficulty === d ? 'border-deep-blue bg-deep-blue text-white' : 'border-gray-200 text-gray-600 hover:border-gray-300'
-                              }`}
-                            >
-                              {DIFFICULTY_SETTINGS[d].label}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                ) : <div />}
-              </div>
-            )}
-
-            {/* Row 3: Modo de Respuesta with inline Tildes */}
-            {selectedBattleMode && (
-              <div className="mb-3">
-                <label className="block text-xs font-bold text-black mb-1">Modo de Respuesta</label>
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
+              {/* Row 2 Right: Modo de Batalla */}
+              {selectedVerbType ? (
+                <div>
+                  <label className="block text-sm font-bold text-black mb-2">Modo de Batalla</label>
+                  <div className="grid grid-cols-2 gap-3">
                     <button
-                      onClick={() => setSelectedMode('write')}
-                      className={`w-full py-2 rounded-lg border-2 font-bold transition-all text-sm ${selectedMode === 'write' ? 'border-deep-blue bg-deep-blue text-white' : 'border-gray-200 text-gray-600 hover:border-gray-300'}`}
+                      onClick={() => setSelectedBattleMode('contrarreloj')}
+                      className={`py-3 rounded-lg border-2 font-bold transition-all text-base relative ${
+                        selectedBattleMode === 'contrarreloj' ? 'border-deep-blue bg-deep-blue text-white shadow-md' : 'border-gray-200 text-gray-600 hover:border-gray-300'
+                      }`}
                     >
-                      ✍️ Escribir
+                      <button
+                        onMouseEnter={() => setShowTooltip('contrarreloj')}
+                        onMouseLeave={() => setShowTooltip(null)}
+                        onClick={(e) => { e.stopPropagation(); setShowTooltip(showTooltip === 'contrarreloj' ? null : 'contrarreloj'); }}
+                        className="absolute top-1 left-1 w-5 h-5 rounded-full bg-gray-200 hover:bg-gray-300 text-xs flex items-center justify-center transition-colors"
+                      >
+                        ?
+                      </button>
+                      {showTooltip === 'contrarreloj' && (
+                        <div className="absolute -top-10 left-0 right-0 bg-gray-800 text-white text-xs px-2 py-1 rounded-lg z-10">
+                          Derrota 30 enemigos antes de que se acabe el tiempo
+                        </div>
+                      )}
+                      ⏱️ Contrarreloj
                     </button>
-                    {selectedMode === 'write' && (
-                      <div className="flex gap-1 mt-1">
-                        <button
-                          onClick={() => setAccentSensitive(true)}
-                          className={`flex-1 py-1 text-xs rounded border font-bold transition-all ${accentSensitive ? 'border-deep-blue bg-deep-blue text-white' : 'border-gray-200 text-gray-500 hover:border-gray-300'}`}
-                        >
-                          Con Tildes
-                        </button>
-                        <button
-                          onClick={() => setAccentSensitive(false)}
-                          className={`flex-1 py-1 text-xs rounded border font-bold transition-all ${!accentSensitive ? 'border-deep-blue bg-deep-blue text-white' : 'border-gray-200 text-gray-500 hover:border-gray-300'}`}
-                        >
-                          Sin Tildes
-                        </button>
-                      </div>
-                    )}
+                    <button
+                      onClick={() => setSelectedBattleMode('jefe')}
+                      className={`py-3 rounded-lg border-2 font-bold transition-all text-base relative ${
+                        selectedBattleMode === 'jefe' ? 'border-deep-blue bg-deep-blue text-white shadow-md' : 'border-gray-200 text-gray-600 hover:border-gray-300'
+                      }`}
+                    >
+                      <button
+                        onMouseEnter={() => setShowTooltip('jefe')}
+                        onMouseLeave={() => setShowTooltip(null)}
+                        onClick={(e) => { e.stopPropagation(); setShowTooltip(showTooltip === 'jefe' ? null : 'jefe'); }}
+                        className="absolute top-1 left-1 w-5 h-5 rounded-full bg-gray-200 hover:bg-gray-300 text-xs flex items-center justify-center transition-colors"
+                      >
+                        ?
+                      </button>
+                      {showTooltip === 'jefe' && (
+                        <div className="absolute -top-10 left-0 right-0 bg-gray-800 text-white text-xs px-2 py-1 rounded-lg z-10">
+                          Derrota al dragón
+                        </div>
+                      )}
+                      🐉 Modo Jefe
+                    </button>
                   </div>
-                  <button
-                    onClick={() => setSelectedMode('choice')}
-                    className={`py-2 rounded-lg border-2 font-bold transition-all text-sm self-start ${selectedMode === 'choice' ? 'border-deep-blue bg-deep-blue text-white' : 'border-gray-200 text-gray-600 hover:border-gray-300'}`}
-                  >
-                    🎯 Selección
-                  </button>
                 </div>
-              </div>
-            )}
+              ) : <div />}
 
-            {/* Iniciar Batalla */}
+              {/* Row 3 Left: empty (Tiempo Verbal may extend vertically) */}
+              <div />
+
+              {/* Row 3 Right: Modo de Respuesta */}
+              {selectedBattleMode ? (
+                <div>
+                  <label className="block text-sm font-bold text-black mb-2">Modo de Respuesta</label>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <button
+                        onClick={() => setSelectedMode('write')}
+                        className={`w-full py-3 rounded-lg border-2 font-bold transition-all text-base ${selectedMode === 'write' ? 'border-deep-blue bg-deep-blue text-white shadow-md' : 'border-gray-200 text-gray-600 hover:border-gray-300'}`}
+                      >
+                        ✍️ Escribir
+                      </button>
+                      {selectedMode === 'write' && (
+                        <div className="flex items-center gap-2 mt-2 justify-center">
+                          <span className="text-xs font-bold text-gray-600">Tildes:</span>
+                          <button
+                            onClick={() => setAccentSensitive(true)}
+                            className={`px-3 py-1 text-xs rounded-full border font-bold transition-all ${accentSensitive ? 'border-deep-blue bg-deep-blue text-white' : 'border-gray-200 text-gray-500 hover:border-gray-300'}`}
+                          >
+                            SÍ
+                          </button>
+                          <button
+                            onClick={() => setAccentSensitive(false)}
+                            className={`px-3 py-1 text-xs rounded-full border font-bold transition-all ${!accentSensitive ? 'border-deep-blue bg-deep-blue text-white' : 'border-gray-200 text-gray-500 hover:border-gray-300'}`}
+                          >
+                            NO
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                    <button
+                      onClick={() => setSelectedMode('choice')}
+                      className={`py-3 rounded-lg border-2 font-bold transition-all text-base self-start ${selectedMode === 'choice' ? 'border-deep-blue bg-deep-blue text-white shadow-md' : 'border-gray-200 text-gray-600 hover:border-gray-300'}`}
+                    >
+                      🎯 Selección
+                    </button>
+                  </div>
+                </div>
+              ) : <div />}
+
+              {/* Row 4 Left: empty */}
+              <div />
+
+              {/* Row 4 Right: Dificultad */}
+              {(selectedMode === 'choice' || selectedMode === 'write') ? (
+                <div>
+                  <label className="block text-sm font-bold text-black mb-2">Dificultad</label>
+                  <div className="grid grid-cols-3 gap-3">
+                    {(Object.keys(DIFFICULTY_SETTINGS) as GameDifficulty[]).map(d => (
+                      <button
+                        key={d}
+                        onClick={() => setSelectedDifficulty(d)}
+                        className={`py-3 rounded-lg border-2 font-bold capitalize transition-all text-base ${
+                          selectedDifficulty === d ? 'border-deep-blue bg-deep-blue text-white shadow-md' : 'border-gray-200 text-gray-600 hover:border-gray-300'
+                        }`}
+                      >
+                        {DIFFICULTY_SETTINGS[d].label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ) : <div />}
+            </div>
+
+            {/* Iniciar Batalla - centered below grid */}
             <button
               onClick={handleStartGame}
               disabled={!selectedGrammar || !selectedTense || !selectedVerbType || !selectedBattleMode || !selectedMode || !selectedDifficulty}
-              className="w-full py-3 bg-gradient-to-r from-spanish-red to-spanish-red hover:from-red-700 hover:to-red-700 disabled:from-gray-300 disabled:to-gray-300 text-white font-bold text-lg rounded-xl transition-all shadow-lg mt-2"
+              className="w-full py-4 bg-gradient-to-r from-spanish-red to-spanish-red hover:from-red-700 hover:to-red-700 disabled:from-gray-300 disabled:to-gray-300 text-white font-bold text-lg rounded-xl transition-all shadow-lg mt-4"
             >
               Iniciar Batalla
             </button>
@@ -2991,26 +2995,26 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
       <div className={`bg-gradient-to-br from-blue-50 to-indigo-50 flex flex-col items-center justify-start ${isMobile && isLandscape ? 'fixed inset-0 z-40 overflow-hidden p-1 pt-1' : isMobile ? 'fixed inset-0 z-40 overflow-hidden p-4 pt-[10px]' : 'h-[calc(100vh-5rem)] p-[15px] overflow-hidden'}`}>
         <div className={`w-full max-w-4xl ${!isMobile ? 'flex flex-col h-full' : ''} ${screenShake ? 'animate-[screenShake_0.5s_ease-in-out]' : ''}`}>
           {/* Header - minimal on mobile landscape */}
-          <div className={`flex justify-between items-center text-white flex-shrink-0 ${isMobile && isLandscape ? 'mb-1 px-2' : isMobile ? 'mb-[10px]' : 'mb-[15px]'}`}>
-            <button onClick={() => setGameState('SELECTION')} className="p-1 md:p-2 hover:bg-white/10 rounded-full">
+          <div className={`flex justify-between items-center text-black flex-shrink-0 ${isMobile && isLandscape ? 'mb-1 px-2' : isMobile ? 'mb-[10px]' : 'mb-[15px]'}`}>
+            <button onClick={() => setGameState('SELECTION')} className="p-1 md:p-2 hover:bg-black/10 rounded-full">
               <ChevronLeft size={isMobile && isLandscape ? 20 : 32} />
             </button>
             <div className="text-center flex-1">
-              <p className={`opacity-70 ${isMobile && isLandscape ? 'text-[10px] leading-tight' : 'text-sm'}`}>Puntos</p>
+              <p className={`text-gray-500 ${isMobile && isLandscape ? 'text-[10px] leading-tight' : 'text-sm'}`}>Puntos</p>
               <p className={`font-black ${isMobile && isLandscape ? 'text-lg' : 'text-4xl'}`}>{score}</p>
             </div>
             <div className="text-center flex-1">
-              <p className={`opacity-70 ${isMobile && isLandscape ? 'text-[10px] leading-tight' : 'text-sm'}`}>Poder</p>
+              <p className={`text-gray-500 ${isMobile && isLandscape ? 'text-[10px] leading-tight' : 'text-sm'}`}>Poder</p>
               <p className={`font-black ${isMobile && isLandscape ? 'text-lg' : 'text-4xl'}`}>{attackPower}x</p>
             </div>
             <div className="text-center flex-1">
-              <p className={`opacity-70 ${isMobile && isLandscape ? 'text-[10px] leading-tight' : 'text-sm'}`}>Vidas</p>
-              <p className={`font-black text-red-400 ${isMobile && isLandscape ? 'text-lg' : 'text-4xl'}`}>{lives}</p>
+              <p className={`text-gray-500 ${isMobile && isLandscape ? 'text-[10px] leading-tight' : 'text-sm'}`}>Vidas</p>
+              <p className={`font-black text-red-600 ${isMobile && isLandscape ? 'text-lg' : 'text-4xl'}`}>{lives}</p>
             </div>
-            <button onClick={() => setGameState('PAUSED')} className="p-1 md:p-2 hover:bg-white/10 rounded-full">
+            <button onClick={() => setGameState('PAUSED')} className="p-1 md:p-2 hover:bg-black/10 rounded-full">
               <Pause size={isMobile && isLandscape ? 20 : 32} />
             </button>
-            <button onClick={() => setInstructionsOpen(true)} className="p-1 md:p-2 hover:bg-white/10 rounded-full">
+            <button onClick={() => setInstructionsOpen(true)} className="p-1 md:p-2 hover:bg-black/10 rounded-full">
               <Info size={isMobile && isLandscape ? 20 : 32} />
             </button>
           </div>
@@ -3152,7 +3156,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
             <div>
               {currentVerb ? (
                 <div>
-                  <h2 className="text-center font-bold text-white text-xl mb-3" style={{ textShadow: '0 2px 4px rgba(0,0,0,0.3)' }}>
+                  <h2 className="text-center font-bold text-black text-xl mb-3">
                     {currentVerb.verb}, {currentVerb.pronoun}
                   </h2>
                   {/* Mobile input bar */}
@@ -3186,7 +3190,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
               <div>
                 {/* Nuevo layout: verbo,pronombre a la izquierda, tiempo verbal en rectángulo azul a la derecha */}
                 <div className={`flex justify-between items-center ${isMobile && isLandscape ? 'mb-2' : isMobile ? 'mb-6' : 'mb-2'}`}>
-                  <h2 className={`font-bold text-deep-blue ${isMobile && isLandscape ? 'text-base' : isMobile ? 'text-2xl' : 'text-2xl'}`}>
+                  <h2 className={`font-bold text-black ${isMobile && isLandscape ? 'text-base' : isMobile ? 'text-2xl' : 'text-2xl'}`}>
                     {currentVerb.verb}, {currentVerb.pronoun}
                   </h2>
                   <div className={`bg-deep-blue text-white rounded-lg font-bold ${isMobile && isLandscape ? 'px-3 py-1 text-xs' : isMobile ? 'px-6 py-2' : 'px-4 py-1 text-base'}`}>

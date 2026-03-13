@@ -781,8 +781,8 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack, cobiVisible = true, sou
   const today = new Date().toISOString().split('T')[0];
   
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50">
-    <div className="max-w-2xl mx-auto px-4 py-6">
+    <div className={`bg-gradient-to-br from-green-50 to-emerald-50 ${isMobile ? 'fixed inset-0 z-40 overflow-hidden' : 'min-h-screen'}`}>
+    <div className={`max-w-2xl mx-auto px-4 ${isMobile ? 'h-full overflow-y-auto py-3' : 'py-6'}`}>
       {/* Header with back button and controls */}
       {!isMobile && (
       <div className="flex items-center justify-between mb-6 gap-2 flex-wrap">
