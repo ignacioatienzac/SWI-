@@ -789,6 +789,7 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
     return (
       <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-50 p-4">
         <div className="max-w-3xl mx-auto">
+          {!isMobile && (
           <div className="flex items-center justify-between mb-4">
             <button
               onClick={onBack}
@@ -801,9 +802,10 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
               🎯 La Rueda de Letras
             </h1>
           </div>
+          )}
 
           <div className="bg-white rounded-3xl shadow-2xl p-8">
-            <p className="text-center text-gray-600 mb-6">Elige tu nivel</p>
+            <h2 className="text-xl font-bold text-center text-deep-blue mb-6">Elige tu nivel</h2>
 
             <div className="grid grid-cols-2 gap-4">
               {[

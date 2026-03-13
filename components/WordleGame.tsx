@@ -195,7 +195,7 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack, cobiVisible = true, sou
     { value: 'a1', label: 'A1', desc: 'Principiante' },
     { value: 'a2', label: 'A2', desc: 'Elemental' },
     { value: 'b1', label: 'B1', desc: 'Intermedio' },
-    { value: 'b2', label: 'B2', desc: 'Intermedio-Alto' }
+    { value: 'b2', label: 'B2', desc: 'Avanzado' }
   ];
 
   const wordLength = useMemo(() => secretWord.length as 3 | 4 | 5 | 6, [secretWord]);
@@ -619,7 +619,7 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack, cobiVisible = true, sou
         </div>
 
         <div className="bg-white rounded-3xl p-8 shadow-xl">
-        <p className="text-center text-gray-600 mb-6">Selecciona tu nivel</p>
+        <h2 className="text-xl font-bold text-center text-green-800 mb-6">Elige tu nivel</h2>
         <div className="grid grid-cols-2 gap-4">
           {DIFFICULTIES.map(d => (
             <button
@@ -784,12 +784,8 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack, cobiVisible = true, sou
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50">
     <div className="max-w-2xl mx-auto px-4 py-6">
       {/* Header with back button and controls */}
+      {!isMobile && (
       <div className="flex items-center justify-between mb-6 gap-2 flex-wrap">
-        {isMobile ? (
-          <button onClick={onBack} className="p-1 hover:bg-white/10 rounded-full">
-            <ChevronLeft size={28} className="text-gray-500" />
-          </button>
-        ) : (
         <button 
           onClick={onBack}
           className="text-gray-500 hover:text-green-800 font-medium flex items-center gap-2 transition-colors"
@@ -797,14 +793,11 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack, cobiVisible = true, sou
           <ChevronLeft size={20} />
           Volver a Juegos
         </button>
-        )}
         
-        {!isMobile && (
         <div className="text-center flex-1 min-w-fit">
           <p className="text-xs text-gray-500 uppercase tracking-wide">Palabra del día</p>
           <p className="text-sm font-semibold text-gray-700">{selectedDate}</p>
         </div>
-        )}
 
         <div className="flex gap-2">
           {/* Hint Button */}
@@ -840,6 +833,7 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack, cobiVisible = true, sou
           </button>
         </div>
       </div>
+      )}
 
       {/* Instructions panel */}
       {showInstructions && (
@@ -1160,11 +1154,6 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack, cobiVisible = true, sou
           {message}
         </div>
       )}
-
-      {/* Guesses counter */}
-      <p className="text-center mb-6 text-gray-700 font-semibold text-sm">
-        Intentos: {guesses.length} / {MAX_GUESSES}
-      </p>
 
       {/* Input (hidden, only for keyboard input) */}
       {status === 'PLAYING' && (

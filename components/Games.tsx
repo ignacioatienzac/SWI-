@@ -189,9 +189,9 @@ const Games: React.FC<GamesProps> = ({ activeGameId, setActiveGameId, cobiVisibl
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 relative" style={{ paddingTop: '20px' }}>
-      <div className="text-center" style={{ marginBottom: '20px' }}>
-        <h1 className="text-4xl md:text-5xl font-extrabold text-deep-blue tracking-tight">
+    <div className="max-w-7xl mx-auto px-4 relative" style={{ paddingTop: '32px', paddingBottom: '32px' }}>
+      <div className="text-center" style={{ marginBottom: '32px' }}>
+        <h1 className="text-xl md:text-5xl font-extrabold text-deep-blue tracking-tight">
           {t('gamesPage.heading')}
         </h1>
       </div>
