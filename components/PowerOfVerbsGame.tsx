@@ -2549,7 +2549,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
       };
 
       return (
-        <div className="h-[100dvh] bg-deep-blue p-3 flex flex-col" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
+        <div className="h-[100dvh] bg-blue-100 p-3 flex flex-col" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
           {/* Header */}
           <div className="bg-white rounded-3xl px-5 py-4 shadow-2xl flex flex-col" style={{ height: 'auto', maxHeight: 'calc(100dvh - 120px)', flex: '0 1 auto' }}>
             <div className="flex items-center gap-2 pb-2 border-b border-gray-100">
@@ -2685,17 +2685,17 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
 
     // --- DESKTOP: VerbMaster-style stacked card menu ---
     return (
-      <div className="min-h-screen bg-deep-blue p-4">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 p-4">
         <div className="max-w-2xl mx-auto">
           <div className="flex items-center justify-between mb-4">
             <button
               onClick={onBack}
-              className="text-gray-300 hover:text-white font-medium flex items-center gap-2 transition-colors"
+              className="text-gray-500 hover:text-deep-blue font-medium flex items-center gap-2 transition-colors"
             >
               <ChevronLeft size={20} />
               Volver a Juegos
             </button>
-            <h1 className="text-2xl font-black text-white">
+            <h1 className="text-2xl font-black text-deep-blue">
               🪄 El Poder de los Verbos
             </h1>
           </div>
@@ -2996,7 +2996,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
   if (gameState === 'PLAYING') {
     // Both modes use the same canvas-based UI
     return (
-      <div className={`bg-deep-blue flex flex-col items-center justify-start ${isMobile && isLandscape ? 'fixed inset-0 z-40 overflow-hidden p-1 pt-1' : isMobile ? 'fixed inset-0 z-40 overflow-hidden p-4 pt-[10px]' : 'h-[calc(100vh-5rem)] p-[15px] overflow-hidden'}`}>
+      <div className={`bg-gradient-to-br from-blue-50 to-indigo-50 flex flex-col items-center justify-start ${isMobile && isLandscape ? 'fixed inset-0 z-40 overflow-hidden p-1 pt-1' : isMobile ? 'fixed inset-0 z-40 overflow-hidden p-4 pt-[10px]' : 'h-[calc(100vh-5rem)] p-[15px] overflow-hidden'}`}>
         <div className={`w-full max-w-4xl ${!isMobile ? 'flex flex-col h-full' : ''} ${screenShake ? 'animate-[screenShake_0.5s_ease-in-out]' : ''}`}>
           {/* Header - minimal on mobile landscape */}
           <div className={`flex justify-between items-center text-white flex-shrink-0 ${isMobile && isLandscape ? 'mb-1 px-2' : isMobile ? 'mb-[10px]' : 'mb-[15px]'}`}>
@@ -3480,7 +3480,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
   // --- PAUSED STATE ---
   if (gameState === 'PAUSED') {
     return (
-      <div className="min-h-screen bg-deep-blue p-4 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 p-4 flex items-center justify-center">
         <div className="bg-white rounded-3xl p-8 max-w-md text-center shadow-2xl">
           <p className="text-7xl mb-4">⏸️</p>
           <h1 className="text-4xl font-black text-deep-blue mb-2">Juego Pausado</h1>
@@ -3649,7 +3649,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
   // --- GAMEOVER STATE ---
   if (gameState === 'GAMEOVER') {
     return (
-      <div className="min-h-screen bg-deep-blue p-4 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 p-4 flex items-center justify-center">
         <div className="bg-white rounded-3xl p-8 max-w-md text-center shadow-2xl">
           <p className="text-7xl mb-4">💀</p>
           <h1 className="text-4xl font-black text-deep-blue mb-2">¡Juego Terminado!</h1>
@@ -3803,7 +3803,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
   // --- VICTORY STATE ---
   if (gameState === 'VICTORY') {
     return (
-      <div className="min-h-screen bg-deep-blue p-4 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 p-4 flex items-center justify-center">
         <div className="bg-white rounded-3xl p-8 max-w-md text-center shadow-2xl">
           <p className="text-7xl mb-4">🎉</p>
           <h1 className="text-4xl font-black text-green-600 mb-2">¡Ganaste!</h1>

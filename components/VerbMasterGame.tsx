@@ -1336,7 +1336,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
                       key={option.value}
                       onClick={() => handleVerbModeChange(option.value)}
                       className={`w-full py-4 rounded-xl border-2 font-bold text-lg transition-all ${
-                        selectedVerbMode === option.value ? 'bg-deep-blue text-white border-deep-blue' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
+                        selectedVerbMode === option.value ? 'bg-red-800 text-white border-red-800' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
                       }`}
                     >
                       {option.label}
@@ -1365,7 +1365,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
                         key={option.value}
                         onClick={() => setSelectedTense(option.value)}
                         className={`py-3 px-2 rounded-xl border-2 font-bold transition-all flex items-center justify-center text-center ${
-                          selectedTense === option.value ? 'bg-deep-blue text-white border-deep-blue' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
+                          selectedTense === option.value ? 'bg-red-800 text-white border-red-800' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
                         }`}
                         style={{ fontSize: '0.8rem', hyphens: 'auto', wordBreak: 'break-word' } as React.CSSProperties}
                       >
@@ -1384,7 +1384,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
                         key={option.value}
                         onClick={() => setSelectedTense(option.value)}
                         className={`w-full py-4 rounded-xl border-2 font-bold text-lg transition-all ${
-                          selectedTense === option.value ? 'bg-deep-blue text-white border-deep-blue' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
+                          selectedTense === option.value ? 'bg-red-800 text-white border-red-800' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
                         }`}
                       >
                         {option.label}
@@ -1404,7 +1404,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
                         key={option.value}
                         onClick={() => setSelectedTense(option.value)}
                         className={`py-3 px-2 rounded-xl border-2 font-bold transition-all flex items-center justify-center text-center ${
-                          selectedTense === option.value ? 'bg-deep-blue text-white border-deep-blue' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
+                          selectedTense === option.value ? 'bg-red-800 text-white border-red-800' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
                         }`}
                         style={{ fontSize: '0.8rem', hyphens: 'auto', wordBreak: 'break-word' } as React.CSSProperties}
                       >
@@ -1429,7 +1429,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
                       key={option.value}
                       onClick={() => setSelectedVerbType(option.value)}
                       className={`w-full py-4 rounded-xl border-2 font-bold text-lg transition-all ${
-                        selectedVerbType === option.value ? 'bg-deep-blue text-white border-deep-blue' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
+                        selectedVerbType === option.value ? 'bg-red-800 text-white border-red-800' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
                       }`}
                     >
                       {option.label}
@@ -1444,20 +1444,20 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
       };
 
       return (
-        <div className="h-[100dvh] bg-deep-blue p-3 flex flex-col" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
+        <div className="h-[100dvh] bg-red-100 p-3 flex flex-col" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
           <div className="bg-white rounded-3xl px-5 py-4 shadow-2xl flex flex-col" style={{ height: 'auto', maxHeight: 'calc(100dvh - 120px)', flex: '0 1 auto' }}>
             <div className="flex items-center gap-2 pb-2 border-b border-gray-100">
               <button onClick={onBack} className="p-1.5 hover:bg-gray-100 rounded-full transition-colors text-gray-500">
                 <ChevronLeft size={20} />
               </button>
-              <h1 className="text-lg font-black text-deep-blue flex-1 text-center">🫧 Maestro de Verbos</h1>
+              <h1 className="text-lg font-black text-red-800 flex-1 text-center">🫧 Maestro de Verbos</h1>
               <div className="w-8"></div>
             </div>
 
             <div className="flex justify-center gap-2 my-2">
               {[1, 2, 3].map(p => (
                 <div key={p} className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                  p === mobileMenuPage ? 'bg-spanish-red w-6' : p < mobileMenuPage ? 'bg-deep-blue' : 'bg-gray-300'
+                  p === mobileMenuPage ? 'bg-spanish-red w-6' : p < mobileMenuPage ? 'bg-red-800' : 'bg-gray-300'
                 }`} />
               ))}
             </div>
@@ -1567,17 +1567,17 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
 
     // --- DESKTOP ---
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-50 p-4">
+      <div className="min-h-screen bg-gradient-to-br from-red-50 to-pink-50 p-4">
         <div className="max-w-2xl mx-auto">
           <div className="flex items-center justify-between mb-4">
             <button
               onClick={onBack}
-              className="text-gray-500 hover:text-deep-blue font-medium flex items-center gap-2 transition-colors"
+              className="text-gray-500 hover:text-red-800 font-medium flex items-center gap-2 transition-colors"
             >
               <ChevronLeft size={20} />
               Volver a Juegos
             </button>
-            <h1 className="text-2xl font-black text-deep-blue">
+            <h1 className="text-2xl font-black text-red-800">
               🫧 Maestro de Verbos
             </h1>
           </div>
@@ -1601,7 +1601,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
                     disabled={option.disabled}
                     className={`py-3 rounded-lg border-2 font-bold transition-all ${
                       selectedVerbMode === option.value
-                        ? 'border-deep-blue bg-deep-blue text-white'
+                        ? 'border-red-800 bg-red-800 text-white'
                         : option.disabled
                         ? 'border-gray-200 text-gray-400 cursor-not-allowed opacity-50'
                         : 'border-gray-200 text-gray-600 hover:border-gray-300'
@@ -1635,7 +1635,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
                       onClick={() => setSelectedTense(option.value)}
                       className={`py-3 rounded-lg border-2 font-bold transition-all ${
                         selectedTense === option.value
-                          ? 'border-deep-blue bg-deep-blue text-white'
+                          ? 'border-red-800 bg-red-800 text-white'
                           : 'border-gray-200 text-gray-600 hover:border-gray-300'
                       }`}
                     >
@@ -1655,7 +1655,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
                       onClick={() => setSelectedTense(option.value)}
                       className={`py-3 rounded-lg border-2 font-bold transition-all ${
                         selectedTense === option.value
-                          ? 'border-deep-blue bg-deep-blue text-white'
+                          ? 'border-red-800 bg-red-800 text-white'
                           : 'border-gray-200 text-gray-600 hover:border-gray-300'
                       }`}
                     >
@@ -1677,7 +1677,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
                       onClick={() => setSelectedTense(option.value)}
                       className={`py-3 rounded-lg border-2 font-bold transition-all ${
                         selectedTense === option.value
-                          ? 'border-deep-blue bg-deep-blue text-white'
+                          ? 'border-red-800 bg-red-800 text-white'
                           : 'border-gray-200 text-gray-600 hover:border-gray-300'
                       }`}
                     >
@@ -1704,7 +1704,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
                     onClick={() => setSelectedVerbType(option.value)}
                     className={`py-3 rounded-lg border-2 font-bold transition-all ${
                       selectedVerbType === option.value
-                        ? 'border-deep-blue bg-deep-blue text-white'
+                        ? 'border-red-800 bg-red-800 text-white'
                         : 'border-gray-200 text-gray-600 hover:border-gray-300'
                     }`}
                   >
@@ -1881,7 +1881,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
   // --- PLAYING STATE ---
   if (gameState === 'PLAYING') {
     return (
-      <div className="min-h-screen md:min-h-0 md:h-[calc(100vh-5rem)] bg-gray-50 p-4 md:p-[10px] relative md:overflow-hidden">
+      <div className="min-h-screen md:min-h-0 md:h-[calc(100vh-5rem)] bg-gradient-to-br from-red-50 to-pink-50 p-4 md:p-[10px] relative md:overflow-hidden">
         <div className="max-w-4xl mx-auto md:flex md:flex-col md:h-full md:gap-[10px]">
           {/* Header */}
           <div className="flex justify-between items-center mb-4 md:mb-0 bg-white rounded-2xl p-4 md:py-1 md:px-3 shadow-md md:flex-shrink-0">
@@ -1894,7 +1894,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
             <div className="flex gap-4 md:gap-5 text-center">
               <div>
                 <p className="text-xs md:text-[10px] text-gray-500 font-medium md:leading-tight">PUNTOS</p>
-                <p className="text-lg md:text-base font-black text-deep-blue md:leading-tight">{score}</p>
+                <p className="text-lg md:text-base font-black text-red-800 md:leading-tight">{score}</p>
               </div>
               <div>
                 <p className="text-xs md:text-[10px] text-gray-500 font-medium md:leading-tight">NIVEL</p>
@@ -1956,7 +1956,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
                 className={`flex-1 px-3 py-1.5 border-2 rounded-lg focus:outline-none text-sm transition-colors duration-200 ${
                   inputFeedback === 'success' ? 'border-green-500 text-green-600 font-bold' :
                   inputFeedback === 'error' ? 'border-red-500 text-red-600 font-bold' :
-                  'border-gray-200 focus:border-deep-blue'
+                  'border-gray-200 focus:border-red-800'
                 }`}
                 style={inputFeedback === 'error' ? { animation: 'vmShake 0.4s ease-in-out' } : undefined}
                 autoFocus
@@ -1964,7 +1964,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
               />
               <button
                 onClick={handleSubmit}
-                className="px-6 py-1.5 bg-deep-blue hover:bg-blue-700 text-white font-bold rounded-lg transition-colors text-sm"
+                className="px-6 py-1.5 bg-red-800 hover:bg-red-900 text-white font-bold rounded-lg transition-colors text-sm"
               >
                 Enviar
               </button>
@@ -2220,10 +2220,10 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
   // --- PAUSED STATE ---
   if (gameState === 'PAUSED') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-50 p-4 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-red-50 to-pink-50 p-4 flex items-center justify-center">
         <div className="bg-white rounded-3xl p-8 max-w-md text-center shadow-2xl">
           <p className="text-7xl mb-4">⏸️</p>
-          <h1 className="text-4xl font-black text-deep-blue mb-2">Pausa</h1>
+          <h1 className="text-4xl font-black text-red-800 mb-2">Pausa</h1>
           <p className="text-lg text-gray-600 mb-6">Puntuación: {score}</p>
           <div className="space-y-3">
             <button
@@ -2636,17 +2636,17 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
   }
   
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-50 p-4 flex items-center justify-center">
+    <div className="min-h-screen bg-gradient-to-br from-red-50 to-pink-50 p-4 flex items-center justify-center">
       <div className="bg-white rounded-3xl p-8 max-w-md text-center shadow-2xl">
         <p className="text-7xl mb-4">💔</p>
-        <h1 className="text-4xl font-black text-deep-blue mb-2">Fin del Juego</h1>
+        <h1 className="text-4xl font-black text-red-800 mb-2">Fin del Juego</h1>
         <p className="text-lg text-gray-600 mb-2">Puntuación Final</p>
         <p className="text-5xl font-black text-spanish-red mb-4">{score}</p>
         <p className="text-gray-600 mb-6">Nivel alcanzado: {gameLevel}</p>
         <div className="space-y-3">
           <button
             onClick={handleStartGame}
-            className="w-full bg-deep-blue hover:bg-blue-700 text-white font-bold py-3 rounded-lg"
+            className="w-full bg-red-800 hover:bg-red-900 text-white font-bold py-3 rounded-lg"
           >
             Jugar de Nuevo
           </button>

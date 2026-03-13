@@ -598,31 +598,38 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack, cobiVisible = true, sou
   // Select level screen
   if (status === 'SELECT_LEVEL') {
     return (
-      <div className="max-w-2xl mx-auto px-4 py-8">
+      <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50 p-4">
+      <div className="max-w-2xl mx-auto">
+        <div className="flex items-center justify-between mb-4">
         <button 
           onClick={onBack}
-          className="mb-6 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
+          className="text-gray-500 hover:text-green-800 font-medium flex items-center gap-2 transition-colors"
         >
-          ← Atrás
+          <ChevronLeft size={20} />
+          Volver a Juegos
         </button>
+        <h1 className="text-2xl font-black text-green-800">🔍 Adivina la Palabra</h1>
+        </div>
 
-        <h2 className="text-3xl font-bold text-center mb-8 text-spanish-red">Wordle - Selecciona Nivel</h2>
-
-        <div className="space-y-3">
+        <div className="bg-white rounded-3xl p-8 shadow-xl">
+        <p className="text-center text-gray-600 mb-6">Selecciona tu nivel</p>
+        <div className="grid grid-cols-2 gap-3">
           {DIFFICULTIES.map(d => (
             <button
               key={d.value}
               onClick={() => startGame(d.value, new Date().toISOString().split('T')[0])}
-              className={`w-full py-4 px-6 rounded-lg font-semibold text-lg transition ${
+              className={`py-3 rounded-lg border-2 font-bold transition-all ${
                 difficulty === d.value 
-                  ? 'bg-spanish-red text-white' 
-                  : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
+                  ? 'border-green-700 bg-green-700 text-white' 
+                  : 'border-gray-200 text-gray-600 hover:border-gray-300'
               }`}
             >
               {d.label}
             </button>
           ))}
         </div>
+        </div>
+      </div>
 
         {/* Cobi Detective pensando en el menú (solo desktop) */}
         <div className={`cobi-container hidden lg:block fixed bottom-0 right-0 z-50 pointer-events-none overflow-visible${!cobiVisible ? ' cobi-hidden' : ''}`}>
@@ -770,14 +777,16 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack, cobiVisible = true, sou
   const today = new Date().toISOString().split('T')[0];
   
   return (
+    <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50">
     <div className="max-w-2xl mx-auto px-4 py-6">
       {/* Header with back button and controls */}
       <div className="flex items-center justify-between mb-6 gap-2 flex-wrap">
         <button 
           onClick={onBack}
-          className="px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
+          className="text-gray-500 hover:text-green-800 font-medium flex items-center gap-2 transition-colors"
         >
-          ← Atrás
+          <ChevronLeft size={20} />
+          Volver a Juegos
         </button>
         
         <div className="text-center flex-1 min-w-fit">
@@ -1397,6 +1406,7 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack, cobiVisible = true, sou
           )}
         </>
       )}
+    </div>
     </div>
   );
 };

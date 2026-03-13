@@ -787,7 +787,7 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
   // MENU
   if (gameStatus === 'MENU') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-green-50 p-4">
+      <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-50 p-4">
         <div className="max-w-3xl mx-auto">
           <div className="flex items-center justify-between mb-4">
             <button
@@ -815,7 +815,7 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
                 <button
                   key={value}
                   onClick={() => startGame(value)}
-                  className="p-6 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white transition-all hover:scale-105 shadow-lg"
+                  className="p-6 rounded-2xl border-2 border-amber-800 bg-amber-800 hover:bg-amber-900 text-white transition-all hover:scale-105 shadow-lg font-bold"
                 >
                   <div className="text-3xl font-black">{label}</div>
                   <div className="text-sm opacity-90">{desc}</div>
@@ -961,7 +961,7 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
   // LOADING
   if (gameStatus === 'LOADING') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-green-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-50 flex items-center justify-center">
         <div className="text-center">
           <div className="text-6xl mb-4 animate-bounce">🎯</div>
           <div className="text-2xl font-bold text-deep-blue">Cargando...</div>
@@ -1145,8 +1145,18 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
   }
 
   return (
-    <div className="lw-playing-root min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-green-50">
+    <div className="lw-playing-root min-h-screen bg-gradient-to-br from-amber-50 to-orange-50">
       <style>{`
+        @keyframes inputShake {
+          0%, 100% { transform: translateX(0); }
+          20% { transform: translateX(-4px); }
+          40% { transform: translateX(4px); }
+          60% { transform: translateX(-4px); }
+          80% { transform: translateX(4px); }
+        }
+        .lw-input-shake {
+          animation: inputShake 0.4s ease-in-out;
+        }
         @media (max-width: 768px) {
           .lw-playing-root {
             overflow: hidden;
@@ -1175,6 +1185,8 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
           .lw-main-content {
             padding-top: 0.25rem !important;
             padding-bottom: 0.25rem !important;
+            padding-left: 10px !important;
+            padding-right: 10px !important;
           }
           .lw-main-grid {
             gap: 0.5rem !important;
@@ -1190,13 +1202,34 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
             overflow: auto;
             width: 100%;
           }
+          .lw-crossword-grid {
+            display: grid !important;
+            width: 100% !important;
+            grid-template-columns: repeat(var(--cols), 1fr) !important;
+          }
+          .lw-crossword-grid > div {
+            width: auto !important;
+            height: auto !important;
+            aspect-ratio: 1;
+            font-size: 0.55rem !important;
+          }
+          .lw-crossword-grid > div span {
+            width: 12px !important;
+            height: 12px !important;
+            font-size: 7px !important;
+          }
+          .lw-feedback-desktop {
+            display: none !important;
+          }
           .lw-wheel-card {
             padding: 0.5rem !important;
           }
+          .lw-input-row {
+            margin-bottom: 10px !important;
+          }
           .lw-input-display {
-            min-height: 1.75rem !important;
+            min-height: 2rem !important;
             padding: 0.25rem 0.5rem !important;
-            margin-bottom: 0.25rem !important;
           }
           .lw-input-text {
             font-size: 1.25rem !important;
@@ -1204,22 +1237,17 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
           .lw-hint-text {
             display: none !important;
           }
-          .lw-wheel-wrapper {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.25rem;
-          }
-          .lw-wheel-container {
-            transform: scale(0.85);
-            transform-origin: center center;
-            margin-bottom: 0 !important;
-          }
           .lw-shuffle-btn {
             display: flex !important;
           }
           .lw-clear-btn {
             display: flex !important;
+          }
+          .lw-wheel-container {
+            --lw-scale: calc((100vw - 40px) / 300);
+            transform: scale(var(--lw-scale));
+            transform-origin: top center;
+            margin-bottom: calc(-300px * (1 - var(--lw-scale))) !important;
           }
           .lw-bottom-buttons {
             display: none !important;
@@ -1468,10 +1496,11 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
               {crosswordData && (
                 <div className="lw-crossword-scroll overflow-auto">
                   <div 
-                    className="inline-grid gap-0.5 p-2 bg-gradient-to-br from-purple-100 to-blue-100 rounded-xl"
+                    className="lw-crossword-grid inline-grid gap-0.5 p-2 bg-gradient-to-br from-purple-100 to-blue-100 rounded-xl"
                     style={{
                       gridTemplateColumns: `repeat(${crosswordData.bounds.maxCol - crosswordData.bounds.minCol + 1}, minmax(32px, 40px))`,
-                    }}
+                      '--cols': crosswordData.bounds.maxCol - crosswordData.bounds.minCol + 1,
+                    } as React.CSSProperties}
                   >
                     {Array.from({ length: crosswordData.bounds.maxRow - crosswordData.bounds.minRow + 1 }).map((_, rowIdx) => {
                       const row = crosswordData.bounds.minRow + rowIdx;
@@ -1534,7 +1563,7 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
 
             {/* Feedback */}
             {feedback.text && (
-              <div className={`p-4 rounded-xl font-bold text-center transition-all transform ${
+              <div className={`lw-feedback-desktop p-4 rounded-xl font-bold text-center transition-all transform ${
                 feedback.type === 'success' 
                   ? 'bg-gradient-to-r from-green-100 to-emerald-100 text-green-800 border-2 border-green-400 animate-bounce' 
                   : 'bg-gradient-to-r from-red-100 to-pink-100 text-red-800 border-2 border-red-400 animate-shake'
@@ -1551,38 +1580,41 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
           <div className="space-y-4">
             {/* Input Area */}
             <div className="lw-wheel-card bg-white rounded-2xl p-6 shadow-xl">
-              <div 
-                className="lw-input-display min-h-20 bg-gradient-to-r from-blue-50 to-purple-50 border-3 border-dashed border-blue-300 rounded-xl flex items-center justify-center mb-4 relative cursor-pointer"
-                onClick={() => { if (isMobile && currentWord.length > 0) submitWord(); }}
-              >
-                {currentWord.length > 0 && (
-                  <button
-                    onClick={(e) => { e.stopPropagation(); clearWord(); }}
-                    className="lw-clear-btn absolute left-2 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-gray-300 hover:bg-gray-400 text-gray-700 flex items-center justify-center hidden"
-                  >
-                    <X size={14} />
-                  </button>
-                )}
-                <span className="lw-input-text text-3xl font-black text-blue-900 tracking-wider">
-                  {currentWord.toUpperCase() || '...'}
-                </span>
+              {/* Input + Shuffle row */}
+              <div className="lw-input-row flex gap-2 mb-4">
+                <div 
+                  className="lw-input-display min-h-20 flex-1 bg-gradient-to-r from-blue-50 to-purple-50 border-3 border-dashed border-blue-300 rounded-xl flex items-center justify-center relative cursor-pointer"
+                  onClick={() => { if (isMobile && currentWord.length > 0) submitWord(); }}
+                >
+                  {currentWord.length > 0 && (
+                    <button
+                      onClick={(e) => { e.stopPropagation(); clearWord(); }}
+                      className="lw-clear-btn absolute left-2 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-gray-300 hover:bg-gray-400 text-gray-700 flex items-center justify-center hidden"
+                    >
+                      <X size={14} />
+                    </button>
+                  )}
+                  <span className={`lw-input-text text-3xl font-black tracking-wider transition-all ${
+                    feedback.type === 'success' ? 'text-green-600' : feedback.type === 'error' ? 'text-red-600 lw-input-shake' : 'text-blue-900'
+                  }`}>
+                    {currentWord.toUpperCase() || '...'}
+                  </span>
+                </div>
+                <button
+                  onClick={shuffleLetterPositions}
+                  className="lw-shuffle-btn hidden items-center justify-center w-10 h-10 rounded-full bg-purple-100 hover:bg-purple-200 text-purple-600 transition-colors flex-shrink-0 self-center"
+                  title="Mezclar letras"
+                >
+                  <Shuffle size={20} />
+                </button>
               </div>
 
               <p className="lw-hint-text text-xs text-center text-gray-500 mb-4 hidden sm:block">
                 💡 Haz clic en las letras o escribe con el teclado
               </p>
 
-              {/* Letter Wheel with shuffle button wrapper */}
-              <div className="lw-wheel-wrapper">
-                <button
-                  onClick={shuffleLetterPositions}
-                  className="lw-shuffle-btn hidden items-center justify-center w-10 h-10 rounded-full bg-purple-100 hover:bg-purple-200 text-purple-600 transition-colors"
-                  title="Mezclar letras"
-                >
-                  <Shuffle size={20} />
-                </button>
-                {/* Letter Wheel */}
-                <div className="lw-wheel-container relative mx-auto mb-4" style={{ width: '300px', height: '300px' }}>
+              {/* Letter Wheel */}
+              <div className="lw-wheel-container relative mx-auto mb-4" style={{ width: '300px', height: '300px' }}>
                 {/* Large background circle - covers all letter buttons */}
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div className="lw-wheel-bg w-72 h-72 bg-gradient-to-br from-purple-100 via-blue-100 to-purple-100 rounded-full shadow-lg opacity-40"></div>
@@ -1714,7 +1746,6 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
                   );
                 })}
               </div>
-              </div>{/* close lw-wheel-wrapper */}
 
               {/* Buttons */}
               <div className="lw-bottom-buttons grid grid-cols-3 gap-2">
