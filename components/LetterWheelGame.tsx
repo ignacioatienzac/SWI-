@@ -1129,18 +1129,100 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-green-50">
+    <div className="lw-playing-root min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-green-50">
+      <style>{`
+        @media (max-width: 768px) {
+          .lw-playing-root {
+            overflow: hidden;
+            height: 100dvh;
+            min-height: unset;
+          }
+          .lw-header-inner {
+            padding-top: 0.25rem !important;
+            padding-bottom: 0.25rem !important;
+          }
+          .lw-header-row {
+            margin-bottom: 0.25rem !important;
+          }
+          .lw-header-title {
+            font-size: 1rem !important;
+          }
+          .lw-header-subtitle {
+            display: none !important;
+          }
+          .lw-progress-section .text-sm {
+            font-size: 0.65rem !important;
+          }
+          .lw-progress-bar {
+            height: 0.375rem !important;
+          }
+          .lw-main-content {
+            padding-top: 0.5rem !important;
+            padding-bottom: 0.5rem !important;
+          }
+          .lw-main-grid {
+            gap: 0.5rem !important;
+          }
+          .lw-crucigrama-title {
+            display: none !important;
+          }
+          .lw-crossword-card {
+            padding: 0.5rem !important;
+          }
+          .lw-crossword-scroll {
+            max-height: 35vh;
+            overflow: auto;
+            width: 100%;
+          }
+          .lw-wheel-card {
+            padding: 0.75rem !important;
+          }
+          .lw-input-display {
+            min-height: 2.5rem !important;
+            padding: 0.5rem !important;
+          }
+          .lw-input-text {
+            font-size: 1.5rem !important;
+          }
+          .lw-wheel-container {
+            transform: scale(0.7);
+            transform-origin: top center;
+            margin-bottom: -2.5rem !important;
+          }
+          .lw-wheel-bg {
+            width: 288px !important;
+            height: 288px !important;
+          }
+          .lw-wheel-svg {
+            width: 300px !important;
+            height: 300px !important;
+          }
+          .lw-letter-btn {
+            width: 3.5rem !important;
+            height: 3.5rem !important;
+            font-size: 1.25rem !important;
+          }
+          .lw-bottom-buttons {
+            gap: 0.25rem !important;
+          }
+          .lw-bottom-btn {
+            padding-top: 0.375rem !important;
+            padding-bottom: 0.375rem !important;
+            font-size: 0.8rem !important;
+          }
+        }
+      `}</style>
       {/* Header */}
       <div className="bg-white shadow-lg sticky top-0 z-20">
-        <div className="max-w-6xl mx-auto px-4 py-4">
-          <div className="flex items-center justify-between mb-3">
+        <div className="lw-header-inner max-w-6xl mx-auto px-4 py-4">
+          <div className="lw-header-row flex items-center justify-between mb-3">
             <button onClick={onBack} className="p-2 hover:bg-gray-100 rounded-full">
               <ChevronLeft size={24} />
             </button>
             
             <div className="text-center flex-1">
-              <h1 className="text-2xl font-black text-deep-blue">La Rueda de Letras</h1>
-              <p className="text-xs text-gray-500">{difficulty.toUpperCase()}</p>
+              <h1 className="lw-header-title text-2xl font-black text-deep-blue">La Rueda de Letras</h1>
+              <p className="lw-header-subtitle text-xs text-gray-500">{difficulty.toUpperCase()}</p>
             </div>
 
             <div className="flex gap-2">
@@ -1167,11 +1249,11 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
           </div>
 
           {/* Progress */}
-          <div className="flex justify-between text-sm mb-2">
+          <div className="lw-progress-section flex justify-between text-sm mb-2">
             <span className="font-semibold text-gray-700">Palabras encontradas</span>
             <span className="font-bold text-purple-600">{foundWords.size} / {gameState.targetWords.length}</span>
           </div>
-          <div className="w-full bg-gray-200 rounded-full h-2.5">
+          <div className="lw-progress-bar w-full bg-gray-200 rounded-full h-2.5">
             <div
               className="bg-gradient-to-r from-purple-500 to-pink-500 h-full rounded-full transition-all duration-300"
               style={{ width: `${(foundWords.size / gameState.targetWords.length) * 100}%` }}
@@ -1359,18 +1441,18 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
       )}
 
       {/* Main Content */}
-      <div className="max-w-6xl mx-auto px-4 py-6">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="lw-main-content max-w-6xl mx-auto px-4 py-6">
+        <div className="lw-main-grid grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Left: Crossword Grid */}
           <div className="space-y-4">
             {/* Crossword */}
-            <div className="bg-white rounded-2xl p-4 shadow-xl">
-              <h2 className="text-lg font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent mb-4 flex items-center gap-2">
+            <div className="lw-crossword-card bg-white rounded-2xl p-4 shadow-xl">
+              <h2 className="lw-crucigrama-title text-lg font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent mb-4 flex items-center gap-2">
                 🧩 Crucigrama
               </h2>
               
               {crosswordData && (
-                <div className="overflow-auto">
+                <div className="lw-crossword-scroll overflow-auto">
                   <div 
                     className="inline-grid gap-0.5 p-2 bg-gradient-to-br from-purple-100 to-blue-100 rounded-xl"
                     style={{
@@ -1454,9 +1536,9 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
           {/* Right: Letter Wheel */}
           <div className="space-y-4">
             {/* Input Area */}
-            <div className="bg-white rounded-2xl p-6 shadow-xl">
-              <div className="min-h-20 bg-gradient-to-r from-blue-50 to-purple-50 border-3 border-dashed border-blue-300 rounded-xl flex items-center justify-center mb-4">
-                <span className="text-3xl font-black text-blue-900 tracking-wider">
+            <div className="lw-wheel-card bg-white rounded-2xl p-6 shadow-xl">
+              <div className="lw-input-display min-h-20 bg-gradient-to-r from-blue-50 to-purple-50 border-3 border-dashed border-blue-300 rounded-xl flex items-center justify-center mb-4">
+                <span className="lw-input-text text-3xl font-black text-blue-900 tracking-wider">
                   {currentWord.toUpperCase() || '...'}
                 </span>
               </div>
@@ -1466,14 +1548,14 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
               </p>
 
               {/* Letter Wheel */}
-              <div className="relative mx-auto mb-4" style={{ width: '300px', height: '300px' }}>
+              <div className="lw-wheel-container relative mx-auto mb-4" style={{ width: '300px', height: '300px' }}>
                 {/* Large background circle - covers all letter buttons */}
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="w-72 h-72 bg-gradient-to-br from-purple-100 via-blue-100 to-purple-100 rounded-full shadow-lg opacity-40"></div>
+                  <div className="lw-wheel-bg w-72 h-72 bg-gradient-to-br from-purple-100 via-blue-100 to-purple-100 rounded-full shadow-lg opacity-40"></div>
                 </div>
                 
                 {/* SVG for connecting lines */}
-                <svg className="absolute inset-0 pointer-events-none z-10" width="300" height="300">
+                <svg className="lw-wheel-svg absolute inset-0 pointer-events-none z-10" width="300" height="300">
                   {usedIndices.length >= 1 && usedIndices.map((currentIdx, i) => {
                     if (i === 0) return null;
                     const prevIdx = usedIndices[i - 1];
@@ -1577,7 +1659,7 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
                         }
                       }}
                       data-letter-index={originalIndex}
-                      className={`absolute w-14 h-14 rounded-full text-xl font-black transition-all ${
+                      className={`lw-letter-btn absolute w-14 h-14 rounded-full text-xl font-black transition-all ${
                         used
                           ? 'bg-gradient-to-br from-red-400 to-pink-500 text-white scale-90 shadow-lg'
                           : 'bg-gradient-to-br from-blue-500 to-purple-600 text-white hover:scale-110 shadow-md active:scale-95'
@@ -1600,22 +1682,22 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
               </div>
 
               {/* Buttons */}
-              <div className="grid grid-cols-3 gap-2">
+              <div className="lw-bottom-buttons grid grid-cols-3 gap-2">
                 <button
                   onClick={clearWord}
-                  className="bg-gray-200 hover:bg-gray-300 font-bold py-3 rounded-xl transition-colors"
+                  className="lw-bottom-btn bg-gray-200 hover:bg-gray-300 font-bold py-3 rounded-xl transition-colors"
                 >
                   Limpiar
                 </button>
                 <button
                   onClick={removeLast}
-                  className="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 rounded-xl transition-colors"
+                  className="lw-bottom-btn bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 rounded-xl transition-colors"
                 >
                   Borrar
                 </button>
                 <button
                   onClick={submitWord}
-                  className="bg-gradient-to-r from-green-500 to-blue-600 hover:from-green-600 hover:to-blue-700 text-white font-bold py-3 rounded-xl transition-all shadow-md"
+                  className="lw-bottom-btn bg-gradient-to-r from-green-500 to-blue-600 hover:from-green-600 hover:to-blue-700 text-white font-bold py-3 rounded-xl transition-all shadow-md"
                 >
                   Enviar
                 </button>

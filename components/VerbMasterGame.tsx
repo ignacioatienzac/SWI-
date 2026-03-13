@@ -1569,23 +1569,20 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-50 p-4">
         <div className="max-w-2xl mx-auto">
-          <button
-            onClick={onBack}
-            className="mb-6 text-gray-500 hover:text-deep-blue font-medium flex items-center gap-2 transition-colors"
-          >
-            <ChevronLeft size={20} />
-            Volver a Juegos
-          </button>
+          <div className="flex items-center justify-between mb-4">
+            <button
+              onClick={onBack}
+              className="text-gray-500 hover:text-deep-blue font-medium flex items-center gap-2 transition-colors"
+            >
+              <ChevronLeft size={20} />
+              Volver a Juegos
+            </button>
+            <h1 className="text-2xl font-black text-deep-blue">
+              🫧 Maestro de Verbos
+            </h1>
+          </div>
 
           <div className={`bg-white rounded-3xl p-8 shadow-xl ${isMobile ? 'pb-24' : ''}`}>
-            <div className="text-center mb-8">
-              <h1 className="text-4xl font-black text-deep-blue mb-2">
-                🫧 Maestro de Verbos
-              </h1>
-              <p className="text-gray-600">
-                ¡Explota las burbujas antes de que lleguen al suelo!
-              </p>
-            </div>
 
             {/* Verb Mode Selection - always visible */}
             <div className="mb-6">

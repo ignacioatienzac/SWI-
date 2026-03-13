@@ -2687,23 +2687,20 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
     return (
       <div className="min-h-screen bg-deep-blue p-4">
         <div className="max-w-2xl mx-auto">
-          <button
-            onClick={onBack}
-            className="mb-6 text-gray-300 hover:text-white font-medium flex items-center gap-2 transition-colors"
-          >
-            <ChevronLeft size={20} />
-            Volver a Juegos
-          </button>
+          <div className="flex items-center justify-between mb-4">
+            <button
+              onClick={onBack}
+              className="text-gray-300 hover:text-white font-medium flex items-center gap-2 transition-colors"
+            >
+              <ChevronLeft size={20} />
+              Volver a Juegos
+            </button>
+            <h1 className="text-2xl font-black text-white">
+              🪄 El Poder de los Verbos
+            </h1>
+          </div>
 
           <div className="bg-white rounded-3xl p-8 shadow-xl">
-            <div className="text-center mb-8">
-              <h1 className="text-4xl font-black text-deep-blue mb-2">
-                🪄 El Poder de los Verbos
-              </h1>
-              <p className="text-gray-600">
-                ¡Defiende el castillo conjugando verbos!
-              </p>
-            </div>
 
             {/* 1. Modo Verbal */}
             <div className="mb-6">

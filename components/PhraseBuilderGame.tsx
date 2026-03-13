@@ -1279,27 +1279,20 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
     return (
       <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 p-4">
         <div className="max-w-2xl mx-auto">
-          <button
-            onClick={onBack}
-            className="mb-6 text-gray-500 hover:text-deep-blue font-medium flex items-center gap-2 transition-colors"
-          >
-            <ChevronLeft size={20} />
-            Volver a Juegos
-          </button>
+          <div className="flex items-center justify-between mb-4">
+            <button
+              onClick={onBack}
+              className="text-gray-500 hover:text-deep-blue font-medium flex items-center gap-2 transition-colors"
+            >
+              <ChevronLeft size={20} />
+              Volver a Juegos
+            </button>
+            <h1 className="text-2xl font-black text-amber-700">
+              🏗️ Constructor de Frases
+            </h1>
+          </div>
 
           <div className="bg-white rounded-3xl p-8 shadow-xl border-4 border-amber-200">
-            {/* Header with construction theme */}
-            <div className="text-center mb-8">
-              <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-amber-400 to-orange-500 rounded-2xl shadow-lg mb-4">
-                <Hammer size={40} className="text-white" />
-              </div>
-              <h1 className="text-4xl font-black text-amber-700 mb-2">
-                🏗️ Constructor de Frases
-              </h1>
-              <p className="text-gray-600">
-                ¡Construye oraciones ordenando las palabras correctamente!
-              </p>
-            </div>
 
             {/* Level Selection */}
             <div className="mb-6">
