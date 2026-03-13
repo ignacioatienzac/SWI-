@@ -1270,25 +1270,53 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
             </div>
 
             <div className="flex gap-2">
-              <button
-                onClick={() => setShowHints(!showHints)}
-                className={`p-2 rounded-full transition-colors ${showHints ? 'bg-yellow-100' : 'hover:bg-gray-100'}`}
-              >
-                <Lightbulb size={24} className="text-yellow-600" />
-              </button>
-              <button
-                onClick={() => setShowCalendar(!showCalendar)}
-                className="p-2 bg-purple-100 text-purple-600 rounded-lg hover:bg-purple-200 transition"
-                title="Calendario"
-              >
-                <Calendar size={20} />
-              </button>
-              <button
-                onClick={() => setShowInstructions(!showInstructions)}
-                className={`p-2 rounded-full transition-colors ${showInstructions ? 'bg-blue-100' : 'hover:bg-gray-100'}`}
-              >
-                <Info size={24} className="text-blue-600" />
-              </button>
+              {isMobile ? (
+                <>
+                  <button
+                    onClick={() => setShowHints(!showHints)}
+                    className={`p-2 rounded-full transition-colors ${showHints ? 'bg-yellow-100' : 'hover:bg-gray-100'}`}
+                  >
+                    <Lightbulb size={24} className="text-yellow-600" />
+                  </button>
+                  <button
+                    onClick={() => setShowCalendar(!showCalendar)}
+                    className="p-2 bg-purple-100 text-purple-600 rounded-lg hover:bg-purple-200 transition"
+                    title="Calendario"
+                  >
+                    <Calendar size={20} />
+                  </button>
+                  <button
+                    onClick={() => setShowInstructions(!showInstructions)}
+                    className={`p-2 rounded-full transition-colors ${showInstructions ? 'bg-blue-100' : 'hover:bg-gray-100'}`}
+                  >
+                    <Info size={24} className="text-blue-600" />
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button
+                    onClick={() => setShowHints(!showHints)}
+                    className={`flex items-center gap-1.5 px-3 py-2 rounded-lg transition-colors ${showHints ? 'bg-yellow-200' : 'bg-yellow-100 hover:bg-yellow-200'}`}
+                  >
+                    <Lightbulb size={20} className="text-yellow-700" />
+                    <span className="text-sm font-semibold text-yellow-800">PISTAS</span>
+                  </button>
+                  <button
+                    onClick={() => setShowCalendar(!showCalendar)}
+                    className={`flex items-center gap-1.5 px-3 py-2 rounded-lg transition-colors ${showCalendar ? 'bg-purple-200' : 'bg-purple-100 hover:bg-purple-200'}`}
+                  >
+                    <Calendar size={20} className="text-purple-600" />
+                    <span className="text-sm font-semibold text-purple-700">CALENDARIO</span>
+                  </button>
+                  <button
+                    onClick={() => setShowInstructions(!showInstructions)}
+                    className={`flex items-center gap-1.5 px-3 py-2 rounded-lg transition-colors ${showInstructions ? 'bg-blue-200' : 'bg-blue-100 hover:bg-blue-200'}`}
+                  >
+                    <Info size={20} className="text-blue-600" />
+                    <span className="text-sm font-semibold text-blue-700">INSTRUCCIONES</span>
+                  </button>
+                </>
+              )}
             </div>
           </div>
 

@@ -784,7 +784,42 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack, cobiVisible = true, sou
     <div className={`bg-gradient-to-br from-green-50 to-emerald-50 ${isMobile ? 'fixed inset-0 z-40 overflow-hidden' : 'min-h-screen'}`}>
     <div className={`max-w-2xl mx-auto px-4 ${isMobile ? 'h-full overflow-y-auto py-3' : 'py-6'}`}>
       {/* Header with back button and controls */}
-      {!isMobile && (
+      {isMobile ? (
+      <div className="flex items-center justify-between mb-3 gap-2">
+        <button onClick={onBack} className="p-1 hover:bg-white/10 rounded-full">
+          <ChevronLeft size={28} className="text-gray-500" />
+        </button>
+        <div className="text-center flex-1">
+          <h1 className="text-lg font-black text-green-800">Adivina la Palabra</h1>
+          <p className="text-xs text-gray-500">{selectedDate}</p>
+        </div>
+        <div className="flex gap-1">
+          <button
+            onClick={() => setShowHint(!showHint)}
+            disabled={guesses.length < 3}
+            className={`p-2 rounded-lg transition ${
+              guesses.length < 3 
+                ? 'bg-gray-200 text-gray-400 cursor-not-allowed' 
+                : 'bg-yellow-100 text-yellow-600 hover:bg-yellow-200'
+            }`}
+          >
+            <Lightbulb size={20} />
+          </button>
+          <button
+            onClick={() => setShowCalendar(!showCalendar)}
+            className="p-2 bg-purple-100 text-purple-600 rounded-lg hover:bg-purple-200 transition"
+          >
+            <Calendar size={20} />
+          </button>
+          <button
+            onClick={() => setShowInstructions(!showInstructions)}
+            className="p-2 bg-green-100 text-green-600 rounded-lg hover:bg-green-200 transition"
+          >
+            <HelpCircle size={20} />
+          </button>
+        </div>
+      </div>
+      ) : (
       <div className="flex items-center justify-between mb-6 gap-2 flex-wrap">
         <button 
           onClick={onBack}
@@ -804,32 +839,33 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack, cobiVisible = true, sou
           <button
             onClick={() => setShowHint(!showHint)}
             disabled={guesses.length < 3}
-            className={`p-2 rounded-lg transition ${
+            className={`flex items-center gap-1.5 px-3 py-2 rounded-lg transition ${
               guesses.length < 3 
                 ? 'bg-gray-200 text-gray-400 cursor-not-allowed' 
-                : 'bg-blue-100 text-blue-600 hover:bg-blue-200'
+                : showHint ? 'bg-yellow-200' : 'bg-yellow-100 hover:bg-yellow-200'
             }`}
             title={guesses.length < 3 ? "Pistas disponibles desde el 4º intento" : "Pista"}
           >
-            <Lightbulb size={20} />
-          </button>
-
-          {/* Instructions Button */}
-          <button
-            onClick={() => setShowInstructions(!showInstructions)}
-            className="p-2 bg-green-100 text-green-600 rounded-lg hover:bg-green-200 transition"
-            title="Instrucciones"
-          >
-            <HelpCircle size={20} />
+            <Lightbulb size={20} className={guesses.length < 3 ? '' : 'text-yellow-700'} />
+            <span className={`text-sm font-semibold ${guesses.length < 3 ? '' : 'text-yellow-800'}`}>PISTAS</span>
           </button>
 
           {/* Calendar Button */}
           <button
             onClick={() => setShowCalendar(!showCalendar)}
-            className="p-2 bg-purple-100 text-purple-600 rounded-lg hover:bg-purple-200 transition"
-            title="Calendario"
+            className={`flex items-center gap-1.5 px-3 py-2 rounded-lg transition-colors ${showCalendar ? 'bg-purple-200' : 'bg-purple-100 hover:bg-purple-200'}`}
           >
-            <Calendar size={20} />
+            <Calendar size={20} className="text-purple-600" />
+            <span className="text-sm font-semibold text-purple-700">CALENDARIO</span>
+          </button>
+
+          {/* Instructions Button */}
+          <button
+            onClick={() => setShowInstructions(!showInstructions)}
+            className={`flex items-center gap-1.5 px-3 py-2 rounded-lg transition-colors ${showInstructions ? 'bg-blue-200' : 'bg-blue-100 hover:bg-blue-200'}`}
+          >
+            <HelpCircle size={20} className="text-blue-600" />
+            <span className="text-sm font-semibold text-blue-700">INSTRUCCIONES</span>
           </button>
         </div>
       </div>
