@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { ChevronLeft, ChevronRight, Play, RotateCcw, Lightbulb, Check, X, Clock, Hammer, Send } from 'lucide-react';
 import { hablarConPanda } from '../services/geminiService';
 import DraggableCobi from './DraggableCobi';
+import { useI18n } from '../services/i18n';
 
 // Mensajes aleatorios para el bocadillo de Cobi en el menú
 const mensajesMenuCobi = [
@@ -45,6 +46,8 @@ interface Phrase {
 }
 
 const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisible = true, soundEnabled = true }) => {
+  const { t } = useI18n();
+
   // Configuration
   const [selectedLevel, setSelectedLevel] = useState<Level | null>(null);
   const [selectedDifficulty, setSelectedDifficulty] = useState<Difficulty | null>(null);
@@ -1001,7 +1004,7 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
           case 1:
             return (
               <div>
-                <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">1. Nivel de Español</h3>
+                <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">1. {t('gameMenu.spanishLevel')}</h3>
                 <div className="flex flex-col gap-3">
                   {(['A1', 'A2', 'B1', 'B2'] as Level[]).map(level => {
                     const isDisabled = level === 'B2';
@@ -1019,7 +1022,7 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
                         }`}
                       >
                         {level}
-                        {isDisabled && <span className="text-xs block font-normal">Próximamente</span>}
+                        {isDisabled && <span className="text-xs block font-normal">{t('gameMenu.comingSoon')}</span>}
                       </button>
                     );
                   })}
@@ -1029,7 +1032,7 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
           case 2:
             return (
               <div>
-                <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">2. Longitud de Frases</h3>
+                <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">2. {t('gameMenu.phraseLength')}</h3>
                 <div className="flex flex-col gap-3">
                   <button
                     onClick={() => setSelectedPhraseLength('short')}
@@ -1038,7 +1041,7 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
                     }`}
                   >
                     <span className="text-2xl mb-1 block">🧱</span>
-                    Frases Cortas
+                    {t('gameMenu.shortPhrases')}
                   </button>
                   <button
                     onClick={() => !longDisabled && setSelectedPhraseLength('long')}
@@ -1050,7 +1053,7 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
                     }`}
                   >
                     <span className="text-2xl mb-1 block">🏗️</span>
-                    {longDisabled ? 'Frases Largas (Próximamente)' : 'Frases Largas'}
+                    {longDisabled ? t('gameMenu.longPhrasesComingSoon') : t('gameMenu.longPhrases')}
                   </button>
                 </div>
               </div>
@@ -1058,7 +1061,7 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
           case 3:
             return (
               <div>
-                <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">3. Dificultad</h3>
+                <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">3. {t('gameMenu.difficulty')}</h3>
                 <div className="flex flex-col gap-3">
                   <button
                     onClick={() => setSelectedDifficulty('easy')}
@@ -1066,8 +1069,8 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
                       selectedDifficulty === 'easy' ? 'bg-green-500 text-white border-green-500' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
                     }`}
                   >
-                    😊 Fácil
-                    <span className="text-xs block font-normal opacity-80">Solo palabras necesarias</span>
+                    😊 {t('gameMenu.easy')}
+                    <span className="text-xs block font-normal opacity-80">{t('gameMenu.easyDesc')}</span>
                   </button>
                   <button
                     onClick={() => setSelectedDifficulty('hard')}
@@ -1075,8 +1078,8 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
                       selectedDifficulty === 'hard' ? 'bg-red-500 text-white border-red-500' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
                     }`}
                   >
-                    😈 Difícil
-                    <span className="text-xs block font-normal opacity-80">Incluye palabras trampa</span>
+                    😈 {t('gameMenu.hard')}
+                    <span className="text-xs block font-normal opacity-80">{t('gameMenu.hardDesc')}</span>
                   </button>
                 </div>
               </div>
@@ -1084,7 +1087,7 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
           case 4:
             return (
               <div>
-                <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">4. Modo de Juego</h3>
+                <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">4. {t('gameMenu.gameMode')}</h3>
                 <div className="flex flex-col gap-3">
                   <button
                     onClick={() => setSelectedMode('practice')}
@@ -1093,11 +1096,11 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
                     }`}
                   >
                     <span className="text-2xl mb-1 block">📖</span>
-                    Práctica
+                    {t('gameMenu.practice')}
                   </button>
                   {selectedMode === 'practice' && (
                     <div className="bg-amber-50 border-2 border-amber-200 rounded-xl p-3 mt-2">
-                      <p className="text-xs font-bold text-amber-700 text-center mb-2">¿Cuántas frases?</p>
+                      <p className="text-xs font-bold text-amber-700 text-center mb-2">{t('gameMenu.howManyPhrases')}</p>
                       <div className="flex items-center justify-center gap-3">
                         <button
                           onClick={() => setPracticeCount(c => Math.max(5, c - 5))}
@@ -1132,7 +1135,7 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
                     }`}
                   >
                     <span className="text-2xl mb-1 block">⏱️</span>
-                    Contrarreloj
+                    {t('gameMenu.contrarreloj')}
                   </button>
                   <button
                     onClick={() => setSelectedMode('lives')}
@@ -1141,7 +1144,7 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
                     }`}
                   >
                     <span className="text-2xl mb-1 block">❤️</span>
-                    Vidas
+                    {t('gameMenu.lives')}
                   </button>
                 </div>
               </div>
@@ -1189,7 +1192,7 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
                   disabled={phrases.length === 0 || !selectedLevel || !selectedPhraseLength || !selectedDifficulty || !selectedMode}
                   className="flex-1 mx-3 py-3 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 disabled:from-gray-300 disabled:to-gray-300 text-white font-bold text-lg rounded-xl transition-all shadow-lg"
                 >
-                  ¡Empezar a Construir!
+                  {t('gameMenu.startBuilding')}
                 </button>
               ) : (
                 <div className="flex-1" />
@@ -1213,8 +1216,8 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
                 <div className="flex items-center gap-2">
                   <span className="text-2xl">🔨</span>
                   <div>
-                    <h3 className="text-white font-bold text-sm">Cobi Constructor</h3>
-                    <p className="text-xs text-amber-50">Tu arquitecto de frases</p>
+                    <h3 className="text-white font-bold text-sm">{t('gameMenu.cobiBuilder')}</h3>
+                    <p className="text-xs text-amber-50">{t('gameMenu.cobiBuilderSub')}</p>
                   </div>
                 </div>
                 <button onClick={() => setShowChatWindow(false)} className="p-1 hover:bg-white/20 rounded-full transition">
@@ -1254,7 +1257,7 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
                     value={chatInput}
                     onChange={(e) => setChatInput(e.target.value)}
                     onKeyPress={(e) => e.key === 'Enter' && sendMessageToCobi()}
-                    placeholder="Escribe tu pregunta..."
+                    placeholder={t('gameMenu.chatPlaceholder')}
                     disabled={isLoadingResponse}
                     className="flex-1 px-4 py-2 border-2 border-gray-200 rounded-full focus:outline-none focus:border-amber-400 transition text-sm disabled:bg-gray-100"
                   />
@@ -1283,7 +1286,7 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
               className="text-gray-500 hover:text-deep-blue font-medium flex items-center gap-2 transition-colors"
             >
               <ChevronLeft size={20} />
-              Volver a Juegos
+              {t('gameMenu.backToGames')}
             </button>
             <h1 className="text-2xl font-black text-amber-700">
               🏗️ Constructor de Frases
@@ -1295,7 +1298,7 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
             {/* Level Selection */}
             <div className="mb-6">
               <label className="block text-sm font-bold text-gray-700 mb-2">
-                📚 Nivel de Español
+                📚 {t('gameMenu.spanishLevel')}
               </label>
               <div className="grid grid-cols-4 gap-3">
                 {(['A1', 'A2', 'B1', 'B2'] as Level[]).map(level => {
@@ -1314,7 +1317,7 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
                       }`}
                     >
                       {level}
-                      {isDisabled && <span className="text-xs block">Próximamente</span>}
+                      {isDisabled && <span className="text-xs block">{t('gameMenu.comingSoon')}</span>}
                     </button>
                   );
                 })}
@@ -1325,7 +1328,7 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
             {selectedLevel && (
             <div className="mb-6">
               <label className="block text-sm font-bold text-gray-700 mb-2">
-                📏 Longitud de Frases
+                📏 {t('gameMenu.phraseLength')}
               </label>
               <div className="grid grid-cols-2 gap-3">
                 <button
@@ -1337,7 +1340,7 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
                   }`}
                 >
                   <span className="text-xl">🧱</span>
-                  <span>Frases Cortas</span>
+                  <span>{t('gameMenu.shortPhrases')}</span>
                 </button>
                 <button
                   onClick={() => !longDisabled && setSelectedPhraseLength('long')}
@@ -1351,7 +1354,7 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
                   }`}
                 >
                   <span className="text-xl">🏗️</span>
-                  <span>{longDisabled ? 'Frases Largas (Próximamente)' : 'Frases Largas'}</span>
+                  <span>{longDisabled ? t('gameMenu.longPhrasesComingSoon') : t('gameMenu.longPhrases')}</span>
                 </button>
               </div>
             </div>
@@ -1361,7 +1364,7 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
             {selectedPhraseLength && (
             <div className="mb-6">
               <label className="block text-sm font-bold text-gray-700 mb-2">
-                ⚙️ Dificultad
+                ⚙️ {t('gameMenu.difficulty')}
               </label>
               <div className="grid grid-cols-2 gap-3">
                 <button
@@ -1384,10 +1387,10 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
                   </button>
                   {showTooltip === 'easy' && (
                     <div className="absolute -top-12 left-0 right-0 bg-gray-800 text-white text-xs px-3 py-2 rounded-lg z-10 whitespace-nowrap">
-                      Solo palabras necesarias
+                      {t('gameMenu.easyDesc')}
                     </div>
                   )}
-                  <span className="text-lg">😊 Fácil</span>
+                  <span className="text-lg">😊 {t('gameMenu.easy')}</span>
                 </button>
                 <button
                   onClick={() => setSelectedDifficulty('hard')}
@@ -1409,10 +1412,10 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
                   </button>
                   {showTooltip === 'hard' && (
                     <div className="absolute -top-12 left-0 right-0 bg-gray-800 text-white text-xs px-3 py-2 rounded-lg z-10 whitespace-nowrap">
-                      Incluye palabras trampa
+                      {t('gameMenu.hardDesc')}
                     </div>
                   )}
-                  <span className="text-lg">😈 Difícil</span>
+                  <span className="text-lg">😈 {t('gameMenu.hard')}</span>
                 </button>
               </div>
             </div>
@@ -1422,7 +1425,7 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
             {selectedDifficulty && (
             <div className="mb-8">
               <label className="block text-sm font-bold text-gray-700 mb-2">
-                🎮 Modo de Juego
+                🎮 {t('gameMenu.gameMode')}
               </label>
               <div className="grid grid-cols-3 gap-3">
                 <button
@@ -1436,7 +1439,7 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
                   }`}
                 >
                   <span className="text-xl">📖</span>
-                  <span>Práctica</span>
+                  <span>{t('gameMenu.practice')}</span>
                 </button>
                 <button
                   onClick={() => setSelectedMode('timed')}
@@ -1449,7 +1452,7 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
                   }`}
                 >
                   <span className="text-xl">⏱️</span>
-                  <span>Contrarreloj</span>
+                  <span>{t('gameMenu.contrarreloj')}</span>
                 </button>
                 <button
                   onClick={() => setSelectedMode('lives')}
@@ -1462,12 +1465,12 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
                   }`}
                 >
                   <span className="text-xl">❤️</span>
-                  <span>Vidas</span>
+                  <span>{t('gameMenu.lives')}</span>
                 </button>
               </div>
               {selectedMode === 'practice' && (
                 <div className="bg-amber-50 border-2 border-amber-200 rounded-xl p-3 mt-3">
-                  <p className="text-xs font-bold text-amber-700 text-center mb-2">¿Cuántas frases?</p>
+                  <p className="text-xs font-bold text-amber-700 text-center mb-2">{t('gameMenu.howManyPhrases')}</p>
                   <div className="flex items-center justify-center gap-3">
                     <button
                       onClick={() => setPracticeCount(c => Math.max(5, c - 5))}
@@ -1505,7 +1508,7 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
               className="w-full py-4 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-black text-xl rounded-xl shadow-lg transition-all transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
             >
               <Play size={24} />
-              {!selectedLevel || !selectedPhraseLength || !selectedDifficulty || !selectedMode ? 'Elige todas las opciones' : '¡Empezar a Construir!'}
+              {!selectedLevel || !selectedPhraseLength || !selectedDifficulty || !selectedMode ? t('gameMenu.chooseAll') : t('gameMenu.startBuilding')}
             </button>
           </div>
         </div>
@@ -1567,8 +1570,8 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
               <div className="flex items-center gap-2">
                 <span className="text-2xl">🔨</span>
                 <div>
-                  <h3 className="text-white font-bold text-sm">Cobi el Constructor</h3>
-                  <p className="text-xs text-amber-50">Tu arquitecto de frases</p>
+                  <h3 className="text-white font-bold text-sm">{t('gameMenu.cobiBuilder')}</h3>
+                  <p className="text-xs text-amber-50">{t('gameMenu.cobiBuilderSub')}</p>
                 </div>
               </div>
               <button
@@ -1626,7 +1629,7 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
                   value={chatInput}
                   onChange={(e) => setChatInput(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && sendMessageToCobi()}
-                  placeholder="Escribe tu pregunta..."
+                  placeholder={t('gameMenu.chatPlaceholder')}
                   disabled={isLoadingResponse}
                   className="flex-1 px-4 py-2 border-2 border-gray-200 rounded-full focus:outline-none focus:border-amber-400 transition text-sm disabled:bg-gray-100"
                 />
@@ -2010,8 +2013,8 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
                   <div className="flex items-center gap-2">
                     <span className="text-2xl">🔨</span>
                     <div>
-                      <h3 className="text-white font-bold text-sm">Cobi el Constructor</h3>
-                      <p className="text-white/80 text-xs">Tu asistente arquitecto</p>
+                      <h3 className="text-white font-bold text-sm">{t('gameMenu.cobiBuilder')}</h3>
+                      <p className="text-white/80 text-xs">{t('gameMenu.cobiBuilderSub')}</p>
                     </div>
                   </div>
                   <button onClick={() => setShowChatWindow(false)} className="p-1 hover:bg-white/20 rounded-full transition">
@@ -2049,7 +2052,7 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
                       value={chatInput}
                       onChange={(e) => setChatInput(e.target.value)}
                       onKeyPress={(e) => e.key === 'Enter' && sendMessageToCobi()}
-                      placeholder="Escribe tu pregunta..."
+                      placeholder={t('gameMenu.chatPlaceholder')}
                       disabled={isLoadingResponse}
                       className="flex-1 px-4 py-2 border-2 border-gray-200 rounded-full focus:outline-none focus:border-amber-400 transition text-sm disabled:bg-gray-100"
                     />
@@ -2450,8 +2453,8 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
                 <div className="flex items-center gap-2">
                   <span className="text-2xl">🔨</span>
                   <div>
-                    <h3 className="text-white font-bold text-sm">Cobi el Constructor</h3>
-                    <p className="text-white/80 text-xs">Tu asistente arquitecto</p>
+                    <h3 className="text-white font-bold text-sm">{t('gameMenu.cobiBuilder')}</h3>
+                    <p className="text-white/80 text-xs">{t('gameMenu.cobiBuilderSub')}</p>
                   </div>
                 </div>
                 <button
@@ -2509,7 +2512,7 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
                     value={chatInput}
                     onChange={(e) => setChatInput(e.target.value)}
                     onKeyPress={(e) => e.key === 'Enter' && sendMessageToCobi()}
-                    placeholder="Escribe tu pregunta..."
+                    placeholder={t('gameMenu.chatPlaceholder')}
                     disabled={isLoadingResponse}
                     className="flex-1 px-4 py-2 border-2 border-gray-200 rounded-full focus:outline-none focus:border-amber-400 transition text-sm disabled:bg-gray-100"
                   />

@@ -3,6 +3,7 @@ import { ChevronLeft, Info, X, Lightbulb, Calendar, ChevronRight, Send, Shuffle 
 import { loadLetterWheelVocabulary, getRandomWordForDate, getRelatedWords } from '../services/letterWheelService';
 import { hablarConPanda } from '../services/geminiService';
 import DraggableCobi from './DraggableCobi';
+import { useI18n } from '../services/i18n';
 
 interface LetterWheelGameProps {
   onBack: () => void;
@@ -108,6 +109,7 @@ const seleccionarMensajeExploradorRandom = (tipo: 'entrada' | 'acierto' | 'fallo
 };
 
 const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible = true, soundEnabled = true }) => {
+  const { t } = useI18n();
   const [gameStatus, setGameStatus] = useState<GameStatus>('MENU');
   const [gameState, setGameState] = useState<GameState | null>(null);
   const [foundWords, setFoundWords] = useState<Set<string>>(new Set());
@@ -578,7 +580,7 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
   const selectLetter = (index: number) => {
     if (!gameState) return;
     
-    // If already selected, only undo if it's the LAST letter used
+    // If already selected, only undo if it's the LAST letter
     const existingIndex = usedIndices.indexOf(index);
     if (existingIndex !== -1) {
       if (existingIndex === usedIndices.length - 1) {
@@ -598,7 +600,7 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
     lastAddedIndexRef.current = index;
   };
 
-  // Add letter during drag (doesn't toggle - only adds if not already selected)
+  // Add letter during drag with backtracking support
   const addLetterDrag = (index: number) => {
     if (!gameState) return;
     
@@ -609,15 +611,16 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
     const existingPosition = usedIndices.indexOf(index);
     
     if (existingPosition !== -1) {
-      // Only undo the LAST letter when dragging back to it
-      if (existingPosition === usedIndices.length - 1) {
+      // Backtracking: if the user goes back to the PENULTIMATE letter, undo the last one
+      if (existingPosition === usedIndices.length - 2 && usedIndices.length >= 2) {
         playPop();
         const newUsedIndices = usedIndices.slice(0, -1);
         const newWord = newUsedIndices.map(idx => gameState.baseWordNormalized[idx]).join('');
         setUsedIndices(newUsedIndices);
         setCurrentWord(newWord);
-        lastAddedIndexRef.current = newUsedIndices.length > 0 ? newUsedIndices[newUsedIndices.length - 1] : null;
+        lastAddedIndexRef.current = newUsedIndices[newUsedIndices.length - 1] ?? null;
       }
+      // For the last letter or any other already-selected letter, do nothing
       return;
     }
     
@@ -796,7 +799,7 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
               className="text-gray-500 hover:text-deep-blue font-medium flex items-center gap-2 transition-colors"
             >
               <ChevronLeft size={20} />
-              Volver a Juegos
+              {t('gameMenu.backToGames')}
             </button>
             <h1 className="text-2xl font-black text-deep-blue">
               🎯 La Rueda de Letras
@@ -805,14 +808,14 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
           )}
 
           <div className="bg-white rounded-3xl shadow-2xl p-8">
-            <h2 className="text-xl font-bold text-center text-deep-blue mb-6">Elige tu nivel</h2>
+            <h2 className="text-xl font-bold text-center text-deep-blue mb-6">{t('gameMenu.chooseLevel')}</h2>
 
             <div className="grid grid-cols-2 gap-4">
               {[
-                { value: 'a1' as const, label: 'A1', desc: 'Principiante' },
-                { value: 'a2' as const, label: 'A2', desc: 'Elemental' },
-                { value: 'b1' as const, label: 'B1', desc: 'Intermedio' },
-                { value: 'b2' as const, label: 'B2', desc: 'Avanzado' }
+                { value: 'a1' as const, label: 'A1', desc: t('gameMenu.beginner') },
+                { value: 'a2' as const, label: 'A2', desc: t('gameMenu.elementary') },
+                { value: 'b1' as const, label: 'B1', desc: t('gameMenu.intermediate') },
+                { value: 'b2' as const, label: 'B2', desc: t('gameMenu.advanced') }
               ].map(({ value, label, desc }) => (
                 <button
                   key={value}
@@ -882,8 +885,8 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
               <div className="flex items-center gap-2">
                 <span className="text-2xl">🧭</span>
                 <div>
-                  <h3 className="text-white font-bold text-sm">Cobi Explorador</h3>
-                  <p className="text-xs text-amber-50">Guía de Aventuras</p>
+                  <h3 className="text-white font-bold text-sm">{t('gameMenu.cobiExplorer')}</h3>
+                  <p className="text-xs text-amber-50">{t('gameMenu.cobiExplorerSub')}</p>
                 </div>
               </div>
               <button
@@ -941,7 +944,7 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
                   value={chatInput}
                   onChange={(e) => setChatInput(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && sendMessageToCobi()}
-                  placeholder="Escribe tu pregunta..."
+                  placeholder={t('gameMenu.chatPlaceholder')}
                   disabled={isLoadingResponse}
                   className="flex-1 px-4 py-2 border-2 border-gray-200 rounded-full focus:outline-none focus:border-amber-400 transition text-sm disabled:bg-gray-100"
                 />
@@ -1051,8 +1054,8 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
               <div className="flex items-center gap-2">
                 <span className="text-2xl">🧭</span>
                 <div>
-                  <h3 className="text-white font-bold text-sm">Cobi Explorador</h3>
-                  <p className="text-xs text-amber-50">Guía de Aventuras</p>
+                  <h3 className="text-white font-bold text-sm">{t('gameMenu.cobiExplorer')}</h3>
+                  <p className="text-xs text-amber-50">{t('gameMenu.cobiExplorerSub')}</p>
                 </div>
               </div>
               <button
@@ -1110,7 +1113,7 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
                   value={chatInput}
                   onChange={(e) => setChatInput(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && sendMessageToCobi()}
-                  placeholder="Escribe tu pregunta..."
+                  placeholder={t('gameMenu.chatPlaceholder')}
                   disabled={isLoadingResponse}
                   className="flex-1 px-4 py-2 border-2 border-gray-200 rounded-full focus:outline-none focus:border-amber-400 transition text-sm disabled:bg-gray-100"
                 />
@@ -1191,7 +1194,7 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
             min-height: 0;
             display: flex;
             flex-direction: column;
-            padding: 0.25rem 0 !important;
+            padding: 0 !important;
             overflow: hidden;
           }
           .lw-main-grid {
@@ -1199,19 +1202,24 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
             min-height: 0;
             display: flex !important;
             flex-direction: column !important;
-            gap: 0.25rem !important;
+            gap: 0 !important;
           }
           .lw-crucigrama-title {
             display: none !important;
           }
+          /* Crossword area: fills available top space */
           .lw-crossword-card {
             padding: 0.5rem !important;
-            flex-shrink: 1;
+            flex: 1 1 auto;
             min-height: 0;
             border-radius: 0 !important;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
           }
           .lw-crossword-scroll {
-            max-height: 30vh;
+            flex: 1;
+            min-height: 0;
             overflow: auto;
             width: 100%;
           }
@@ -1234,10 +1242,10 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
           .lw-feedback-desktop {
             display: none !important;
           }
+          /* Wheel area: fixed at bottom, perfect circle */
           .lw-wheel-card {
             padding: 0.25rem 0.5rem !important;
-            flex-shrink: 0;
-            max-height: 35vh;
+            flex: 0 0 auto;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -1265,10 +1273,26 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
             display: flex !important;
           }
           .lw-wheel-container {
-            width: min(80vw, 280px) !important;
-            height: min(80vw, 280px) !important;
+            width: 90vw !important;
+            height: 90vw !important;
+            aspect-ratio: 1 / 1;
+            max-width: 320px;
+            max-height: 320px;
             flex-shrink: 0;
             margin-bottom: 0 !important;
+          }
+          .lw-wheel-bg {
+            width: 100% !important;
+            height: 100% !important;
+          }
+          .lw-wheel-svg {
+            width: 100% !important;
+            height: 100% !important;
+          }
+          .lw-letter-btn {
+            width: 2.5em !important;
+            height: 2.5em !important;
+            font-size: clamp(0.7rem, 3vw, 1.1rem) !important;
           }
           .lw-bottom-buttons {
             display: none !important;
@@ -1655,25 +1679,25 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
                 <button
                   onClick={shuffleLetterPositions}
                   className="lw-shuffle-btn hidden items-center justify-center w-10 h-10 rounded-full bg-purple-100 hover:bg-purple-200 text-purple-600 transition-colors flex-shrink-0 self-center"
-                  title="Mezclar letras"
+                  title={t('gameMenu.lwShuffle')}
                 >
                   <Shuffle size={20} />
                 </button>
               </div>
 
               <p className="lw-hint-text text-xs text-center text-gray-500 mb-4 hidden sm:block">
-                💡 Haz clic en las letras o escribe con el teclado
+                {t('gameMenu.lwHint')}
               </p>
 
               {/* Letter Wheel */}
               {(() => {
-                const wheelSize = isMobile ? Math.min(window.innerWidth * 0.8, 280) : 300;
+                const wheelSize = isMobile ? Math.min(window.innerWidth * 0.9, 320) : 300;
                 const letterCount = gameState.baseWordNormalized.length;
-                const btnSize = isMobile ? (letterCount > 8 ? 40 : 48) : 56;
+                const btnSize = isMobile ? Math.max(Math.round(wheelSize * 0.14), letterCount > 8 ? 34 : 40) : 56;
                 const btnRadius = btnSize / 2;
                 const wheelRadius = (wheelSize / 2) - btnRadius - 4;
                 const bgCircleSize = wheelSize - 16;
-                const letterFontSize = isMobile ? (letterCount > 8 ? '0.85rem' : '1.1rem') : '1.25rem';
+                const letterFontSize = isMobile ? `${Math.max(btnSize * 0.4, 10)}px` : '1.25rem';
                 return (
               <>
               <div className="lw-wheel-container relative mx-auto mb-4" style={{ width: `${wheelSize}px`, height: `${wheelSize}px` }}>
@@ -1809,19 +1833,19 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
                   onClick={clearWord}
                   className="lw-bottom-btn bg-gray-200 hover:bg-gray-300 font-bold py-3 rounded-xl transition-colors"
                 >
-                  Limpiar
+                  {t('gameMenu.lwClean')}
                 </button>
                 <button
                   onClick={removeLast}
                   className="lw-bottom-btn bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 rounded-xl transition-colors"
                 >
-                  Borrar
+                  {t('gameMenu.lwDelete')}
                 </button>
                 <button
                   onClick={submitWord}
                   className="lw-bottom-btn bg-gradient-to-r from-green-500 to-blue-600 hover:from-green-600 hover:to-blue-700 text-white font-bold py-3 rounded-xl transition-all shadow-md"
                 >
-                  Enviar
+                  {t('gameMenu.lwSend')}
                 </button>
               </div>
               </>
@@ -1890,8 +1914,8 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
             <div className="flex items-center gap-2">
               <span className="text-2xl">🧭</span>
               <div>
-                <h3 className="text-white font-bold text-sm">Cobi Explorador</h3>
-                <p className="text-xs text-amber-50">Guía de Aventuras</p>
+                <h3 className="text-white font-bold text-sm">{t('gameMenu.cobiExplorer')}</h3>
+                <p className="text-xs text-amber-50">{t('gameMenu.cobiExplorerSub')}</p>
               </div>
             </div>
             <button
@@ -1949,7 +1973,7 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
                 value={chatInput}
                 onChange={(e) => setChatInput(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && sendMessageToCobi()}
-                placeholder="Escribe tu pregunta..."
+                placeholder={t('gameMenu.chatPlaceholder')}
                 disabled={isLoadingResponse}
                 className="flex-1 px-4 py-2 border-2 border-gray-200 rounded-full focus:outline-none focus:border-amber-400 transition text-sm disabled:bg-gray-100"
               />

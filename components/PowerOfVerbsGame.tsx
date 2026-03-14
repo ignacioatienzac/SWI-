@@ -14,7 +14,22 @@ interface PowerOfVerbsGameProps {
 }
 
 // Función para formatear nombres de tiempos verbales
-const formatTenseName = (tense: string): string => {
+const formatTenseName = (tense: string, t?: (key: string) => string): string => {
+  if (t) {
+    const tenseKeyMap: Record<string, string> = {
+      'imperfecto': 'gameMenu.preteritoImperfecto',
+      'indefinido': 'gameMenu.preteritoIndefinido',
+      'presente': 'gameMenu.presente',
+      'pretérito perfecto': 'gameMenu.preteritoPerfecto',
+      'pretérito indefinido': 'gameMenu.preteritoIndefinido',
+      'presente continuo': 'gameMenu.presenteContinuo',
+      'futuro simple': 'gameMenu.futuroSimple',
+      'condicional simple': 'gameMenu.condicionalSimple',
+      'pretérito pluscuamperfecto': 'gameMenu.preteritoPluscuamperfecto',
+    };
+    const key = tenseKeyMap[tense.toLowerCase()];
+    if (key) return t(key);
+  }
   const tenseMap: Record<string, string> = {
     'imperfecto': 'Pretérito Imperfecto',
     'indefinido': 'Pretérito Indefinido',
@@ -26,7 +41,6 @@ const formatTenseName = (tense: string): string => {
     'condicional simple': 'Condicional Simple',
     'pretérito pluscuamperfecto': 'Pretérito Pluscuamperfecto'
   };
-  
   return tenseMap[tense.toLowerCase()] || tense.charAt(0).toUpperCase() + tense.slice(1);
 };
 
@@ -298,7 +312,17 @@ const PovMobileKeyboard: React.FC<PovMobileKeyboardProps> = ({ onKeyPress, onDel
 
 // --- COMPONENT ---
 const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible = true, soundEnabled = true }) => {
-  const { tArray, lang } = useI18n();
+  const { t, tArray, lang } = useI18n();
+
+  const difficultyLabel = (key: string) => {
+    const map: Record<string, string> = { 'Fácil': t('gameMenu.easy'), 'Intermedio': t('gameMenu.intermediate'), 'Difícil': t('gameMenu.hard') };
+    return map[key] || key;
+  };
+
+  const verbTypeLabel = (vt: string) => {
+    const map: Record<string, string> = { 'regular': t('gameMenu.regulares'), 'irregular': t('gameMenu.irregulares'), 'mixed': t('gameMenu.todos') };
+    return map[vt] || vt;
+  };
 
   // Helper to pick a random Cobi Mago message by type
   const magoMsg = useCallback((tipo: 'juego' | 'acierto' | 'fallo' | 'pausa' | 'victoria' | 'derrota' | 'menu'): string => {
@@ -2392,17 +2416,17 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
           case 1:
             return (
               <div>
-                <h3 className="text-sm font-bold text-black uppercase tracking-widest mb-4">1. Modo Verbal</h3>
+                <h3 className="text-sm font-bold text-black uppercase tracking-widest mb-4">1. {t('gameMenu.verbMode')}</h3>
                 <div className="flex flex-col gap-3">
                   {['indicativo', 'subjuntivo', 'imperativo'].map(g => (
                     <button
                       key={g}
                       onClick={() => setSelectedGrammar(g)}
-                      className={`w-full py-4 rounded-xl border-2 font-bold text-lg capitalize transition-all ${
+                      className={`w-full py-4 rounded-xl border-2 font-bold text-lg transition-all ${
                         selectedGrammar === g ? 'bg-deep-blue text-white border-deep-blue' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
                       }`}
                     >
-                      {g}
+                      {t(`gameMenu.${g}`)}
                     </button>
                   ))}
                 </div>
@@ -2411,41 +2435,41 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
           case 2:
             return (
               <div>
-                <h3 className="text-sm font-bold text-black uppercase tracking-widest mb-4">2. Tiempo Verbal</h3>
+                <h3 className="text-sm font-bold text-black uppercase tracking-widest mb-4">2. {t('gameMenu.verbTense')}</h3>
                 {availableTenses.length > 0 ? (
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gridAutoRows: '1fr', gap: '8px' }}>
-                    {availableTenses.map(t => (
+                    {availableTenses.map(tense => (
                       <button
-                        key={t}
-                        onClick={() => setSelectedTense(t)}
+                        key={tense}
+                        onClick={() => setSelectedTense(tense)}
                         className={`py-3 px-2 rounded-xl border-2 font-bold text-lg transition-all flex items-center justify-center text-center ${
-                          selectedTense === t ? 'bg-deep-blue text-white border-deep-blue' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
+                          selectedTense === tense ? 'bg-deep-blue text-white border-deep-blue' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
                         }`}
                         style={{ hyphens: 'auto', wordBreak: 'break-word' } as React.CSSProperties}
                       >
-                        {formatTenseName(t)}
+                        {formatTenseName(tense, t)}
                       </button>
                     ))}
                   </div>
                 ) : (
-                  <p className="text-sm text-gray-400 italic">No hay tiempos disponibles para este modo.</p>
+                  <p className="text-sm text-gray-400 italic">{t('gameMenu.noTensesAvailable')}</p>
                 )}
               </div>
             );
           case 3:
             return (
               <div>
-                <h3 className="text-sm font-bold text-black uppercase tracking-widest mb-4">3. Tipo de Verbos</h3>
+                <h3 className="text-sm font-bold text-black uppercase tracking-widest mb-4">3. {t('gameMenu.verbType')}</h3>
                 <div className="flex flex-col gap-3">
-                  {['regular', 'irregular', 'mixed'].map(t => (
+                  {['regular', 'irregular', 'mixed'].map(vt => (
                     <button
-                      key={t}
-                      onClick={() => setSelectedVerbType(t)}
-                      className={`w-full py-4 rounded-xl border-2 font-bold text-lg capitalize transition-all ${
-                        selectedVerbType === t ? 'bg-deep-blue text-white border-deep-blue' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
+                      key={vt}
+                      onClick={() => setSelectedVerbType(vt)}
+                      className={`w-full py-4 rounded-xl border-2 font-bold text-lg transition-all ${
+                        selectedVerbType === vt ? 'bg-deep-blue text-white border-deep-blue' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
                       }`}
                     >
-                      {t === 'mixed' ? 'Todos' : t}
+                      {verbTypeLabel(vt)}
                     </button>
                   ))}
                 </div>
@@ -2454,21 +2478,21 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
           case 4:
             return (
               <div>
-                <h3 className="text-sm font-bold text-black uppercase tracking-widest mb-4">4. Modo de Batalla</h3>
+                <h3 className="text-sm font-bold text-black uppercase tracking-widest mb-4">4. {t('gameMenu.battleMode')}</h3>
                 <div className="grid grid-cols-2 gap-4">
                   <button
                     onClick={() => setSelectedBattleMode('contrarreloj')}
                     className={`py-3 px-4 rounded-xl border-2 font-bold text-lg transition-all flex items-center justify-center gap-2 ${selectedBattleMode === 'contrarreloj' ? 'bg-deep-blue text-white border-deep-blue' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'}`}
                   >
                     <span className="text-2xl">⏱️</span>
-                    Contrarreloj
+                    {t('gameMenu.contrarreloj')}
                   </button>
                   <button
                     onClick={() => setSelectedBattleMode('jefe')}
                     className={`py-3 px-4 rounded-xl border-2 font-bold text-lg transition-all flex items-center justify-center gap-2 ${selectedBattleMode === 'jefe' ? 'bg-deep-blue text-white border-deep-blue' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'}`}
                   >
                     <span className="text-2xl">🐉</span>
-                    Modo Jefe
+                    {t('gameMenu.modoJefe')}
                   </button>
                 </div>
               </div>
@@ -2476,14 +2500,14 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
           case 5:
             return (
               <div>
-                <h3 className="text-sm font-bold text-black uppercase tracking-widest mb-4">5. Modo de Respuesta</h3>
+                <h3 className="text-sm font-bold text-black uppercase tracking-widest mb-4">5. {t('gameMenu.answerMode')}</h3>
                 <div className="flex flex-col gap-3">
                   <div>
                     <button
                       onClick={() => setSelectedMode('write')}
                       className={`w-full py-4 rounded-xl border-2 text-center transition-all font-bold text-lg ${selectedMode === 'write' ? 'bg-deep-blue text-white border-deep-blue' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'}`}
                     >
-                      ✍️ Escribir
+                      ✍️ {t('gameMenu.escribir')}
                     </button>
                     {selectedMode === 'write' && (
                       <div className="flex gap-2 mt-2">
@@ -2491,13 +2515,13 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
                           onClick={() => setAccentSensitive(true)}
                           className={`flex-1 py-2 text-sm rounded-lg border-2 font-bold transition-all ${accentSensitive ? 'bg-deep-blue text-white border-deep-blue' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'}`}
                         >
-                          Con Tildes
+                          {t('gameMenu.conTildes')}
                         </button>
                         <button
                           onClick={() => setAccentSensitive(false)}
                           className={`flex-1 py-2 text-sm rounded-lg border-2 font-bold transition-all ${!accentSensitive ? 'bg-deep-blue text-white border-deep-blue' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'}`}
                         >
-                          Sin Tildes
+                          {t('gameMenu.sinTildes')}
                         </button>
                       </div>
                     )}
@@ -2506,7 +2530,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
                     onClick={() => setSelectedMode('choice')}
                     className={`w-full py-4 rounded-xl border-2 text-center transition-all font-bold text-lg ${selectedMode === 'choice' ? 'bg-deep-blue text-white border-deep-blue' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'}`}
                   >
-                    🎯 Selección
+                    🎯 {t('gameMenu.seleccion')}
                   </button>
                 </div>
               </div>
@@ -2514,7 +2538,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
           case 6:
             return (
               <div>
-                <h3 className="text-sm font-bold text-black uppercase tracking-widest mb-4">6. Dificultad</h3>
+                <h3 className="text-sm font-bold text-black uppercase tracking-widest mb-4">6. {t('gameMenu.difficulty')}</h3>
                 <div className="flex flex-col gap-3">
                   {(Object.keys(DIFFICULTY_SETTINGS) as GameDifficulty[]).map(d => (
                     <button
@@ -2524,7 +2548,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
                         selectedDifficulty === d ? 'bg-deep-blue text-white border-deep-blue' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
                       }`}
                     >
-                      {DIFFICULTY_SETTINGS[d].label}
+                      {difficultyLabel(DIFFICULTY_SETTINGS[d].label)}
                     </button>
                   ))}
                 </div>
@@ -2543,7 +2567,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
               <button onClick={onBack} className="p-1.5 hover:bg-gray-100 rounded-full transition-colors text-black">
                 <ChevronLeft size={20} />
               </button>
-              <h1 className="text-lg font-black text-black flex-1 text-center">Configura tu Batalla</h1>
+              <h1 className="text-lg font-black text-black flex-1 text-center">{t('gameMenu.configureBattle')}</h1>
               <div className="w-8"></div>
             </div>
 
@@ -2583,7 +2607,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
                   disabled={!selectedGrammar || !selectedTense || !selectedVerbType || !selectedBattleMode || !selectedMode || !selectedDifficulty}
                   className="flex-1 mx-3 py-3 bg-gradient-to-r from-spanish-red to-spanish-red hover:from-red-700 hover:to-red-700 disabled:from-gray-300 disabled:to-gray-300 text-white font-bold text-lg rounded-xl transition-all shadow-lg"
                 >
-                  Iniciar Batalla
+                  {t('gameMenu.startBattle')}
                 </button>
               ) : (
                 <div className="flex-1" />
@@ -2612,8 +2636,8 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
                 <div className="flex items-center gap-2">
                   <span className="text-2xl">🪄</span>
                   <div>
-                    <h3 className="text-white font-bold text-sm">Cobi Mago</h3>
-                    <p className="text-xs text-purple-50">Experto en Gramática Española</p>
+                    <h3 className="text-white font-bold text-sm">{t('gameMenu.cobiWizard')}</h3>
+                    <p className="text-xs text-purple-50">{t('gameMenu.cobiWizardSub')}</p>
                   </div>
                 </div>
                 <button onClick={() => setShowChatWindow(false)} className="p-1 hover:bg-white/20 rounded-full transition">
@@ -2651,7 +2675,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
                     value={chatInput}
                     onChange={(e) => setChatInput(e.target.value)}
                     onKeyPress={(e) => e.key === 'Enter' && sendMessageToCobi()}
-                    placeholder="Escribe tu pregunta..."
+                    placeholder={t('gameMenu.chatPlaceholder')}
                     disabled={isLoadingResponse}
                     className="flex-1 px-4 py-2 border-2 border-gray-200 rounded-full focus:outline-none focus:border-purple-400 transition text-sm disabled:bg-gray-100"
                   />
@@ -2680,7 +2704,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
               className="text-black hover:text-deep-blue font-medium flex items-center gap-2 transition-colors"
             >
               <ChevronLeft size={20} />
-              Volver a Juegos
+              {t('gameMenu.backToGames')}
             </button>
             <h1 className="text-3xl font-black text-deep-blue">
               🪄 El Poder de los Verbos
@@ -2692,17 +2716,17 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
 
               {/* Row 1 Left: Modo Verbal */}
               <div>
-                <label className="block text-sm font-bold text-black mb-2">Modo Verbal</label>
+                <label className="block text-sm font-bold text-black mb-2">{t('gameMenu.verbMode')}</label>
                 <div className="grid grid-cols-3 gap-3">
                   {['indicativo', 'subjuntivo', 'imperativo'].map(g => (
                     <button
                       key={g}
                       onClick={() => setSelectedGrammar(g)}
-                      className={`py-3 rounded-lg border-2 font-bold capitalize transition-all text-base ${
+                      className={`py-3 rounded-lg border-2 font-bold transition-all text-base ${
                         selectedGrammar === g ? 'border-deep-blue bg-deep-blue text-white shadow-md' : 'border-gray-200 text-gray-600 hover:border-gray-300'
                       }`}
                     >
-                      {g}
+                      {t(`gameMenu.${g}`)}
                     </button>
                   ))}
                 </div>
@@ -2711,17 +2735,17 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
               {/* Row 1 Right: Tipo de Verbos */}
               {selectedTense ? (
                 <div>
-                  <label className="block text-sm font-bold text-black mb-2">Tipo de Verbos</label>
+                  <label className="block text-sm font-bold text-black mb-2">{t('gameMenu.verbType')}</label>
                   <div className="grid grid-cols-3 gap-3">
-                    {['regular', 'irregular', 'mixed'].map(t => (
+                    {['regular', 'irregular', 'mixed'].map(vt => (
                       <button
-                        key={t}
-                        onClick={() => setSelectedVerbType(t)}
-                        className={`py-3 rounded-lg border-2 font-bold capitalize transition-all text-base ${
-                          selectedVerbType === t ? 'border-deep-blue bg-deep-blue text-white shadow-md' : 'border-gray-200 text-gray-600 hover:border-gray-300'
+                        key={vt}
+                        onClick={() => setSelectedVerbType(vt)}
+                        className={`py-3 rounded-lg border-2 font-bold transition-all text-base ${
+                          selectedVerbType === vt ? 'border-deep-blue bg-deep-blue text-white shadow-md' : 'border-gray-200 text-gray-600 hover:border-gray-300'
                         }`}
                       >
-                        {t === 'mixed' ? 'Todos' : t}
+                        {verbTypeLabel(vt)}
                       </button>
                     ))}
                   </div>
@@ -2731,24 +2755,24 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
               {/* Row 2 Left: Tiempo Verbal */}
               {selectedGrammar ? (
                 <div>
-                  <label className="block text-sm font-bold text-black mb-2">Tiempo Verbal</label>
+                  <label className="block text-sm font-bold text-black mb-2">{t('gameMenu.verbTense')}</label>
                   {availableTenses.length > 0 ? (
                     <div className="grid grid-cols-3 gap-3">
-                      {availableTenses.map(t => (
+                      {availableTenses.map(tense => (
                         <button
-                          key={t}
-                          onClick={() => setSelectedTense(t)}
+                          key={tense}
+                          onClick={() => setSelectedTense(tense)}
                           className={`py-3 px-2 rounded-lg border-2 font-bold transition-all text-base ${
-                            selectedTense === t ? 'border-deep-blue bg-deep-blue text-white shadow-md' : 'border-gray-200 text-gray-600 hover:border-gray-300'
+                            selectedTense === tense ? 'border-deep-blue bg-deep-blue text-white shadow-md' : 'border-gray-200 text-gray-600 hover:border-gray-300'
                           }`}
-                          style={formatTenseName(t).length > 12 ? { fontSize: 'clamp(0.7rem, 1.5vw, 1rem)' } : undefined}
+                          style={formatTenseName(tense, t).length > 12 ? { fontSize: 'clamp(0.7rem, 1.5vw, 1rem)' } : undefined}
                         >
-                          {formatTenseName(t)}
+                          {formatTenseName(tense, t)}
                         </button>
                       ))}
                     </div>
                   ) : (
-                    <p className="text-sm text-gray-400 italic">No hay tiempos disponibles para este modo.</p>
+                    <p className="text-sm text-gray-400 italic">{t('gameMenu.noTensesAvailable')}</p>
                   )}
                 </div>
               ) : <div />}
@@ -2758,7 +2782,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
                 <div className="space-y-4">
                   {/* Modo de Batalla */}
                   <div>
-                    <label className="block text-sm font-bold text-black mb-2">Modo de Batalla</label>
+                    <label className="block text-sm font-bold text-black mb-2">{t('gameMenu.battleMode')}</label>
                     <div className="grid grid-cols-2 gap-3">
                       <button
                         onClick={() => setSelectedBattleMode('contrarreloj')}
@@ -2776,10 +2800,10 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
                         </button>
                         {showTooltip === 'contrarreloj' && (
                           <div className="absolute -top-10 left-0 right-0 bg-gray-800 text-white text-xs px-2 py-1 rounded-lg z-10">
-                            Derrota 30 enemigos antes de que se acabe el tiempo
+                            {t('gameMenu.contrarrelojDesc')}
                           </div>
                         )}
-                        ⏱️ Contrarreloj
+                        ⏱️ {t('gameMenu.contrarreloj')}
                       </button>
                       <button
                         onClick={() => setSelectedBattleMode('jefe')}
@@ -2797,10 +2821,10 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
                         </button>
                         {showTooltip === 'jefe' && (
                           <div className="absolute -top-10 left-0 right-0 bg-gray-800 text-white text-xs px-2 py-1 rounded-lg z-10">
-                            Derrota al dragón
+                            {t('gameMenu.modoJefeDesc')}
                           </div>
                         )}
-                        🐉 Modo Jefe
+                        🐉 {t('gameMenu.modoJefe')}
                       </button>
                     </div>
                   </div>
@@ -2808,29 +2832,29 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
                   {/* Modo de Respuesta */}
                   {selectedBattleMode && (
                     <div>
-                      <label className="block text-sm font-bold text-black mb-2">Modo de Respuesta</label>
+                      <label className="block text-sm font-bold text-black mb-2">{t('gameMenu.answerMode')}</label>
                       <div className="grid grid-cols-2 gap-3">
                         <div>
                           <button
                             onClick={() => setSelectedMode('write')}
                             className={`w-full py-3 rounded-lg border-2 font-bold transition-all text-base ${selectedMode === 'write' ? 'border-deep-blue bg-deep-blue text-white shadow-md' : 'border-gray-200 text-gray-600 hover:border-gray-300'}`}
                           >
-                            ✍️ Escribir
+                            ✍️ {t('gameMenu.escribir')}
                           </button>
                           {selectedMode === 'write' && (
                             <div className="flex items-center gap-2 mt-2 justify-center">
-                              <span className="text-xs font-bold text-gray-600">Tildes:</span>
+                              <span className="text-xs font-bold text-gray-600">{t('gameMenu.tildesLabel')}</span>
                               <button
                                 onClick={() => setAccentSensitive(true)}
                                 className={`px-3 py-1 text-xs rounded-full border font-bold transition-all ${accentSensitive ? 'border-deep-blue bg-deep-blue text-white' : 'border-gray-200 text-gray-500 hover:border-gray-300'}`}
                               >
-                                SÍ
+                                {t('gameMenu.conTildes')}
                               </button>
                               <button
                                 onClick={() => setAccentSensitive(false)}
                                 className={`px-3 py-1 text-xs rounded-full border font-bold transition-all ${!accentSensitive ? 'border-deep-blue bg-deep-blue text-white' : 'border-gray-200 text-gray-500 hover:border-gray-300'}`}
                               >
-                                NO
+                                {t('gameMenu.sinTildes')}
                               </button>
                             </div>
                           )}
@@ -2839,7 +2863,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
                           onClick={() => setSelectedMode('choice')}
                           className={`py-3 rounded-lg border-2 font-bold transition-all text-base self-start ${selectedMode === 'choice' ? 'border-deep-blue bg-deep-blue text-white shadow-md' : 'border-gray-200 text-gray-600 hover:border-gray-300'}`}
                         >
-                          🎯 Selección
+                          🎯 {t('gameMenu.seleccion')}
                         </button>
                       </div>
                     </div>
@@ -2848,7 +2872,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
                   {/* Dificultad */}
                   {(selectedMode === 'choice' || selectedMode === 'write') && (
                     <div>
-                      <label className="block text-sm font-bold text-black mb-2">Dificultad</label>
+                      <label className="block text-sm font-bold text-black mb-2">{t('gameMenu.difficulty')}</label>
                       <div className="grid grid-cols-3 gap-3">
                         {(Object.keys(DIFFICULTY_SETTINGS) as GameDifficulty[]).map(d => (
                           <button
@@ -2858,7 +2882,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
                               selectedDifficulty === d ? 'border-deep-blue bg-deep-blue text-white shadow-md' : 'border-gray-200 text-gray-600 hover:border-gray-300'
                             }`}
                           >
-                            {DIFFICULTY_SETTINGS[d].label}
+                            {difficultyLabel(DIFFICULTY_SETTINGS[d].label)}
                           </button>
                         ))}
                       </div>
@@ -2874,7 +2898,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
               disabled={!selectedGrammar || !selectedTense || !selectedVerbType || !selectedBattleMode || !selectedMode || !selectedDifficulty}
               className="w-full py-4 bg-gradient-to-r from-spanish-red to-spanish-red hover:from-red-700 hover:to-red-700 disabled:from-gray-300 disabled:to-gray-300 text-white font-bold text-lg rounded-xl transition-all shadow-lg mt-4"
             >
-              Iniciar Batalla
+              {t('gameMenu.startBattle')}
             </button>
           </div>
 
@@ -2926,8 +2950,8 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
                 <div className="flex items-center gap-2">
                   <span className="text-2xl">🪄</span>
                   <div>
-                    <h3 className="text-white font-bold text-sm">Cobi Mago</h3>
-                    <p className="text-xs text-purple-50">Experto en Gramática Española</p>
+                    <h3 className="text-white font-bold text-sm">{t('gameMenu.cobiWizard')}</h3>
+                    <p className="text-xs text-purple-50">{t('gameMenu.cobiWizardSub')}</p>
                   </div>
                 </div>
                 <button onClick={() => setShowChatWindow(false)} className="p-1 hover:bg-white/20 rounded-full transition">
@@ -2965,7 +2989,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
                     value={chatInput}
                     onChange={(e) => setChatInput(e.target.value)}
                     onKeyPress={(e) => e.key === 'Enter' && sendMessageToCobi()}
-                    placeholder="Escribe tu pregunta..."
+                    placeholder={t('gameMenu.chatPlaceholder')}
                     disabled={isLoadingResponse}
                     className="flex-1 px-4 py-2 border-2 border-gray-200 rounded-full focus:outline-none focus:border-purple-400 transition text-sm disabled:bg-gray-100"
                   />
@@ -3392,8 +3416,8 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
               <div className="flex items-center gap-2">
                 <span className="text-2xl">🪄</span>
                 <div>
-                  <h3 className="text-white font-bold text-sm">Cobi Mago</h3>
-                  <p className="text-xs text-purple-50">Experto en Gramática Española</p>
+                  <h3 className="text-white font-bold text-sm">{t('gameMenu.cobiWizard')}</h3>
+                  <p className="text-xs text-purple-50">{t('gameMenu.cobiWizardSub')}</p>
                 </div>
               </div>
               <button
@@ -3451,7 +3475,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
                   value={chatInput}
                   onChange={(e) => setChatInput(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && sendMessageToCobi()}
-                  placeholder="Escribe tu pregunta..."
+                  placeholder={t('gameMenu.chatPlaceholder')}
                   disabled={isLoadingResponse}
                   className="flex-1 px-4 py-2 border-2 border-gray-200 rounded-full focus:outline-none focus:border-purple-400 transition text-sm disabled:bg-gray-100"
                 />
@@ -3561,8 +3585,8 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
               <div className="flex items-center gap-2">
                 <span className="text-2xl">🪄</span>
                 <div>
-                  <h3 className="text-white font-bold text-sm">Cobi Mago</h3>
-                  <p className="text-xs text-purple-50">Experto en Gramática Española</p>
+                  <h3 className="text-white font-bold text-sm">{t('gameMenu.cobiWizard')}</h3>
+                  <p className="text-xs text-purple-50">{t('gameMenu.cobiWizardSub')}</p>
                 </div>
               </div>
               <button
@@ -3620,7 +3644,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
                   value={chatInput}
                   onChange={(e) => setChatInput(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && sendMessageToCobi()}
-                  placeholder="Escribe tu pregunta..."
+                  placeholder={t('gameMenu.chatPlaceholder')}
                   disabled={isLoadingResponse}
                   className="flex-1 px-4 py-2 border-2 border-gray-200 rounded-full focus:outline-none focus:border-purple-400 transition text-sm disabled:bg-gray-100"
                 />
@@ -3715,8 +3739,8 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
               <div className="flex items-center gap-2">
                 <span className="text-2xl">🪄</span>
                 <div>
-                  <h3 className="text-white font-bold text-sm">Cobi Mago</h3>
-                  <p className="text-xs text-purple-50">Experto en Gramática Española</p>
+                  <h3 className="text-white font-bold text-sm">{t('gameMenu.cobiWizard')}</h3>
+                  <p className="text-xs text-purple-50">{t('gameMenu.cobiWizardSub')}</p>
                 </div>
               </div>
               <button
@@ -3774,7 +3798,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
                   value={chatInput}
                   onChange={(e) => setChatInput(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && sendMessageToCobi()}
-                  placeholder="Escribe tu pregunta..."
+                  placeholder={t('gameMenu.chatPlaceholder')}
                   disabled={isLoadingResponse}
                   className="flex-1 px-4 py-2 border-2 border-gray-200 rounded-full focus:outline-none focus:border-purple-400 transition text-sm disabled:bg-gray-100"
                 />
@@ -3869,8 +3893,8 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
               <div className="flex items-center gap-2">
                 <span className="text-2xl">🪄</span>
                 <div>
-                  <h3 className="text-white font-bold text-sm">Cobi Mago</h3>
-                  <p className="text-xs text-purple-50">Experto en Gramática Española</p>
+                  <h3 className="text-white font-bold text-sm">{t('gameMenu.cobiWizard')}</h3>
+                  <p className="text-xs text-purple-50">{t('gameMenu.cobiWizardSub')}</p>
                 </div>
               </div>
               <button
@@ -3928,7 +3952,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
                   value={chatInput}
                   onChange={(e) => setChatInput(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && sendMessageToCobi()}
-                  placeholder="Escribe tu pregunta..."
+                  placeholder={t('gameMenu.chatPlaceholder')}
                   disabled={isLoadingResponse}
                   className="flex-1 px-4 py-2 border-2 border-gray-200 rounded-full focus:outline-none focus:border-purple-400 transition text-sm disabled:bg-gray-100"
                 />

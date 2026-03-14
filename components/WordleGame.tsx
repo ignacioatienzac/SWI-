@@ -4,6 +4,7 @@ import { getWordOfDay } from '../services/vocabularyService';
 import { isValidWord, getHintsForAttempt, normalizeAccents } from '../services/wordleService';
 import { hablarConPanda } from '../services/geminiService';
 import DraggableCobi from './DraggableCobi';
+import { useI18n } from '../services/i18n';
 
 // Mensajes aleatorios para el bocadillo del Cobi detective en el MENÚ
 const mensajesMenuDetective = [
@@ -134,6 +135,7 @@ const playSound = (type: 'correct' | 'present' | 'absent' | 'win' | 'lose') => {
 };
 
 const WordleGame: React.FC<WordleGameProps> = ({ onBack, cobiVisible = true, soundEnabled: _soundEnabled = true }) => {
+  const { t } = useI18n();
   const [status, setStatus] = useState<GameStatus>('SELECT_LEVEL');
   const [difficulty, setDifficulty] = useState<string>('a1');
   const [secretWord, setSecretWord] = useState<string>('');
@@ -192,10 +194,10 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack, cobiVisible = true, sou
   }, []);
 
   const DIFFICULTIES = [
-    { value: 'a1', label: 'A1', desc: 'Principiante' },
-    { value: 'a2', label: 'A2', desc: 'Elemental' },
-    { value: 'b1', label: 'B1', desc: 'Intermedio' },
-    { value: 'b2', label: 'B2', desc: 'Avanzado' }
+    { value: 'a1', label: 'A1', desc: t('gameMenu.beginner') },
+    { value: 'a2', label: 'A2', desc: t('gameMenu.elementary') },
+    { value: 'b1', label: 'B1', desc: t('gameMenu.intermediate') },
+    { value: 'b2', label: 'B2', desc: t('gameMenu.advanced') }
   ];
 
   const wordLength = useMemo(() => secretWord.length as 3 | 4 | 5 | 6, [secretWord]);
@@ -612,14 +614,14 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack, cobiVisible = true, sou
           className="text-gray-500 hover:text-green-800 font-medium flex items-center gap-2 transition-colors"
         >
           <ChevronLeft size={20} />
-          Volver a Juegos
+          {t('gameMenu.backToGames')}
         </button>
         )}
         <h1 className={`text-2xl font-black text-green-800 ${isMobile ? 'hidden' : ''}`}>🔍 Adivina la Palabra</h1>
         </div>
 
         <div className="bg-white rounded-3xl p-8 shadow-xl">
-        <h2 className="text-xl font-bold text-center text-green-800 mb-6">Elige tu nivel</h2>
+        <h2 className="text-xl font-bold text-center text-green-800 mb-6">{t('gameMenu.chooseLevel')}</h2>
         <div className="grid grid-cols-2 gap-4">
           {DIFFICULTIES.map(d => (
             <button
@@ -692,8 +694,8 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack, cobiVisible = true, sou
               <div className="flex items-center gap-2">
                 <span className="text-2xl">🔎</span>
                 <div>
-                  <h3 className="text-white font-bold text-sm">Cobi el Detective</h3>
-                  <p className="text-xs" style={{ color: '#FFF5E1' }}>Tu guía investigador</p>
+                  <h3 className="text-white font-bold text-sm">{t('gameMenu.cobiDetective')}</h3>
+                  <p className="text-xs" style={{ color: '#FFF5E1' }}>{t('gameMenu.cobiDetectiveSub')}</p>
                 </div>
               </div>
               <button
@@ -754,7 +756,7 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack, cobiVisible = true, sou
                   value={chatInput}
                   onChange={(e) => setChatInput(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && sendMessageToCobi()}
-                  placeholder="Escribe tu pregunta..."
+                  placeholder={t('gameMenu.chatPlaceholder')}
                   disabled={isLoadingResponse}
                   className="flex-1 px-4 py-2 border-2 border-gray-200 rounded-full focus:outline-none focus:border-green-600 transition text-sm disabled:bg-gray-100"
                 />
@@ -822,7 +824,7 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack, cobiVisible = true, sou
           className="text-gray-500 hover:text-green-800 font-medium flex items-center gap-2 transition-colors"
         >
           <ChevronLeft size={20} />
-          Volver a Juegos
+          {t('gameMenu.backToGames')}
         </button>
 
         <div className="flex gap-2">
@@ -865,17 +867,28 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack, cobiVisible = true, sou
       {/* Instructions overlay modal */}
       {showInstructions && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={() => setShowInstructions(false)}>
-          <div className="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl" onClick={e => e.stopPropagation()}>
-            <div className="flex items-center justify-between mb-4">
-              <p className="font-semibold text-green-800">¿Cómo jugar?</p>
-              <button onClick={() => setShowInstructions(false)} className="p-2 hover:bg-gray-100 rounded-full"><X size={20} /></button>
+          <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl overflow-hidden" onClick={e => e.stopPropagation()}>
+            <div className="bg-gradient-to-r from-green-500 to-emerald-600 px-6 py-4 flex items-center justify-between">
+              <h3 className="text-white font-bold text-lg flex items-center gap-2">📖 ¿Cómo jugar?</h3>
+              <button onClick={() => setShowInstructions(false)} className="p-1 hover:bg-white/20 rounded-full transition"><X size={20} className="text-white" /></button>
             </div>
-            <ul className="list-disc list-inside space-y-1 text-sm text-green-800">
-              <li>Adivina la palabra oculta en 6 intentos.</li>
-              <li><span className="inline-block w-4 h-4 bg-green-500 rounded align-middle mr-1"></span> Verde: letra correcta y bien colocada.</li>
-              <li><span className="inline-block w-4 h-4 bg-yellow-500 rounded align-middle mr-1"></span> Amarillo: letra correcta pero mal colocada.</li>
-              <li><span className="inline-block w-4 h-4 bg-gray-400 rounded align-middle mr-1"></span> Gris: letra no está en la palabra.</li>
-            </ul>
+            <div className="p-6 space-y-4">
+              <p className="text-gray-700 text-sm">Adivina la palabra oculta en <strong>6 intentos</strong>. Después de cada intento, las letras cambiarán de color:</p>
+              <div className="space-y-3">
+                <div className="flex items-center gap-3 p-3 bg-green-50 rounded-xl border border-green-200">
+                  <span className="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center text-white font-bold text-lg shrink-0">A</span>
+                  <p className="text-sm text-gray-700"><strong className="text-green-700">Verde</strong> — Letra correcta y bien colocada</p>
+                </div>
+                <div className="flex items-center gap-3 p-3 bg-yellow-50 rounded-xl border border-yellow-200">
+                  <span className="w-10 h-10 bg-yellow-500 rounded-lg flex items-center justify-center text-white font-bold text-lg shrink-0">B</span>
+                  <p className="text-sm text-gray-700"><strong className="text-yellow-700">Amarillo</strong> — Letra correcta pero mal colocada</p>
+                </div>
+                <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl border border-gray-200">
+                  <span className="w-10 h-10 bg-gray-400 rounded-lg flex items-center justify-center text-white font-bold text-lg shrink-0">C</span>
+                  <p className="text-sm text-gray-700"><strong className="text-gray-600">Gris</strong> — Letra no está en la palabra</p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       )}
@@ -883,23 +896,32 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack, cobiVisible = true, sou
       {/* Hint overlay modal */}
       {showHint && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={() => setShowHint(false)}>
-          <div className="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl" onClick={e => e.stopPropagation()}>
-            <div className="flex items-center justify-between mb-4">
-              <p className="font-semibold text-blue-800">Pistas:</p>
-              <button onClick={() => setShowHint(false)} className="p-2 hover:bg-gray-100 rounded-full"><X size={20} /></button>
+          <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl overflow-hidden" onClick={e => e.stopPropagation()}>
+            <div className="bg-gradient-to-r from-yellow-400 to-amber-500 px-6 py-4 flex items-center justify-between">
+              <h3 className="text-white font-bold text-lg flex items-center gap-2">💡 Pistas</h3>
+              <button onClick={() => setShowHint(false)} className="p-1 hover:bg-white/20 rounded-full transition"><X size={20} className="text-white" /></button>
             </div>
-            {hints.length === 0 ? (
-              <p className="text-gray-600 italic text-sm">Las pistas aparecerán después del 3er intento fallido</p>
-            ) : (
-              <ul className="list-disc list-inside space-y-1 text-sm text-blue-800">
-                {hints.map((hint, idx) => (
-                  <li key={idx}>{hint}</li>
-                ))}
-              </ul>
-            )}
-            <p className="text-xs text-gray-600 mt-3">
-              Intento {guesses.length + 1} de {MAX_GUESSES} - {hints.length}/3 pistas visibles
-            </p>
+            <div className="p-6">
+              {hints.length === 0 ? (
+                <div className="text-center py-4">
+                  <span className="text-4xl mb-3 block">🔍</span>
+                  <p className="text-gray-500 text-sm">Las pistas aparecerán después del 3er intento fallido</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {hints.map((hint, idx) => (
+                    <div key={idx} className="flex items-start gap-3 p-3 bg-amber-50 rounded-xl border border-amber-200">
+                      <span className="w-7 h-7 bg-amber-500 rounded-full flex items-center justify-center text-white font-bold text-xs shrink-0">{idx + 1}</span>
+                      <p className="text-sm text-gray-700 pt-0.5">{hint}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+              <div className="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between text-xs text-gray-500">
+                <span>Intento {guesses.length + 1} de {MAX_GUESSES}</span>
+                <span>{hints.length}/3 pistas</span>
+              </div>
+            </div>
           </div>
         </div>
       )}
@@ -1387,8 +1409,8 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack, cobiVisible = true, sou
                 <div className="flex items-center gap-2">
                   <span className="text-2xl">🔎</span>
                   <div>
-                    <h3 className="text-white font-bold text-sm">Cobi el Detective</h3>
-                    <p className="text-xs" style={{ color: '#FFF5E1' }}>Tu asistente investigador</p>
+                    <h3 className="text-white font-bold text-sm">{t('gameMenu.cobiDetective')}</h3>
+                    <p className="text-xs" style={{ color: '#FFF5E1' }}>{t('gameMenu.cobiDetectiveSub')}</p>
                   </div>
                 </div>
                 <button
@@ -1448,7 +1470,7 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack, cobiVisible = true, sou
                         sendMessageToCobi();
                       }
                     }}
-                    placeholder="Escribe tu pregunta..."
+                    placeholder={t('gameMenu.chatPlaceholder')}
                     disabled={isLoadingResponse}
                     className="flex-1 px-4 py-2 border-2 border-gray-200 rounded-full focus:outline-none transition text-sm disabled:bg-gray-100"
                     style={{ borderColor: '#2D5A27' } as any}

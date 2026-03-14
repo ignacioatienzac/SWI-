@@ -211,7 +211,7 @@ const VmMobileKeyboard: React.FC<VmMobileKeyboardProps> = ({ onKeyPress, onDelet
 };
 
 const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = true, soundEnabled = true }) => {
-  const { tArray, lang } = useI18n();
+  const { t, tArray, lang } = useI18n();
 
   // Helper to pick a random Cobi Sensei message by type
   const senseiMsg = useCallback((tipo: 'juego' | 'victoria' | 'fallo' | 'pausa' | 'acierto' | 'menu'): string => {
@@ -1310,12 +1310,12 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
           case 1:
             return (
               <div>
-                <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">1. Modo Verbal</h3>
+                <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">1. {t('gameMenu.verbMode')}</h3>
                 <div className="flex flex-col gap-3">
                   {[
-                    { value: 'indicativo' as VerbMode, label: 'Indicativo' },
-                    { value: 'subjuntivo' as VerbMode, label: 'Subjuntivo' },
-                    { value: 'imperativo' as VerbMode, label: 'Imperativo' }
+                    { value: 'indicativo' as VerbMode, label: t('gameMenu.indicativo') },
+                    { value: 'subjuntivo' as VerbMode, label: t('gameMenu.subjuntivo') },
+                    { value: 'imperativo' as VerbMode, label: t('gameMenu.imperativo') }
                   ].map(option => (
                     <button
                       key={option.value}
@@ -1333,18 +1333,18 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
           case 2:
             return (
               <div>
-                <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">2. Tiempo Verbal</h3>
+                <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">2. {t('gameMenu.verbTense')}</h3>
                 {selectedVerbMode === 'indicativo' && (
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gridAutoRows: '1fr', gap: '8px' }}>
                     {[
-                      { value: 'presente', label: 'Presente' },
-                      { value: 'pretérito perfecto', label: 'Pretérito Perfecto' },
-                      { value: 'indefinido', label: 'Pretérito Indefinido' },
-                      { value: 'imperfecto', label: 'Pretérito Imperfecto' },
-                      { value: 'presente continuo', label: 'Presente Continuo' },
-                      { value: 'futuro simple', label: 'Futuro Simple' },
-                      { value: 'condicional simple', label: 'Condicional Simple' },
-                      { value: 'pretérito pluscuamperfecto', label: 'Pret. Pluscuamperfecto' }
+                      { value: 'presente', label: t('gameMenu.presente') },
+                      { value: 'pretérito perfecto', label: t('gameMenu.preteritoPerfecto') },
+                      { value: 'indefinido', label: t('gameMenu.preteritoIndefinido') },
+                      { value: 'imperfecto', label: t('gameMenu.preteritoImperfecto') },
+                      { value: 'presente continuo', label: t('gameMenu.presenteContinuo') },
+                      { value: 'futuro simple', label: t('gameMenu.futuroSimple') },
+                      { value: 'condicional simple', label: t('gameMenu.condicionalSimple') },
+                      { value: 'pretérito pluscuamperfecto', label: t('gameMenu.preteritoPluscuamperfecto') }
                     ].map(option => (
                       <button
                         key={option.value}
@@ -1362,8 +1362,8 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
                 {selectedVerbMode === 'imperativo' && (
                   <div className="flex flex-col gap-3">
                     {[
-                      { value: 'afirmativo', label: 'Afirmativo' },
-                      { value: 'negativo', label: 'Negativo' }
+                      { value: 'afirmativo', label: t('gameMenu.afirmativo') },
+                      { value: 'negativo', label: t('gameMenu.negativo') }
                     ].map(option => (
                       <button
                         key={option.value}
@@ -1380,10 +1380,10 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
                 {selectedVerbMode === 'subjuntivo' && (
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gridAutoRows: '1fr', gap: '8px' }}>
                     {[
-                      { value: 'presente', label: 'Presente' },
-                      { value: 'imperfecto', label: 'Pretérito Imperfecto' },
-                      { value: 'pretérito perfecto', label: 'Pretérito Perfecto' },
-                      { value: 'pretérito pluscuamperfecto', label: 'Pret. Pluscuamperfecto' }
+                      { value: 'presente', label: t('gameMenu.presente') },
+                      { value: 'imperfecto', label: t('gameMenu.preteritoImperfecto') },
+                      { value: 'pretérito perfecto', label: t('gameMenu.preteritoPerfecto') },
+                      { value: 'pretérito pluscuamperfecto', label: t('gameMenu.preteritoPluscuamperfecto') }
                     ].map(option => (
                       <button
                         key={option.value}
@@ -1403,12 +1403,12 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
           case 3:
             return (
               <div>
-                <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">3. Tipo de Verbos</h3>
+                <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">3. {t('gameMenu.verbType')}</h3>
                 <div className="flex flex-col gap-3">
                   {[
-                    { value: 'regular' as VerbType, label: 'Regulares' },
-                    { value: 'irregular' as VerbType, label: 'Irregulares' },
-                    { value: 'all' as VerbType, label: 'Todos' }
+                    { value: 'regular' as VerbType, label: t('gameMenu.regulares') },
+                    { value: 'irregular' as VerbType, label: t('gameMenu.irregulares') },
+                    { value: 'all' as VerbType, label: t('gameMenu.todos') }
                   ].map(option => (
                     <button
                       key={option.value}
@@ -1426,7 +1426,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
           case 4:
             return (
               <div>
-                <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">4. Tildes / Acentos</h3>
+                <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">4. {t('gameMenu.accents')}</h3>
                 <div className="flex flex-col gap-3">
                   <button
                     onClick={() => setAccentSensitive(true)}
@@ -1434,7 +1434,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
                       accentSensitive ? 'bg-red-800 text-white border-red-800' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
                     }`}
                   >
-                    Sí — Con tildes
+                    {t('gameMenu.accentsYes')}
                   </button>
                   <button
                     onClick={() => setAccentSensitive(false)}
@@ -1442,7 +1442,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
                       !accentSensitive ? 'bg-red-800 text-white border-red-800' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
                     }`}
                   >
-                    No — Sin tildes
+                    {t('gameMenu.accentsNo')}
                   </button>
                 </div>
               </div>
@@ -1490,7 +1490,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
                   disabled={!selectedVerbType}
                   className="flex-1 mx-3 py-3 bg-gradient-to-r from-spanish-red to-spanish-red hover:from-red-700 hover:to-red-700 disabled:from-gray-300 disabled:to-gray-300 text-white font-bold text-lg rounded-xl transition-all shadow-lg"
                 >
-                  Comenzar Juego
+                  {t('gameMenu.startGame')}
                 </button>
               ) : (
                 <div className="flex-1" />
@@ -1514,8 +1514,8 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
                 <div className="flex items-center gap-2">
                   <span className="text-2xl">🥋</span>
                   <div>
-                    <h3 className="text-white font-bold text-sm">Cobi Sensei</h3>
-                    <p className="text-xs text-red-50">Instructor Zen</p>
+                    <h3 className="text-white font-bold text-sm">{t('gameMenu.cobiSensei')}</h3>
+                    <p className="text-xs text-red-50">{t('gameMenu.cobiSenseiSub')}</p>
                   </div>
                 </div>
                 <button onClick={() => setShowChatWindow(false)} className="p-1 hover:bg-white/20 rounded-full transition">
@@ -1555,7 +1555,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
                     value={chatInput}
                     onChange={(e) => setChatInput(e.target.value)}
                     onKeyPress={(e) => e.key === 'Enter' && sendMessageToCobi()}
-                    placeholder="Escribe tu pregunta..."
+                    placeholder={t('gameMenu.chatPlaceholder')}
                     disabled={isLoadingResponse}
                     className="flex-1 px-4 py-2 border-2 border-gray-200 rounded-full focus:outline-none focus:border-red-400 transition text-sm disabled:bg-gray-100"
                   />
@@ -1584,7 +1584,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
               className="text-gray-500 hover:text-red-800 font-medium flex items-center gap-2 transition-colors"
             >
               <ChevronLeft size={20} />
-              Volver a Juegos
+              {t('gameMenu.backToGames')}
             </button>
             <h1 className="text-2xl font-black text-red-800">
               🫧 Maestro de Verbos
@@ -1596,13 +1596,13 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
             {/* Verb Mode Selection - always visible */}
             <div className="mb-6">
               <label className="block text-sm font-bold text-gray-700 mb-2">
-                Modo Verbal
+                {t('gameMenu.verbMode')}
               </label>
               <div className="grid grid-cols-3 gap-3">
                 {[
-                  { value: 'indicativo' as VerbMode, label: 'Indicativo', disabled: false },
-                  { value: 'subjuntivo' as VerbMode, label: 'Subjuntivo', disabled: false },
-                  { value: 'imperativo' as VerbMode, label: 'Imperativo', disabled: false }
+                  { value: 'indicativo' as VerbMode, label: t('gameMenu.indicativo'), disabled: false },
+                  { value: 'subjuntivo' as VerbMode, label: t('gameMenu.subjuntivo'), disabled: false },
+                  { value: 'imperativo' as VerbMode, label: t('gameMenu.imperativo'), disabled: false }
                 ].map(option => (
                   <button
                     key={option.value}
@@ -1626,19 +1626,19 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
             {selectedVerbMode && (
             <div className="mb-6">
               <label className="block text-sm font-bold text-gray-700 mb-2">
-                Tiempo Verbal
+                {t('gameMenu.verbTense')}
               </label>
               {selectedVerbMode === 'indicativo' && (
                 <div className="grid grid-cols-2 gap-3">
                   {[
-                    { value: 'presente', label: 'Presente' },
-                    { value: 'pretérito perfecto', label: 'Pretérito Perfecto' },
-                    { value: 'indefinido', label: 'Pretérito Indefinido' },
-                    { value: 'imperfecto', label: 'Pretérito Imperfecto' },
-                    { value: 'presente continuo', label: 'Presente Continuo' },
-                    { value: 'futuro simple', label: 'Futuro Simple' },
-                    { value: 'condicional simple', label: 'Condicional Simple' },
-                    { value: 'pretérito pluscuamperfecto', label: 'Pretérito Pluscuamperfecto' }
+                    { value: 'presente', label: t('gameMenu.presente') },
+                    { value: 'pretérito perfecto', label: t('gameMenu.preteritoPerfecto') },
+                    { value: 'indefinido', label: t('gameMenu.preteritoIndefinido') },
+                    { value: 'imperfecto', label: t('gameMenu.preteritoImperfecto') },
+                    { value: 'presente continuo', label: t('gameMenu.presenteContinuo') },
+                    { value: 'futuro simple', label: t('gameMenu.futuroSimple') },
+                    { value: 'condicional simple', label: t('gameMenu.condicionalSimple') },
+                    { value: 'pretérito pluscuamperfecto', label: t('gameMenu.preteritoPluscuamperfecto') }
                   ].map(option => (
                     <button
                       key={option.value}
@@ -1657,8 +1657,8 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
               {selectedVerbMode === 'imperativo' && (
                 <div className="grid grid-cols-2 gap-3">
                   {[
-                    { value: 'afirmativo', label: 'Afirmativo' },
-                    { value: 'negativo', label: 'Negativo' }
+                    { value: 'afirmativo', label: t('gameMenu.afirmativo') },
+                    { value: 'negativo', label: t('gameMenu.negativo') }
                   ].map(option => (
                     <button
                       key={option.value}
@@ -1677,10 +1677,10 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
               {selectedVerbMode === 'subjuntivo' && (
                 <div className="grid grid-cols-2 gap-3">
                   {[
-                    { value: 'presente', label: 'Presente' },
-                    { value: 'imperfecto', label: 'Pretérito Imperfecto' },
-                    { value: 'pretérito perfecto', label: 'Pretérito Perfecto' },
-                    { value: 'pretérito pluscuamperfecto', label: 'Pretérito Pluscuamperfecto' }
+                    { value: 'presente', label: t('gameMenu.presente') },
+                    { value: 'imperfecto', label: t('gameMenu.preteritoImperfecto') },
+                    { value: 'pretérito perfecto', label: t('gameMenu.preteritoPerfecto') },
+                    { value: 'pretérito pluscuamperfecto', label: t('gameMenu.preteritoPluscuamperfecto') }
                   ].map(option => (
                     <button
                       key={option.value}
@@ -1703,13 +1703,13 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
             {selectedTense && (
             <div className="mb-6">
               <label className="block text-sm font-bold text-gray-700 mb-2">
-                Tipo de Verbos
+                {t('gameMenu.verbType')}
               </label>
               <div className="grid grid-cols-3 gap-3">
                 {[
-                  { value: 'regular' as VerbType, label: 'Regulares' },
-                  { value: 'irregular' as VerbType, label: 'Irregulares' },
-                  { value: 'all' as VerbType, label: 'Todos' }
+                  { value: 'regular' as VerbType, label: t('gameMenu.regulares') },
+                  { value: 'irregular' as VerbType, label: t('gameMenu.irregulares') },
+                  { value: 'all' as VerbType, label: t('gameMenu.todos') }
                 ].map(option => (
                   <button
                     key={option.value}
@@ -1731,7 +1731,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
             {selectedVerbType && (
             <div className="mb-6">
               <label className="block text-sm font-bold text-gray-700 mb-2">
-                Tildes / Acentos
+                {t('gameMenu.accents')}
               </label>
               <div className="grid grid-cols-2 gap-3">
                 <button
@@ -1742,7 +1742,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
                       : 'border-gray-200 text-gray-600 hover:border-gray-300'
                   }`}
                 >
-                  Sí — Con tildes
+                  {t('gameMenu.accentsYes')}
                 </button>
                 <button
                   onClick={() => setAccentSensitive(false)}
@@ -1752,7 +1752,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
                       : 'border-gray-200 text-gray-600 hover:border-gray-300'
                   }`}
                 >
-                  No — Sin tildes
+                  {t('gameMenu.accentsNo')}
                 </button>
               </div>
             </div>
@@ -1772,7 +1772,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
                   disabled={!selectedVerbType}
                   className="w-full py-4 bg-gradient-to-r from-spanish-red to-spanish-red hover:from-red-700 hover:to-red-700 disabled:from-gray-300 disabled:to-gray-300 text-white font-bold text-xl rounded-xl transition-all shadow-lg"
                 >
-                  Comenzar Juego
+                  {t('gameMenu.startGame')}
                 </button>
               </div>
             ) : (
@@ -1781,7 +1781,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
                 disabled={!selectedVerbType}
                 className="w-full py-4 bg-gradient-to-r from-spanish-red to-spanish-red hover:from-red-700 hover:to-red-700 disabled:from-gray-300 disabled:to-gray-300 text-white font-bold text-xl rounded-xl transition-all shadow-lg"
               >
-                Comenzar Juego
+                {t('gameMenu.startGame')}
               </button>
             )}
           </div>
@@ -1844,8 +1844,8 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
               <div className="flex items-center gap-2">
                 <span className="text-2xl">🥋</span>
                 <div>
-                  <h3 className="text-white font-bold text-sm">Cobi Sensei</h3>
-                  <p className="text-xs text-red-50">Instructor Zen de Artes Marciales</p>
+                  <h3 className="text-white font-bold text-sm">{t('gameMenu.cobiSensei')}</h3>
+                  <p className="text-xs text-red-50">{t('gameMenu.cobiSenseiSub')}</p>
                 </div>
               </div>
               <button
@@ -1903,7 +1903,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
                   value={chatInput}
                   onChange={(e) => setChatInput(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && sendMessageToCobi()}
-                  placeholder="Escribe tu pregunta..."
+                  placeholder={t('gameMenu.chatPlaceholder')}
                   disabled={isLoadingResponse}
                   className="flex-1 px-4 py-2 border-2 border-gray-200 rounded-full focus:outline-none focus:border-red-400 transition text-sm disabled:bg-gray-100"
                 />
@@ -2184,8 +2184,8 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
               <div className="flex items-center gap-2">
                 <span className="text-2xl">🥋</span>
                 <div>
-                  <h3 className="text-white font-bold text-sm">Cobi Sensei</h3>
-                  <p className="text-xs text-red-50">Instructor Zen de Artes Marciales</p>
+                  <h3 className="text-white font-bold text-sm">{t('gameMenu.cobiSensei')}</h3>
+                  <p className="text-xs text-red-50">{t('gameMenu.cobiSenseiSub')}</p>
                 </div>
               </div>
               <button
@@ -2243,7 +2243,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
                   value={chatInput}
                   onChange={(e) => setChatInput(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && sendMessageToCobi()}
-                  placeholder="Escribe tu pregunta..."
+                  placeholder={t('gameMenu.chatPlaceholder')}
                   disabled={isLoadingResponse}
                   className="flex-1 px-4 py-2 border-2 border-gray-200 rounded-full focus:outline-none focus:border-red-400 transition text-sm disabled:bg-gray-100"
                 />
@@ -2342,8 +2342,8 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
               <div className="flex items-center gap-2">
                 <span className="text-2xl">🥋</span>
                 <div>
-                  <h3 className="text-white font-bold text-sm">Cobi Sensei</h3>
-                  <p className="text-xs text-red-50">Instructor Zen de Artes Marciales</p>
+                  <h3 className="text-white font-bold text-sm">{t('gameMenu.cobiSensei')}</h3>
+                  <p className="text-xs text-red-50">{t('gameMenu.cobiSenseiSub')}</p>
                 </div>
               </div>
               <button
@@ -2401,7 +2401,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
                   value={chatInput}
                   onChange={(e) => setChatInput(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && sendMessageToCobi()}
-                  placeholder="Escribe tu pregunta..."
+                  placeholder={t('gameMenu.chatPlaceholder')}
                   disabled={isLoadingResponse}
                   className="flex-1 px-4 py-2 border-2 border-gray-200 rounded-full focus:outline-none focus:border-red-400 transition text-sm disabled:bg-gray-100"
                 />
@@ -2595,7 +2595,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
               <div className="flex items-center gap-2">
                 <span className="text-2xl">🥋</span>
                 <div>
-                  <h3 className="text-white font-bold text-sm">Cobi Sensei</h3>
+                  <h3 className="text-white font-bold text-sm">{t('gameMenu.cobiSensei')}</h3>
                   <p className="text-xs text-yellow-50">¡Maestro Victorioso!</p>
                 </div>
               </div>
@@ -2654,7 +2654,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
                   value={chatInput}
                   onChange={(e) => setChatInput(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && sendMessageToCobi()}
-                  placeholder="Escribe tu pregunta..."
+                  placeholder={t('gameMenu.chatPlaceholder')}
                   disabled={isLoadingResponse}
                   className="flex-1 px-4 py-2 border-2 border-gray-200 rounded-full focus:outline-none focus:border-yellow-400 transition text-sm disabled:bg-gray-100"
                 />
@@ -2765,8 +2765,8 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
             <div className="flex items-center gap-2">
               <span className="text-2xl">🥋</span>
               <div>
-                <h3 className="text-white font-bold text-sm">Cobi Sensei</h3>
-                <p className="text-xs text-red-50">Instructor Zen de Artes Marciales</p>
+                <h3 className="text-white font-bold text-sm">{t('gameMenu.cobiSensei')}</h3>
+                <p className="text-xs text-red-50">{t('gameMenu.cobiSenseiSub')}</p>
               </div>
             </div>
             <button
@@ -2824,7 +2824,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
                 value={chatInput}
                 onChange={(e) => setChatInput(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && sendMessageToCobi()}
-                placeholder="Escribe tu pregunta..."
+                placeholder={t('gameMenu.chatPlaceholder')}
                 disabled={isLoadingResponse}
                 className="flex-1 px-4 py-2 border-2 border-gray-200 rounded-full focus:outline-none focus:border-red-400 transition text-sm disabled:bg-gray-100"
               />
