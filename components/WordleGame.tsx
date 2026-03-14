@@ -789,9 +789,6 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack, cobiVisible = true, sou
         <button onClick={onBack} className="p-1 hover:bg-white/10 rounded-full">
           <ChevronLeft size={28} className="text-gray-500" />
         </button>
-        <div className="text-center flex-1">
-          <h1 className="text-lg font-black text-green-800">Adivina la Palabra</h1>
-        </div>
         <div className="flex gap-1">
           <button
             onClick={() => setShowHint(!showHint)}
@@ -827,10 +824,6 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack, cobiVisible = true, sou
           <ChevronLeft size={20} />
           Volver a Juegos
         </button>
-        
-        <div className="text-center flex-1 min-w-fit">
-          <h1 className="text-lg font-black text-green-800">Adivina la Palabra</h1>
-        </div>
 
         <div className="flex gap-2">
           {/* Hint Button */}
@@ -869,99 +862,110 @@ const WordleGame: React.FC<WordleGameProps> = ({ onBack, cobiVisible = true, sou
       </div>
       )}
 
-      {/* Instructions panel */}
+      {/* Instructions overlay modal */}
       {showInstructions && (
-        <div className="mb-4 p-4 bg-green-50 border-l-4 border-green-400 rounded text-sm text-green-800">
-          <p className="font-semibold mb-2">¿Cómo jugar?</p>
-          <ul className="list-disc list-inside space-y-1">
-            <li>Adivina la palabra oculta en 6 intentos.</li>
-            <li><span className="inline-block w-4 h-4 bg-green-500 rounded align-middle mr-1"></span> Verde: letra correcta y bien colocada.</li>
-            <li><span className="inline-block w-4 h-4 bg-yellow-500 rounded align-middle mr-1"></span> Amarillo: letra correcta pero mal colocada.</li>
-            <li><span className="inline-block w-4 h-4 bg-gray-400 rounded align-middle mr-1"></span> Gris: letra no está en la palabra.</li>
-          </ul>
-        </div>
-      )}
-
-      {/* Hint display */}
-      {showHint && (
-        <div className="mb-4 p-3 bg-blue-50 border-l-4 border-blue-400 rounded text-sm text-blue-800">
-          <p className="font-semibold mb-2">Pistas:</p>
-          {hints.length === 0 ? (
-            <p className="text-gray-600 italic">Las pistas aparecerán después del 3er intento fallido</p>
-          ) : (
-            <ul className="list-disc list-inside space-y-1">
-              {hints.map((hint, idx) => (
-                <li key={idx}>{hint}</li>
-              ))}
-            </ul>
-          )}
-          <p className="text-xs text-gray-600 mt-2">
-            Intento {guesses.length + 1} de {MAX_GUESSES} - {hints.length}/3 pistas visibles
-          </p>
-        </div>
-      )}
-
-      {/* Calendar selector - Monthly view */}
-      {showCalendar && (
-        <div className="mb-4 p-4 bg-gray-50 border border-gray-200 rounded-lg">
-          {/* Month navigation */}
-          <div className="flex items-center justify-between mb-4">
-            <button
-              onClick={() => setDisplayMonth(new Date(displayMonth.getFullYear(), displayMonth.getMonth() - 1))}
-              className="p-2 hover:bg-gray-200 rounded"
-            >
-              <ChevronLeft size={20} />
-            </button>
-            <div className="text-center font-semibold">
-              {displayMonth.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' })}
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={() => setShowInstructions(false)}>
+          <div className="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-4">
+              <p className="font-semibold text-green-800">¿Cómo jugar?</p>
+              <button onClick={() => setShowInstructions(false)} className="p-2 hover:bg-gray-100 rounded-full"><X size={20} /></button>
             </div>
-            <button
-              onClick={() => setDisplayMonth(new Date(displayMonth.getFullYear(), displayMonth.getMonth() + 1))}
-              className="p-2 hover:bg-gray-200 rounded"
-            >
-              <ChevronRight size={20} />
-            </button>
+            <ul className="list-disc list-inside space-y-1 text-sm text-green-800">
+              <li>Adivina la palabra oculta en 6 intentos.</li>
+              <li><span className="inline-block w-4 h-4 bg-green-500 rounded align-middle mr-1"></span> Verde: letra correcta y bien colocada.</li>
+              <li><span className="inline-block w-4 h-4 bg-yellow-500 rounded align-middle mr-1"></span> Amarillo: letra correcta pero mal colocada.</li>
+              <li><span className="inline-block w-4 h-4 bg-gray-400 rounded align-middle mr-1"></span> Gris: letra no está en la palabra.</li>
+            </ul>
           </div>
+        </div>
+      )}
 
-          {/* Calendar grid */}
-          <div className="grid grid-cols-7 gap-1">
-            {['L', 'M', 'X', 'J', 'V', 'S', 'D'].map(day => (
-              <div key={day} className="text-center text-xs font-semibold text-gray-600 py-1">
-                {day}
+      {/* Hint overlay modal */}
+      {showHint && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={() => setShowHint(false)}>
+          <div className="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-4">
+              <p className="font-semibold text-blue-800">Pistas:</p>
+              <button onClick={() => setShowHint(false)} className="p-2 hover:bg-gray-100 rounded-full"><X size={20} /></button>
+            </div>
+            {hints.length === 0 ? (
+              <p className="text-gray-600 italic text-sm">Las pistas aparecerán después del 3er intento fallido</p>
+            ) : (
+              <ul className="list-disc list-inside space-y-1 text-sm text-blue-800">
+                {hints.map((hint, idx) => (
+                  <li key={idx}>{hint}</li>
+                ))}
+              </ul>
+            )}
+            <p className="text-xs text-gray-600 mt-3">
+              Intento {guesses.length + 1} de {MAX_GUESSES} - {hints.length}/3 pistas visibles
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Calendar overlay modal */}
+      {showCalendar && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={() => setShowCalendar(false)}>
+          <div className="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-4">
+              <button
+                onClick={() => setDisplayMonth(new Date(displayMonth.getFullYear(), displayMonth.getMonth() - 1))}
+                className="p-2 hover:bg-gray-200 rounded"
+              >
+                <ChevronLeft size={20} />
+              </button>
+              <div className="text-center font-semibold">
+                {displayMonth.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' })}
               </div>
-            ))}
-            {calendarDays.map((dateStr, idx) => {
-              const isSelected = dateStr === selectedDate;
-              const isToday = dateStr === today;
-              const isFuture = !!(dateStr && dateStr > today);
-              
-              return (
-                <button
-                  key={idx}
-                  onClick={() => {
-                    if (dateStr && !isFuture) {
-                      setSelectedDate(dateStr);
-                      startGame(difficulty, dateStr);
-                      setShowCalendar(false);
-                    }
-                  }}
-                  disabled={isFuture}
-                  className={`py-2 text-xs font-semibold rounded ${
-                    !dateStr
-                      ? ''
-                      : isSelected
-                      ? 'bg-spanish-red text-white'
-                      : isToday
-                      ? 'bg-green-500 text-white'
-                      : isFuture
-                      ? 'text-gray-300 cursor-not-allowed'
-                      : 'bg-white text-gray-800 hover:bg-gray-200 border border-gray-200'
-                  }`}
-                >
-                  {dateStr ? new Date(dateStr).getDate() : ''}
-                </button>
-              );
-            })}
+              <button
+                onClick={() => setDisplayMonth(new Date(displayMonth.getFullYear(), displayMonth.getMonth() + 1))}
+                className="p-2 hover:bg-gray-200 rounded"
+              >
+                <ChevronRight size={20} />
+              </button>
+              <button onClick={() => setShowCalendar(false)} className="p-2 hover:bg-gray-100 rounded-full ml-2"><X size={20} /></button>
+            </div>
+
+            <div className="grid grid-cols-7 gap-1">
+              {['L', 'M', 'X', 'J', 'V', 'S', 'D'].map(day => (
+                <div key={day} className="text-center text-xs font-semibold text-gray-600 py-1">
+                  {day}
+                </div>
+              ))}
+              {calendarDays.map((dateStr, idx) => {
+                const isSelected = dateStr === selectedDate;
+                const isToday = dateStr === today;
+                const isFuture = !!(dateStr && dateStr > today);
+                
+                return (
+                  <button
+                    key={idx}
+                    onClick={() => {
+                      if (dateStr && !isFuture) {
+                        setSelectedDate(dateStr);
+                        startGame(difficulty, dateStr);
+                        setShowCalendar(false);
+                      }
+                    }}
+                    disabled={isFuture}
+                    className={`py-2 text-xs font-semibold rounded ${
+                      !dateStr
+                        ? ''
+                        : isSelected
+                        ? 'bg-spanish-red text-white'
+                        : isToday
+                        ? 'bg-green-500 text-white'
+                        : isFuture
+                        ? 'text-gray-300 cursor-not-allowed'
+                        : 'bg-white text-gray-800 hover:bg-gray-200 border border-gray-200'
+                    }`}
+                  >
+                    {dateStr ? new Date(dateStr).getDate() : ''}
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </div>
       )}

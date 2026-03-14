@@ -1039,7 +1039,6 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
                   >
                     <span className="text-2xl mb-1 block">🧱</span>
                     Frases Cortas
-                    <span className="text-xs block font-normal opacity-80">3–5 palabras</span>
                   </button>
                   <button
                     onClick={() => !longDisabled && setSelectedPhraseLength('long')}
@@ -1051,8 +1050,7 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
                     }`}
                   >
                     <span className="text-2xl mb-1 block">🏗️</span>
-                    Frases Largas
-                    <span className="text-xs block font-normal opacity-80">{longDisabled ? 'Próximamente para B1' : '6–10 palabras'}</span>
+                    {longDisabled ? 'Frases Largas (Próximamente)' : 'Frases Largas'}
                   </button>
                 </div>
               </div>

@@ -2418,10 +2418,10 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
                       <button
                         key={t}
                         onClick={() => setSelectedTense(t)}
-                        className={`py-3 px-2 rounded-xl border-2 font-bold transition-all flex items-center justify-center text-center ${
+                        className={`py-3 px-2 rounded-xl border-2 font-bold text-lg transition-all flex items-center justify-center text-center ${
                           selectedTense === t ? 'bg-deep-blue text-white border-deep-blue' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
                         }`}
-                        style={{ fontSize: '0.8rem', hyphens: 'auto', wordBreak: 'break-word' } as React.CSSProperties}
+                        style={{ hyphens: 'auto', wordBreak: 'break-word' } as React.CSSProperties}
                       >
                         {formatTenseName(t)}
                       </button>
@@ -2458,17 +2458,17 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
                 <div className="grid grid-cols-2 gap-4">
                   <button
                     onClick={() => setSelectedBattleMode('contrarreloj')}
-                    className={`py-3 px-4 rounded-xl border-2 transition-all flex items-center justify-center gap-2 ${selectedBattleMode === 'contrarreloj' ? 'border-spanish-red bg-red-50 ring-2 ring-red-200' : 'border-gray-200 hover:bg-gray-50'}`}
+                    className={`py-3 px-4 rounded-xl border-2 font-bold text-lg transition-all flex items-center justify-center gap-2 ${selectedBattleMode === 'contrarreloj' ? 'bg-deep-blue text-white border-deep-blue' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'}`}
                   >
                     <span className="text-2xl">⏱️</span>
-                    <span className="font-bold text-deep-blue text-lg">Contrarreloj</span>
+                    Contrarreloj
                   </button>
                   <button
                     onClick={() => setSelectedBattleMode('jefe')}
-                    className={`py-3 px-4 rounded-xl border-2 transition-all flex items-center justify-center gap-2 ${selectedBattleMode === 'jefe' ? 'border-spanish-red bg-red-50 ring-2 ring-red-200' : 'border-gray-200 hover:bg-gray-50'}`}
+                    className={`py-3 px-4 rounded-xl border-2 font-bold text-lg transition-all flex items-center justify-center gap-2 ${selectedBattleMode === 'jefe' ? 'bg-deep-blue text-white border-deep-blue' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'}`}
                   >
                     <span className="text-2xl">🐉</span>
-                    <span className="font-bold text-deep-blue text-lg">Modo Jefe</span>
+                    Modo Jefe
                   </button>
                 </div>
               </div>

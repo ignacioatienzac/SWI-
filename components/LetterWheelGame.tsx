@@ -1191,7 +1191,7 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
             min-height: 0;
             display: flex;
             flex-direction: column;
-            padding: 0.25rem 10px !important;
+            padding: 0.25rem 0 !important;
             overflow: hidden;
           }
           .lw-main-grid {
@@ -1208,6 +1208,7 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
             padding: 0.5rem !important;
             flex-shrink: 1;
             min-height: 0;
+            border-radius: 0 !important;
           }
           .lw-crossword-scroll {
             max-height: 30vh;
@@ -1241,6 +1242,7 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
             flex-direction: column;
             align-items: center;
             overflow: hidden;
+            border-radius: 0 !important;
           }
           .lw-input-row {
             margin-bottom: 0.25rem !important;
@@ -1351,10 +1353,10 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
         </div>
       </div>
 
-      {/* Calendar selector - Monthly view */}
+      {/* Calendar Modal */}
       {showCalendar && (
-        <div className="max-w-6xl mx-auto px-4 pt-4">
-          <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={() => setShowCalendar(false)}>
+          <div className="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl" onClick={e => e.stopPropagation()}>
             {/* Month navigation */}
             <div className="flex items-center justify-between mb-4">
               <button
@@ -1371,6 +1373,9 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
                 className="p-2 hover:bg-gray-200 rounded"
               >
                 <ChevronRight size={20} />
+              </button>
+              <button onClick={() => setShowCalendar(false)} className="p-2 hover:bg-gray-100 rounded-full ml-2">
+                <X size={20} />
               </button>
             </div>
 

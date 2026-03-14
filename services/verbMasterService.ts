@@ -125,13 +125,20 @@ export function generateChallenge(
   };
 }
 
+// Strip accents/tildes for accent-insensitive comparison
+function stripAccents(s: string): string {
+  return s.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+}
+
 // Validate player's answer
-export function validateAnswer(challenge: BubbleChallenge, userInput: string): boolean {
+export function validateAnswer(challenge: BubbleChallenge, userInput: string, accentSensitive: boolean = true): boolean {
   const normalized = userInput.trim().toLowerCase();
   const correct = challenge.correctAnswer.toLowerCase();
   
-  // Direct match
-  return normalized === correct;
+  if (accentSensitive) {
+    return normalized === correct;
+  }
+  return stripAccents(normalized) === stripAccents(correct);
 }
 
 // Calculate score based on game level and streak

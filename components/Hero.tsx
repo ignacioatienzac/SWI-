@@ -51,28 +51,9 @@ const Hero: React.FC<HeroProps> = ({ onStart, onResources }) => {
             </p>
           </div>
 
-          {/* Right Column: Game screenshots mosaic */}
-          <div className="grid grid-cols-6 grid-rows-2 gap-3 md:gap-4" style={{ aspectRatio: '4/3' }}>
-            {/* El Poder de los Verbos - large, spans 3 cols */}
-            <div className="col-span-3 row-span-1 rounded-2xl overflow-hidden shadow-lg border-2 border-white/80 hover:scale-[1.03] transition-transform duration-300">
-              <img src="./data/images/El-Poder-De-Los-Verbos.png" alt="El Poder de los Verbos" className="w-full h-full object-cover" />
-            </div>
-            {/* La Rueda de Letras - spans 3 cols */}
-            <div className="col-span-3 row-span-1 rounded-2xl overflow-hidden shadow-lg border-2 border-white/80 hover:scale-[1.03] transition-transform duration-300">
-              <img src="./data/images/La-Rueda-De-Letras.png" alt="La Rueda de Letras" className="w-full h-full object-cover" />
-            </div>
-            {/* Adivina la Palabra - spans 2 cols */}
-            <div className="col-span-2 row-span-1 rounded-2xl overflow-hidden shadow-lg border-2 border-white/80 hover:scale-[1.03] transition-transform duration-300">
-              <img src="./data/images/Adivina-La-Palabra.png" alt="Adivina la Palabra" className="w-full h-full object-cover" />
-            </div>
-            {/* Maestro de Verbos - spans 2 cols */}
-            <div className="col-span-2 row-span-1 rounded-2xl overflow-hidden shadow-lg border-2 border-white/80 hover:scale-[1.03] transition-transform duration-300">
-              <img src="./data/images/Maestro-De-Verbos.png" alt="Maestro de Verbos" className="w-full h-full object-cover" />
-            </div>
-            {/* Constructor de Frases - spans 2 cols */}
-            <div className="col-span-2 row-span-1 rounded-2xl overflow-hidden shadow-lg border-2 border-white/80 hover:scale-[1.03] transition-transform duration-300">
-              <img src="./data/images/Constructor-De-Frases.png" alt="Constructor de Frases" className="w-full h-full object-cover" />
-            </div>
+          {/* Right Column: Game mosaic image */}
+          <div className="rounded-2xl overflow-hidden shadow-lg border-2 border-white/80 hover:scale-[1.02] transition-transform duration-300">
+            <img src="./data/images/Mosaico.png" alt="Juegos de CobiSpanish" className="w-full h-full object-cover" />
           </div>
 
         </div>

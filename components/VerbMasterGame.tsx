@@ -231,6 +231,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
   const [selectedVerbType, setSelectedVerbType] = useState<VerbType | null>(null);
   const [selectedTense, setSelectedTense] = useState<string | null>(null);
   const [selectedLevel] = useState<VerbLevel>('A1');
+  const [accentSensitive, setAccentSensitive] = useState(true);
   
   // Cobi Sensei State
   const [cobiSenseiMenuMessage, setCobiSenseiMenuMessage] = useState<string>('');
@@ -1253,7 +1254,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
     // Try to match with any bubble
     let matched = false;
     bubblesRef.current.forEach(bubble => {
-      if (!matched && !bubble.isPopping && validateAnswer(bubble.challenge, userInput)) {
+      if (!matched && !bubble.isPopping && validateAnswer(bubble.challenge, userInput, accentSensitive)) {
         matched = true;
         
         // SRS: Calculate response time (from bubble birth to pop)
@@ -1301,7 +1302,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
 
     // --- MOBILE: Paginated Wizard Menu ---
     if (isMobile) {
-      const canGoNext = mobileMenuPage < 3;
+      const canGoNext = mobileMenuPage < 4;
       const canGoBack = mobileMenuPage > 1;
 
       const renderVMPage = () => {
@@ -1422,6 +1423,30 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
                 </div>
               </div>
             );
+          case 4:
+            return (
+              <div>
+                <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">4. Tildes / Acentos</h3>
+                <div className="flex flex-col gap-3">
+                  <button
+                    onClick={() => setAccentSensitive(true)}
+                    className={`w-full py-4 rounded-xl border-2 font-bold text-lg transition-all ${
+                      accentSensitive ? 'bg-red-800 text-white border-red-800' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
+                    }`}
+                  >
+                    Sí — Con tildes
+                  </button>
+                  <button
+                    onClick={() => setAccentSensitive(false)}
+                    className={`w-full py-4 rounded-xl border-2 font-bold text-lg transition-all ${
+                      !accentSensitive ? 'bg-red-800 text-white border-red-800' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
+                    }`}
+                  >
+                    No — Sin tildes
+                  </button>
+                </div>
+              </div>
+            );
           default:
             return null;
         }
@@ -1439,7 +1464,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
             </div>
 
             <div className="flex justify-center gap-2 my-2">
-              {[1, 2, 3].map(p => (
+              {[1, 2, 3, 4].map(p => (
                 <div key={p} className={`w-2 h-2 rounded-full transition-all duration-300 ${
                   p === mobileMenuPage ? 'bg-spanish-red w-6' : p < mobileMenuPage ? 'bg-red-800' : 'bg-gray-300'
                 }`} />
@@ -1459,7 +1484,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
                 <div className="w-11" />
               )}
 
-              {mobileMenuPage === 3 ? (
+              {mobileMenuPage === 4 ? (
                 <button
                   onClick={handleStartGame}
                   disabled={!selectedVerbType}
@@ -1698,6 +1723,37 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
                     {option.label}
                   </button>
                 ))}
+              </div>
+            </div>
+            )}
+
+            {/* Accent/Tildes Option - revealed after verb type selected */}
+            {selectedVerbType && (
+            <div className="mb-6">
+              <label className="block text-sm font-bold text-gray-700 mb-2">
+                Tildes / Acentos
+              </label>
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  onClick={() => setAccentSensitive(true)}
+                  className={`py-3 rounded-lg border-2 font-bold transition-all ${
+                    accentSensitive
+                      ? 'border-red-800 bg-red-800 text-white'
+                      : 'border-gray-200 text-gray-600 hover:border-gray-300'
+                  }`}
+                >
+                  Sí — Con tildes
+                </button>
+                <button
+                  onClick={() => setAccentSensitive(false)}
+                  className={`py-3 rounded-lg border-2 font-bold transition-all ${
+                    !accentSensitive
+                      ? 'border-red-800 bg-red-800 text-white'
+                      : 'border-gray-200 text-gray-600 hover:border-gray-300'
+                  }`}
+                >
+                  No — Sin tildes
+                </button>
               </div>
             </div>
             )}
