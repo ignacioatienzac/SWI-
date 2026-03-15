@@ -1107,7 +1107,7 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
         .lw-input-shake {
           animation: inputShake 0.4s ease-in-out;
         }
-        @media (max-width: 768px) {
+        @media (max-width: 767px) {
           .lw-playing-root {
             overflow: hidden;
             height: 100dvh;
@@ -1115,12 +1115,18 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
             display: flex;
             flex-direction: column;
           }
+          /* === HEADER: 10% === */
+          .lw-playing-root > .bg-white {
+            flex: 0 0 10%;
+            min-height: 0;
+            overflow: hidden;
+          }
           .lw-header-inner {
-            padding-top: 0.25rem !important;
-            padding-bottom: 0.25rem !important;
+            padding-top: 0.2rem !important;
+            padding-bottom: 0.2rem !important;
           }
           .lw-header-row {
-            margin-bottom: 0.25rem !important;
+            margin-bottom: 0.15rem !important;
           }
           .lw-header-title {
             font-size: 1rem !important;
@@ -1134,8 +1140,9 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
           .lw-progress-bar {
             display: none !important;
           }
+          /* === MAIN CONTENT: 90% remaining === */
           .lw-main-content {
-            flex: 1;
+            flex: 1 1 0;
             min-height: 0;
             display: flex;
             flex-direction: column;
@@ -1143,19 +1150,27 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
             overflow: hidden;
           }
           .lw-main-grid {
-            flex: 1;
+            flex: 1 1 0;
             min-height: 0;
             display: flex !important;
             flex-direction: column !important;
             gap: 0 !important;
+            height: 100%;
           }
           .lw-crucigrama-title {
             display: none !important;
           }
-          /* Crossword area: fills available top space */
+          /* === CROSSWORD ZONE: ~44% of remaining (≈40% of viewport) === */
+          .lw-crossword-zone {
+            flex: 44 0 0 !important;
+            min-height: 0;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+          }
           .lw-crossword-card {
             padding: 0.5rem !important;
-            flex: 1 1 auto;
+            flex: 1 1 0;
             min-height: 0;
             border-radius: 0 !important;
             overflow: hidden;
@@ -1188,19 +1203,30 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
           .lw-feedback-desktop {
             display: none !important;
           }
-          /* Wheel area: fixed at bottom, perfect circle */
+          /* === WHEEL ZONE: ~56% of remaining (5% input + 45% wheel ≈ 50% viewport) === */
+          .lw-wheel-zone {
+            flex: 56 0 0 !important;
+            min-height: 0;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            padding-bottom: 10px;
+          }
           .lw-wheel-card {
-            padding: 0.25rem 20px !important;
-            flex: 0 0 auto;
+            padding: 0 15px 0 15px !important;
+            flex: 1 1 0;
+            min-height: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
             overflow: hidden;
             border-radius: 0 !important;
           }
+          /* Input row: 5% zone */
           .lw-input-row {
-            margin-bottom: 0.25rem !important;
+            margin-bottom: 0.15rem !important;
             width: 100%;
+            flex-shrink: 0;
           }
           .lw-input-display {
             min-height: 2rem !important;
@@ -1218,11 +1244,11 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
           .lw-clear-btn {
             display: flex !important;
           }
+          /* Wheel occupies remaining space */
           .lw-wheel-container {
-            width: auto !important;
-            height: auto !important;
-            flex-shrink: 0;
-            margin-bottom: 0 !important;
+            flex: 1 1 0 !important;
+            min-height: 0;
+            margin: 15px 0 0 0 !important;
           }
           .lw-wheel-bg {
             width: 100% !important;
@@ -1231,11 +1257,6 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
           .lw-wheel-svg {
             width: 100% !important;
             height: 100% !important;
-          }
-          .lw-letter-btn {
-            width: 2.5em !important;
-            height: 2.5em !important;
-            font-size: clamp(0.7rem, 3vw, 1.1rem) !important;
           }
           .lw-bottom-buttons {
             display: none !important;
@@ -1505,7 +1526,7 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
       <div className="lw-main-content max-w-6xl mx-auto px-4 py-6">
         <div className="lw-main-grid grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Left: Crossword Grid */}
-          <div className="space-y-4">
+          <div className="lw-crossword-zone space-y-4">
             {/* Crossword */}
             <div className="lw-crossword-card bg-white rounded-2xl p-4 shadow-xl">
               <h2 className="lw-crucigrama-title text-lg font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent mb-4 flex items-center gap-2">
@@ -1596,7 +1617,7 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
           </div>
 
           {/* Right: Letter Wheel */}
-          <div className="space-y-4">
+          <div className="lw-wheel-zone space-y-4">
             {/* Input Area */}
             <div className="lw-wheel-card bg-white rounded-2xl p-6 shadow-xl">
               {/* Input + Shuffle row */}
@@ -1638,13 +1659,14 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
                 let wheelSize: number;
                 let btnSize: number;
                 if (isMobile) {
-                  // Dynamic: fit wheel so all buttons sit with 20px margin from container edges
-                  const maxByWidth = window.innerWidth - 40;
-                  // Estimate available height for wheel card: input row (~40px) + wheel + padding (~20px bottom)
-                  const wheelCardEl = document.querySelector('.lw-wheel-card');
-                  const maxByHeight = wheelCardEl ? wheelCardEl.clientHeight - 60 : 320;
-                  wheelSize = Math.min(maxByWidth, maxByHeight, 320);
-                  btnSize = Math.max(Math.round(wheelSize * 0.14), letterCount > 8 ? 34 : 40);
+                  // Available width: viewport minus 15px padding on each side
+                  const maxByWidth = window.innerWidth - 30;
+                  // Available height: 45% of viewport minus top margin (15px)
+                  const wheelZoneHeight = window.innerHeight * 0.45;
+                  const maxByHeight = wheelZoneHeight - 15;
+                  // Use the smaller dimension to keep circle + buttons inside
+                  wheelSize = Math.min(maxByWidth, maxByHeight);
+                  btnSize = Math.max(Math.round(wheelSize * 0.13), letterCount > 8 ? 30 : 36);
                 } else {
                   wheelSize = 300;
                   btnSize = 56;
