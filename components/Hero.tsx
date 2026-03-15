@@ -57,26 +57,26 @@ const Hero: React.FC<HeroProps> = ({ onStart, onResources }) => {
           </div>
 
           {/* Right Column: Game mosaic */}
-          <div className="grid grid-cols-6 grid-rows-2 gap-2 md:gap-3" style={{ aspectRatio: '4/3' }}>
-            {/* El Poder de los Verbos - large left */}
-            <div className="col-span-3 row-span-1 rounded-2xl overflow-hidden shadow-lg border-2 border-white/80">
-              <img src="./data/images/El-Poder-De-Los-Verbos.png" alt="El Poder de los Verbos" className="w-full h-full object-contain bg-gradient-to-br from-purple-50 to-blue-50" />
-            </div>
-            {/* La Rueda de Letras - large right */}
-            <div className="col-span-3 row-span-1 rounded-2xl overflow-hidden shadow-lg border-2 border-white/80">
-              <img src="./data/images/La-Rueda-De-Letras.png" alt="La Rueda de Letras" className="w-full h-full object-contain bg-gradient-to-br from-amber-50 to-orange-50" />
-            </div>
-            {/* Adivina la Palabra */}
-            <div className="col-span-2 row-span-1 rounded-2xl overflow-hidden shadow-lg border-2 border-white/80">
-              <img src="./data/images/Adivina-La-Palabra.png" alt="Adivina la Palabra" className="w-full h-full object-contain bg-gradient-to-br from-green-50 to-emerald-50" />
-            </div>
-            {/* Maestro de Verbos */}
-            <div className="col-span-2 row-span-1 rounded-2xl overflow-hidden shadow-lg border-2 border-white/80">
-              <img src="./data/images/Maestro-De-Verbos.png" alt="Maestro de Verbos" className="w-full h-full object-contain bg-gradient-to-br from-red-50 to-pink-50" />
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '20px' }}>
+            {/* El Poder de los Verbos */}
+            <div style={{ gridColumn: 1, gridRow: 1 }}>
+              <img src="./data/images/El-Poder-De-Los-Verbos.png" alt="El Poder de los Verbos" style={{ width: '100%', height: 'auto', objectFit: 'contain', aspectRatio: '2.38 / 1', borderRadius: '15px', boxShadow: '0 4px 15px rgba(0,0,0,0.1)' }} />
             </div>
             {/* Constructor de Frases */}
-            <div className="col-span-2 row-span-1 rounded-2xl overflow-hidden shadow-lg border-2 border-white/80">
-              <img src="./data/images/Constructor-De-Frases.png" alt="Constructor de Frases" className="w-full h-full object-contain bg-gradient-to-br from-yellow-50 to-amber-50" />
+            <div style={{ gridColumn: 1, gridRow: 2 }}>
+              <img src="./data/images/Constructor-De-Frases.png" alt="Constructor de Frases" style={{ width: '100%', height: 'auto', objectFit: 'contain', aspectRatio: '2.38 / 1', borderRadius: '15px', boxShadow: '0 4px 15px rgba(0,0,0,0.1)' }} />
+            </div>
+            {/* Adivina la Palabra (vertical, spans 2 rows) */}
+            <div style={{ gridColumn: 2, gridRow: '1 / span 2' }}>
+              <img src="./data/images/Adivina-La-Palabra.png" alt="Adivina la Palabra" style={{ width: '100%', height: 'auto', objectFit: 'contain', aspectRatio: '0.82 / 1', borderRadius: '15px', boxShadow: '0 4px 15px rgba(0,0,0,0.1)' }} />
+            </div>
+            {/* La Rueda de Letras */}
+            <div style={{ gridColumn: 1, gridRow: 3 }}>
+              <img src="./data/images/La-Rueda-De-Letras.png" alt="La Rueda de Letras" style={{ width: '100%', height: 'auto', objectFit: 'contain', aspectRatio: '2 / 1', borderRadius: '15px', boxShadow: '0 4px 15px rgba(0,0,0,0.1)' }} />
+            </div>
+            {/* Maestro de Verbos */}
+            <div style={{ gridColumn: 2, gridRow: 3 }}>
+              <img src="./data/images/Maestro-De-Verbos.png" alt="Maestro de Verbos" style={{ width: '100%', height: 'auto', objectFit: 'contain', aspectRatio: '1.6 / 1', borderRadius: '15px', boxShadow: '0 4px 15px rgba(0,0,0,0.1)' }} />
             </div>
           </div>
 

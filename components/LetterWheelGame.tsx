@@ -1244,7 +1244,7 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
           }
           /* Wheel area: fixed at bottom, perfect circle */
           .lw-wheel-card {
-            padding: 0.25rem 0.5rem !important;
+            padding: 0.25rem 20px !important;
             flex: 0 0 auto;
             display: flex;
             flex-direction: column;
@@ -1273,8 +1273,8 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
             display: flex !important;
           }
           .lw-wheel-container {
-            width: 90vw !important;
-            height: 90vw !important;
+            width: calc(100vw - 40px) !important;
+            height: calc(100vw - 40px) !important;
             aspect-ratio: 1 / 1;
             max-width: 320px;
             max-height: 320px;
@@ -1574,7 +1574,7 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
                   <div 
                     className="lw-crossword-grid inline-grid gap-0.5 p-2 bg-gradient-to-br from-purple-100 to-blue-100 rounded-xl"
                     style={{
-                      gridTemplateColumns: `repeat(${crosswordData.bounds.maxCol - crosswordData.bounds.minCol + 1}, minmax(32px, 40px))`,
+                      gridTemplateColumns: `repeat(${crosswordData.bounds.maxCol - crosswordData.bounds.minCol + 1}, 40px)`,
                       '--cols': crosswordData.bounds.maxCol - crosswordData.bounds.minCol + 1,
                     } as React.CSSProperties}
                   >
@@ -1691,7 +1691,7 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
 
               {/* Letter Wheel */}
               {(() => {
-                const wheelSize = isMobile ? Math.min(window.innerWidth * 0.9, 320) : 300;
+                const wheelSize = isMobile ? Math.min(window.innerWidth - 40, 320) : 300;
                 const letterCount = gameState.baseWordNormalized.length;
                 const btnSize = isMobile ? Math.max(Math.round(wheelSize * 0.14), letterCount > 8 ? 34 : 40) : 56;
                 const btnRadius = btnSize / 2;
