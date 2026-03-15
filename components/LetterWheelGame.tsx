@@ -1241,115 +1241,6 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
             display: none !important;
           }
         }
-        /* === Landscape mobile/tablet: side-by-side layout === */
-        @media (max-width: 1024px) and (orientation: landscape) {
-          .lw-playing-root {
-            overflow: hidden;
-            height: 100dvh;
-            min-height: unset;
-            display: flex;
-            flex-direction: column;
-          }
-          .lw-header-inner {
-            padding-top: 0.2rem !important;
-            padding-bottom: 0.2rem !important;
-          }
-          .lw-header-row {
-            margin-bottom: 0 !important;
-          }
-          .lw-header-title {
-            font-size: 0.9rem !important;
-          }
-          .lw-header-subtitle { display: none !important; }
-          .lw-progress-section { display: none !important; }
-          .lw-progress-bar { display: none !important; }
-          .lw-main-content {
-            flex: 1;
-            min-height: 0;
-            display: flex;
-            flex-direction: column;
-            padding: 0 !important;
-            overflow: hidden;
-          }
-          /* KEY: row direction fills horizontal space */
-          .lw-main-grid {
-            flex: 1;
-            min-height: 0;
-            display: flex !important;
-            flex-direction: row !important;
-            gap: 0 !important;
-          }
-          .lw-crucigrama-title { display: none !important; }
-          .lw-crossword-card {
-            flex: 1 1 0;
-            min-width: 0;
-            padding: 0.4rem !important;
-            border-radius: 0 !important;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-          }
-          .lw-crossword-scroll {
-            flex: 1;
-            min-height: 0;
-            overflow: auto;
-            width: 100%;
-          }
-          .lw-crossword-grid {
-            display: grid !important;
-            grid-template-columns: repeat(var(--cols), 1fr) !important;
-            width: max-content !important;
-            min-width: 100% !important;
-          }
-          .lw-crossword-grid > div {
-            width: auto !important;
-            height: auto !important;
-            aspect-ratio: 1;
-            font-size: 0.55rem !important;
-          }
-          .lw-crossword-grid > div span {
-            width: 12px !important;
-            height: 12px !important;
-            font-size: 7px !important;
-          }
-          .lw-feedback-desktop { display: none !important; }
-          .lw-wheel-card {
-            flex: 1 1 0;
-            min-width: 0;
-            padding: 0.4rem 0.75rem !important;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            overflow: hidden;
-            border-radius: 0 !important;
-          }
-          .lw-input-row {
-            margin-bottom: 0.2rem !important;
-            width: 100%;
-          }
-          .lw-input-display {
-            min-height: 2rem !important;
-            padding: 0.2rem 0.4rem !important;
-          }
-          .lw-input-text { font-size: 1.1rem !important; }
-          .lw-hint-text { display: none !important; }
-          .lw-shuffle-btn { display: flex !important; }
-          .lw-clear-btn { display: flex !important; }
-          .lw-wheel-container {
-            width: auto !important;
-            height: auto !important;
-            flex-shrink: 0;
-            margin-bottom: 0 !important;
-          }
-          .lw-wheel-bg { width: 100% !important; height: 100% !important; }
-          .lw-wheel-svg { width: 100% !important; height: 100% !important; }
-          .lw-letter-btn {
-            width: 2.5em !important;
-            height: 2.5em !important;
-            font-size: clamp(0.65rem, 2vw, 1rem) !important;
-          }
-          .lw-bottom-buttons { display: none !important; }
-        }
       `}</style>
       {/* Header */}
       <div className="bg-white shadow-lg sticky top-0 z-20">
@@ -1746,27 +1637,14 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
                 const letterCount = gameState.baseWordNormalized.length;
                 let wheelSize: number;
                 let btnSize: number;
-                const isLandscapeMode = window.innerWidth > window.innerHeight;
                 if (isMobile) {
-                  // Portrait: full width. Landscape: half width (side-by-side layout).
-                  const maxByWidth = isLandscapeMode
-                    ? Math.floor(window.innerWidth / 2) - 30
-                    : window.innerWidth - 40;
+                  // Dynamic: fit wheel so all buttons sit with 20px margin from container edges
+                  const maxByWidth = window.innerWidth - 40;
+                  // Estimate available height for wheel card: input row (~40px) + wheel + padding (~20px bottom)
                   const wheelCardEl = document.querySelector('.lw-wheel-card');
-                  const maxByHeight = wheelCardEl
-                    ? wheelCardEl.clientHeight - 60
-                    : (isLandscapeMode ? window.innerHeight - 100 : 320);
-                  wheelSize = Math.min(maxByWidth, maxByHeight, isLandscapeMode ? 500 : 320);
+                  const maxByHeight = wheelCardEl ? wheelCardEl.clientHeight - 60 : 320;
+                  wheelSize = Math.min(maxByWidth, maxByHeight, 320);
                   btnSize = Math.max(Math.round(wheelSize * 0.14), letterCount > 8 ? 34 : 40);
-                } else if (isLandscapeMode && window.innerWidth < 1024) {
-                  // 768-1023px landscape (large phone/small tablet): half-width column
-                  const maxByWidth = Math.floor(window.innerWidth / 2) - 30;
-                  const wheelCardEl = document.querySelector('.lw-wheel-card');
-                  const maxByHeight = wheelCardEl
-                    ? wheelCardEl.clientHeight - 60
-                    : window.innerHeight - 120;
-                  wheelSize = Math.min(maxByWidth, maxByHeight, 400);
-                  btnSize = Math.max(Math.round(wheelSize * 0.14), letterCount > 8 ? 38 : 44);
                 } else {
                   wheelSize = 300;
                   btnSize = 56;
