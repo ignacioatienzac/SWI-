@@ -15,7 +15,7 @@ const Hero: React.FC<HeroProps> = ({ onStart, onResources }) => {
       <div className="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 rounded-full bg-spanish-yellow/10 blur-3xl opacity-70"></div>
       <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 rounded-full bg-spanish-red/5 blur-3xl opacity-70"></div>
 
-      <div className="w-full px-[30px] py-10 md:py-0 relative z-10">
+      <div className="w-full pl-[30px] py-10 md:py-0 relative z-10">
         <div className="md:grid md:grid-cols-[40%_60%] md:items-center" style={{ gap: '30px' }}>
           
           {/* Left Column: Content */}
@@ -57,7 +57,7 @@ const Hero: React.FC<HeroProps> = ({ onStart, onResources }) => {
           </div>
 
           {/* Right Column: Featured mosaic image */}
-          <div className="flex items-center justify-center">
+          <div className="flex items-center justify-center pr-[30px]">
             <img
               src="./data/images/Mosaico.png"
               alt="Mosaico de juegos"
@@ -65,8 +65,6 @@ const Hero: React.FC<HeroProps> = ({ onStart, onResources }) => {
                 width: '100%',
                 height: 'auto',
                 objectFit: 'contain',
-                borderRadius: '15px',
-                boxShadow: '0 4px 15px rgba(0,0,0,0.1)'
               }}
             />
           </div>
