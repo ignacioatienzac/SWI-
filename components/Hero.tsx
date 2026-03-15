@@ -15,8 +15,8 @@ const Hero: React.FC<HeroProps> = ({ onStart, onResources }) => {
       <div className="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 rounded-full bg-spanish-yellow/10 blur-3xl opacity-70"></div>
       <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 rounded-full bg-spanish-red/5 blur-3xl opacity-70"></div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-0 relative z-10 w-full">
-        <div className="md:grid md:grid-cols-2 md:gap-12 md:items-center">
+      <div className="max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-0 relative z-10 w-full">
+        <div className="md:grid md:grid-cols-[minmax(0,1fr)_minmax(460px,1fr)] xl:grid-cols-[minmax(0,1fr)_1300px] md:gap-12 md:items-center">
           
           {/* Left Column: Content */}
           <div className="text-center md:text-left mb-10 md:mb-0">
@@ -57,12 +57,13 @@ const Hero: React.FC<HeroProps> = ({ onStart, onResources }) => {
           </div>
 
           {/* Right Column: Featured mosaic image */}
-          <div className="flex items-center justify-center">
+          <div className="flex items-center justify-center xl:justify-end">
             <img
               src="./data/images/Mosaico.png"
               alt="Mosaico de juegos"
               style={{
                 width: '100%',
+                maxWidth: '1300px',
                 height: 'auto',
                 objectFit: 'contain',
                 borderRadius: '15px',

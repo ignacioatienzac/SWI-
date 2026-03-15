@@ -527,7 +527,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
           setBossWaveNearCompletion(false);
           setBossPreparationActive(false);
           setKillCount(0); // Reset kill counter for new wave
-          nextSpawnTimeRef.current = performance.now() + 1000; // Reset spawn timing for new wave
+            nextSpawnTimeRef.current = simulationTimeRef.current + 1000; // Reset spawn timing for new wave
           
           setFeedbackMsg({ text: t('pov.waveStarted').replace('{n}', String(bossCurrentWave + 2)), type: 'success' });
           playNewWave(); // Fanfare for new wave
@@ -601,10 +601,12 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
   const lastTimeRef = useRef<number>(0);
   const lastSpawnRef = useRef<number>(0);
   const lastShotRef = useRef<number>(0);
+    const simulationTimeRef = useRef<number>(0);
   const audioCtxRef = useRef<AudioContext | null>(null);
   const soundEnabledRef = useRef(soundEnabled);
   soundEnabledRef.current = soundEnabled;
-  const MAX_FRAME_GAP_MS = 120;
+    const FRAME_TIME_MS = 1000 / 120;
+    const MAX_SIMULATION_STEP_MS = 500;
   
   const heroRef = useRef({ x: 50, y: 0, width: 40, height: 40 }); // Y position set dynamically
   const monstersRef = useRef<Monster[]>([]);
@@ -1292,13 +1294,14 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
     heroRef.current.height = wizardSize;
     
     // Reset timing refs to prevent immediate spawn/shot
-    lastSpawnRef.current = performance.now();
-    lastShotRef.current = performance.now();
-    gameStartTimeRef.current = performance.now();
-    nextSpawnTimeRef.current = performance.now() + 1000; // First spawn after 1s
+      simulationTimeRef.current = 0;
+      lastSpawnRef.current = 0;
+      lastShotRef.current = 0;
+      gameStartTimeRef.current = 0;
+      nextSpawnTimeRef.current = 1000; // First spawn after 1s in simulation time
     lastTimeRef.current = 0;
     deltaTimeRef.current = 1;
-    lastSpawnTimeRef.current = performance.now();
+      lastSpawnTimeRef.current = 0;
     killCountRef.current = 0;
     attackPowerRef.current = 1;
     pointsStreakRef.current = 0;
@@ -1818,7 +1821,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
     }
   };
 
-  const updateEntities = () => {
+  const updateEntities = (simulationNow: number) => {
     const dt = deltaTimeRef.current;
     monstersRef.current.forEach(m => { m.x -= m.speed * dt; });
     projectilesRef.current.forEach(p => { p.x += p.speed * dt; });
@@ -1832,10 +1835,8 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
         setGameState('GAMEOVER');
       }
     }
-
-    const now = performance.now();
     // Don't shoot during boss preparation phase
-    if (now - lastShotRef.current > (isMobile ? 2250 : 1000) && !bossPreparationActive) { 
+  if (simulationNow - lastShotRef.current > (isMobile ? 2250 : 1000) && !bossPreparationActive) {
        // Projectile size: 75% on mobile for better proportions
        const projectileSize = isMobile ? Math.round(35 * 0.75) : 35;
        
@@ -1853,7 +1854,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
          emoji: '🔥'
        });
        playShoot(); // Play shoot sound
-       lastShotRef.current = now;
+       lastShotRef.current = simulationNow;
     }
   };
 
@@ -2201,21 +2202,18 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
     if (gameState !== 'PLAYING') return;
     if (!lastTimeRef.current) lastTimeRef.current = time;
     
-    // Calculate deltaTime normalized to 120fps (8.33ms per frame)
-    // At 120fps: dt ≈ 1.0 (no change), at 60fps: dt ≈ 2.0 (moves 2x per frame to compensate)
     const elapsed = time - lastTimeRef.current;
-    // Skip simulation after long frame gaps caused by tab throttling or OS overlays.
-    if (elapsed <= 0 || elapsed > MAX_FRAME_GAP_MS) {
+    if (elapsed <= 0) {
       lastTimeRef.current = time;
-      deltaTimeRef.current = 1;
-      lastShotRef.current = time;
-      lastSpawnRef.current = time;
-      nextSpawnTimeRef.current = Math.max(nextSpawnTimeRef.current, time + 150);
       requestRef.current = requestAnimationFrame(gameLoop);
       return;
     }
-    deltaTimeRef.current = Math.min(elapsed / (1000 / 120), 3); // Cap at 3x to prevent teleporting
+
+    const simulationElapsed = Math.min(elapsed, MAX_SIMULATION_STEP_MS);
+    simulationTimeRef.current += simulationElapsed;
+    deltaTimeRef.current = simulationElapsed / FRAME_TIME_MS;
     lastTimeRef.current = time;
+    const simulationNow = simulationTimeRef.current;
     
     // FPS counter update
     fpsFrameCountRef.current++;
@@ -2229,8 +2227,8 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
     if (canvas) {
         const ctx = canvas.getContext('2d');
         if (ctx) {
-            spawnMonster(canvas.width, canvas.height, time);
-            updateEntities();
+        spawnMonster(canvas.width, canvas.height, simulationNow);
+        updateEntities(simulationNow);
             checkCollisions();
             
             // Check if waiting for clean screen in boss mode
@@ -3547,8 +3545,8 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
                 // Reset timing refs to prevent burst of spawns/shots after pause
                 lastTimeRef.current = 0;
                 deltaTimeRef.current = 1;
-                lastShotRef.current = performance.now();
-                nextSpawnTimeRef.current = performance.now() + 500;
+                lastShotRef.current = simulationTimeRef.current;
+                nextSpawnTimeRef.current = Math.max(nextSpawnTimeRef.current, simulationTimeRef.current + 500);
                 void resumeAudioContext();
                 setGameState('PLAYING');
               }}
