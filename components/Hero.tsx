@@ -56,18 +56,19 @@ const Hero: React.FC<HeroProps> = ({ onStart, onResources }) => {
             </div>
           </div>
 
-          {/* Right Column: Game mosaic */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '20px' }}>
-            {/* El Poder de los Verbos */}
-            <img src="./data/images/El-Poder-De-Los-Verbos.png" alt="El Poder de los Verbos" style={{ gridColumn: 1, gridRow: 1, width: '100%', height: 'auto', objectFit: 'contain', aspectRatio: '2.38 / 1', borderRadius: '15px', boxShadow: '0 4px 15px rgba(0,0,0,0.1)' }} />
-            {/* Constructor de Frases */}
-            <img src="./data/images/Constructor-De-Frases.png" alt="Constructor de Frases" style={{ gridColumn: 1, gridRow: 2, width: '100%', height: 'auto', objectFit: 'contain', aspectRatio: '2.38 / 1', borderRadius: '15px', boxShadow: '0 4px 15px rgba(0,0,0,0.1)' }} />
-            {/* Adivina la Palabra (vertical, spans 2 rows) */}
-            <img src="./data/images/Adivina-La-Palabra.png" alt="Adivina la Palabra" style={{ gridColumn: 2, gridRow: '1 / span 2', width: '100%', height: 'auto', objectFit: 'contain', aspectRatio: '0.82 / 1', borderRadius: '15px', boxShadow: '0 4px 15px rgba(0,0,0,0.1)' }} />
-            {/* La Rueda de Letras */}
-            <img src="./data/images/La-Rueda-De-Letras.png" alt="La Rueda de Letras" style={{ gridColumn: 1, gridRow: 3, width: '100%', height: 'auto', objectFit: 'contain', aspectRatio: '2 / 1', borderRadius: '15px', boxShadow: '0 4px 15px rgba(0,0,0,0.1)' }} />
-            {/* Maestro de Verbos */}
-            <img src="./data/images/Maestro-De-Verbos.png" alt="Maestro de Verbos" style={{ gridColumn: 2, gridRow: 3, width: '100%', height: 'auto', objectFit: 'contain', aspectRatio: '1.6 / 1', borderRadius: '15px', boxShadow: '0 4px 15px rgba(0,0,0,0.1)' }} />
+          {/* Right Column: Featured mosaic image */}
+          <div className="flex items-center justify-center">
+            <img
+              src="./data/images/Mosaico.png"
+              alt="Mosaico de juegos"
+              style={{
+                width: '100%',
+                height: 'auto',
+                objectFit: 'contain',
+                borderRadius: '15px',
+                boxShadow: '0 4px 15px rgba(0,0,0,0.1)'
+              }}
+            />
           </div>
 
         </div>

@@ -604,6 +604,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
   const audioCtxRef = useRef<AudioContext | null>(null);
   const soundEnabledRef = useRef(soundEnabled);
   soundEnabledRef.current = soundEnabled;
+  const MAX_FRAME_GAP_MS = 120;
   
   const heroRef = useRef({ x: 50, y: 0, width: 40, height: 40 }); // Y position set dynamically
   const monstersRef = useRef<Monster[]>([]);
@@ -751,10 +752,41 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
   // --- AUDIO HELPERS ---
   const getAudioCtx = (): AudioContext => {
     if (!audioCtxRef.current) {
-      audioCtxRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+      const AudioContextCtor = window.AudioContext || (window as any).webkitAudioContext;
+      audioCtxRef.current = new AudioContextCtor();
     }
     return audioCtxRef.current;
   };
+
+  const resumeAudioContext = async () => {
+    if (!soundEnabledRef.current) return;
+    try {
+      const ctx = getAudioCtx();
+      if (ctx.state !== 'running') {
+        await ctx.resume();
+      }
+    } catch (error) {
+      console.warn('Unable to resume audio context:', error);
+    }
+  };
+
+  useEffect(() => {
+    if (!soundEnabled) return;
+
+    const unlockAudio = () => {
+      void resumeAudioContext();
+    };
+
+    window.addEventListener('pointerdown', unlockAudio, { passive: true });
+    window.addEventListener('keydown', unlockAudio);
+    document.addEventListener('visibilitychange', unlockAudio);
+
+    return () => {
+      window.removeEventListener('pointerdown', unlockAudio);
+      window.removeEventListener('keydown', unlockAudio);
+      document.removeEventListener('visibilitychange', unlockAudio);
+    };
+  }, [soundEnabled]);
 
   const playTone = (frequency: number, duration: number, type: OscillatorType = 'sine') => {
     if (!soundEnabledRef.current) return;
@@ -1221,6 +1253,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
 
   const handleStartGame = async () => {
     if (!selectedTense || !selectedVerbType || !selectedMode || !selectedDifficulty || !selectedBattleMode) return;
+    void resumeAudioContext();
     
     // Wait for images to be loaded before starting
     if (!imagesReady) {
@@ -1263,6 +1296,9 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
     lastShotRef.current = performance.now();
     gameStartTimeRef.current = performance.now();
     nextSpawnTimeRef.current = performance.now() + 1000; // First spawn after 1s
+    lastTimeRef.current = 0;
+    deltaTimeRef.current = 1;
+    lastSpawnTimeRef.current = performance.now();
     killCountRef.current = 0;
     attackPowerRef.current = 1;
     pointsStreakRef.current = 0;
@@ -2168,11 +2204,13 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
     // Calculate deltaTime normalized to 120fps (8.33ms per frame)
     // At 120fps: dt ≈ 1.0 (no change), at 60fps: dt ≈ 2.0 (moves 2x per frame to compensate)
     const elapsed = time - lastTimeRef.current;
-    // If elapsed > 500ms the tab was likely backgrounded — skip this frame to avoid burst
-    if (elapsed > 500) {
+    // Skip simulation after long frame gaps caused by tab throttling or OS overlays.
+    if (elapsed <= 0 || elapsed > MAX_FRAME_GAP_MS) {
       lastTimeRef.current = time;
-      nextSpawnTimeRef.current = time + 500;
-      lastShotRef.current = performance.now();
+      deltaTimeRef.current = 1;
+      lastShotRef.current = time;
+      lastSpawnRef.current = time;
+      nextSpawnTimeRef.current = Math.max(nextSpawnTimeRef.current, time + 150);
       requestRef.current = requestAnimationFrame(gameLoop);
       return;
     }
@@ -2304,6 +2342,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
 
   const handleAnswer = (answer: string) => {
     if (!currentVerb) return;
+    void resumeAudioContext();
     
     // SRS: Calculate response time
     const responseTime = Date.now() - responseStartTimeRef.current;
@@ -3507,8 +3546,10 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
               onClick={() => {
                 // Reset timing refs to prevent burst of spawns/shots after pause
                 lastTimeRef.current = 0;
+                deltaTimeRef.current = 1;
                 lastShotRef.current = performance.now();
                 nextSpawnTimeRef.current = performance.now() + 500;
+                void resumeAudioContext();
                 setGameState('PLAYING');
               }}
               className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 rounded-lg flex items-center justify-center gap-2"
