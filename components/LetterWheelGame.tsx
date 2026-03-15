@@ -1123,7 +1123,7 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
           }
           .lw-header-inner {
             padding-top: 0.2rem !important;
-            padding-bottom: 0.2rem !important;
+            padding-bottom: 10px !important;
           }
           .lw-header-row {
             margin-bottom: 0.15rem !important;
@@ -1148,6 +1148,7 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
             flex-direction: column;
             padding: 0 !important;
             overflow: hidden;
+            margin-top: 15px;
           }
           .lw-main-grid {
             flex: 1 1 0;
@@ -1213,7 +1214,7 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
             padding-bottom: 10px;
           }
           .lw-wheel-card {
-            padding: 0 15px 0 15px !important;
+            padding: 0 20px 20px 20px !important;
             flex: 1 1 0;
             min-height: 0;
             display: flex;
@@ -1221,6 +1222,7 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
             align-items: center;
             overflow: hidden;
             border-radius: 0 !important;
+            box-shadow: none !important;
           }
           /* Input row: 5% zone */
           .lw-input-row {
@@ -1659,11 +1661,11 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
                 let wheelSize: number;
                 let btnSize: number;
                 if (isMobile) {
-                  // Available width: viewport minus 15px padding on each side
-                  const maxByWidth = window.innerWidth - 30;
-                  // Available height: 45% of viewport minus top margin (15px)
+                  // Available width: viewport minus 20px padding on each side
+                  const maxByWidth = window.innerWidth - 40;
+                  // Available height: 45% of viewport minus top margin (15px) and bottom padding (20px)
                   const wheelZoneHeight = window.innerHeight * 0.45;
-                  const maxByHeight = wheelZoneHeight - 15;
+                  const maxByHeight = wheelZoneHeight - 35;
                   // Use the smaller dimension to keep circle + buttons inside
                   wheelSize = Math.min(maxByWidth, maxByHeight);
                   btnSize = Math.max(Math.round(wheelSize * 0.13), letterCount > 8 ? 30 : 36);
