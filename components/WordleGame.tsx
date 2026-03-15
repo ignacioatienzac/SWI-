@@ -19,6 +19,10 @@ const playSound = (type: 'correct' | 'present' | 'absent' | 'win' | 'lose') => {
   // Respect global sound toggle
   if (localStorage.getItem('soundEnabled') === 'false') return;
   const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+  // Safari starts AudioContext suspended; resume() must be called within a user gesture
+  if (audioContext.state === 'suspended') {
+    audioContext.resume().catch(() => {});
+  }
   const oscillator = audioContext.createOscillator();
   const gain = audioContext.createGain();
   

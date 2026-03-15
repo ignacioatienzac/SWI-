@@ -775,24 +775,37 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
   useEffect(() => {
     if (!soundEnabled) return;
 
+    // Synchronous unlock — Safari requires ctx.resume() within the synchronous
+    // call stack of a user gesture; avoid async wrappers here.
     const unlockAudio = () => {
-      void resumeAudioContext();
+      try {
+        const ctx = getAudioCtx();
+        if (ctx.state !== 'running') {
+          ctx.resume().catch(() => {});
+        }
+      } catch (_) { /* ignore */ }
     };
 
+    // touchstart for iOS Safari; click as universal fallback
+    window.addEventListener('touchstart', unlockAudio, { passive: true });
+    window.addEventListener('click', unlockAudio, { passive: true });
     window.addEventListener('pointerdown', unlockAudio, { passive: true });
     window.addEventListener('keydown', unlockAudio);
-    document.addEventListener('visibilitychange', unlockAudio);
 
     return () => {
+      window.removeEventListener('touchstart', unlockAudio);
+      window.removeEventListener('click', unlockAudio);
       window.removeEventListener('pointerdown', unlockAudio);
       window.removeEventListener('keydown', unlockAudio);
-      document.removeEventListener('visibilitychange', unlockAudio);
     };
   }, [soundEnabled]);
 
   const playTone = (frequency: number, duration: number, type: OscillatorType = 'sine') => {
     if (!soundEnabledRef.current) return;
     const ctx = getAudioCtx();
+    if (ctx.state === 'suspended') {
+      ctx.resume().catch(() => {});
+    }
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
     osc.type = type;
