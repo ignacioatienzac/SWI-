@@ -190,7 +190,7 @@ const App: React.FC = () => {
       case View.HOME:
         return (
           <>
-            <Hero onStart={() => setCurrentView(View.GAMES)} onResources={() => setCurrentView(View.RESOURCES)} />
+            <Hero onStart={() => setCurrentView(View.GAMES)} />
             <MeetCobi />
             <GamesExplainer />
             <AboutMe />
@@ -204,7 +204,7 @@ const App: React.FC = () => {
       default:
         return (
           <>
-            <Hero onStart={() => setCurrentView(View.GAMES)} onResources={() => setCurrentView(View.RESOURCES)} />
+            <Hero onStart={() => setCurrentView(View.GAMES)} />
             <MeetCobi />
             <GamesExplainer />
             <AboutMe />

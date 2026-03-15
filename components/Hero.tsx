@@ -3,10 +3,9 @@ import { useI18n } from '../services/i18n';
 
 interface HeroProps {
   onStart: () => void;
-  onResources: () => void;
 }
 
-const Hero: React.FC<HeroProps> = ({ onStart, onResources }) => {
+const Hero: React.FC<HeroProps> = ({ onStart }) => {
   const { t } = useI18n();
   return (
     <div className="relative overflow-hidden bg-cream min-h-[calc(100dvh-5rem)] flex items-center">
@@ -38,12 +37,7 @@ const Hero: React.FC<HeroProps> = ({ onStart, onResources }) => {
               >
                 {t('hero.cta')}
               </button>
-              <button 
-                onClick={onResources}
-                className="px-8 py-4 bg-white text-deep-blue border-2 border-deep-blue/10 text-lg font-bold rounded-full hover:border-deep-blue hover:bg-blue-50 transition-all duration-300"
-              >
-                {t('hero.secondary')}
-              </button>
+
             </div>
 
             <div className="mt-5 space-y-1">

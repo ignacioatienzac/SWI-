@@ -18,7 +18,6 @@ const Header: React.FC<HeaderProps> = ({ currentView, onChangeView, cobiVisible,
 
   const navItems = [
     { label: t('header.home'), value: View.HOME },
-    { label: t('header.resources'), value: View.RESOURCES },
     { label: t('header.games'), value: View.GAMES },
   ];
 
