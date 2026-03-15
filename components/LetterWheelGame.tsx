@@ -107,6 +107,7 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
 
   const audioCtxRef = useRef<AudioContext | null>(null);
   const lastAddedIndexRef = useRef<number | null>(null);
+  const initialVhRef = useRef(window.innerHeight);
 
   // Send message to Cobi Explorador
   const sendMessageToCobi = async () => {
@@ -1183,6 +1184,7 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
             min-height: 0;
             overflow: auto;
             width: 100%;
+            background: linear-gradient(to bottom right, #f3e8ff, #dbeafe);
           }
           .lw-crossword-grid {
             display: grid !important;
@@ -1248,8 +1250,7 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
           }
           /* Wheel occupies remaining space */
           .lw-wheel-container {
-            flex: 1 1 0 !important;
-            min-height: 0;
+            flex: 0 0 auto !important;
             margin: 15px 20px 20px 20px !important;
           }
           .lw-wheel-bg {
@@ -1661,11 +1662,11 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
                 let wheelSize: number;
                 let btnSize: number;
                 if (isMobile) {
+                  const vh = initialVhRef.current;
                   // Available width: viewport minus card padding (15px*2) minus circle margin (20px*2)
                   const maxByWidth = window.innerWidth - 70;
-                  // Available height: 45% of viewport minus circle margins (15px top + 20px bottom)
-                  const wheelZoneHeight = window.innerHeight * 0.45;
-                  const maxByHeight = wheelZoneHeight - 35;
+                  // Available height: wheel zone (50% of vh) minus input row, margins, paddings
+                  const maxByHeight = vh * 0.5 - 100;
                   // Use the smaller dimension to keep circle + buttons inside
                   wheelSize = Math.min(maxByWidth, maxByHeight);
                   btnSize = Math.max(Math.round(wheelSize * 0.13), letterCount > 8 ? 30 : 36);
