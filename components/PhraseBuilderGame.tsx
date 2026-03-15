@@ -4,22 +4,6 @@ import { hablarConPanda } from '../services/geminiService';
 import DraggableCobi from './DraggableCobi';
 import { useI18n } from '../services/i18n';
 
-// Mensajes aleatorios para el bocadillo de Cobi en el menú
-const mensajesMenuCobi = [
-  "🏗️ ¡Listo para construir frases perfectas! 🐾",
-  "✨ Las palabras son como ladrillos, ¡colócalas bien! 🐾",
-  "🎯 ¿Práctica, contrarreloj o vidas? ¡Tú eliges! 🐾",
-  "🧱 Cada frase correcta suma puntos. ¡Vamos! 🐾",
-  "💪 ¡El orden de las palabras es importante! 🐾",
-  "📚 Empieza fácil y aumenta la dificultad. 🐾",
-  "🎨 ¡Construyamos juntos oraciones increíbles! 🐾"
-];
-
-const seleccionarMensajeMenuRandom = (): string => {
-  const indice = Math.floor(Math.random() * mensajesMenuCobi.length);
-  return mensajesMenuCobi[indice];
-};
-
 interface PhraseBuilderGameProps {
   onBack: () => void;
   cobiVisible?: boolean;
@@ -46,7 +30,7 @@ interface Phrase {
 }
 
 const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisible = true, soundEnabled = true }) => {
-  const { t } = useI18n();
+  const { t, tArray, lang } = useI18n();
 
   // Configuration
   const [selectedLevel, setSelectedLevel] = useState<Level | null>(null);
@@ -155,7 +139,8 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
   
   // Seleccionar mensaje aleatorio para el menú
   useEffect(() => {
-    setCobiMenuMessage(seleccionarMensajeMenuRandom());
+    const menuMsgs = tArray('cobi.phraseBuilder.menu');
+    setCobiMenuMessage(menuMsgs[Math.floor(Math.random() * menuMsgs.length)]);
   }, []);
   
   // Audio
@@ -192,32 +177,8 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
   };
   const playPlace = () => playTone(440, 0.06, 'triangle');
 
-  // Cobi messages by type
-  const cobiMessages = {
-    start: [
-      "¡Patitas a la obra! 🐾",
-      "¡Los materiales están listos! 👷‍♂️",
-      "¡Hola, constructor! ¿Empezamos? 🏗️"
-    ],
-    success: [
-      "¡Ha encajado a la perfección! ¡Eres un crack! ✨",
-      "Esta frase es tan fuerte como una roca. 🐾",
-      "¡Impresionante! Tienes madera de gran arquitecto del español."
-    ],
-    error: [
-      "¡Mmmmpf! Creo que esa pieza no iba ahí... 👷‍♂️",
-      "¡Cuidado! Si ponemos las palabras así, la estructura se cae. 🐾",
-      "¡Ups! Se me ha resbalado el casco del susto. ¡Inténtalo otra vez! ✨"
-    ],
-    aiPrompt: [
-      "¿Te has quedado sin cemento? ¡Pregúntame y te doy una pista! 🐾",
-      "Si el plano está muy difícil, ¡haz clic en mi chat y lo resolvemos juntos! ✨",
-      "¡No te atasques! Yo tengo los planos secretos... ¡pídeme ayuda! 👷‍♂️"
-    ]
-  };
-
   const getRandomMessage = (type: 'start' | 'success' | 'error' | 'aiPrompt') => {
-    const messages = cobiMessages[type];
+    const messages = tArray(`cobi.phraseBuilder.${type}`);
     return messages[Math.floor(Math.random() * messages.length)];
   };
 
@@ -333,7 +294,7 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
       console.error('Error al comunicarse con Cobi:', error);
       setChatHistory(prev => [
         ...prev,
-        { role: 'cobi', text: '¡Ups! Parece que se me cayó el casco y perdí la conexión. ¿Puedes intentarlo otra vez? 🐾' }
+        { role: 'cobi', text: t('pb.chatError') }
       ]);
     } finally {
       setIsLoadingResponse(false);
@@ -946,7 +907,7 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
       const streakBonus = Math.min(streak * 2, 20);
       setScore(prev => prev + points + streakBonus);
       setStreak(prev => prev + 1);
-      setFeedback({ type: 'success', message: `¡Correcto! +${points + streakBonus} puntos` });
+      setFeedback({ type: 'success', message: t('pb.correctPoints').replace('{points}', String(points + streakBonus)) });
       setShowColorHints(false);
       setWordColors([]);
       
@@ -963,7 +924,7 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
       playError();
       changeCobiState('error'); // Cobi reacciona con ánimo
       setStreak(0);
-      setFeedback({ type: 'error', message: 'Inténtalo de nuevo' });
+      setFeedback({ type: 'error', message: t('pb.tryAgain') });
       setShowColorHints(false);
       setWordColors([]);
       
@@ -1161,7 +1122,7 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
               <button onClick={onBack} className="p-1.5 hover:bg-gray-100 rounded-full transition-colors text-gray-500">
                 <ChevronLeft size={20} />
               </button>
-              <h1 className="text-lg font-black text-amber-700 flex-1 text-center">🏗️ Constructor de Frases</h1>
+              <h1 className="text-lg font-black text-amber-700 flex-1 text-center">🏗️ {t('pb.title')}</h1>
               <div className="w-8"></div>
             </div>
 
@@ -1228,8 +1189,8 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
                 {chatHistory.length === 0 ? (
                   <div className="text-center text-gray-500 text-sm mt-8">
                     <p className="mb-2">👷‍♂️</p>
-                    <p>¡Hola! Soy Cobi, tu arquitecto personal.</p>
-                    <p className="text-xs mt-2">Pregúntame sobre los modos de juego.</p>
+                    <p>{t('pb.chatWelcome')}</p>
+                    <p className="text-xs mt-2">{t('pb.chatWelcomeSubMenu')}</p>
                   </div>
                 ) : (
                   chatHistory.map((msg, idx) => (
@@ -1245,7 +1206,7 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
                 {isLoadingResponse && (
                   <div className="flex justify-start">
                     <div className="bg-white border-2 border-amber-200 rounded-2xl px-4 py-3">
-                      <p className="text-sm text-gray-600">El Panda revisa los planos... 🐾</p>
+                      <p className="text-sm text-gray-600">{t('pb.chatLoading')}</p>
                     </div>
                   </div>
                 )}
@@ -1289,7 +1250,7 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
               {t('gameMenu.backToGames')}
             </button>
             <h1 className="text-2xl font-black text-amber-700">
-              🏗️ Constructor de Frases
+              🏗️ {t('pb.title')}
             </h1>
           </div>
 
@@ -1520,7 +1481,7 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
             {!showChatWindow && (
               <div style={{ position: 'absolute', left: '-200px', bottom: '80px', zIndex: 5, maxWidth: '220px' }} className="bg-white/95 backdrop-blur-sm rounded-2xl px-4 py-2 shadow-lg border-2 border-gray-200 pointer-events-auto">
                 <p className="text-gray-700 font-semibold text-sm text-center leading-snug">
-                  {cobiMenuMessage || "🏗️ ¡Construyamos frases juntos! 🐾"}
+                  {cobiMenuMessage || t('pb.defaultBubble')}
                 </p>
                 {/* Pico del bocadillo apuntando hacia Cobi */}
                 <div className="absolute top-1/2 -translate-y-1/2 -right-3 w-4 h-4 bg-white border-r-2 border-b-2 border-gray-200 transform rotate-[315deg]"></div>
@@ -1549,7 +1510,7 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
                   <path id="chatTextPathMenu" d="M 20,50 A 30,30 0 1,1 80,50" fill="none" />
                   <text>
                     <textPath href="#chatTextPathMenu" startOffset="50%" textAnchor="middle" className="curved-text-style">
-                      CHATEAR
+                      {lang === 'en' ? 'CHAT' : 'CHATEAR'}
                     </textPath>
                   </text>
                 </svg>
@@ -1587,8 +1548,8 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
               {chatHistory.length === 0 ? (
                 <div className="text-center text-gray-500 text-sm mt-8">
                   <p className="mb-2">👷‍♂️</p>
-                  <p>¡Hola! Soy Cobi, tu arquitecto personal.</p>
-                  <p className="text-xs mt-2">Pregúntame sobre los modos de juego o sobre español.</p>
+                  <p>{t('pb.chatWelcome')}</p>
+                  <p className="text-xs mt-2">{t('pb.chatWelcomeSubMenu')}</p>
                 </div>
               ) : (
                 chatHistory.map((msg, idx) => (
@@ -1614,7 +1575,7 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
                 <div className="flex justify-start">
                   <div className="bg-white border-2 border-amber-200 rounded-2xl px-4 py-3">
                     <p className="text-sm text-gray-600">
-                      El Panda está revisando los planos... 🐾
+                      {t('pb.chatLoading')}
                     </p>
                   </div>
                 </div>
@@ -1655,15 +1616,15 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
         <div className="bg-white rounded-3xl p-8 shadow-xl max-w-md w-full text-center">
           <div className="text-6xl mb-4">🏚️</div>
           <h2 className="text-3xl font-black text-gray-800 mb-2">
-            {selectedMode === 'timed' ? '¡Tiempo agotado!' : '¡Sin vidas!'}
+            {selectedMode === 'timed' ? t('pb.timeUp') : t('pb.noLives')}
           </h2>
-          <p className="text-gray-600 mb-6">La construcción se ha detenido</p>
+          <p className="text-gray-600 mb-6">{t('pb.constructionStopped')}</p>
           
           <div className="bg-amber-50 rounded-xl p-4 mb-6">
-            <p className="text-sm text-amber-700 font-medium">Puntuación final</p>
+            <p className="text-sm text-amber-700 font-medium">{t('pb.finalScore')}</p>
             <p className="text-4xl font-black text-amber-600">{score}</p>
             <p className="text-sm text-gray-500 mt-2">
-              Frases completadas: {currentPhraseIndex}
+              {t('pb.phrasesCompleted').replace('{n}', String(currentPhraseIndex))}
             </p>
           </div>
           
@@ -1672,13 +1633,13 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
               onClick={() => setGameState('MENU')}
               className="flex-1 py-3 bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold rounded-xl transition-colors"
             >
-              Menú
+              {t('pb.menu')}
             </button>
             <button
               onClick={startGame}
               className="flex-1 py-3 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl transition-colors"
             >
-              Reintentar
+              {t('pb.retry')}
             </button>
           </div>
         </div>
@@ -1693,12 +1654,12 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
         <div className="bg-white rounded-3xl p-8 shadow-xl max-w-md w-full text-center">
           <div className="text-6xl mb-4">🏆</div>
           <h2 className="text-3xl font-black text-amber-700 mb-2">
-            ¡Construcción Completa!
+            {t('pb.constructionComplete')}
           </h2>
-          <p className="text-gray-600 mb-6">Has completado todas las frases</p>
+          <p className="text-gray-600 mb-6">{t('pb.allPhrasesComplete')}</p>
           
           <div className="bg-amber-50 rounded-xl p-4 mb-6">
-            <p className="text-sm text-amber-700 font-medium">Puntuación final</p>
+            <p className="text-sm text-amber-700 font-medium">{t('pb.finalScore')}</p>
             <p className="text-4xl font-black text-amber-600">{score}</p>
           </div>
           
@@ -1707,13 +1668,13 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
               onClick={() => setGameState('MENU')}
               className="flex-1 py-3 bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold rounded-xl transition-colors"
             >
-              Menú
+              {t('pb.menu')}
             </button>
             <button
               onClick={startGame}
               className="flex-1 py-3 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl transition-colors"
             >
-              Jugar de nuevo
+              {t('pb.playAgain')}
             </button>
           </div>
         </div>
@@ -1730,19 +1691,19 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
       <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 p-4 flex items-center justify-center">
         <div className="bg-white rounded-3xl p-12 shadow-2xl border-4 border-amber-200 text-center max-w-md">
           <div className="text-6xl mb-4">⏸️</div>
-          <h2 className="text-3xl font-black text-gray-800 mb-2">Juego Pausado</h2>
-          <p className="text-gray-600 mb-6">Tómate un descanso</p>
+          <h2 className="text-3xl font-black text-gray-800 mb-2">{t('pb.paused')}</h2>
+          <p className="text-gray-600 mb-6">{t('pb.takeABreak')}</p>
           <button
             onClick={() => setIsPaused(false)}
             className="w-full py-4 bg-gradient-to-r from-green-500 to-green-600 text-white font-bold text-lg rounded-xl hover:from-green-600 hover:to-green-700 transition-all shadow-lg"
           >
-            ▶️ Continuar
+            {t('pb.continue')}
           </button>
           <button
             onClick={() => setGameState('MENU')}
             className="w-full mt-3 py-3 bg-gray-200 text-gray-700 font-bold rounded-xl hover:bg-gray-300 transition-all"
           >
-            Volver al Menú
+            {t('pb.backToMenu')}
           </button>
         </div>
       </div>
@@ -1774,16 +1735,16 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
             </button>
             <div className="flex gap-3 text-center items-center">
               <div>
-                <p className="text-[10px] text-gray-500 font-medium">PTS</p>
+                <p className="text-[10px] text-gray-500 font-medium">{t('pb.pts')}</p>
                 <p className="text-lg font-black text-amber-600">{score}</p>
               </div>
               <div>
-                <p className="text-[10px] text-gray-500 font-medium">RACHA</p>
+                <p className="text-[10px] text-gray-500 font-medium">{t('pb.streak')}</p>
                 <p className="text-lg font-black text-orange-500">🔥{streak}</p>
               </div>
               {selectedMode === 'timed' && (
                 <div>
-                  <p className="text-[10px] text-gray-500 font-medium">TIEMPO</p>
+                  <p className="text-[10px] text-gray-500 font-medium">{t('pb.time')}</p>
                   <p className={`text-lg font-black ${timeLeft <= 10 ? 'text-red-500 animate-pulse' : 'text-blue-600'}`}>
                     <Clock className="inline w-4 h-4 mr-0.5" />{timeLeft}s
                   </p>
@@ -1799,7 +1760,7 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
               )}
               {selectedMode === 'lives' && (
                 <div>
-                  <p className="text-[10px] text-gray-500 font-medium">VIDAS</p>
+                  <p className="text-[10px] text-gray-500 font-medium">{t('pb.livesLabel')}</p>
                   <p className="text-lg font-black text-red-500">{'❤️'.repeat(lives)}{'🖤'.repeat(3 - lives)}</p>
                 </div>
               )}
@@ -1817,7 +1778,7 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
               </button>
             </div>
             <div className="text-right">
-              <p className="text-[10px] text-gray-500 font-medium">FRASE</p>
+              <p className="text-[10px] text-gray-500 font-medium">{t('pb.phrase')}</p>
               <p className="text-sm font-bold text-gray-700">{currentPhraseIndex + 1}/{phrases.length}</p>
             </div>
           </div>
@@ -1834,16 +1795,16 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
           {/* Instructions display */}
           {showInstructions && (
             <div className="bg-purple-100 rounded-xl p-3 mb-2 border-2 border-purple-300 shadow-md">
-              <h3 className="text-purple-800 font-bold mb-1 text-center text-sm">🎯 Instrucciones</h3>
+              <h3 className="text-purple-800 font-bold mb-1 text-center text-sm">{t('pb.instructionsTitle')}</h3>
               {selectedDifficulty === 'easy' ? (
                 <div className="text-purple-800 text-xs space-y-1">
-                  <p>• <strong>Objetivo:</strong> Construye la frase usando TODAS las piezas</p>
-                  <p>• 🟢 Correcta &nbsp; 🔴 Incorrecta</p>
+                  <p>• <strong>{t('pb.instructionEasyObj')}</strong></p>
+                  <p>• {t('pb.instructionEasyCorrect')} &nbsp; {t('pb.instructionEasyIncorrect')}</p>
                 </div>
               ) : (
                 <div className="text-purple-800 text-xs space-y-1">
-                  <p>• <strong>Objetivo:</strong> Construye frases con las piezas correctas</p>
-                  <p>• 🟢 Correcta &nbsp; 🔵 Mal ubicada &nbsp; 🔴 No pertenece</p>
+                  <p>• <strong>{t('pb.instructionHardObj')}</strong></p>
+                  <p>• {lang === 'en' ? '🟢 Correct   🔵 Wrong position   🔴 Doesn\'t belong' : '🟢 Correcta   🔵 Mal ubicada   🔴 No pertenece'}</p>
                 </div>
               )}
             </div>
@@ -1853,7 +1814,7 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
           {selectedDifficulty === 'hard' && currentPhrase && (
             <div className="bg-amber-100 rounded-xl p-2 mb-2 border-2 border-amber-300">
               <p className="text-xs text-amber-800 text-center font-bold">
-                🎯 Usa {currentPhrase.frase_objetivo.match(/[\w\u00C0-\u024F]+|[!?¡¿]/g)?.length || 0} piezas
+                {t('pb.usePieces').replace('{n}', String(currentPhrase.frase_objetivo.match(/[\w\u00C0-\u024F]+|[!?¡¿]/g)?.length || 0))}
               </p>
             </div>
           )}
@@ -1868,11 +1829,11 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
           >
             <div className="flex items-center gap-1.5 mb-2">
               <Hammer size={16} className="text-amber-600" />
-              <span className="text-xs font-bold text-amber-700">ZONA DE CONSTRUCCIÓN</span>
+              <span className="text-xs font-bold text-amber-700">{t('pb.constructionZone')}</span>
             </div>
             <div className="flex flex-wrap gap-1.5 min-h-[40px]">
               {selectedWords.length === 0 && dropTargetIndex < 0 ? (
-                <p className="text-gray-400 italic text-xs">{dragSource === 'available' ? '¡Suelta aquí!' : 'Arrastra o toca las palabras...'}</p>
+                <p className="text-gray-400 italic text-xs">{dragSource === 'available' ? t('pb.dropHere') : t('pb.dragHint')}</p>
               ) : (
                 <>
                   {selectedWords.map((word, index) => {
@@ -1931,7 +1892,7 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
                 className="mt-2 px-3 py-1.5 bg-blue-500 hover:bg-blue-600 text-white font-bold rounded-lg transition-colors flex items-center gap-1.5 text-xs"
               >
                 <Lightbulb size={14} />
-                Ver posiciones
+                {t('pb.showPositions')}
               </button>
             )}
           </div>
@@ -1940,7 +1901,7 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
           <div className="bg-white/90 backdrop-blur rounded-xl p-3 shadow-lg mb-2 border-2 border-amber-200" style={{ width: '100%', boxSizing: 'border-box' }}>
             <div className="flex items-center gap-1.5 mb-2">
               <span className="text-base">🧱</span>
-              <span className="text-xs font-bold text-gray-600">MATERIALES DISPONIBLES</span>
+              <span className="text-xs font-bold text-gray-600">{lang === 'en' ? 'AVAILABLE MATERIALS' : 'MATERIALES DISPONIBLES'}</span>
             </div>
             <div className="flex flex-wrap gap-1.5">
               {availableWords.map((word, index) => (
@@ -1973,7 +1934,7 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
               className="flex-1 py-2.5 bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold rounded-xl transition-colors flex items-center justify-center gap-1 text-sm"
             >
               <RotateCcw size={16} />
-              Reiniciar
+              {t('pb.reset')}
             </button>
             <button
               onClick={checkAnswer}
@@ -1981,7 +1942,7 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
               className="flex-[2] py-2.5 px-4 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white font-bold rounded-xl shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-1 text-sm"
             >
               <Check size={16} />
-              Comprobar
+              {t('pb.check')}
             </button>
           </div>
         </div>
@@ -2025,8 +1986,8 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
                   {chatHistory.length === 0 ? (
                     <div className="text-center text-gray-500 text-sm mt-8">
                       <p className="mb-2">👷‍♂️</p>
-                      <p>¡Hola! Soy Cobi, tu arquitecto personal.</p>
-                      <p className="text-xs mt-2">Pregúntame lo que necesites sobre esta frase.</p>
+                      <p>{t('pb.chatWelcome')}</p>
+                      <p className="text-xs mt-2">{t('pb.chatWelcomeSubPlaying')}</p>
                     </div>
                   ) : (
                     chatHistory.map((msg, idx) => (
@@ -2040,7 +2001,7 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
                   {isLoadingResponse && (
                     <div className="flex justify-start">
                       <div className="bg-white border-2 border-amber-200 rounded-2xl px-4 py-3">
-                        <p className="text-sm text-gray-600">El Panda está revisando los planos... 🐾</p>
+                        <p className="text-sm text-gray-600">{t('pb.chatLoading')}</p>
                       </div>
                     </div>
                   )}
@@ -2116,16 +2077,16 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
           
           <div className="flex gap-6 text-center">
             <div>
-              <p className="text-xs text-gray-500 font-medium">PUNTOS</p>
+              <p className="text-xs text-gray-500 font-medium">{t('pb.pointsLabel')}</p>
               <p className="text-2xl font-black text-amber-600">{score}</p>
             </div>
             <div>
-              <p className="text-xs text-gray-500 font-medium">RACHA</p>
+              <p className="text-xs text-gray-500 font-medium">{t('pb.streak')}</p>
               <p className="text-2xl font-black text-orange-500">🔥 {streak}</p>
             </div>
             {selectedMode === 'timed' && (
               <div>
-                <p className="text-xs text-gray-500 font-medium">TIEMPO</p>
+                <p className="text-xs text-gray-500 font-medium">{t('pb.time')}</p>
                 <p className={`text-2xl font-black ${timeLeft <= 10 ? 'text-red-500 animate-pulse' : 'text-blue-600'}`}>
                   <Clock className="inline w-5 h-5 mr-1" />
                   {timeLeft}s
@@ -2139,7 +2100,7 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
                   className={`p-2 rounded-full transition-colors ${
                     isPaused ? 'bg-green-100 text-green-600' : 'bg-yellow-100 text-yellow-600 hover:bg-yellow-200'
                   }`}
-                  title={isPaused ? 'Reanudar' : 'Pausar'}
+                  title={isPaused ? t('pb.continue') : t('pb.paused')}
                 >
                   {isPaused ? '▶️' : '⏸️'}
                 </button>
@@ -2147,7 +2108,7 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
             )}
             {selectedMode === 'lives' && (
               <div>
-                <p className="text-xs text-gray-500 font-medium">VIDAS</p>
+                <p className="text-xs text-gray-500 font-medium">{t('pb.livesLabel')}</p>
                 <p className="text-2xl font-black text-red-500">
                   {'❤️'.repeat(lives)}{'🖤'.repeat(3 - lives)}
                 </p>
@@ -2159,7 +2120,7 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
                 className={`p-2 rounded-full transition-colors ${
                   showHint ? 'bg-amber-100 text-amber-600' : 'hover:bg-gray-100 text-gray-400'
                 }`}
-                title="Mostrar pista"
+                title={lang === 'en' ? 'Show hint' : 'Mostrar pista'}
               >
                 <Lightbulb size={24} />
               </button>
@@ -2170,7 +2131,7 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
                 className={`p-2 rounded-full transition-colors ${
                   showInstructions ? 'bg-purple-100 text-purple-600' : 'hover:bg-gray-100 text-gray-400'
                 }`}
-                title="Ver instrucciones"
+                title={lang === 'en' ? 'View instructions' : 'Ver instrucciones'}
               >
                 <span className="text-xl font-bold">?</span>
               </button>
@@ -2178,7 +2139,7 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
           </div>
           
           <div className="text-right">
-            <p className="text-xs text-gray-500 font-medium">FRASE</p>
+            <p className="text-xs text-gray-500 font-medium">{t('pb.phrase')}</p>
             <p className="text-lg font-bold text-gray-700">{currentPhraseIndex + 1}/{phrases.length}</p>
           </div>
         </div>
@@ -2195,22 +2156,20 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
         {/* Instructions display */}
         {showInstructions && (
           <div className="bg-purple-100 rounded-xl p-4 mb-4 border-2 border-purple-300 shadow-md">
-            <h3 className="text-purple-800 font-bold mb-2 text-center">🎯 Instrucciones</h3>
+            <h3 className="text-purple-800 font-bold mb-2 text-center">{t('pb.instructionsTitle')}</h3>
             {selectedDifficulty === 'easy' ? (
               <div className="text-purple-800 text-sm space-y-2">
-                <p>• <strong>Objetivo:</strong> Construye la frase usando TODAS las piezas disponibles</p>
-                <p>• <strong>Ayuda visual:</strong> Si te equivocas, pulsa "Ver posiciones" para ver:</p>
-                <p className="ml-4">🟢 <strong>Verde:</strong> La pieza está en la posición correcta</p>
-                <p className="ml-4">🔴 <strong>Rojo:</strong> La pieza NO está en la posición correcta</p>
+                <p>• <strong>{t('pb.instructionEasyObj')}</strong></p>
+                <p className="ml-4">{t('pb.instructionEasyCorrect')}</p>
+                <p className="ml-4">{t('pb.instructionEasyIncorrect')}</p>
               </div>
             ) : (
               <div className="text-purple-800 text-sm space-y-2">
-                <p>• <strong>Objetivo:</strong> Construye frases válidas usando las piezas correctas</p>
-                <p>• <strong>Palabras trampa:</strong> Algunas piezas NO forman parte de la frase</p>
-                <p>• <strong>Ayuda visual:</strong> Si te equivocas, pulsa "Ver posiciones" para ver:</p>
-                <p className="ml-4">🟢 <strong>Verde:</strong> La pieza está en la posición correcta</p>
-                <p className="ml-4">🔵 <strong>Azul:</strong> La pieza es correcta pero está mal ubicada</p>
-                <p className="ml-4">🔴 <strong>Rojo:</strong> La pieza NO forma parte de la frase</p>
+                <p>• <strong>{t('pb.instructionHardObj')}</strong></p>
+                <p>• {t('pb.instructionHardIncorrect')}</p>
+                <p className="ml-4">{t('pb.instructionHardCorrect')}</p>
+                <p className="ml-4">{t('pb.instructionHardWrongPos')}</p>
+                <p className="ml-4">{t('pb.instructionHardIncorrect')}</p>
               </div>
             )}
           </div>
@@ -2220,7 +2179,7 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
         {selectedDifficulty === 'hard' && currentPhrase && (
           <div className="bg-amber-100 rounded-xl p-3 mb-4 border-2 border-amber-300">
             <p className="text-sm text-amber-800 text-center font-bold">
-              🎯 Usa {currentPhrase.frase_objetivo.match(/[\w\u00C0-\u024F]+|[!?¡¿]/g)?.length || 0} piezas
+              {t('pb.usePieces').replace('{n}', String(currentPhrase.frase_objetivo.match(/[\w\u00C0-\u024F]+|[!?¡¿]/g)?.length || 0))}
             </p>
           </div>
         )}
@@ -2236,12 +2195,12 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
         >
           <div className="flex items-center gap-2 mb-3">
             <Hammer size={20} className="text-amber-600" />
-            <span className="text-sm font-bold text-amber-700">ZONA DE CONSTRUCCIÓN</span>
+            <span className="text-sm font-bold text-amber-700">{t('pb.constructionZone')}</span>
           </div>
           
           <div className="flex flex-wrap gap-2 min-h-[50px]">
             {selectedWords.length === 0 && dropTargetIndex < 0 ? (
-              <p className="text-gray-400 italic">{dragSource === 'available' ? '¡Suelta aquí!' : 'Arrastra o haz clic en las palabras para construir la frase...'}</p>
+              <p className="text-gray-400 italic">{dragSource === 'available' ? t('pb.dropHere') : t('pb.dragHintDesktop')}</p>
             ) : (
               <>
                 {selectedWords.map((word, index) => {
@@ -2311,7 +2270,7 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
               className="mt-3 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white font-bold rounded-lg transition-colors flex items-center gap-2"
             >
               <Lightbulb size={18} />
-              Ver posiciones
+              {t('pb.showPositions')}
             </button>
           )}
         </div>
@@ -2320,7 +2279,7 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
         <div className="bg-white/90 backdrop-blur rounded-2xl p-6 shadow-lg mb-4 border-2 border-amber-200">
           <div className="flex items-center gap-2 mb-3">
             <span className="text-xl">🧱</span>
-            <span className="text-sm font-bold text-gray-600">MATERIALES DISPONIBLES</span>
+            <span className="text-sm font-bold text-gray-600">{lang === 'en' ? 'AVAILABLE MATERIALS' : 'MATERIALES DISPONIBLES'}</span>
           </div>
           
           <div className="flex flex-wrap gap-2.5">
@@ -2355,7 +2314,7 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
             className="flex-1 py-4 bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold rounded-xl transition-colors flex items-center justify-center gap-2"
           >
             <RotateCcw size={20} />
-            Reiniciar
+            {t('pb.reset')}
           </button>
           <button
             onClick={checkAnswer}
@@ -2363,7 +2322,7 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
             className="flex-2 py-4 px-8 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white font-bold rounded-xl shadow-lg transition-all transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
             <Check size={20} />
-            Comprobar Frase
+            {t('pb.checkPhrase')}
           </button>
         </div>
       </div>
@@ -2432,7 +2391,7 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
                     <path id="chatTextPath" d="M 20,50 A 30,30 0 1,1 80,50" fill="none" />
                     <text>
                       <textPath href="#chatTextPath" startOffset="50%" textAnchor="middle" className="curved-text-style">
-                        CHATEAR
+                        {lang === 'en' ? 'CHAT' : 'CHATEAR'}
                       </textPath>
                     </text>
                   </svg>
@@ -2470,8 +2429,8 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
                 {chatHistory.length === 0 ? (
                   <div className="text-center text-gray-500 text-sm mt-8">
                     <p className="mb-2">👷‍♂️</p>
-                    <p>¡Hola! Soy Cobi, tu arquitecto personal.</p>
-                    <p className="text-xs mt-2">Pregúntame lo que necesites sobre esta frase.</p>
+                    <p>{t('pb.chatWelcome')}</p>
+                    <p className="text-xs mt-2">{t('pb.chatWelcomeSubPlaying')}</p>
                   </div>
                 ) : (
                   chatHistory.map((msg, idx) => (
@@ -2497,7 +2456,7 @@ const PhraseBuilderGame: React.FC<PhraseBuilderGameProps> = ({ onBack, cobiVisib
                   <div className="flex justify-start">
                     <div className="bg-white border-2 border-amber-200 rounded-2xl px-4 py-3">
                       <p className="text-sm text-gray-600">
-                        El Panda está revisando los planos... 🐾
+                        {t('pb.chatLoading')}
                       </p>
                     </div>
                   </div>

@@ -529,7 +529,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
           setKillCount(0); // Reset kill counter for new wave
           nextSpawnTimeRef.current = performance.now() + 1000; // Reset spawn timing for new wave
           
-          setFeedbackMsg({ text: `¡Oleada ${bossCurrentWave + 2} iniciada! 💪`, type: 'success' });
+          setFeedbackMsg({ text: t('pov.waveStarted').replace('{n}', String(bossCurrentWave + 2)), type: 'success' });
           playNewWave(); // Fanfare for new wave
           setTimeout(() => setFeedbackMsg({ text: '', type: '' }), 3000);
         } else {
@@ -556,7 +556,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
             };
             
             playBossSpawn(); // Epic dragon roar sound
-            setFeedbackMsg({ text: '¡El dragón ha aparecido! 🐉', type: 'error' });
+            setFeedbackMsg({ text: t('pov.bossAppeared'), type: 'error' });
             setTimeout(() => setFeedbackMsg({ text: '', type: '' }), 3000);
           }
           
@@ -741,7 +741,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
       console.error('Error al comunicarse con Cobi Mago:', error);
       setChatHistory(prev => [
         ...prev,
-        { role: 'cobi', text: '¡Ups! Mi varita mágica tuvo un problema. 🪄✨ Inténtalo de nuevo.' }
+        { role: 'cobi', text: t('pov.chatError') }
       ]);
     } finally {
       setIsLoadingResponse(false);
@@ -1224,14 +1224,14 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
     
     // Wait for images to be loaded before starting
     if (!imagesReady) {
-      setFeedbackMsg({ text: 'Cargando imágenes...', type: '' });
+      setFeedbackMsg({ text: t('pov.loadingImages'), type: '' });
       return;
     }
     
     // Use SRS-based pool for intelligent conjugation selection
     const pool = await getFilteredVerbsSRS(selectedGrammar, selectedTense, selectedVerbType);
     if (pool.length === 0) {
-      setFeedbackMsg({ text: 'No hay verbos disponibles para esta configuración.', type: 'error' });
+      setFeedbackMsg({ text: t('pov.noVerbsAvailable'), type: 'error' });
       return;
     }
 
@@ -2343,7 +2343,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
         setAttackPower(prev => prev + 1);
         playPowerUp(); // Crystal chime for power increase
         setCobiMagoMessage(magoMsg('acierto'));
-        setFeedbackMsg({ text: `¡Correcto! Daño: ${newDamage} (Racha: ${newStreak})`, type: 'success' });
+        setFeedbackMsg({ text: t('pov.correctDamage').replace('{damage}', String(newDamage)).replace('{streak}', String(newStreak)), type: 'success' });
         setUserInput('');
         setTimeout(() => pickNewVerb(verbsPool), 600);
       } else {
@@ -2362,9 +2362,9 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
         setCobiMagoMessage(magoMsg('fallo'));
         
         if (newFailureCount >= 3) {
-          setFeedbackMsg({ text: `Incorrecto. La respuesta es: ${validAnswers[0]}`, type: 'error' });
+          setFeedbackMsg({ text: t('pov.incorrectReveal').replace('{answer}', validAnswers[0]), type: 'error' });
         } else {
-          setFeedbackMsg({ text: `Incorrecto. Intenta de nuevo (${newFailureCount}/3)`, type: 'error' });
+          setFeedbackMsg({ text: t('pov.incorrectRetry').replace('{count}', String(newFailureCount)), type: 'error' });
         }
       }
     } else {
@@ -2376,7 +2376,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
         setAttackPower(prev => prev + 1); // No limit
         playPowerUp(); // Crystal chime for power increase
         setCobiMagoMessage(magoMsg('acierto'));
-        setFeedbackMsg({ text: '¡Correcto! +Poder', type: 'success' });
+        setFeedbackMsg({ text: t('pov.correctPower'), type: 'success' });
         setUserInput('');
         setTimeout(() => pickNewVerb(verbsPool), 600);
       } else {
@@ -2392,9 +2392,9 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
         setCobiMagoMessage(magoMsg('fallo'));
         
         if (newFailureCount >= 3) {
-          setFeedbackMsg({ text: `Incorrecto. La respuesta es: ${validAnswers[0]}`, type: 'error' });
+          setFeedbackMsg({ text: t('pov.incorrectReveal').replace('{answer}', validAnswers[0]), type: 'error' });
         } else {
-          setFeedbackMsg({ text: `Incorrecto. Intenta de nuevo (${newFailureCount}/3)`, type: 'error' });
+          setFeedbackMsg({ text: t('pov.incorrectRetry').replace('{count}', String(newFailureCount)), type: 'error' });
         }
       }
     }
@@ -2648,8 +2648,8 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
                 {chatHistory.length === 0 ? (
                   <div className="text-center text-gray-500 text-sm mt-8">
                     <p className="mb-2">🪄</p>
-                    <p>¡Bienvenido a mi estudio mágico! Soy Cobi Mago.</p>
-                    <p className="text-xs mt-2">Pregúntame sobre gramática o el juego. ✨</p>
+                    <p>{t('pov.chatWelcome')}</p>
+                    <p className="text-xs mt-2">{t('pov.chatWelcomeSub')}</p>
                   </div>
                 ) : (
                   chatHistory.map((msg, idx) => (
@@ -2663,7 +2663,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
                 {isLoadingResponse && (
                   <div className="flex justify-start">
                     <div className="bg-white border-2 border-purple-200 rounded-2xl px-4 py-3">
-                      <p className="text-sm text-gray-600">El Mago consulta su grimorio... 📖✨</p>
+                      <p className="text-sm text-gray-600">{t('pov.chatLoading')}</p>
                     </div>
                   </div>
                 )}
@@ -2707,7 +2707,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
               {t('gameMenu.backToGames')}
             </button>
             <h1 className="text-3xl font-black text-deep-blue">
-              🪄 El Poder de los Verbos
+              🪄 {t('pov.title')}
             </h1>
           </div>
 
@@ -2962,8 +2962,8 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
                 {chatHistory.length === 0 ? (
                   <div className="text-center text-gray-500 text-sm mt-8">
                     <p className="mb-2">🪄</p>
-                    <p>¡Bienvenido a mi estudio mágico! Soy Cobi Mago.</p>
-                    <p className="text-xs mt-2">Pregúntame sobre gramática o el juego. ✨</p>
+                    <p>{t('pov.chatWelcome')}</p>
+                    <p className="text-xs mt-2">{t('pov.chatWelcomeSub')}</p>
                   </div>
                 ) : (
                   chatHistory.map((msg, idx) => (
@@ -2977,7 +2977,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
                 {isLoadingResponse && (
                   <div className="flex justify-start">
                     <div className="bg-white border-2 border-purple-200 rounded-2xl px-4 py-3">
-                      <p className="text-sm text-gray-600">El Mago consulta su grimorio... 📖✨</p>
+                      <p className="text-sm text-gray-600">{t('pov.chatLoading')}</p>
                     </div>
                   </div>
                 )}
@@ -3021,15 +3021,15 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
               <ChevronLeft size={isMobile && isLandscape ? 20 : 32} />
             </button>
             <div className="text-center flex-1">
-              <p className={`text-gray-500 ${isMobile && isLandscape ? 'text-[10px] leading-tight' : 'text-sm'}`}>Puntos</p>
+              <p className={`text-gray-500 ${isMobile && isLandscape ? 'text-[10px] leading-tight' : 'text-sm'}`}>{t('pov.points')}</p>
               <p className={`font-black ${isMobile && isLandscape ? 'text-lg' : 'text-4xl'}`}>{score}</p>
             </div>
             <div className="text-center flex-1">
-              <p className={`text-gray-500 ${isMobile && isLandscape ? 'text-[10px] leading-tight' : 'text-sm'}`}>Poder</p>
+              <p className={`text-gray-500 ${isMobile && isLandscape ? 'text-[10px] leading-tight' : 'text-sm'}`}>{t('pov.power')}</p>
               <p className={`font-black ${isMobile && isLandscape ? 'text-lg' : 'text-4xl'}`}>{attackPower}x</p>
             </div>
             <div className="text-center flex-1">
-              <p className={`text-gray-500 ${isMobile && isLandscape ? 'text-[10px] leading-tight' : 'text-sm'}`}>Vidas</p>
+              <p className={`text-gray-500 ${isMobile && isLandscape ? 'text-[10px] leading-tight' : 'text-sm'}`}>{t('pov.lives')}</p>
               <p className={`font-black text-red-600 ${isMobile && isLandscape ? 'text-lg' : 'text-4xl'}`}>{lives}</p>
             </div>
             <button onClick={() => setGameState('PAUSED')} className="p-1 md:p-2 hover:bg-black/10 rounded-full">
@@ -3202,7 +3202,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
                   />
                 </div>
               ) : (
-                <p className="text-center text-white">Cargando...</p>
+                <p className="text-center text-white">{t('pov.loading')}</p>
               )}
             </div>
           ) : (
@@ -3275,7 +3275,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
                           setTimeout(() => input.setSelectionRange(start + 1, start + 1), 0);
                         }
                       }}
-                      placeholder="Escribe tu respuesta..."
+                      placeholder={t('pov.writePlaceholder')}
                       className={`px-4 border-2 rounded-lg focus:outline-none transition-colors ${
                         inputFeedback === 'success' ? 'border-green-500 text-green-600 font-bold' :
                         inputFeedback === 'error' ? 'border-red-500 text-red-600 font-bold' :
@@ -3287,7 +3287,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
                       onClick={() => handleAnswer(userInput)}
                       className={`bg-deep-blue hover:bg-blue-900 text-white font-bold rounded-lg transition-colors ${isMobile ? 'w-full py-3' : 'px-6 py-2 text-base'}`}
                     >
-                      Verificar Respuesta
+                      {t('pov.verifyAnswer')}
                     </button>
                   </div>
                 ) : (
@@ -3315,12 +3315,12 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
                 )}
                 {!isMobile && selectedMode === 'write' && (
                   <p className="mt-1 text-[10px] text-gray-400 text-center leading-tight">
-                    {accentSensitive ? 'Usa las teclas 1-5 para vocales con tilde (á é í ó ú)' : '😌 Tildes relajadas activadas — las tildes no afectan tu respuesta'}
+                    {accentSensitive ? t('pov.tildeHint') : t('pov.tildeRelaxed')}
                   </p>
                 )}
               </div>
             ) : (
-              <p className="text-center text-gray-500">Cargando...</p>
+              <p className="text-center text-gray-500">{t('pov.loading')}</p>
             )}
           </div>
           )}
@@ -3331,31 +3331,31 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
             <div className="bg-white rounded-2xl p-8 max-w-md shadow-2xl">
               <div className="flex justify-between items-center mb-4">
-                <h2 className="text-2xl font-bold text-deep-blue">Instrucciones</h2>
+                <h2 className="text-2xl font-bold text-deep-blue">{t('pov.instructionsTitle')}</h2>
                 <button onClick={() => setInstructionsOpen(false)} className="p-1 hover:bg-gray-100 rounded">
                   <X size={24} />
                 </button>
               </div>
               <div className="space-y-3 text-gray-700">
-                <p>🧙‍♂️ <strong>Eres un mago:</strong> Responde preguntas para ganar poder</p>
-                <p>👾 <strong>Monstruos atacan:</strong> Usa tu poder para defenderlos</p>
-                <p>🏰 <strong>Protege el castillo:</strong> Si pierdes vidas, pierdes el juego</p>
-                <p>⚡ <strong>Ataca automáticamente:</strong> Cada segundo dispara proyectiles</p>
+                <p>{t('pov.instruction1')}</p>
+                <p>{t('pov.instruction2')}</p>
+                <p>{t('pov.instruction3')}</p>
+                <p>{t('pov.instruction4')}</p>
                 {selectedBattleMode === 'contrarreloj' && selectedDifficulty && (
-                  <p>🎯 <strong>Modo Contrarreloj:</strong> ¡Debes conseguir {DIFFICULTY_SETTINGS[selectedDifficulty].targetScore} puntos para completar el juego! Cada acierto hace ⚔️ daño al enemigo. ¡Las rachas aumentan tu poder!</p>
+                  <p>{t('pov.instruction5')}</p>
                 )}
                 {selectedBattleMode === 'jefe' && (
-                  <p>🐉 <strong>Modo Jefe:</strong> Derrota al dragón gigante que aparece después de un tiempo</p>
+                  <p>{t('pov.instruction6')}</p>
                 )}
                 {selectedMode === 'write' && (
-                  <p>📝 <strong>Modo Escritura:</strong> Usa las teclas 1-5 para vocales con tilde (1=á, 2=é, 3=í, 4=ó, 5=ú)</p>
+                  <p>{t('pov.instruction7')}</p>
                 )}
               </div>
               <button
                 onClick={() => setInstructionsOpen(false)}
                 className="w-full mt-6 bg-deep-blue text-white font-bold py-3 rounded-lg"
               >
-                Entendido
+                {t('pov.understood')}
               </button>
             </div>
           </div>
@@ -3433,8 +3433,8 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
               {chatHistory.length === 0 ? (
                 <div className="text-center text-gray-500 text-sm mt-8">
                   <p className="mb-2">🪄</p>
-                  <p>¡Bienvenido a mi estudio mágico! Soy Cobi Mago.</p>
-                  <p className="text-xs mt-2">Pregúntame sobre gramática o el juego. ✨</p>
+                  <p>{t('pov.chatWelcome')}</p>
+                  <p className="text-xs mt-2">{t('pov.chatWelcomeSub')}</p>
                 </div>
               ) : (
                 chatHistory.map((msg, idx) => (
@@ -3460,7 +3460,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
                 <div className="flex justify-start">
                   <div className="bg-white border-2 border-purple-200 rounded-2xl px-4 py-3">
                     <p className="text-sm text-gray-600">
-                      El Mago consulta su grimorio... 📖✨
+                      {t('pov.chatLoading')}
                     </p>
                   </div>
                 </div>
@@ -3500,8 +3500,8 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 p-4 flex items-center justify-center">
         <div className="bg-white rounded-3xl p-8 max-w-md text-center shadow-2xl">
           <p className="text-7xl mb-4">⏸️</p>
-          <h1 className="text-4xl font-black text-deep-blue mb-2">Juego Pausado</h1>
-          <p className="text-lg text-gray-600 mb-6">Puntuación actual: {score}</p>
+          <h1 className="text-4xl font-black text-deep-blue mb-2">{t('pov.paused')}</h1>
+          <p className="text-lg text-gray-600 mb-6">{t('pov.currentScore').replace('{score}', String(score))}</p>
           <div className="space-y-3">
             <button
               onClick={() => {
@@ -3514,7 +3514,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
               className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 rounded-lg flex items-center justify-center gap-2"
             >
               <Play size={24} />
-              Continuar
+              {t('pov.continue')}
             </button>
             <button
               onClick={() => {
@@ -3525,7 +3525,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
               }}
               className="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-3 rounded-lg"
             >
-              Salir al Menú
+              {t('pov.exitToMenu')}
             </button>
           </div>
         </div>
@@ -3602,8 +3602,8 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
               {chatHistory.length === 0 ? (
                 <div className="text-center text-gray-500 text-sm mt-8">
                   <p className="mb-2">🪄</p>
-                  <p>¡Bienvenido a mi estudio mágico! Soy Cobi Mago.</p>
-                  <p className="text-xs mt-2">Pregúntame sobre gramática o el juego. ✨</p>
+                  <p>{t('pov.chatWelcome')}</p>
+                  <p className="text-xs mt-2">{t('pov.chatWelcomeSub')}</p>
                 </div>
               ) : (
                 chatHistory.map((msg, idx) => (
@@ -3629,7 +3629,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
                 <div className="flex justify-start">
                   <div className="bg-white border-2 border-purple-200 rounded-2xl px-4 py-3">
                     <p className="text-sm text-gray-600">
-                      El Mago consulta su grimorio... 📖✨
+                      {t('pov.chatLoading')}
                     </p>
                   </div>
                 </div>
@@ -3669,8 +3669,8 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 p-4 flex items-center justify-center">
         <div className="bg-white rounded-3xl p-8 max-w-md text-center shadow-2xl">
           <p className="text-7xl mb-4">💀</p>
-          <h1 className="text-4xl font-black text-deep-blue mb-2">¡Juego Terminado!</h1>
-          <p className="text-3xl font-bold text-spanish-red mb-6">Puntuación: {score}</p>
+          <h1 className="text-4xl font-black text-deep-blue mb-2">{t('pov.gameOver')}</h1>
+          <p className="text-3xl font-bold text-spanish-red mb-6">{t('pov.finalScore').replace('{score}', String(score))}</p>
           <button
             onClick={() => {
               setGameState('SELECTION');
@@ -3680,7 +3680,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
             }}
             className="w-full bg-deep-blue hover:bg-blue-900 text-white font-bold py-3 rounded-lg"
           >
-            Intentar de Nuevo
+            {t('pov.tryAgain')}
           </button>
         </div>
 
@@ -3756,8 +3756,8 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
               {chatHistory.length === 0 ? (
                 <div className="text-center text-gray-500 text-sm mt-8">
                   <p className="mb-2">🪄</p>
-                  <p>¡Bienvenido a mi estudio mágico! Soy Cobi Mago.</p>
-                  <p className="text-xs mt-2">Pregúntame sobre gramática o el juego. ✨</p>
+                  <p>{t('pov.chatWelcome')}</p>
+                  <p className="text-xs mt-2">{t('pov.chatWelcomeSub')}</p>
                 </div>
               ) : (
                 chatHistory.map((msg, idx) => (
@@ -3783,7 +3783,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
                 <div className="flex justify-start">
                   <div className="bg-white border-2 border-purple-200 rounded-2xl px-4 py-3">
                     <p className="text-sm text-gray-600">
-                      El Mago consulta su grimorio... 📖✨
+                      {t('pov.chatLoading')}
                     </p>
                   </div>
                 </div>
@@ -3823,8 +3823,8 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 p-4 flex items-center justify-center">
         <div className="bg-white rounded-3xl p-8 max-w-md text-center shadow-2xl">
           <p className="text-7xl mb-4">🎉</p>
-          <h1 className="text-4xl font-black text-green-600 mb-2">¡Ganaste!</h1>
-          <p className="text-3xl font-bold text-deep-blue mb-6">Puntuación: {score}</p>
+          <h1 className="text-4xl font-black text-green-600 mb-2">{t('pov.youWon')}</h1>
+          <p className="text-3xl font-bold text-deep-blue mb-6">{t('pov.victoryScore').replace('{score}', String(score))}</p>
           <button
             onClick={() => {
               setGameState('SELECTION');
@@ -3834,7 +3834,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
             }}
             className="w-full bg-deep-blue hover:bg-blue-900 text-white font-bold py-3 rounded-lg"
           >
-            Jugar de Nuevo
+            {t('pov.playAgain')}
           </button>
         </div>
 
@@ -3910,8 +3910,8 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
               {chatHistory.length === 0 ? (
                 <div className="text-center text-gray-500 text-sm mt-8">
                   <p className="mb-2">🪄</p>
-                  <p>¡Bienvenido a mi estudio mágico! Soy Cobi Mago.</p>
-                  <p className="text-xs mt-2">Pregúntame sobre gramática o el juego. ✨</p>
+                  <p>{t('pov.chatWelcome')}</p>
+                  <p className="text-xs mt-2">{t('pov.chatWelcomeSub')}</p>
                 </div>
               ) : (
                 chatHistory.map((msg, idx) => (
@@ -3937,7 +3937,7 @@ const PowerOfVerbsGame: React.FC<PowerOfVerbsGameProps> = ({ onBack, cobiVisible
                 <div className="flex justify-start">
                   <div className="bg-white border-2 border-purple-200 rounded-2xl px-4 py-3">
                     <p className="text-sm text-gray-600">
-                      El Mago consulta su grimorio... 📖✨
+                      {t('pov.chatLoading')}
                     </p>
                   </div>
                 </div>

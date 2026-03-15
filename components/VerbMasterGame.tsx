@@ -308,7 +308,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
       console.error('Error al comunicarse con Cobi Sensei:', error);
       setChatHistory(prev => [
         ...prev,
-        { role: 'cobi', text: '🥋 ¡Ups! Mi mente se distrajo un momento. ¿Puedes repetir eso, joven aprendiz? 🐾' }
+        { role: 'cobi', text: t('vm.chatError') }
       ]);
     } finally {
       setIsLoadingResponse(false);
@@ -529,7 +529,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
     // Use SRS-based pool for intelligent conjugation selection
     const verbs = await getFilteredVerbsSRS(selectedLevel, selectedVerbType, selectedTense, selectedVerbMode);
     if (verbs.length === 0) {
-      alert('No hay verbos disponibles para esta configuración');
+      alert(t('vm.noVerbsAvailable'));
       return;
     }
     
@@ -1276,7 +1276,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
         const points = calculateScore(gameLevel, streak);
         setScore(prev => prev + points);
         setStreak(prev => prev + 1);
-        setFeedback({ text: `¡Correcto! +${points}`, type: 'success' });
+        setFeedback({ text: t('vm.correctPoints').replace('{points}', String(points)), type: 'success' });
         setTimeout(() => setFeedback(null), 1000);
         setInputFeedback('success');
         setTimeout(() => setInputFeedback('idle'), 1000);
@@ -1285,7 +1285,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
     
     if (!matched) {
       setStreak(0);
-      setFeedback({ text: 'Intenta con otra burbuja', type: 'error' });
+      setFeedback({ text: t('vm.tryAnotherBubble'), type: 'error' });
       setTimeout(() => setFeedback(null), 1000);
       setInputFeedback('error');
       setTimeout(() => setInputFeedback('idle'), 1000);
@@ -1459,7 +1459,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
               <button onClick={onBack} className="p-1.5 hover:bg-gray-100 rounded-full transition-colors text-gray-500">
                 <ChevronLeft size={20} />
               </button>
-              <h1 className="text-lg font-black text-red-800 flex-1 text-center">🫧 Maestro de Verbos</h1>
+              <h1 className="text-lg font-black text-red-800 flex-1 text-center">🫧 {t('vm.title')}</h1>
               <div className="w-8"></div>
             </div>
 
@@ -1526,8 +1526,8 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
                 {chatHistory.length === 0 ? (
                   <div className="text-center text-gray-500 text-sm mt-8">
                     <p className="mb-2">🥋</p>
-                    <p>¡Bienvenido al dojo! Soy tu Maestro Cobi.</p>
-                    <p className="text-xs mt-2">Pregúntame sobre conjugaciones.</p>
+                    <p>{t('vm.chatWelcomeMenu')}</p>
+                    <p className="text-xs mt-2">{t('vm.chatWelcomeMenuSub')}</p>
                   </div>
                 ) : (
                   chatHistory.map((msg, idx) => (
@@ -1543,7 +1543,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
                 {isLoadingResponse && (
                   <div className="flex justify-start">
                     <div className="bg-white border-2 border-red-200 rounded-2xl px-4 py-3">
-                      <p className="text-sm text-gray-600">El Sensei medita tu pregunta... 🎋</p>
+                      <p className="text-sm text-gray-600">{t('vm.chatLoading')}</p>
                     </div>
                   </div>
                 )}
@@ -1587,7 +1587,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
               {t('gameMenu.backToGames')}
             </button>
             <h1 className="text-2xl font-black text-red-800">
-              🫧 Maestro de Verbos
+              🫧 {t('vm.title')}
             </h1>
           </div>
 
@@ -1861,8 +1861,8 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
               {chatHistory.length === 0 ? (
                 <div className="text-center text-gray-500 text-sm mt-8">
                   <p className="mb-2">🥋</p>
-                  <p>¡Bienvenido al dojo! Soy tu Maestro Cobi.</p>
-                  <p className="text-xs mt-2">Pregúntame sobre los niveles o sobre conjugaciones.</p>
+                  <p>{t('vm.chatWelcomeMenu')}</p>
+                  <p className="text-xs mt-2">{t('vm.chatWelcomeMenuSubDesktop')}</p>
                 </div>
               ) : (
                 chatHistory.map((msg, idx) => (
@@ -1888,7 +1888,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
                 <div className="flex justify-start">
                   <div className="bg-white border-2 border-red-200 rounded-2xl px-4 py-3">
                     <p className="text-sm text-gray-600">
-                      El Sensei medita tu pregunta... 🎋
+                      {t('vm.chatLoading')}
                     </p>
                   </div>
                 </div>
@@ -1938,19 +1938,19 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
             </button>
             <div className="flex gap-5 text-center">
               <div>
-                <p className="text-[10px] text-gray-500 font-medium leading-tight">PUNTOS</p>
+                <p className="text-[10px] text-gray-500 font-medium leading-tight">{t('vm.points')}</p>
                 <p className="text-base font-black text-red-800 leading-tight">{score}</p>
               </div>
               <div>
-                <p className="text-[10px] text-gray-500 font-medium leading-tight">NIVEL</p>
+                <p className="text-[10px] text-gray-500 font-medium leading-tight">{t('vm.level')}</p>
                 <p className="text-base font-black text-green-600 leading-tight">{gameLevel}</p>
               </div>
               <div>
-                <p className="text-[10px] text-gray-500 font-medium leading-tight">RACHA</p>
+                <p className="text-[10px] text-gray-500 font-medium leading-tight">{t('vm.streak')}</p>
                 <p className="text-base font-black text-orange-500 leading-tight">{streak}</p>
               </div>
               <div>
-                <p className="text-[10px] text-gray-500 font-medium leading-tight">VIDAS</p>
+                <p className="text-[10px] text-gray-500 font-medium leading-tight">{t('vm.lives')}</p>
                 <p className="text-sm font-black text-red-500 leading-tight">
                   {'❤️'.repeat(lives)}
                 </p>
@@ -2011,7 +2011,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
                 onClick={handleSubmit}
                 className="px-6 py-1.5 bg-red-800 hover:bg-red-900 text-white font-bold rounded-lg transition-colors text-sm"
               >
-                Enviar
+                {t('vm.submit')}
               </button>
             </div>
             
@@ -2046,7 +2046,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
               </p>
             )}
             <p className="hidden md:block mt-0.5 text-[10px] text-gray-400 text-center leading-tight">
-              Usa las teclas 1-5 para vocales con tilde (á é í ó ú)
+              {t('vm.tildeHint')}
             </p>
           </div>
         </div>
@@ -2065,7 +2065,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
                   WebkitTextStroke: '2px rgba(30, 64, 175, 0.8)'
                 }}
               >
-                NIVEL {gameLevel}
+                {t('vm.levelN').replace('{n}', String(gameLevel))}
               </h1>
             </div>
           </div>
@@ -2201,8 +2201,8 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
               {chatHistory.length === 0 ? (
                 <div className="text-center text-gray-500 text-sm mt-8">
                   <p className="mb-2">🥋</p>
-                  <p>¡Concentración! Estoy aquí si necesitas ayuda.</p>
-                  <p className="text-xs mt-2">Pregúntame sobre conjugaciones mientras juegas.</p>
+                  <p>{t('vm.chatWelcomePlaying')}</p>
+                  <p className="text-xs mt-2">{t('vm.chatWelcomePlayingSub')}</p>
                 </div>
               ) : (
                 chatHistory.map((msg, idx) => (
@@ -2228,7 +2228,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
                 <div className="flex justify-start">
                   <div className="bg-white border-2 border-red-200 rounded-2xl px-4 py-3">
                     <p className="text-sm text-gray-600">
-                      El Sensei medita tu pregunta... 🎋
+                      {t('vm.chatLoading')}
                     </p>
                   </div>
                 </div>
@@ -2268,21 +2268,21 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
       <div className="min-h-screen bg-gradient-to-br from-red-50 to-pink-50 p-4 flex items-center justify-center">
         <div className="bg-white rounded-3xl p-8 max-w-md text-center shadow-2xl">
           <p className="text-7xl mb-4">⏸️</p>
-          <h1 className="text-4xl font-black text-red-800 mb-2">Pausa</h1>
-          <p className="text-lg text-gray-600 mb-6">Puntuación: {score}</p>
+          <h1 className="text-4xl font-black text-red-800 mb-2">{t('vm.paused')}</h1>
+          <p className="text-lg text-gray-600 mb-6">{t('vm.pausedScore').replace('{score}', String(score))}</p>
           <div className="space-y-3">
             <button
               onClick={() => setGameState('PLAYING')}
               className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 rounded-lg flex items-center justify-center gap-2"
             >
               <Play size={24} />
-              Continuar
+              {t('vm.continue')}
             </button>
             <button
               onClick={() => setGameState('LEVEL_SELECT')}
               className="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-3 rounded-lg"
             >
-              Salir al Menú
+              {t('vm.exitToMenu')}
             </button>
           </div>
         </div>
@@ -2359,8 +2359,8 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
               {chatHistory.length === 0 ? (
                 <div className="text-center text-gray-500 text-sm mt-8">
                   <p className="mb-2">🥋</p>
-                  <p>¡Un momento de meditación! Estoy aquí si necesitas algo.</p>
-                  <p className="text-xs mt-2">Pregúntame lo que necesites.</p>
+                  <p>{t('vm.chatWelcomePaused')}</p>
+                  <p className="text-xs mt-2">{t('vm.chatWelcomePausedSub')}</p>
                 </div>
               ) : (
                 chatHistory.map((msg, idx) => (
@@ -2386,7 +2386,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
                 <div className="flex justify-start">
                   <div className="bg-white border-2 border-red-200 rounded-2xl px-4 py-3">
                     <p className="text-sm text-gray-600">
-                      El Sensei medita tu pregunta... 🎋
+                      {t('vm.chatLoading')}
                     </p>
                   </div>
                 </div>
@@ -2512,19 +2512,19 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
         <div className="bg-white rounded-3xl p-8 max-w-md text-center shadow-2xl border-4 border-yellow-400 victory-card victory-card-pulse relative z-10">
           <p className="text-7xl mb-4">🏆</p>
           <h1 className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-600 to-green-600 mb-2">
-            ¡Victoria!
+            {t('vm.victory')}
           </h1>
-          <p className="text-lg text-gray-600 mb-2">Has completado el juego</p>
+          <p className="text-lg text-gray-600 mb-2">{t('vm.victorySubtitle')}</p>
           <p className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-green-600 to-blue-600 mb-4">
             {score}
           </p>
-          <p className="text-gray-600 mb-6">¡Has alcanzado los 6000 puntos!</p>
+          <p className="text-gray-600 mb-6">{t('vm.victoryDescription')}</p>
           <div className="space-y-3">
             <button
               onClick={handleStartGame}
               className="w-full bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white font-bold py-3 rounded-lg"
             >
-              Jugar de Nuevo
+              {t('vm.playAgain')}
             </button>
             <button
               onClick={() => {
@@ -2534,7 +2534,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
               }}
               className="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-3 rounded-lg"
             >
-              Cambiar Configuración
+              {t('vm.changeConfig')}
             </button>
           </div>
         </div>
@@ -2596,7 +2596,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
                 <span className="text-2xl">🥋</span>
                 <div>
                   <h3 className="text-white font-bold text-sm">{t('gameMenu.cobiSensei')}</h3>
-                  <p className="text-xs text-yellow-50">¡Maestro Victorioso!</p>
+                  <p className="text-xs text-yellow-50">{t('vm.victorySub')}</p>
                 </div>
               </div>
               <button
@@ -2612,8 +2612,8 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
               {chatHistory.length === 0 ? (
                 <div className="text-center text-gray-500 text-sm mt-8">
                   <p className="mb-2">🏆</p>
-                  <p>¡Felicitaciones! Has demostrado ser un verdadero maestro.</p>
-                  <p className="text-xs mt-2">¿Quieres saber más técnicas avanzadas?</p>
+                  <p>{t('vm.chatWelcomeVictory')}</p>
+                  <p className="text-xs mt-2">{t('vm.chatWelcomeVictorySub')}</p>
                 </div>
               ) : (
                 chatHistory.map((msg, idx) => (
@@ -2639,7 +2639,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
                 <div className="flex justify-start">
                   <div className="bg-white border-2 border-yellow-300 rounded-2xl px-4 py-3">
                     <p className="text-sm text-gray-600">
-                      El Sensei medita tu pregunta... 🎋
+                      {t('vm.chatLoading')}
                     </p>
                   </div>
                 </div>
@@ -2684,16 +2684,16 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
     <div className="min-h-screen bg-gradient-to-br from-red-50 to-pink-50 p-4 flex items-center justify-center">
       <div className="bg-white rounded-3xl p-8 max-w-md text-center shadow-2xl">
         <p className="text-7xl mb-4">💔</p>
-        <h1 className="text-4xl font-black text-red-800 mb-2">Fin del Juego</h1>
-        <p className="text-lg text-gray-600 mb-2">Puntuación Final</p>
+        <h1 className="text-4xl font-black text-red-800 mb-2">{t('vm.gameOver')}</h1>
+        <p className="text-lg text-gray-600 mb-2">{t('vm.finalScoreLabel')}</p>
         <p className="text-5xl font-black text-spanish-red mb-4">{score}</p>
-        <p className="text-gray-600 mb-6">Nivel alcanzado: {gameLevel}</p>
+        <p className="text-gray-600 mb-6">{t('vm.levelReached').replace('{n}', String(gameLevel))}</p>
         <div className="space-y-3">
           <button
             onClick={handleStartGame}
             className="w-full bg-red-800 hover:bg-red-900 text-white font-bold py-3 rounded-lg"
           >
-            Jugar de Nuevo
+            {t('vm.playAgain')}
           </button>
           <button
             onClick={() => {
@@ -2704,7 +2704,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
             }}
             className="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-3 rounded-lg"
           >
-            Cambiar Configuración
+            {t('vm.changeConfig')}
           </button>
         </div>
       </div>
@@ -2782,8 +2782,8 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
             {chatHistory.length === 0 ? (
               <div className="text-center text-gray-500 text-sm mt-8">
                 <p className="mb-2">🥋</p>
-                <p>¡Ánimo! Todo maestro comenzó como aprendiz.</p>
-                <p className="text-xs mt-2">Pregúntame lo que necesites para mejorar.</p>
+                <p>{t('vm.chatWelcomeGameover')}</p>
+                <p className="text-xs mt-2">{t('vm.chatWelcomeGameoverSub')}</p>
               </div>
             ) : (
               chatHistory.map((msg, idx) => (
@@ -2809,7 +2809,7 @@ const VerbMasterGame: React.FC<VerbMasterGameProps> = ({ onBack, cobiVisible = t
               <div className="flex justify-start">
                 <div className="bg-white border-2 border-red-200 rounded-2xl px-4 py-3">
                   <p className="text-sm text-gray-600">
-                    El Sensei medita tu pregunta... 🎋
+                    {t('vm.chatLoading')}
                   </p>
                 </div>
               </div>

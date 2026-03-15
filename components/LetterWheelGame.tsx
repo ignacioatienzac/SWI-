@@ -44,72 +44,13 @@ interface CrosswordCell {
 
 type GameStatus = 'MENU' | 'LOADING' | 'PLAYING' | 'VICTORY';
 
-// Mensajes de Cobi Explorador
-const mensajesExploradorEntrada = [
-  "¡Bienvenido a la expedición! ✨",
-  "¡Tenemos una misión! ¿Buscamos las palabras? 🗺️",
-  "¡Prepárate! La aventura empieza aquí. 🎒",
-  "¡Busquemos el tesoro de las letras! 💎",
-  "¡Abre el mapa, es hora de explorar! 📜"
-];
-
-const mensajesExploradorAcierto = [
-  "¡Tesoro encontrado! 💎",
-  "¡Una palabra nueva para el mapa! 🗺️",
-  "¡Increíble! Eres un gran explorador. ✨",
-  "¡Zas! ¡Esa palabra encaja perfecta! 🧩",
-  "¡Esa es la ruta correcta! 🛤️",
-  "¡Buen hallazgo, aventurero! 🏺"
-];
-
-const mensajesExploradorFallo = [
-  "¡Cuidado con la trampa! 🕸️",
-  "¡Ese camino no lleva a ninguna parte! 🗺️",
-  "¡Uy, una letra se ha escapado! 🔎",
-  "¡Ruta equivocada! Probemos otra. 🧭",
-  "¡Esa palabra no está en el mapa antiguo! 📜",
-  "¡Casi caemos en el pozo! ¡Inténtalo otra vez! 🕳️"
-];
-
-const mensajesExploradorVictoria = [
-  "¡Misión cumplida! 🏆 ¡Hemos descifrado el código antiguo!",
-  "¡El tesoro de las letras es nuestro! 💎",
-  "¡Increíble! Has encontrado todas las palabras ocultas. ✨",
-  "¡Expedición finalizada con éxito! El mapa está completo. 🗺️",
-  "¡Elemental, querido alumno! 🥇",
-  "¡Eres el mejor explorador de palabras del mundo! 🐾"
-];
-
-const mensajesExploradorMenu = [
-  "¡No hay mapa difícil si trabajamos juntos! 🐾",
-  "¡Explorar palabras es la mejor forma de aprender! ¿Vamos? 🚀",
-  "Aventurero, ¿qué nivel elegimos hoy? 🔎"
-];
-
-const seleccionarMensajeExploradorRandom = (tipo: 'entrada' | 'acierto' | 'fallo' | 'victoria' | 'menu'): string => {
-  let mensajes: string[];
-  switch (tipo) {
-    case 'entrada':
-      mensajes = mensajesExploradorEntrada;
-      break;
-    case 'acierto':
-      mensajes = mensajesExploradorAcierto;
-      break;
-    case 'fallo':
-      mensajes = mensajesExploradorFallo;
-      break;
-    case 'victoria':
-      mensajes = mensajesExploradorVictoria;
-      break;
-    case 'menu':
-      mensajes = mensajesExploradorMenu;
-      break;
-  }
-  return mensajes[Math.floor(Math.random() * mensajes.length)];
-};
-
 const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible = true, soundEnabled = true }) => {
-  const { t } = useI18n();
+  const { t, tArray, lang } = useI18n();
+
+  const pickRandomMessage = (tipo: 'entrada' | 'acierto' | 'fallo' | 'victoria' | 'menu'): string => {
+    const msgs = tArray(`cobi.letterWheel.${tipo}`);
+    return msgs[Math.floor(Math.random() * msgs.length)];
+  };
   const [gameStatus, setGameStatus] = useState<GameStatus>('MENU');
   const [gameState, setGameState] = useState<GameState | null>(null);
   const [foundWords, setFoundWords] = useState<Set<string>>(new Set());
@@ -126,9 +67,9 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
   const [showCalendar, setShowCalendar] = useState(false);
   const [displayMonth, setDisplayMonth] = useState<Date>(new Date());
   const [, forceUpdate] = useState({});
-  const [cobiExploradorMessage, setCobiExploradorMessage] = useState<string>(seleccionarMensajeExploradorRandom('entrada'));
+  const [cobiExploradorMessage, setCobiExploradorMessage] = useState<string>(pickRandomMessage('entrada'));
   const [cobiExploradorAvatar, setCobiExploradorAvatar] = useState<string>('./data/images/cobi-explorador.webp');
-  const [cobiExploradorMenuMessage] = useState<string>(seleccionarMensajeExploradorRandom('menu'));
+  const [cobiExploradorMenuMessage] = useState<string>(pickRandomMessage('menu'));
   
   // Chat State
   const [showChatWindow, setShowChatWindow] = useState(false);
@@ -218,7 +159,7 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
       console.error('Error al comunicarse con Cobi Explorador:', error);
       setChatHistory(prev => [
         ...prev,
-        { role: 'cobi', text: '¡Ups! Mi brújula tuvo un problema. 🧭 Inténtalo de nuevo.' }
+        { role: 'cobi', text: t('lw.chatError') }
       ]);
     } finally {
       setIsLoadingResponse(false);
@@ -541,13 +482,13 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
     const newGameState = await generateGame(gameDate, level);
     
     if (!newGameState) {
-      alert('Error al generar el juego. Por favor, intenta de nuevo.');
+      alert(t('lw.generateError'));
       setGameStatus('MENU');
       return;
     }
 
     if (newGameState.targetWords.length === 0) {
-      alert('No se encontraron palabras válidas. Por favor, intenta de nuevo.');
+      alert(t('lw.noWordsFound'));
       setGameStatus('MENU');
       return;
     }
@@ -653,8 +594,8 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
 
     if (match && !foundWords.has(currentWord)) {
       playSuccess();
-      setFeedback({ text: isBaseWord ? '¡Excelente! ¡Encontraste la palabra base!' : '¡Correcto!', type: 'success' });
-      setCobiExploradorMessage(seleccionarMensajeExploradorRandom('acierto'));
+      setFeedback({ text: isBaseWord ? t('lw.foundBaseWord') : t('lw.correct'), type: 'success' });
+      setCobiExploradorMessage(pickRandomMessage('acierto'));
       setCobiExploradorAvatar('./data/images/cobi-explorador-victoria.webp');
       setTimeout(() => setCobiExploradorAvatar('./data/images/cobi-explorador.webp'), 2000);
       setFoundWords(new Set([...foundWords, currentWord]));
@@ -684,19 +625,19 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
       if (foundWords.size + 1 >= totalWords) {
         setTimeout(() => {
           playVictory();
-          setCobiExploradorMessage(seleccionarMensajeExploradorRandom('victoria'));
+          setCobiExploradorMessage(pickRandomMessage('victoria'));
           setCobiExploradorAvatar('./data/images/cobi-explorador-victoria.webp');
           setGameStatus('VICTORY');
         }, 500);
       }
     } else if (foundWords.has(currentWord)) {
-      setFeedback({ text: 'Ya encontraste esta palabra', type: 'error' });
+      setFeedback({ text: t('lw.alreadyFound'), type: 'error' });
     } else {
       playError();
-      setCobiExploradorMessage(seleccionarMensajeExploradorRandom('fallo'));
+      setCobiExploradorMessage(pickRandomMessage('fallo'));
       setCobiExploradorAvatar('./data/images/cobi-explorador-derrota.webp');
       setTimeout(() => setCobiExploradorAvatar('./data/images/cobi-explorador.webp'), 2000);
-      setFeedback({ text: 'Palabra incorrecta', type: 'error' });
+      setFeedback({ text: t('lw.incorrect'), type: 'error' });
     }
     
     // Always clear the word after attempting (correct or incorrect)
@@ -802,7 +743,7 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
               {t('gameMenu.backToGames')}
             </button>
             <h1 className="text-2xl font-black text-deep-blue">
-              🎯 La Rueda de Letras
+              🎯 {t('lw.title')}
             </h1>
           </div>
           )}
@@ -902,8 +843,8 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
               {chatHistory.length === 0 ? (
                 <div className="text-center text-gray-500 text-sm mt-8">
                   <p className="mb-2">🧭</p>
-                  <p>¡Bienvenido! Soy Cobi Explorador.</p>
-                  <p className="text-xs mt-2">Pregúntame sobre el juego o palabras. 🗺️</p>
+                  <p>{t('lw.chatWelcome')}</p>
+                  <p className="text-xs mt-2">{t('lw.chatWelcomeSub')}</p>
                 </div>
               ) : (
                 chatHistory.map((msg, idx) => (
@@ -929,7 +870,7 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
                 <div className="flex justify-start">
                   <div className="bg-white border-2 border-amber-200 rounded-2xl px-4 py-3">
                     <p className="text-sm text-gray-600">
-                      El Explorador consulta su mapa... 🗺️
+                      {t('lw.chatLoading')}
                     </p>
                   </div>
                 </div>
@@ -969,7 +910,7 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
       <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-50 flex items-center justify-center">
         <div className="text-center">
           <div className="text-6xl mb-4 animate-bounce">🎯</div>
-          <div className="text-2xl font-bold text-deep-blue">Cargando...</div>
+          <div className="text-2xl font-bold text-deep-blue">{t('lw.loading')}</div>
         </div>
       </div>
     );
@@ -981,20 +922,20 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
       <div className="min-h-screen bg-gradient-to-br from-green-50 via-yellow-50 to-blue-50 p-4 flex items-center justify-center relative">
         <div className="bg-white rounded-3xl p-8 max-w-md text-center shadow-2xl">
           <div className="text-8xl mb-6">🎉</div>
-          <h1 className="text-5xl font-black text-green-600 mb-4">¡Felicidades!</h1>
-          <p className="text-xl text-gray-700 mb-8">Encontraste todas las palabras</p>
+          <h1 className="text-5xl font-black text-green-600 mb-4">{t('lw.congratulations')}</h1>
+          <p className="text-xl text-gray-700 mb-8">{t('lw.foundAllWords')}</p>
           <div className="space-y-3">
             <button
               onClick={() => startGame(difficulty)}
               className="w-full bg-gradient-to-r from-green-500 to-blue-600 hover:from-green-600 hover:to-blue-700 text-white font-bold py-4 rounded-xl transition-all shadow-lg"
             >
-              Jugar de Nuevo
+              {t('lw.playAgain')}
             </button>
             <button
               onClick={() => setGameStatus('MENU')}
               className="w-full bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-4 rounded-xl transition-colors"
             >
-              Menú Principal
+              {t('lw.mainMenu')}
             </button>
           </div>
         </div>
@@ -1071,8 +1012,8 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
               {chatHistory.length === 0 ? (
                 <div className="text-center text-gray-500 text-sm mt-8">
                   <p className="mb-2">🧭</p>
-                  <p>¡Bienvenido! Soy Cobi Explorador.</p>
-                  <p className="text-xs mt-2">Pregúntame sobre el juego o palabras. 🗺️</p>
+                  <p>{t('lw.chatWelcome')}</p>
+                  <p className="text-xs mt-2">{t('lw.chatWelcomeSub')}</p>
                 </div>
               ) : (
                 chatHistory.map((msg, idx) => (
@@ -1098,7 +1039,7 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
                 <div className="flex justify-start">
                   <div className="bg-white border-2 border-amber-200 rounded-2xl px-4 py-3">
                     <p className="text-sm text-gray-600">
-                      El Explorador consulta su mapa... 🗺️
+                      {t('lw.chatLoading')}
                     </p>
                   </div>
                 </div>
@@ -1137,12 +1078,12 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
     return (
       <div className="min-h-screen bg-red-50 flex items-center justify-center">
         <div className="text-center p-8 bg-white rounded-xl shadow-lg">
-          <p className="text-red-600 font-bold">Error: No se pudo cargar el juego</p>
+          <p className="text-red-600 font-bold">{t('lw.loadError')}</p>
           <button
             onClick={() => setGameStatus('MENU')}
             className="mt-4 px-6 py-2 bg-blue-500 text-white rounded-lg"
           >
-            Volver al menú
+            {t('lw.backToMenu')}
           </button>
         </div>
       </div>
@@ -1225,8 +1166,9 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
           }
           .lw-crossword-grid {
             display: grid !important;
-            width: 100% !important;
             grid-template-columns: repeat(var(--cols), 1fr) !important;
+            width: max-content !important;
+            min-width: 100% !important;
           }
           .lw-crossword-grid > div {
             width: auto !important;
@@ -1273,11 +1215,8 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
             display: flex !important;
           }
           .lw-wheel-container {
-            width: calc(100vw - 40px) !important;
-            height: calc(100vw - 40px) !important;
-            aspect-ratio: 1 / 1;
-            max-width: 320px;
-            max-height: 320px;
+            width: auto !important;
+            height: auto !important;
             flex-shrink: 0;
             margin-bottom: 0 !important;
           }
@@ -1308,7 +1247,7 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
             </button>
             
             <div className="text-center flex-1">
-              <h1 className="lw-header-title text-2xl font-black text-deep-blue">La Rueda de Letras</h1>
+              <h1 className="lw-header-title text-2xl font-black text-deep-blue">{t('lw.title')}</h1>
               <p className="lw-header-subtitle text-xs text-gray-500">{difficulty.toUpperCase()}</p>
             </div>
 
@@ -1324,7 +1263,7 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
                   <button
                     onClick={() => setShowCalendar(!showCalendar)}
                     className="p-2 bg-purple-100 text-purple-600 rounded-lg hover:bg-purple-200 transition"
-                    title="Calendario"
+                    title={t('lw.calendar')}
                   >
                     <Calendar size={20} />
                   </button>
@@ -1342,21 +1281,21 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
                     className={`flex items-center gap-1.5 px-3 py-2 rounded-lg transition-colors ${showHints ? 'bg-yellow-200' : 'bg-yellow-100 hover:bg-yellow-200'}`}
                   >
                     <Lightbulb size={20} className="text-yellow-700" />
-                    <span className="text-sm font-semibold text-yellow-800">PISTAS</span>
+                    <span className="text-sm font-semibold text-yellow-800">{t('lw.hints')}</span>
                   </button>
                   <button
                     onClick={() => setShowCalendar(!showCalendar)}
                     className={`flex items-center gap-1.5 px-3 py-2 rounded-lg transition-colors ${showCalendar ? 'bg-purple-200' : 'bg-purple-100 hover:bg-purple-200'}`}
                   >
                     <Calendar size={20} className="text-purple-600" />
-                    <span className="text-sm font-semibold text-purple-700">CALENDARIO</span>
+                    <span className="text-sm font-semibold text-purple-700">{t('lw.calendar')}</span>
                   </button>
                   <button
                     onClick={() => setShowInstructions(!showInstructions)}
                     className={`flex items-center gap-1.5 px-3 py-2 rounded-lg transition-colors ${showInstructions ? 'bg-blue-200' : 'bg-blue-100 hover:bg-blue-200'}`}
                   >
                     <Info size={20} className="text-blue-600" />
-                    <span className="text-sm font-semibold text-blue-700">INSTRUCCIONES</span>
+                    <span className="text-sm font-semibold text-blue-700">{t('lw.instructions')}</span>
                   </button>
                 </>
               )}
@@ -1365,7 +1304,7 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
 
           {/* Progress */}
           <div className="lw-progress-section flex justify-between text-sm mb-2">
-            <span className="font-semibold text-gray-700">Palabras encontradas</span>
+            <span className="font-semibold text-gray-700">{t('lw.wordsFound')}</span>
             <span className="font-bold text-purple-600">{foundWords.size} / {gameState.targetWords.length}</span>
           </div>
           <div className="lw-progress-bar w-full bg-gray-200 rounded-full h-2.5">
@@ -1390,7 +1329,7 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
                 <ChevronLeft size={20} />
               </button>
               <div className="text-center font-semibold">
-                {displayMonth.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' })}
+                {displayMonth.toLocaleDateString(lang === 'en' ? 'en-US' : 'es-ES', { month: 'long', year: 'numeric' })}
               </div>
               <button
                 onClick={() => setDisplayMonth(new Date(displayMonth.getFullYear(), displayMonth.getMonth() + 1))}
@@ -1405,7 +1344,7 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
 
             {/* Calendar grid */}
             <div className="grid grid-cols-7 gap-1">
-              {['L', 'M', 'X', 'J', 'V', 'S', 'D'].map(day => (
+              {tArray('lw.dayAbbrevs').map(day => (
                 <div key={day} className="text-center text-xs font-semibold text-gray-600 py-1">
                   {day}
                 </div>
@@ -1452,17 +1391,17 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl p-6 max-w-md shadow-2xl">
             <div className="flex justify-between mb-4">
-              <h3 className="text-2xl font-black text-deep-blue">Instrucciones</h3>
+              <h3 className="text-2xl font-black text-deep-blue">{t('lw.instructionsTitle')}</h3>
               <button onClick={() => setShowInstructions(false)} className="p-2 hover:bg-gray-100 rounded-full">
                 <X size={20} />
               </button>
             </div>
             <div className="space-y-3 text-gray-700 text-sm">
-              <p>🎯 Forma palabras usando las letras de la palabra base.</p>
-              <p>🔤 Solo puedes usar cada letra el número de veces que aparece.</p>
-              <p>💻 En ordenador: click o teclado.</p>
-              <p>📱 En móvil: toca y arrastra.</p>
-              <p>⌨️ Enter para enviar, Backspace para borrar, Escape para limpiar.</p>
+              <p>{t('lw.instruction1')}</p>
+              <p>{t('lw.instruction2')}</p>
+              <p>{t('lw.instruction3')}</p>
+              <p>{t('lw.instruction4')}</p>
+              <p>{t('lw.instruction5')}</p>
             </div>
           </div>
         </div>
@@ -1474,7 +1413,7 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
           <div className="bg-white rounded-2xl p-6 max-w-lg w-full max-h-[80vh] overflow-y-auto shadow-2xl">
             <div className="flex justify-between items-center mb-6">
               <h3 className="text-2xl font-black bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-                💡 Pistas
+                {t('lw.hintsTitle')}
               </h3>
               <button onClick={() => setShowHints(false)} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
                 <X size={20} />
@@ -1503,10 +1442,10 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
                       </span>
                       <div className="flex-1">
                         <p className={`font-medium ${baseFound ? 'text-purple-800' : 'text-gray-700'}`}>
-                          {gameState.baseWord.pistas || 'Palabra principal'}
+                          {gameState.baseWord.pistas || t('lw.mainWord')}
                         </p>
                         <p className="text-xs text-gray-500 mt-1">
-                          {gameState.baseWordNormalized.length} letras
+                          {gameState.baseWordNormalized.length} {t('lw.nLetters')}
                           {baseFound && <span className="ml-2 text-purple-600 font-semibold">• {gameState.baseWordNormalized.toUpperCase()}</span>}
                         </p>
                       </div>
@@ -1539,10 +1478,10 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
                       </span>
                       <div className="flex-1">
                         <p className={`font-medium ${found ? 'text-green-800' : 'text-gray-700'}`}>
-                          {item.word.pistas || 'Sin pista'}
+                          {item.word.pistas || t('lw.noHint')}
                         </p>
                         <p className="text-xs text-gray-500 mt-1">
-                          {item.normalized.length} letras
+                          {item.normalized.length} {t('lw.nLetters')}
                           {found && <span className="ml-2 text-green-600 font-semibold">• {item.normalized.toUpperCase()}</span>}
                         </p>
                       </div>
@@ -1566,7 +1505,7 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
             {/* Crossword */}
             <div className="lw-crossword-card bg-white rounded-2xl p-4 shadow-xl">
               <h2 className="lw-crucigrama-title text-lg font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent mb-4 flex items-center gap-2">
-                🧩 Crucigrama
+                {t('lw.crossword')}
               </h2>
               
               {crosswordData && (
@@ -1691,9 +1630,21 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
 
               {/* Letter Wheel */}
               {(() => {
-                const wheelSize = isMobile ? Math.min(window.innerWidth - 40, 320) : 300;
                 const letterCount = gameState.baseWordNormalized.length;
-                const btnSize = isMobile ? Math.max(Math.round(wheelSize * 0.14), letterCount > 8 ? 34 : 40) : 56;
+                let wheelSize: number;
+                let btnSize: number;
+                if (isMobile) {
+                  // Dynamic: fit wheel so all buttons sit with 20px margin from container edges
+                  const maxByWidth = window.innerWidth - 40;
+                  // Estimate available height for wheel card: input row (~40px) + wheel + padding (~20px bottom)
+                  const wheelCardEl = document.querySelector('.lw-wheel-card');
+                  const maxByHeight = wheelCardEl ? wheelCardEl.clientHeight - 60 : 320;
+                  wheelSize = Math.min(maxByWidth, maxByHeight, 320);
+                  btnSize = Math.max(Math.round(wheelSize * 0.14), letterCount > 8 ? 34 : 40);
+                } else {
+                  wheelSize = 300;
+                  btnSize = 56;
+                }
                 const btnRadius = btnSize / 2;
                 const wheelRadius = (wheelSize / 2) - btnRadius - 4;
                 const bgCircleSize = wheelSize - 16;
@@ -1931,8 +1882,8 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
             {chatHistory.length === 0 ? (
               <div className="text-center text-gray-500 text-sm mt-8">
                 <p className="mb-2">🧭</p>
-                <p>¡Bienvenido! Soy Cobi Explorador.</p>
-                <p className="text-xs mt-2">Pregúntame sobre el juego o palabras. 🗺️</p>
+                <p>{t('lw.chatWelcome')}</p>
+                <p className="text-xs mt-2">{t('lw.chatWelcomeSub')}</p>
               </div>
             ) : (
               chatHistory.map((msg, idx) => (
@@ -1958,7 +1909,7 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
               <div className="flex justify-start">
                 <div className="bg-white border-2 border-amber-200 rounded-2xl px-4 py-3">
                   <p className="text-sm text-gray-600">
-                    El Explorador consulta su mapa... 🗺️
+                    {t('lw.chatLoading')}
                   </p>
                 </div>
               </div>
