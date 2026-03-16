@@ -1111,7 +1111,7 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
         @media (max-width: 767px) {
           .lw-playing-root {
             overflow: hidden;
-            height: 100dvh;
+            height: 100svh;
             min-height: unset;
             display: flex;
             flex-direction: column;
@@ -1191,6 +1191,8 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
             grid-template-columns: repeat(var(--cols), 1fr) !important;
             width: max-content !important;
             min-width: 100% !important;
+            background: linear-gradient(to bottom right, #f3e8ff, #dbeafe) !important;
+            border-radius: 0 !important;
           }
           .lw-crossword-grid > div {
             width: auto !important;
@@ -1675,7 +1677,7 @@ const LetterWheelGame: React.FC<LetterWheelGameProps> = ({ onBack, cobiVisible =
                   btnSize = 56;
                 }
                 const btnRadius = btnSize / 2;
-                const wheelRadius = (wheelSize / 2) - btnRadius - 4;
+                const wheelRadius = (wheelSize / 2) - btnRadius - (isMobile ? 8 : 4);
                 const bgCircleSize = wheelSize - 16;
                 const letterFontSize = isMobile ? `${Math.max(btnSize * 0.4, 10)}px` : '1.25rem';
                 return (
